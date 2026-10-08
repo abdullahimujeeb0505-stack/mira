@@ -9,6 +9,7 @@ out-tsc
 .expo-shared
 /scripts/data/muse-memory.json
 /scripts/data/muse-learning.json
+/scripts/data/muse-opportunities.json
 
 # dependencies
 node_modules
