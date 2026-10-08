@@ -23,10 +23,12 @@ The script sends `Reply with exactly: GROQ WORKS` to Groq's Responses API using 
 
 ## Muse CLI
 
-Start an in-memory conversation with Muse, the personal Web3 intern:
+Start a conversation with Muse, the personal Web3 intern:
 
 ```sh
 pnpm --filter @workspace/scripts run muse
 ```
 
-Enter a message at the `You:` prompt. Type `/exit` to end the session. Muse uses the `GROK_API_CODING_KEY` secret and the Groq `openai/gpt-oss-20b` model. Conversation history is kept only in memory for the current CLI session.
+Enter a message at the `You:` prompt. Type `/help` for memory commands or `/exit` to end the session. Muse uses the `GROK_API_CODING_KEY` secret and the Groq `openai/gpt-oss-20b` model. Conversation history is session-only.
+
+Memories persist in `scripts/data/muse-memory.json` (ignored by Git); set `MUSE_MEMORY_PATH` to use a different file.
