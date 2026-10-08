@@ -7,6 +7,7 @@
     "hello": "tsx ./src/hello.ts",
     "hello-server": "tsx ./src/hello-server.ts",
     "groq-api-test": "tsx ./src/groq-api-test.ts",
+    "muse": "tsx ./src/muse/cli.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
