@@ -7,16 +7,15 @@ if (!apiKey) {
   process.exitCode = 1;
 } else {
   try {
-    const response = await fetch("https://api.x.ai/v1/responses", {
+    const response = await fetch("https://api.groq.com/openai/v1/responses", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "grok-4.7",
-        input: "Reply with exactly: GROK WORKS",
-        store: false,
+        model: "openai/gpt-oss-20b",
+        input: "Reply with exactly: GROQ WORKS",
       }),
       signal: AbortSignal.timeout(120_000),
     });
@@ -24,18 +23,19 @@ if (!apiKey) {
     const result: unknown = await response.json();
 
     if (!response.ok) {
-      const errorMessage = getErrorMessage(result);
-      throw new Error(`xAI request failed with HTTP ${response.status}${errorMessage}`);
+      throw new Error(
+        `Groq request failed with HTTP ${response.status}${getErrorMessage(result)}`,
+      );
     }
 
     const text = getResponseText(result);
     if (!text) {
-      throw new Error("xAI returned a successful response without text output.");
+      throw new Error("Groq returned a successful response without text output.");
     }
 
     process.stdout.write(`${text}\n`);
   } catch (error) {
-    const message = error instanceof Error ? error.message : "xAI request failed.";
+    const message = error instanceof Error ? error.message : "Groq request failed.";
     console.error(message.replaceAll(apiKey, "[REDACTED]"));
     process.exitCode = 1;
   }
@@ -58,7 +58,11 @@ function getResponseText(value: unknown): string | undefined {
   const text = value.output.flatMap((item) => {
     if (!isRecord(item) || !Array.isArray(item.content)) return [];
     return item.content.flatMap((part) =>
-      isRecord(part) && typeof part.text === "string" ? [part.text] : [],
+      isRecord(part) &&
+      part.type === "output_text" &&
+      typeof part.text === "string"
+        ? [part.text]
+        : [],
     );
   });
 

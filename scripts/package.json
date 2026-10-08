@@ -6,7 +6,7 @@
   "scripts": {
     "hello": "tsx ./src/hello.ts",
     "hello-server": "tsx ./src/hello-server.ts",
-    "grok-api-test": "tsx ./src/grok-api-test.ts",
+    "groq-api-test": "tsx ./src/groq-api-test.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
