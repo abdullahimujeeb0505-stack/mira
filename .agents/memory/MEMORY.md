@@ -1,0 +1,1 @@
+- [Muse integration scope](muse-integration-scope.md) — keep opportunity discovery local and provider-neutral until the user explicitly requests integrations.
