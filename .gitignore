@@ -10,6 +10,7 @@ out-tsc
 /scripts/data/muse-memory.json
 /scripts/data/muse-learning.json
 /scripts/data/muse-opportunities.json
+/scripts/data/muse-watch-rules.json
 
 # dependencies
 node_modules

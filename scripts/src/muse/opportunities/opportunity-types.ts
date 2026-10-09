@@ -3,10 +3,12 @@ import type { OutcomeCharacteristics, OutcomeDomain } from "../learning/outcome-
 export const OPPORTUNITY_TYPES = [
   "WL",
   "FREE_MINT",
+  "AIRDROP",
   "CAMPAIGN",
   "COMPETITION",
   "GRANT",
   "CONTENT",
+  "PRODUCT_LAUNCH",
   "OTHER",
 ] as const;
 

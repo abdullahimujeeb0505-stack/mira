@@ -8,7 +8,7 @@
     "hello-server": "tsx ./src/hello-server.ts",
     "groq-api-test": "tsx ./src/groq-api-test.ts",
     "muse": "tsx ./src/muse/cli.ts",
-    "test": "tsx --test ./src/muse/learning/learning-service.test.ts ./src/muse/decision/decision-service.test.ts ./src/muse/opportunities/opportunity-service.test.ts",
+    "test": "tsx --test ./src/muse/learning/learning-service.test.ts ./src/muse/decision/decision-service.test.ts ./src/muse/opportunities/opportunity-service.test.ts ./src/muse/watch/watch-service.test.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
