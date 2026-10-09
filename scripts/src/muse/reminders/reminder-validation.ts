@@ -69,7 +69,7 @@ export function normalizeReminder(value: unknown): Reminder {
   if (status === "delivered" && !deliveryReceipt) {
     throw new Error("A delivered reminder must include an adapter receipt.");
   }
-  if (status === "snoozed" && !normalizeDate(value.snoozeUntil, "snooze time")) {
+  if (status === "snoozed" && !optionalDate(value.snoozeUntil, "snooze time")) {
     throw new Error("A snoozed reminder must include a snooze time.");
   }
 
