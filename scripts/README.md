@@ -57,3 +57,21 @@ pnpm --filter @workspace/scripts run muse-sources -- run-once
 ```
 
 The scheduler polls enabled sources at their configured intervals, stores last-check/success/error state, applies bounded retries and request timeouts, and observes a cooldown after rate limits. Retrieved text is treated as untrusted data and is never passed to Muse's LLM. Continuous scheduling is available through `SourceScheduler.start()` / `stop()`; the CLI only runs an explicit one-shot cycle.
+
+## Muse opportunity tracking
+
+The separate tracking layer stores user-managed opportunities in `scripts/data/muse-tracked-opportunities.json` (ignored by Git); set `MUSE_TRACKED_OPPORTUNITIES_PATH` to use another file. It supports whitelist/waitlist applications, airdrops, campaigns, quests, competitions, grants, content opportunities, public mints, product launches, and other opportunities.
+
+Use the CLI to add and manage records, import a discovered opportunity by its existing opportunity ID, review deadlines, and record results:
+
+```sh
+pnpm --filter @workspace/scripts run muse-tracking -- help
+pnpm --filter @workspace/scripts run muse-tracking -- add --title "Orbit contributor airdrop" --category AIRDROP --project Orbit --source-url https://example.com/airdrop
+pnpm --filter @workspace/scripts run muse-tracking -- list --status DISCOVERED
+pnpm --filter @workspace/scripts run muse-tracking -- from-opportunity <discovered-id>
+pnpm --filter @workspace/scripts run muse-tracking -- eligibility <tracked-id> ELIGIBLE --evidence "Official checker result" --evidence-url https://example.com/checker
+pnpm --filter @workspace/scripts run muse-tracking -- upcoming --days 7
+pnpm --filter @workspace/scripts run muse-tracking -- overdue
+```
+
+Eligibility, win, and loss status changes require evidence. Verified success, failure, and neutral outcomes are recorded through the existing `LearningService`; unknown outcomes are retained in the tracking record but are not learned. Wallet references accept public addresses only; there is no wallet connection, signing, or transaction execution. The tracker never stores private-key fields and rejects recognizable key or seed-phrase material.
