@@ -1,13 +1,13 @@
 import { createInterface } from "node:readline";
-import { GroqResponsesProvider } from "./groq-responses-provider.js";
 import { MuseAgent } from "./muse-agent.js";
+import { createTextGenerationProvider } from "./provider-selection.js";
 import {
   MEMORY_CATEGORIES,
   parseMemoryCategory,
 } from "./memory/memory-types.js";
 
 async function main(): Promise<void> {
-  const agent = new MuseAgent(new GroqResponsesProvider());
+  const agent = new MuseAgent(createTextGenerationProvider());
   const terminal = createInterface({
     input: process.stdin,
     output: process.stdout,

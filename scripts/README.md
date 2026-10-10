@@ -29,7 +29,9 @@ Start a conversation with Muse, the personal Web3 intern:
 pnpm --filter @workspace/scripts run muse
 ```
 
-Enter a message at the `You:` prompt. Type `/help` for memory commands or `/exit` to end the session. Muse uses the `GROK_API_CODING_KEY` secret and the Groq `openai/gpt-oss-20b` model. Conversation history is session-only.
+Enter a message at the `You:` prompt. Type `/help` for memory commands or `/exit` to end the session. By default, Muse uses the `GROK_API_CODING_KEY` secret and the Groq `openai/gpt-oss-20b` model. Conversation history is session-only.
+
+Set `MUSE_LLM_PROVIDER=agentrouter` to use AgentRouter instead. This requires `AGENTROUTER_API_KEY`; `AGENTROUTER_MODEL` optionally overrides the default `gpt-5.6-sol` model. AgentRouter models can change availability, so verify the current model list in its [AgentRouter Codex guide](https://ps.air-outer.com/docs/codex.html). Set `MUSE_LLM_PROVIDER=groq` or leave it unset to keep using Groq.
 
 Memories persist in `scripts/data/muse-memory.json` (ignored by Git); set `MUSE_MEMORY_PATH` to use a different file.
 
