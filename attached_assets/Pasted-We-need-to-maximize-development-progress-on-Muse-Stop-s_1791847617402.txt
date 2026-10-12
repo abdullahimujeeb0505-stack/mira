@@ -1,0 +1,26 @@
+We need to maximize development progress on Muse. Stop spending time on Git authentication investigations and dependency-proxy diagnostics.
+
+Current state:
+
+- Branch: "main"
+- Current commit: "beb042c8b5dc693929f2078cded46dd2464eae0f"
+- Two local commits ahead of the cached GitHub "origin/main"
+- Current commit is present on "gitsafe-backup/main"
+- Working tree was clean at the last check
+- AgentRouter parser was updated and committed
+- 8 focused AgentRouter tests and 55 scripts tests passed through cached local tools
+- Scripts workspace typecheck passed through cached tools
+- Normal pnpm-linked tools and Vite remain unavailable because dependency installation failed at Replit's internal package proxy with HTTP 403
+- Do not retry installation or make a live API request
+
+Your task is to make the greatest safe progress possible toward a working Muse demo.
+
+1. Inspect the existing architecture and identify the shortest path to a usable end-to-end Muse workflow.
+2. Check the current source files and existing tests before editing. Do not repeat tests that already passed unless changes require them.
+3. Implement the highest-value missing piece that can be built and tested with the dependencies already available. Prefer connecting the existing Muse agent to a session-safe HTTP API route if the repository supports it. Keep each user's conversation isolated; never share one conversation history between different senders.
+4. If that integration cannot be completed safely without unavailable dependencies or undocumented external APIs, choose the next most useful self-contained improvement to an existing Muse feature.
+5. Add focused tests and run the relevant cached local test/typecheck commands.
+6. Preserve the existing parser fix, both local commits, the backup remote, and all existing user changes. Do not reset, rebase, force-push, delete files, alter dependency versions, or modify the lockfile.
+7. Do not invent Photon/iMessage API details, claim real notifications work when they do not, or expose credentials.
+
+Work on the implementation now. Do not stop after producing a plan. At the end, report the files changed, exact checks run and results, the working functionality gained, and the single biggest remaining blocker. Do not claim anything passed unless it actually ran and passed.

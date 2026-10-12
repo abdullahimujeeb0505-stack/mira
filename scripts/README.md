@@ -35,6 +35,18 @@ Set `MUSE_LLM_PROVIDER=agentrouter` to use AgentRouter instead. This requires `A
 
 Memories persist in `scripts/data/muse-memory.json` (ignored by Git); set `MUSE_MEMORY_PATH` to use a different file.
 
+## Muse browser demo
+
+Start the lightweight HTTP chat demo:
+
+```sh
+pnpm --filter @workspace/scripts run muse-server
+```
+
+Open `http://localhost:3000` (or the configured `PORT`). The server uses the existing Groq provider by default; configure `GROK_API_CODING_KEY`, or choose AgentRouter with `MUSE_LLM_PROVIDER=agentrouter` and `AGENTROUTER_API_KEY`. `SESSION_SECRET` is required to sign the browser's HTTP-only session cookie.
+
+Each browser session gets an independent `MuseAgent` and its own saved-memory file under `scripts/data/muse-http-sessions/`. Conversation history stays in that session's server memory and resets when the server restarts. The page sends messages only to this server; the server then sends them to the configured model provider.
+
 ## Muse learning records
 
 Learning records use a separate `LearningRepository` and persist in `scripts/data/muse-learning.json` (ignored by Git). Set `MUSE_LEARNING_PATH` to use a different file. The repository supports the categories `SUCCESS_PATTERN`, `FAILURE_PATTERN`, `PREFERENCE`, `OPPORTUNITY_PATTERN`, `CONTENT_PATTERN`, and `STRATEGY`; each record stores its pattern, evidence, outcome, confidence (0–1), and observation count.
