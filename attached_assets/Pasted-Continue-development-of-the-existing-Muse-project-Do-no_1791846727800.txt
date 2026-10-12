@@ -1,0 +1,49 @@
+Continue development of the existing Muse project. Do not rebuild the project or repeat the package-installation investigation.
+
+1. Check whether Termux introduced a repository change
+
+Before editing code, inspect Git history and compare the current repository with the last known-good state, if available. Check changes to:
+
+- "pnpm-lock.yaml"
+- Root and workspace "package.json" files
+- ".npmrc" and package-manager configuration
+- Replit configuration files
+
+Determine whether any Termux-related commit changed dependency resolution or registry configuration. Report relevant commit hashes and exact differences. Do not reset, revert, or overwrite commits. Do not assume Termux caused the Replit proxy error without evidence.
+
+2. Continue even if the dependency installation is incomplete
+
+Do not retry "pnpm install". The last attempt failed with the same Replit internal proxy 403 after adding 465 of 466 packages.
+
+Check which local executables are available. Run the existing scripts workspace typecheck and test commands wherever possible. If a command fails because a dependency is missing, record the exact error and continue with checks that can run.
+
+3. Fix the AgentRouter response parser
+
+Inspect the existing AgentRouter provider and its tests. A previous live request returned HTTP 200, but Muse reported that the successful response contained no text output.
+
+Implement a robust fix in the existing provider for the documented OpenAI-compatible Responses API format, including text in "output[].content[]" blocks where applicable. Distinguish a genuinely empty response from an unsupported response structure.
+
+Add mocked tests covering:
+
+- A successful response containing text
+- Multiple text blocks
+- A genuinely empty output
+- An unexpected response structure
+- An HTTP error response
+
+Do not change the endpoint, model, provider-selection behavior, or unrelated architecture.
+
+4. Verify and report
+
+Run the focused AgentRouter tests, full scripts test suite, and typecheck wherever dependencies permit. Fix failures caused by your changes.
+
+Do not make a live API request, expose secrets, modify the lockfile, or overwrite user changes.
+
+Finish by reporting:
+
+1. Whether a Termux-related repository change was found
+2. Files changed
+3. Exact test and typecheck results
+4. Any remaining blocker
+
+Do not stop after producing an investigation report. Complete the parser fix and verification if the available workspace permits it. Never claim a test passed unless it actually ran and passed.

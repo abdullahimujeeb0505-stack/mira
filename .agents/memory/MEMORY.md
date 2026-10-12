@@ -1,1 +1,2 @@
 - [Muse integration scope](muse-integration-scope.md) — keep opportunity discovery local and provider-neutral until the user explicitly requests integrations.
+- [Partial pnpm installs](partial-pnpm-installs.md) — failed installs can leave tools in the virtual store without workspace command links.

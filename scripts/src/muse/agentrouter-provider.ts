@@ -70,14 +70,19 @@ export class AgentRouterProvider implements TextGenerationProvider {
       );
     }
 
-    const text = getResponseText(result);
-    if (!text) {
+    const parsedResponse = parseResponseText(result);
+    if (parsedResponse.kind === "empty") {
       throw new Error(
         "AgentRouter returned a successful response without text output.",
       );
     }
+    if (parsedResponse.kind === "unsupported") {
+      throw new Error(
+        "AgentRouter returned a successful response with an unsupported response structure.",
+      );
+    }
 
-    return text;
+    return parsedResponse.text;
   }
 }
 
@@ -90,23 +95,49 @@ function getErrorMessage(value: unknown): string {
   return typeof value.message === "string" ? `: ${value.message}` : "";
 }
 
-function getResponseText(value: unknown): string | undefined {
-  if (!isRecord(value)) return undefined;
-  if (typeof value.output_text === "string") return value.output_text;
-  if (!Array.isArray(value.output)) return undefined;
+type ParsedResponseText =
+  | { kind: "text"; text: string }
+  | { kind: "empty" }
+  | { kind: "unsupported" };
 
-  const text = value.output.flatMap((item) => {
-    if (!isRecord(item) || !Array.isArray(item.content)) return [];
-    return item.content.flatMap((part) =>
-      isRecord(part) &&
-      part.type === "output_text" &&
-      typeof part.text === "string"
-        ? [part.text]
-        : [],
-    );
-  });
+function parseResponseText(value: unknown): ParsedResponseText {
+  if (!isRecord(value)) return { kind: "unsupported" };
 
-  return text.length > 0 ? text.join("") : undefined;
+  if (typeof value.output_text === "string" && value.output_text.length > 0) {
+    return { kind: "text", text: value.output_text };
+  }
+
+  if (value.output === undefined) {
+    return typeof value.output_text === "string"
+      ? { kind: "empty" }
+      : { kind: "unsupported" };
+  }
+  if (!Array.isArray(value.output)) return { kind: "unsupported" };
+
+  const textBlocks: string[] = [];
+  for (const item of value.output) {
+    if (!isRecord(item)) return { kind: "unsupported" };
+    if (item.content === undefined) {
+      if (typeof item.type !== "string") return { kind: "unsupported" };
+      continue;
+    }
+    if (!Array.isArray(item.content)) return { kind: "unsupported" };
+
+    for (const part of item.content) {
+      if (!isRecord(part) || typeof part.type !== "string") {
+        return { kind: "unsupported" };
+      }
+
+      if (part.type === "output_text" || part.type === "text") {
+        if (typeof part.text !== "string") return { kind: "unsupported" };
+        if (part.text.length > 0) textBlocks.push(part.text);
+      }
+    }
+  }
+
+  return textBlocks.length > 0
+    ? { kind: "text", text: textBlocks.join("") }
+    : { kind: "empty" };
 }
 
 function redact(value: string, secret: string): string {

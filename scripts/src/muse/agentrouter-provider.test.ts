@@ -81,6 +81,64 @@ test("AgentRouter sends a Responses API request and returns its text", async () 
     },
   ));
 
+test("AgentRouter combines multiple nested text blocks", async () =>
+  withEnvironment({ AGENTROUTER_API_KEY: testApiKey }, async () => {
+    const provider = new AgentRouterProvider({
+      fetchImplementation: async () =>
+        jsonResponse({
+          output_text: "",
+          output: [
+            {
+              type: "message",
+              content: [
+                { type: "output_text", text: "Hello " },
+                { type: "text", text: "from " },
+                { type: "output_text", text: "AgentRouter" },
+              ],
+            },
+          ],
+        }),
+    });
+
+    const response = await provider.generateText({
+      systemPrompt: "You are Muse.",
+      conversation: [{ role: "user", content: "Hi" }],
+    });
+
+    assert.equal(response, "Hello from AgentRouter");
+  }));
+
+test("AgentRouter reports a valid empty response", async () =>
+  withEnvironment({ AGENTROUTER_API_KEY: testApiKey }, async () => {
+    const provider = new AgentRouterProvider({
+      fetchImplementation: async () => jsonResponse({ output: [] }),
+    });
+
+    await assert.rejects(
+      provider.generateText({
+        systemPrompt: "You are Muse.",
+        conversation: [{ role: "user", content: "Hi" }],
+      }),
+      /without text output/,
+    );
+  }));
+
+test("AgentRouter reports an unsupported response structure", async () =>
+  withEnvironment({ AGENTROUTER_API_KEY: testApiKey }, async () => {
+    const provider = new AgentRouterProvider({
+      fetchImplementation: async () =>
+        jsonResponse({ result: { text: "Unexpected shape" } }),
+    });
+
+    await assert.rejects(
+      provider.generateText({
+        systemPrompt: "You are Muse.",
+        conversation: [{ role: "user", content: "Hi" }],
+      }),
+      /unsupported response structure/,
+    );
+  }));
+
 test("AgentRouter reports API errors without exposing the API key", async () =>
   withEnvironment({ AGENTROUTER_API_KEY: testApiKey }, async () => {
     const provider = new AgentRouterProvider({
