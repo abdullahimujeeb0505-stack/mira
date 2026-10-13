@@ -1,6 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
-import { createServer as createNetServer, type AddressInfo } from "node:net";
+import { mkdtemp, readFile, readdir, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -14,7 +13,7 @@ const testSessionSecret = "muse-http-session-test-secret";
 
 async function withServer(
   providerFactory: () => TextGenerationProvider,
-  run: (baseUrl: string) => Promise<void>,
+  run: (baseUrl: string, memoryDirectory: string) => Promise<void>,
 ): Promise<void> {
   const memoryDirectory = await mkdtemp(join(tmpdir(), "muse-http-test-"));
   const server = createMuseHttpServer({
@@ -27,9 +26,12 @@ async function withServer(
     server.listen(0, "127.0.0.1", resolve);
   });
 
-  const address = server.address() as AddressInfo;
+  const address = server.address();
+  if (!address || typeof address === "string") {
+    throw new Error("The test server did not bind to a TCP port.");
+  }
   try {
-    await run(`http://127.0.0.1:${address.port}`);
+    await run(`http://127.0.0.1:${address.port}`, memoryDirectory);
   } finally {
     await new Promise<void>((resolve, reject) => {
       server.close((error) => (error ? reject(error) : resolve()));
@@ -128,9 +130,66 @@ test("Muse keeps conversation histories isolated by signed browser session", asy
         ),
         [["user", "Bob's first message"]],
       );
+
+      const [cookieName, cookieValue] = aliceCookie.split("=");
+      const [sessionId, signature] = cookieValue.split(".");
+      const alteredSignature =
+        (signature[0] === "0" ? "1" : "0") + signature.slice(1);
+      const forgedResponse = await sendMessage(
+        baseUrl,
+        "This must start a new session",
+        `${cookieName}=${sessionId}.${alteredSignature}`,
+      );
+      assert.equal(forgedResponse.status, 200);
+      assert.notEqual(getSessionCookie(forgedResponse), aliceCookie);
+      assert.equal(providerNumber, 3);
+      assert.deepEqual(
+        conversationsBySession[2][0].conversation.map(
+          ({ role, content }) => [role, content],
+        ),
+        [["user", "This must start a new session"]],
+      );
     },
   );
 });
+
+test("each browser session persists memories in a separate file", async () =>
+  withServer(
+    () => ({ generateText: async () => "Noted." }),
+    async (baseUrl, memoryDirectory) => {
+      const aliceMessage =
+        "Please remember that I prefer low-risk launches.";
+      const bobMessage =
+        "Please remember that I prefer rapid experiments.";
+      const aliceResponse = await sendMessage(baseUrl, aliceMessage);
+      assert.equal(aliceResponse.status, 200);
+      const aliceCookie = getSessionCookie(aliceResponse);
+      const bobResponse = await sendMessage(baseUrl, bobMessage);
+      assert.equal(bobResponse.status, 200);
+      assert.notEqual(getSessionCookie(bobResponse), aliceCookie);
+
+      const memoryFiles = await readdir(memoryDirectory);
+      assert.equal(memoryFiles.length, 2);
+      const memories = await Promise.all(
+        memoryFiles.map(async (fileName) => ({
+          fileName,
+          contents: await readFile(join(memoryDirectory, fileName), "utf8"),
+        })),
+      );
+      const aliceMemory = memories.find(({ contents }) =>
+        contents.includes(aliceMessage),
+      );
+      const bobMemory = memories.find(({ contents }) =>
+        contents.includes(bobMessage),
+      );
+
+      assert.ok(aliceMemory);
+      assert.ok(bobMemory);
+      assert.notEqual(aliceMemory.fileName, bobMemory.fileName);
+      assert.equal(aliceMemory.contents.includes(bobMessage), false);
+      assert.equal(bobMemory.contents.includes(aliceMessage), false);
+    },
+  ));
 
 test("Muse rejects missing, empty, and oversized messages before creating a session", async () => {
   let providerCreations = 0;
@@ -147,11 +206,28 @@ test("Muse rejects missing, empty, and oversized messages before creating a sess
       });
       assert.equal(missing.status, 400);
 
+      const malformed = await fetch(`${baseUrl}/api/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: '{"message":',
+      });
+      assert.equal(malformed.status, 400);
+
       const empty = await sendMessage(baseUrl, "   ");
       assert.equal(empty.status, 400);
 
       const oversized = await sendMessage(baseUrl, "x".repeat(4_001));
       assert.equal(oversized.status, 413);
+
+      const oversizedBody = await fetch(`${baseUrl}/api/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: "Hello",
+          unused: "x".repeat(17 * 1_024),
+        }),
+      });
+      assert.equal(oversizedBody.status, 413);
       assert.equal(providerCreations, 0);
     },
   );
@@ -168,5 +244,21 @@ test("Muse returns a generic configuration error without exposing provider detai
       const body = await response.text();
       assert.match(body, /model provider is not configured/i);
       assert.equal(body.includes("sensitive details"), false);
+    },
+  ));
+
+test("Muse hides model-generation failures from the HTTP response", async () =>
+  withServer(
+    () => ({
+      generateText: async () => {
+        throw new Error("Sensitive provider response and credential details");
+      },
+    }),
+    async (baseUrl) => {
+      const response = await sendMessage(baseUrl, "Hello");
+      assert.equal(response.status, 502);
+      const body = await response.text();
+      assert.match(body, /could not generate a reply/i);
+      assert.equal(body.includes("credential details"), false);
     },
   ));

@@ -47,6 +47,10 @@ Open `http://localhost:3000` (or the configured `PORT`). The server uses the exi
 
 Each browser session gets an independent `MuseAgent` and its own saved-memory file under `scripts/data/muse-http-sessions/`. Conversation history stays in that session's server memory and resets when the server restarts. The page sends messages only to this server; the server then sends them to the configured model provider.
 
+The demo is not an authentication system: anyone who can reach its port can create a separate session. Keep it local or behind a trusted preview; add access control and request-rate limits before public deployment.
+
+**Replit preview limitation:** this server is currently a `scripts` command, not a registered Replit artifact/workflow. Existing artifact previews do not auto-start or route to it. Run it manually on `PORT` for now; automatic preview needs a dedicated workflow/artifact registration.
+
 ## Muse learning records
 
 Learning records use a separate `LearningRepository` and persist in `scripts/data/muse-learning.json` (ignored by Git). Set `MUSE_LEARNING_PATH` to use a different file. The repository supports the categories `SUCCESS_PATTERN`, `FAILURE_PATTERN`, `PREFERENCE`, `OPPORTUNITY_PATTERN`, `CONTENT_PATTERN`, and `STRATEGY`; each record stores its pattern, evidence, outcome, confidence (0–1), and observation count.

@@ -1,0 +1,30 @@
+Continue implementing the existing Muse HTTP chat demo from the current checkpoint. Do not rebuild the project or repeat the package-installation investigation.
+
+The previous session added a small built-in Node.js HTTP chat service in the existing "scripts" workspace. It reuses "MuseAgent" and provider selection, uses signed per-browser session cookies, and stores conversation memory in separate files. Its new HTTP tests passed, but the typecheck found two issues: a test transcript type and an HTTPS check on a plain HTTP socket. Work stopped when the daily quota was exhausted.
+
+1. Resume safely
+
+- Inspect the current Git status and recent diff before editing.
+- Preserve all existing changes, including the AgentRouter parser fix and its tests.
+- Do not reset, revert, overwrite, or discard work.
+- Do not retry "pnpm install", change dependencies, modify the lockfile, or investigate the package proxy again.
+
+2. Finish the interrupted HTTP chat implementation
+
+- Inspect the new HTTP chat service and its tests.
+- Fix the two reported typecheck issues using the correct types and protocol handling; do not suppress errors with "any" or broad casts.
+- Check session isolation: each browser session must have separate conversation history and memory. Do not share mutable conversation arrays across users.
+- Ensure session cookies are signed, use appropriate security attributes, and cannot be forged trivially.
+- Validate request bodies and impose a reasonable size limit.
+- Handle malformed requests and provider failures without exposing secrets or stack traces.
+- Keep the service self-contained and dependency-free if possible. Do not invent Photon/iMessage integration or claim external messaging works.
+
+3. Verify
+
+Use the already available cached local tools. Run the focused HTTP chat tests, AgentRouter tests, full scripts test suite, and scripts typecheck wherever possible. Do not make live API calls. Report exact commands and results, distinguishing checks that passed from checks that could not run.
+
+4. Deliver a usable demo
+
+If the checks pass, document the exact command to start the HTTP chat demo and how to configure its provider environment variables. Make sure it binds safely for local/demo use and explain any Replit-specific limitation that prevents it from being previewed.
+
+Do the implementation now rather than returning another plan. At the end, report files changed, checks run, remaining blockers, and the exact next action needed from me.

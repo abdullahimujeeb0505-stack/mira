@@ -38,6 +38,7 @@ const CHAT_PAGE = `<!doctype html>
       h1 { margin: 12px 0 8px; font-size: clamp(30px, 6vw, 48px); letter-spacing: -.04em; }
       .intro, .notice { color: #a8afbe; line-height: 1.6; }
       .notice { margin: 0; font-size: 12px; }
+      .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
       #messages { flex: 1; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; padding: 22px 0; }
       .message { max-width: 88%; padding: 12px 15px; border-radius: 16px; line-height: 1.55; overflow-wrap: anywhere; white-space: pre-wrap; }
       .message.muse { align-self: flex-start; background: #252c3a; }
