@@ -37,6 +37,18 @@ Memories persist in `scripts/data/muse-memory.json` (ignored by Git); set `MUSE_
 
 ## Muse browser demo
 
+Check the demo prerequisites without starting the server or contacting a model provider:
+
+```sh
+pnpm --filter @workspace/scripts run muse-preflight
+```
+
+The preflight prints only prerequisite names and readiness states; it never prints secret values. It checks that `SESSION_SECRET` is non-empty, `MUSE_CHAT_ACCESS_TOKEN` is at least 32 UTF-8 bytes, the selected provider key is set, and the local `tsx` command is installed. Its standalone tests can run with Node.js alone:
+
+```sh
+pnpm --filter @workspace/scripts run muse-preflight-test
+```
+
 Start the lightweight HTTP chat demo:
 
 ```sh
