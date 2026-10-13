@@ -141,6 +141,7 @@ export interface MuseHttpServerOptions {
   sessionSecret?: string;
   accessToken?: string;
   memoryDirectory?: string;
+  sharedMemoryPath?: string;
   providerFactory?: () => TextGenerationProvider;
   maxActiveSessions?: number;
   sessionTtlMs?: number;
@@ -165,6 +166,9 @@ export function createMuseHttpServer(
     DEFAULT_MEMORY_DIRECTORY;
   const providerFactory =
     options.providerFactory ?? (() => createTextGenerationProvider());
+  const sharedMemories = new MemoryService(
+    new JsonMemoryRepository(options.sharedMemoryPath),
+  );
   const maxActiveSessions = options.maxActiveSessions ?? MAX_ACTIVE_SESSIONS;
   const sessionTtlMs = options.sessionTtlMs ?? SESSION_TTL_MS;
   if (!Number.isInteger(maxActiveSessions) || maxActiveSessions < 1) {
@@ -308,6 +312,7 @@ export function createMuseHttpServer(
           new MemoryService(
             new JsonMemoryRepository(join(memoryDirectory, `${id}.json`)),
           ),
+          sharedMemories,
         ),
         lastUsedAt: now,
         pending: Promise.resolve(),

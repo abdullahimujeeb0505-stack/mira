@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, readdir, rm } from "node:fs/promises";
+import { mkdtemp, readFile, readdir, rm, writeFile, mkdir } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -17,12 +17,14 @@ async function withServer(
   providerFactory: () => TextGenerationProvider,
   run: (baseUrl: string, memoryDirectory: string) => Promise<void>,
   accessToken: string | null = testAccessToken,
+  sharedMemoryPath?: string,
 ): Promise<void> {
   const memoryDirectory = await mkdtemp(join(tmpdir(), "muse-http-test-"));
   const server = createMuseHttpServer({
     sessionSecret: testSessionSecret,
     accessToken: accessToken ?? "",
     memoryDirectory,
+    ...(sharedMemoryPath ? { sharedMemoryPath } : {}),
     providerFactory,
   });
   await new Promise<void>((resolve, reject) => {
@@ -250,6 +252,46 @@ test("each browser session persists memories in a separate file", async () =>
       assert.equal(bobMemory.contents.includes(aliceMessage), false);
     },
   ));
+
+
+test("browser sessions can recall shared profile memories", async () => {
+  const root = await mkdtemp(join(tmpdir(), "muse-shared-profile-test-"));
+  const sharedMemoryPath = join(root, "profile.json");
+  const profileFact = "I study Pharmacy and prefer concise practical explanations.";
+  await mkdir(root, { recursive: true });
+  await writeFile(
+    sharedMemoryPath,
+    JSON.stringify([{
+      id: "shared-profile-fact",
+      category: "USER",
+      content: profileFact,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }]),
+    "utf8",
+  );
+
+  const capturedPrompts: string[] = [];
+  try {
+    await withServer(
+      () => ({
+        generateText: async (request: TextGenerationRequest) => {
+          capturedPrompts.push(request.systemPrompt);
+          return "Noted.";
+        },
+      }),
+      async (baseUrl) => {
+        const response = await sendMessage(baseUrl, "Can you help me study?");
+        assert.equal(response.status, 200);
+        assert.ok(capturedPrompts[0]?.includes(profileFact));
+      },
+      testAccessToken,
+      sharedMemoryPath,
+    );
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
 
 test("Muse rejects missing, empty, and oversized messages before creating a session", async () => {
   let providerCreations = 0;
