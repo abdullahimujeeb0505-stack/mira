@@ -91,13 +91,26 @@ export class JsonMemoryRepository implements MemoryRepository {
     if (terms.length === 0 || limit <= 0) return [];
 
     const records = await this.list();
+    const asksAboutStudies = /\b(stud(y|ies)|pharmacy|coursework|university|education|learning style|study habits)\b/i.test(query);
+    const asksAboutLearningPreferences = /\b(learn(ing)? style|prefer(red|ences)?|study habits|explanations|teaching style)\b/i.test(query);
+
     return records
       .map((record) => {
+        const content = record.content.toLowerCase();
         const memoryTerms = new Set(tokenize(`${record.category} ${record.content}`));
-        const score = terms.reduce(
+        const lexicalScore = terms.reduce(
           (total, term) => total + (memoryTerms.has(term) ? 1 : 0),
           0,
         );
+        const studyBoost =
+          asksAboutStudies && /\b(pharmacy|student|university|coursework|study|studies|education)\b/i.test(content)
+            ? 4
+            : 0;
+        const learningBoost =
+          asksAboutLearningPreferences && /\b(prefer|beginner-friendly|exam-focused|explanation|workings|concept|exercise|learning)\b/i.test(content)
+            ? 4
+            : 0;
+        const score = lexicalScore + studyBoost + learningBoost;
         return { record, score };
       })
       .filter(({ score }) => score > 0)
