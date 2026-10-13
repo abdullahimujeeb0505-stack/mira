@@ -1,4 +1,9 @@
-import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
+import {
+  createHash,
+  createHmac,
+  randomBytes,
+  timingSafeEqual,
+} from "node:crypto";
 import {
   createServer,
   type IncomingMessage,
@@ -39,6 +44,8 @@ const CHAT_PAGE = `<!doctype html>
       .intro, .notice { color: #a8afbe; line-height: 1.6; }
       .notice { margin: 0; font-size: 12px; }
       .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+      .access-code { display: grid; gap: 8px; margin: 10px 0 0; color: #cbd1df; font-size: 13px; }
+      .access-code input { width: 100%; border: 1px solid #3b4354; border-radius: 12px; padding: 12px; color: inherit; background: #10131b; font: inherit; }
       #messages { flex: 1; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; padding: 22px 0; }
       .message { max-width: 88%; padding: 12px 15px; border-radius: 16px; line-height: 1.55; overflow-wrap: anywhere; white-space: pre-wrap; }
       .message.muse { align-self: flex-start; background: #252c3a; }
@@ -57,7 +64,12 @@ const CHAT_PAGE = `<!doctype html>
       <div class="eyebrow">Muse · personal Web3 intern</div>
       <h1>What are you working on?</h1>
       <p class="intro">Ask a question or share a goal. Muse will keep this browser session's conversation separate from other sessions.</p>
-      <p class="notice">Messages are sent to the model provider configured for this project. A provider key is required for replies.</p>
+      <p class="notice">Messages are sent to the model provider configured for this project. A provider key and demo access code are required for replies.</p>
+      <label class="access-code" for="access-code">
+        Demo access code
+        <input id="access-code" type="password" autocomplete="off" required>
+      </label>
+      <p class="notice">The access code is kept in this tab and sent only with chat requests. Do not enter a provider key here.</p>
       <section id="messages" aria-live="polite" aria-label="Conversation">
         <div class="message muse">Hi, I’m Muse. What would you like to work through?</div>
       </section>
@@ -71,6 +83,7 @@ const CHAT_PAGE = `<!doctype html>
     <script>
       const form = document.querySelector("#chat-form");
       const input = document.querySelector("#message");
+      const accessCode = document.querySelector("#access-code");
       const button = document.querySelector("#send");
       const messages = document.querySelector("#messages");
       const status = document.querySelector("#status");
@@ -85,6 +98,11 @@ const CHAT_PAGE = `<!doctype html>
         event.preventDefault();
         const message = input.value.trim();
         if (!message || button.disabled) return;
+        if (!accessCode.value) {
+          status.textContent = "Enter the demo access code to continue.";
+          accessCode.focus();
+          return;
+        }
         addMessage("you", message);
         input.value = "";
         button.disabled = true;
@@ -92,7 +110,10 @@ const CHAT_PAGE = `<!doctype html>
         try {
           const response = await fetch("/api/chat", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + accessCode.value
+            },
             body: JSON.stringify({ message })
           });
           const result = await response.json();
@@ -118,6 +139,7 @@ interface MuseSession {
 
 export interface MuseHttpServerOptions {
   sessionSecret?: string;
+  accessToken?: string;
   memoryDirectory?: string;
   providerFactory?: () => TextGenerationProvider;
   maxActiveSessions?: number;
@@ -132,6 +154,10 @@ export function createMuseHttpServer(
   if (!sessionSecret.trim()) {
     throw new Error("SESSION_SECRET is required to start the Muse HTTP server.");
   }
+  const accessToken =
+    options.accessToken ?? process.env.MUSE_CHAT_ACCESS_TOKEN ?? "";
+  const accessTokenIsStrongEnough =
+    Buffer.byteLength(accessToken, "utf8") >= 32;
 
   const memoryDirectory =
     options.memoryDirectory ??
@@ -184,6 +210,17 @@ export function createMuseHttpServer(
     if (request.method !== "POST") {
       response.setHeader("Allow", "POST");
       sendJson(response, 405, { error: "Use POST to send a chat message." });
+      return;
+    }
+    if (!accessTokenIsStrongEnough) {
+      sendJson(response, 503, {
+        error:
+          "Muse chat is locked. Configure MUSE_CHAT_ACCESS_TOKEN with at least 32 bytes in Replit Secrets.",
+      });
+      return;
+    }
+    if (!hasValidAccessToken(request, accessToken)) {
+      sendJson(response, 401, { error: "A valid Muse demo access code is required." });
       return;
     }
     if (request.headers["content-type"]?.split(";")[0]?.trim() !== "application/json") {
@@ -291,6 +328,28 @@ function enqueueResponse(session: MuseSession, message: string): Promise<string>
     () => undefined,
   );
   return response;
+}
+
+function hasValidAccessToken(
+  request: IncomingMessage,
+  expectedToken: string,
+): boolean {
+  const authorization = request.headers.authorization;
+  if (typeof authorization !== "string" || !authorization.startsWith("Bearer ")) {
+    return false;
+  }
+
+  const providedToken = authorization.slice("Bearer ".length);
+  if (
+    !providedToken ||
+    Buffer.byteLength(providedToken, "utf8") > 1_024
+  ) {
+    return false;
+  }
+
+  const expectedDigest = createHash("sha256").update(expectedToken).digest();
+  const providedDigest = createHash("sha256").update(providedToken).digest();
+  return timingSafeEqual(expectedDigest, providedDigest);
 }
 
 function readSessionId(

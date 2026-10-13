@@ -10,14 +10,18 @@ import type {
 import { createMuseHttpServer } from "./http-server.js";
 
 const testSessionSecret = "muse-http-session-test-secret";
+const testAccessToken =
+  "muse-test-access-code-with-more-than-thirty-two-bytes-0123456789";
 
 async function withServer(
   providerFactory: () => TextGenerationProvider,
   run: (baseUrl: string, memoryDirectory: string) => Promise<void>,
+  accessToken: string | null = testAccessToken,
 ): Promise<void> {
   const memoryDirectory = await mkdtemp(join(tmpdir(), "muse-http-test-"));
   const server = createMuseHttpServer({
     sessionSecret: testSessionSecret,
+    accessToken: accessToken ?? "",
     memoryDirectory,
     providerFactory,
   });
@@ -50,11 +54,15 @@ async function sendMessage(
   baseUrl: string,
   message: string,
   cookie?: string,
+  accessToken: string | null = testAccessToken,
 ): Promise<Response> {
   return fetch(`${baseUrl}/api/chat`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      ...(accessToken !== null
+        ? { Authorization: `Bearer ${accessToken}` }
+        : {}),
       ...(cookie ? { Cookie: cookie } : {}),
     },
     body: JSON.stringify({ message }),
@@ -67,12 +75,64 @@ test("Muse serves the chat page with same-origin security headers", async () =>
     async (baseUrl) => {
       const response = await fetch(baseUrl);
       assert.equal(response.status, 200);
-      assert.match(await response.text(), /What are you working on\?/);
+      const html = await response.text();
+      assert.match(html, /What are you working on\?/);
       assert.equal(response.headers.get("cache-control"), "no-store");
       assert.equal(response.headers.get("x-content-type-options"), "nosniff");
       assert.equal(response.headers.get("content-security-policy")?.includes("connect-src 'self'"), true);
+      assert.match(html, /access-code/);
     },
   ));
+
+test("Muse requires a configured strong demo access code before chat", async () => {
+  let providerCreations = 0;
+  const providerFactory = () => {
+    providerCreations += 1;
+    return { generateText: async () => "authorized reply" };
+  };
+
+  await withServer(providerFactory, async (baseUrl) => {
+    const missing = await sendMessage(baseUrl, "No access code", undefined, null);
+    assert.equal(missing.status, 401);
+
+    const incorrect = await sendMessage(
+      baseUrl,
+      "Wrong access code",
+      undefined,
+      "incorrect-code",
+    );
+    assert.equal(incorrect.status, 401);
+    assert.equal(providerCreations, 0);
+
+    const authorized = await sendMessage(baseUrl, "Authorized message");
+    assert.equal(authorized.status, 200);
+    assert.equal(providerCreations, 1);
+  });
+
+  await withServer(
+    providerFactory,
+    async (baseUrl) => {
+      const response = await sendMessage(baseUrl, "Access is not configured");
+      assert.equal(response.status, 503);
+      assert.match(await response.text(), /MUSE_CHAT_ACCESS_TOKEN/);
+    },
+    "",
+  );
+
+  await withServer(
+    providerFactory,
+    async (baseUrl) => {
+      const response = await sendMessage(
+        baseUrl,
+        "The configured code is too weak",
+      );
+      assert.equal(response.status, 503);
+      assert.match(await response.text(), /at least 32 bytes/);
+    },
+    "short",
+  );
+  assert.equal(providerCreations, 1);
+});
 
 test("Muse keeps conversation histories isolated by signed browser session", async () => {
   const conversationsBySession: TextGenerationRequest[][] = [];
@@ -201,14 +261,20 @@ test("Muse rejects missing, empty, and oversized messages before creating a sess
     async (baseUrl) => {
       const missing = await fetch(`${baseUrl}/api/chat`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${testAccessToken}`,
+        },
         body: JSON.stringify({}),
       });
       assert.equal(missing.status, 400);
 
       const malformed = await fetch(`${baseUrl}/api/chat`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${testAccessToken}`,
+        },
         body: '{"message":',
       });
       assert.equal(malformed.status, 400);
@@ -221,7 +287,10 @@ test("Muse rejects missing, empty, and oversized messages before creating a sess
 
       const oversizedBody = await fetch(`${baseUrl}/api/chat`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${testAccessToken}`,
+        },
         body: JSON.stringify({
           message: "Hello",
           unused: "x".repeat(17 * 1_024),

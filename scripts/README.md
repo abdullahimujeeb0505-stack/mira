@@ -43,13 +43,13 @@ Start the lightweight HTTP chat demo:
 pnpm --filter @workspace/scripts run muse-server
 ```
 
-Open `http://localhost:3000` (or the configured `PORT`). The server uses the existing Groq provider by default; configure `GROK_API_CODING_KEY`, or choose AgentRouter with `MUSE_LLM_PROVIDER=agentrouter` and `AGENTROUTER_API_KEY`. `SESSION_SECRET` is required to sign the browser's HTTP-only session cookie.
+Open `http://localhost:3000` locally, or use the **Muse Chat Preview** workflow in Replit at port `3000` and path `/`. The server uses the existing Groq provider by default; configure `GROK_API_CODING_KEY`, or choose AgentRouter with `MUSE_LLM_PROVIDER=agentrouter` and `AGENTROUTER_API_KEY`. `SESSION_SECRET` is required to sign the browser's HTTP-only session cookie.
 
 Each browser session gets an independent `MuseAgent` and its own saved-memory file under `scripts/data/muse-http-sessions/`. Conversation history stays in that session's server memory and resets when the server restarts. The page sends messages only to this server; the server then sends them to the configured model provider.
 
-The demo is not an authentication system: anyone who can reach its port can create a separate session. Keep it local or behind a trusted preview; add access control and request-rate limits before public deployment.
+Development URLs are public by default. Before starting the preview, set `MUSE_CHAT_ACCESS_TOKEN` in Replit Secrets to a random value of at least 32 bytes. The page requires this access code and sends it in an authorization header; it is held in the current browser tab and is not saved to a cookie or local storage. The server fails closed if this secret is missing or too short. Keep the Replit development URL private as an additional layer, and add user-level access control and rate limits before any public deployment.
 
-**Replit preview limitation:** this server is currently a `scripts` command, not a registered Replit artifact/workflow. Existing artifact previews do not auto-start or route to it. Run it manually on `PORT` for now; automatic preview needs a dedicated workflow/artifact registration.
+The Muse preview uses a separate workflow on port `3000`; it does not replace the API Server (`/api`) or Canvas (`/__mockup`). It can start only after the existing scripts dependencies, including `tsx`, are available.
 
 ## Muse learning records
 
