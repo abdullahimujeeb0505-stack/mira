@@ -1,0 +1,33 @@
+Continue development of Muse from the current state. The HTTP chat service is implemented and its tests have passed. Do not rebuild it.
+
+Goal: Make the Muse chat demo runnable in Replit
+
+1. Inspect the existing Replit configuration, workflows, API server, Canvas/mockup preview, and the new "scripts/src/muse/http-server.ts".
+2. Determine the safest way to expose the Muse chat UI in the current Replit preview without replacing, breaking, or duplicating the existing API server or Canvas.
+3. Inspect the existing "scripts/package.json" command for "muse-server" and its runtime requirements.
+4. Implement the smallest safe integration that makes the Muse chat demo accessible through the Replit preview. Preserve the existing app's routes and startup behavior.
+5. Do not install dependencies, modify the lockfile, change dependency versions, or retry the failed package installation.
+6. Do not expose the chat service publicly without appropriate access controls. Keep "SESSION_SECRET" and provider keys in Replit Secrets. Never print their values.
+7. Add or update tests for any routing, startup, or proxy changes. Use available cached tools and report exact results.
+
+Git safety
+
+Before editing, inspect "git status --short" and the current diff. Preserve all uncommitted changes in:
+
+- "scripts/README.md"
+- "scripts/src/muse/http-server.test.ts"
+- "scripts/src/muse/http-server.ts"
+
+Do not discard the untracked continuation note or any other user changes. Do not push or rewrite Git history.
+
+Completion criteria
+
+The result must include:
+
+- The exact command to start Muse in Replit.
+- The URL or preview path to access the chat interface.
+- Which environment secrets must be configured.
+- Exact verification results.
+- Any remaining blocker that prevents an end-to-end chat test.
+
+Implement the integration rather than returning another plan. If the current Replit preview architecture cannot safely support this without dependency installation, explain the precise limitation and leave the existing app intact.
