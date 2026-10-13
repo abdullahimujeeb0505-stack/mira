@@ -1,0 +1,14 @@
+Continue developing the existing Muse repository. The current dependency installation is incomplete because Replit's internal package proxy previously returned HTTP 403. Do not rebuild the project, change dependencies, modify the lockfile, or repeat the previous investigation.
+
+Goal: get Muse Chat Preview running using the existing project.
+
+1. Inspect the current Git status, latest commit, "replit.md", ".replit", root and workspace package manifests, and the Muse Chat Preview workflow.
+2. Run the existing "muse-preflight-test" and "muse-preflight" commands. Inspect their actual output.
+3. Determine whether the current Replit environment can restore the existing locked dependencies. Do not attempt installation until you have checked whether the package proxy is accessible and whether the required packages can be fetched through a supported Replit mechanism. Do not print credentials or secret values.
+4. If package fetching is still blocked, stop dependency recovery and implement only a safe, reversible diagnostic or workaround that does not modify dependencies, the lockfile, registry configuration, or unrelated services. Do not claim the preview works.
+5. If dependencies are available, run "pnpm install --frozen-lockfile", then run the AgentRouter parser tests, HTTP chat tests, full scripts test suite, and scripts typecheck. Fix failures caused by the current Muse code.
+6. Configure the existing Muse Chat Preview workflow to use its documented startup command. Preserve the existing API Server and Canvas routes and workflows. Do not expose the chat service publicly without its access-token protection.
+7. Do not make live AI API requests. Do not assume any provider key or chat access token exists. Check required secret names only; never display secret values. If a required secret is absent, report the name and let me add it through Replit Secrets.
+8. Finish with the exact commands and results, whether the preview actually started, and any remaining blocker. Make useful code changes where safe instead of ending with an investigation report.
+
+Preserve existing changes and commits. Do not push to GitHub or perform destructive Git operations.

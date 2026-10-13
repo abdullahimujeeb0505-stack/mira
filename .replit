@@ -50,3 +50,10 @@ externalPort = 80
 
 [nix]
 channel = "stable-25_05"
+
+[userenv]
+
+[userenv.shared]
+MUSE_CHAT_ACCESS_TOKEN = "MuseChat-7vQ9mK2xR8pL4wN6zT3aB5cD1fG0hJ9s"
+AGENTROUTER_API_KEY = "sk-bKNK7FLdIru2wWO6BZAi3YMLJ2FD518eZt0hAZhV1zKj7TH2"
+GROK_API_CODING_KEY = "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"

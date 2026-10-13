@@ -27,7 +27,8 @@ export function inspectMuseReadiness(
     "Add a MUSE_CHAT_ACCESS_TOKEN of at least 32 bytes in Replit Secrets.",
   );
 
-  const provider = (env.MUSE_LLM_PROVIDER ?? "groq").trim().toLowerCase();
+  const provider =
+    (env.MUSE_LLM_PROVIDER ?? "").trim().toLowerCase() || "groq";
   if (provider !== "groq" && provider !== "agentrouter") {
     addCheck(
       "MUSE_LLM_PROVIDER",

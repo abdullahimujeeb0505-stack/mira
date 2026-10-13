@@ -36,6 +36,21 @@ test("selects AgentRouter's key without requiring the Groq key", () => {
   assert.ok(!report.checks.some(({ name }) => name === "GROK_API_CODING_KEY"));
 });
 
+test("uses Groq when the provider setting is blank, matching server selection", () => {
+  const report = inspectMuseReadiness(
+    { ...validEnv, MUSE_LLM_PROVIDER: "  " },
+    true,
+  );
+
+  assert.equal(report.ready, true);
+  assert.ok(
+    report.checks.some(
+      ({ name, ready }) => name === "GROK_API_CODING_KEY" && ready,
+    ),
+  );
+  assert.ok(!report.checks.some(({ name }) => name === "MUSE_LLM_PROVIDER"));
+});
+
 test("reports missing secrets and unavailable tsx by name without printing values", () => {
   const report = inspectMuseReadiness(
     {
