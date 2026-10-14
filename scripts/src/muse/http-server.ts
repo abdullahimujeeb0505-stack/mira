@@ -87,10 +87,35 @@ const CHAT_PAGE = `<!doctype html>
       const button = document.querySelector("#send");
       const messages = document.querySelector("#messages");
       const status = document.querySelector("#status");
+      function addInlineFormatting(parent, text) {
+        const parts = text.split(/(\\*\\*[^*]+\\*\\*|\\*[^*]+\\*)/g);
+        for (const part of parts) {
+          if (part.startsWith("**") && part.endsWith("**") && part.length > 4) {
+            const strong = document.createElement("strong");
+            strong.textContent = part.slice(2, -2);
+            parent.append(strong);
+          } else if (part.startsWith("*") && part.endsWith("*") && part.length > 2) {
+            const em = document.createElement("em");
+            em.textContent = part.slice(1, -1);
+            parent.append(em);
+          } else {
+            parent.append(document.createTextNode(part));
+          }
+        }
+      }
+
       function addMessage(kind, text) {
         const item = document.createElement("div");
         item.className = "message " + kind;
-        item.textContent = text;
+        if (kind === "muse") {
+          const lines = text.split("\\n");
+          lines.forEach((line, index) => {
+            if (index) item.append(document.createElement("br"));
+            addInlineFormatting(item, line);
+          });
+        } else {
+          item.textContent = text;
+        }
         messages.append(item);
         item.scrollIntoView({ block: "nearest" });
       }
