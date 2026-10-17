@@ -6,7 +6,10 @@ import test from "node:test";
 import { GroqProvider } from "./groq-provider.js";
 import { MuseAgent } from "./muse-agent.js";
 import { OpenRouterProvider } from "./openrouter-provider.js";
-import { createTextGenerationProvider } from "./provider-selection.js";
+import {
+  createTextGenerationProvider,
+  formatProviderDiagnostic,
+} from "./provider-selection.js";
 import { runResearch } from "./research-cli.js";
 import { JsonMemoryRepository } from "./memory/json-memory-repository.js";
 import { MemoryService } from "./memory/memory-service.js";
@@ -79,6 +82,8 @@ test("Groq builds its OpenAI-compatible request and parses chat completion text"
         },
       });
 
+      assert.equal(provider.providerName, "groq");
+      assert.equal(provider.model, "groq/research-model");
       assert.equal(
         await provider.generateText({
           systemPrompt: "system",
@@ -103,7 +108,7 @@ test("Groq builds its OpenAI-compatible request and parses chat completion text"
     },
   ));
 
-test("Groq accepts the documented legacy key and gives the model a configurable default", async () =>
+test("Groq defaults to a recommended model instead of the deprecated Llama model", async () =>
   withEnvironment(
     { GROQ_API_KEY: undefined, GROK_API_CODING_KEY: GROQ_KEY, GROQ_MODEL: undefined },
     async () => {
@@ -111,14 +116,20 @@ test("Groq accepts the documented legacy key and gives the model a configurable 
       const provider = new GroqProvider({
         fetchImplementation: async (_url, init) => {
           body = JSON.parse(String(init?.body)) as Record<string, unknown>;
+          if (body.model === "llama-3.3-70b-versatile") {
+            return new Response(JSON.stringify({ error: "model unavailable" }), {
+              status: 404,
+            });
+          }
           return chatResponse("legacy key accepted");
         },
       });
+      assert.equal(provider.model, "openai/gpt-oss-120b");
       assert.equal(
         await provider.generateText({ systemPrompt: "", conversation: [] }),
         "legacy key accepted",
       );
-      assert.equal(body?.model, "llama-3.3-70b-versatile");
+      assert.equal(body?.model, "openai/gpt-oss-120b");
     },
   ));
 
@@ -140,6 +151,8 @@ test("OpenRouter builds an independent request against its documented endpoint",
         },
       });
 
+      assert.equal(provider.providerName, "openrouter");
+      assert.equal(provider.model, "publisher/model");
       assert.equal(
         await provider.generateText({
           systemPrompt: "system",
@@ -162,6 +175,58 @@ test("OpenRouter builds an independent request against its documented endpoint",
           { role: "user", content: "question" },
         ],
       });
+    },
+  ));
+
+test("provider diagnostics report only the selected provider and model", async () =>
+  withEnvironment(
+    {
+      GROQ_API_KEY: GROQ_KEY,
+      GROQ_MODEL: "llama-3.3-70b-versatile",
+      OPENROUTER_API_KEY: OPENROUTER_KEY,
+      OPENROUTER_MODEL: "publisher/model",
+      AGENTROUTER_API_KEY: "agentrouter-unit-test-key",
+      AGENTROUTER_MODEL: "gpt-6-astra",
+      MUSE_LLM_PROVIDER: "groq",
+    },
+    () => {
+      const groqDiagnostic = formatProviderDiagnostic(
+        createTextGenerationProvider(),
+      );
+      assert.equal(
+        groqDiagnostic,
+        "Muse LLM provider: groq (model: llama-3.3-70b-versatile).",
+      );
+      assert.doesNotMatch(
+        groqDiagnostic,
+        /groq-unit-test-key|openrouter-unit-test-key|agentrouter-unit-test-key/,
+      );
+
+      process.env.MUSE_LLM_PROVIDER = "openrouter";
+      const openRouterDiagnostic = formatProviderDiagnostic(
+        createTextGenerationProvider(),
+      );
+      assert.equal(
+        openRouterDiagnostic,
+        "Muse LLM provider: openrouter (model: publisher/model).",
+      );
+      assert.doesNotMatch(
+        openRouterDiagnostic,
+        /groq-unit-test-key|openrouter-unit-test-key|agentrouter-unit-test-key/,
+      );
+
+      process.env.MUSE_LLM_PROVIDER = "agentrouter";
+      const agentRouterDiagnostic = formatProviderDiagnostic(
+        createTextGenerationProvider(),
+      );
+      assert.equal(
+        agentRouterDiagnostic,
+        "Muse LLM provider: agentrouter (model: gpt-6-astra).",
+      );
+      assert.doesNotMatch(
+        agentRouterDiagnostic,
+        /groq-unit-test-key|openrouter-unit-test-key|agentrouter-unit-test-key/,
+      );
     },
   ));
 

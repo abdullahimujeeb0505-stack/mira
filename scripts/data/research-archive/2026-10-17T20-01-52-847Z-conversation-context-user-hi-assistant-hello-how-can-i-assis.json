@@ -1,0 +1,93 @@
+{
+  "id": "2026-10-17T20-01-52-847Z-conversation-context-user-hi-assistant-hello-how-can-i-assis",
+  "question": "Conversation context:\nuser: Hi\nassistant: Hello! How can I assist you today?\n\nFollow-up question: Research the history of TypeScript, explain its major milestones, and cite sources with working URLs. Distinguish verified facts from uncertainty.",
+  "plan": {
+    "objective": "Provide a concise historical overview of TypeScript, highlighting its major milestones from inception to the present, and cite each fact with a working URL. Clearly label information that is well‑documented versus points that remain uncertain or debated.",
+    "taskType": "historical",
+    "deliverable": "A structured summary of TypeScript’s history with dated milestones, each accompanied by a verified source link, and a brief note indicating the confidence level of each statement.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "Official Microsoft TypeScript blog posts and documentation",
+      "TypeScript release notes on GitHub",
+      "Announcements from the TypeScript team on the TypeScript GitHub repository",
+      "Reputable technology news outlets (e.g., InfoWorld, Ars Technica, The Verge) for contextual milestones",
+      "Academic or industry conference papers that discuss TypeScript’s impact (peer‑reviewed where available)"
+    ],
+    "questions": [
+      "When was TypeScript first announced and by whom?",
+      "What are the key version releases and features that marked major shifts in the language (e.g., 0.8, 1.0, 2.0, 3.0, 4.0, 5.0, etc.)?",
+      "When did TypeScript become the default language for major Microsoft projects (e.g., Azure SDKs, VS Code)?",
+      "What adoption milestones or community events (e.g., npm download thresholds, GitHub stars) illustrate its growth?",
+      "Which aspects of TypeScript’s early development timeline remain uncertain or lack clear primary documentation?"
+    ],
+    "queries": [
+      "\"TypeScript\" announcement Microsoft 2012 blog",
+      "TypeScript release notes GitHub 1.0 2.0 3.0 4.0 5.0",
+      "TypeScript adoption milestones npm downloads GitHub stars",
+      "Microsoft Visual Studio Code TypeScript integration history",
+      "Unclear or disputed early TypeScript development timeline"
+    ],
+    "unresolvedQuestions": [
+      "Exact first announcement date and presenter of TypeScript.",
+      "Official dates when TypeScript became the default language for Azure SDKs.",
+      "Official dates when TypeScript became the default language for Visual Studio Code.",
+      "Quantitative adoption milestones (npm download thresholds, GitHub star counts, etc.).",
+      "Detailed timeline of early internal beta releases and design decisions prior to the public 0.8 release."
+    ]
+  },
+  "answer": "**Verified milestones**\n- **Initial announcement & first public release**: TypeScript was introduced by Microsoft’s Anders Hejlsberg and the first public version (0.8) was released in **October 2012**【1†L1-L4】【2†L9-L13】.\n- **Early version series**: The version table lists the progression from 0.8 (Oct 2012) through the pre‑2.0 era (0.8 – 1.8, 2012‑2016)【1†L7-L10】.\n- **TypeScript 2.0**: Marked the start of the “Inference” era and was released in **2016** (the era spans 2.0 – 3.9, 2016‑2020)【1†L12-L13】.\n- **TypeScript 3.x**: Continued the inference era (2016‑2020) with features such as mapped types and conditional types【1†L12-L13】.\n- **TypeScript 4.0**: Begins the “Modern” era from **2020 onward**, introducing template‑literal types and other modern tooling features【1†L13-L14】.\n- **TypeScript 7.0**: The latest listed release shipped on **8 July 2026**, featuring a Go‑native compiler and major performance gains【1†L20-L23】.\n\n**Points with limited or no source support**\n- **Exact announcement date & presenter**: While the release of 0.8 in October 2012 is documented, the precise announcement date and the person who presented it are not specified in the retrieved sources.\n- **Default language status for Azure SDKs**: No retrieved source confirms when (or if) TypeScript became the default language for Azure SDKs.\n- **Default language status for VS Code**: The VS Code documentation page mentions TypeScript support but does not state that TypeScript is the default language for the editor’s own codebase.\n- **Adoption metrics**: The sources do not provide npm download counts, GitHub star milestones, or other quantitative adoption indicators.\n\n**Uncertain / debated aspects**\n- Early internal beta releases and design‑decision timelines are not detailed in the available sources, leaving gaps in the pre‑release history.\n- The exact rollout dates for major versions 1.0, 5.0, and 6.0 are absent from the retrieved evidence.",
+  "sources": [
+    {
+      "title": "TypeScript Version History &mdash; every release from 0.8 through today, with headline type-system features",
+      "url": "https://mungomash.com/software/typescript/versions/",
+      "publisher": "mungomash.com",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "retrievedAt": "2026-10-17T20:01:47.024Z",
+      "content": "TypeScript Version History &mdash; every release from 0.8 through today, with headline type-system features \n\nSports \n\nWork \n\nPlay \n\n2012 &ndash; 2026\n\nTypeScript Versions\n\nEvery public release of TypeScript &mdash; from TypeScript 0.8 in October 2012 through TypeScript 7.0 in July 2026 &mdash; with ship dates and the headline type-system features per version. Plus Anders Hejlsberg's design lineage, the AtScript merger with Google's Angular team, the strictNullChecks revolution, the conditional-types and template-literal-types eras, the decorators-stage-3 long road, the native-TypeScript-in-runtimes wave, and the Go-rewrite that shipped stable as TypeScript 7.0 in July 2026.\n\nEra\n\nPre-2.0 &mdash; TypeScript 0.8 &ndash; 1.8, 2012&ndash;2016, before strictNullChecks \n\nInference &mdash; TypeScript 2.0 &ndash; 3.9, 2016&ndash;2020, the type-system-maturity era (mapped types, conditional types, optional chaining) \n\nModern &mdash; TypeScript 4.0+, 2020 onward, template literal types and the modern toolchain era \n\nTypeScript has no formal LTS or end-of-life policy. Microsoft supports \"the latest\" and the project ships on a roughly quarterly cadence; the practical advice is to upgrade with each minor release. See the TypeScript blog for per-release announcements and github.com/microsoft/TypeScript/releases for changelogs. Ship dates in the table come from npm publish timestamps and the blog's announcement dates, not GitHub's release pages, several of which carry later re-publication dates (7.0.2's reads August 20, 2026).\n\nTypeScript version table\n\nVersion\n\nEra\n\nReleased\n\nNotable changes\n\nVersion\n\nTypeScript 7.0\n\nModern \n\nJul 8, 2026\n\nLatest release. The Go-native compiler ships stable &mdash; 8&ndash;12x faster full builds, new --checkers / --builders / --singleThreaded parallelism controls, a rebuilt Parcel-based --watch . No stable programmatic API yet, so template-embedding tools (Vue, Astro, Svelte, Angular) stay on 6.0 for now.\n\nThe Go-native port ships as TypeScript 7.0 &mdash; announced July 8, 2026 , about a year and four months after the March 2025 rewrite announcement . Microsoft's own benchmarks on real-world codebases: vscode 125.7s &rarr; 10.6s (11.9x), sentry 8.9x, bluesky 8.7x, playwright 8.7x, tldraw 7.7x on full builds, while asking for 6&ndash;26% less aggregate memory over the span of a build; opening a file with an error in the vscode codebase drops from ~17.5s to ~1.3s (13x).\n\nNo stable public API yet &mdash; 7.0 ships its own tsc binary and a deliberately-provisional set of typescript/unstable/* subpath exports, but no stable programmatic API; the real one is targeted for 7.1, and the team has said it will be &ldquo;new (and different)&rdquo; rather than a port of 6.0's. A new @typescript/typescript6 compatibility package (with a tsc6 binary and a re-export of the 6.0 API) lets tools like typescript-eslint keep working side-by-side via npm aliasing. Nightly builds move from the standalone @typescript/native-preview package to the st"
+    },
+    {
+      "title": "Typescript History Positive Evolution Guide",
+      "url": "https://techhistorylab.com/typescript-history-from-2012-to-today/",
+      "canonicalUrl": "https://techhistorylab.com/typescript-history-from-2012-to-today/",
+      "publisher": "techhistorylab.com",
+      "publishedAt": "2026-05-05T01:22:03.000Z",
+      "updatedAt": "2026-05-07T13:02:06.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "retrievedAt": "2026-10-17T20:01:46.906Z",
+      "content": "Typescript History Positive Evolution Guide \n\nSkip to content \n\nSubscribe\n\nSubscribe \n\nInformation Technology \n\nArtificial Intelligence \n\nScience \n\nDiscoveries & Inventions \n\nAbout \n\nContact \n\nInformation Technology \n\nArtificial Intelligence \n\nScience \n\nDiscoveries & Inventions \n\nAbout \n\nContact \n\nThe Complete History of TypeScript: From 2012 to Today\nBy \n\nAbdul Hafeez \n\n/ May 5, 2026 \n\nThe journey of typescript history is one of the most powerful and transformative stories in modern programming. From its humble beginnings in 2012 to becoming a dominant force in web development, TypeScript has reshaped how developers write and maintain code. Understanding typescript history helps us see how innovation, community growth, and smart design choices can redefine an entire ecosystem.\n\nCreated by Anders Hejlsberg at Microsoft, TypeScript was introduced as a solution to the growing complexity of JavaScript applications. Today, it stands as a key part of modern software engineering and continues to evolve rapidly.\n\nThe Origins of TypeScript (2010 – 2012)\n\nBefore TypeScript was officially released, JavaScript was already dominating web development. However, as applications became larger, developers faced challenges related to maintainability and debugging. This is where the idea behind typescript history began.\n\nMicrosoft recognized the need for a language that could bring static analysis and better tooling to JavaScript. Inspired by the history of typed JavaScript and earlier experiments like CoffeeScript, TypeScript was designed to enhance JavaScript without replacing it.\n\nDuring this period, Hejlsberg and his team focused on language specification, ensuring backward compatibility while introducing static typing. This careful balance became a defining feature of typescript history.\n\nTypeScript 1.0 Release and Early Growth (2012 – 2014)\n\nThe official TypeScript 1.0 release marked a major milestone. It introduced optional static typing, classes, and modules, making it easier to build scalable applications.\n\nDevelopers quickly started exploring what is typescript ? and how it could improve their workflows. Early adopters appreciated the improved developer productivity and better error detection.\n\nAt this stage, the evolution of TypeScript was closely tied to Microsoft’s open source journey. Although initially not fully open source, it gradually embraced community contributions, setting the stage for rapid growth.\n\nCommunity Expansion and Ecosystem Building (2014 – 2016)\n\nAs TypeScript gained popularity, its ecosystem began to expand. Tools like DefinitelyTyped allowed developers to use type definitions for existing JavaScript libraries, significantly boosting adoption.\n\nThe growth of the TS ecosystem was fueled by community contributions and improved developer tools. This period in typescript history also saw increased interest from major companies.\n\nDevelopers began comparing typescript vs javascript, highlighting the benefits of static analysis and improv"
+    },
+    {
+      "title": "TypeScript in Visual Studio Code",
+      "url": "https://code.visualstudio.com/Docs/languages/typescript",
+      "publisher": "code.visualstudio.com",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "retrievedAt": "2026-10-17T20:01:46.924Z",
+      "content": "TypeScript in Visual Studio Code \n\nAI agents: See llms.txt for documentation discovery and navigation. Documentation articles are also available as Markdown by appending .md to the article URL.\n\nVisual Studio Code \n\nFeatures \n\nAgents \n\nAgent Customization \n\nModels & Agent Harnesses \n\nEnterprise \n\nExtensibility \n\nDocs \n\nDocumentation \n\nAPI \n\nFAQ \n\nRelease Notes \n\nBlog \n\nLearn \n\nEvents \n\nResources \n\nExtensions \n\nMCP \n\nDownload \n\nSearch \n\nDownload \n\n🎬 Watch The Story of VS Code! \n\nVS Code is now on Instagram, follow @vscode.ig for updates, tips, and more. \n\nRewatch GitHub Copilot Day. \n\nDismiss this update \n\nAll Docs \n\nLanguages\n\nOverview \n\nLanguage Support \n\nJavaScript \n\nJSON \n\nHTML \n\nEmmet \n\nCSS, SCSS and Less \n\nTypeScript \n\nMarkdown \n\nPowerShell \n\nC++ \n\nJava \n\nPHP \n\nPython \n\nJulia \n\nR \n\nRuby \n\nRust \n\nGo \n\nT-SQL \n\nC# \n\n.NET \n\nSwift \n\nNode.js / JavaScript \n\nWorking with JavaScript \n\nNode.js Tutorial \n\nNode.js Debugging \n\nDeploy Node.js Apps \n\nBrowser Debugging \n\nAngular Tutorial \n\nReact Tutorial \n\nVue Tutorial \n\nDebugging Recipes \n\nPerformance Profiling \n\nExtensions \n\nTypeScript \n\nTutorial \n\nTranspiling \n\nEditing \n\nRefactoring \n\nDebugging \n\nPython \n\nQuick Start \n\nTutorial \n\nRun Python Code \n\nEditing \n\nLinting \n\nFormatting \n\nDebugging \n\nEnvironments \n\nTesting \n\nPython Interactive \n\nDjango Tutorial \n\nFastAPI Tutorial \n\nFlask Tutorial \n\nCreate Containers \n\nDeploy Python Apps \n\nPython in the Web \n\nSettings Reference \n\nJava \n\nGetting Started \n\nNavigate and Edit \n\nRefactoring \n\nFormatting and Linting \n\nProject Management \n\nBuild Tools \n\nRun and Debug \n\nTesting \n\nSpring Boot \n\nModernizing Java Apps \n\nApplication Servers \n\nDeploy Java Apps \n\nGUI Applications \n\nExtensions \n\nFAQ \n\nC++ \n\nIntro Videos \n\nGCC on Linux \n\nGCC on Windows \n\nGCC on Windows Subsystem for Linux \n\nClang on macOS \n\nMicrosoft C++ on Windows \n\nBuild with CMake \n\nCMake Tools on Linux \n\nCMake Quick Start \n\nC++ Dev Tools for Copilot \n\nEditing and Navigating \n\nDebugging \n\nConfigure Debugging \n\nRefactoring \n\nSettings Reference \n\nConfigure IntelliSense \n\nConfigure IntelliSense for Cross-Compiling \n\nFAQ \n\nC# \n\nIntro Videos \n\nGet Started \n\nNavigate and Edit \n\nIntelliCode \n\nRefactoring \n\nFormatting and Linting \n\nProject Management \n\nBuild Tools \n\nPackage Management \n\nRun and Debug \n\nTesting \n\nFAQ \n\nTopics \n\nOverview \n\nJavaScript \n\nJSON \n\nHTML \n\nEmmet \n\nCSS, SCSS and Less \n\nTypeScript \n\nMarkdown \n\nPowerShell \n\nC++ \n\nJava \n\nPHP \n\nPython \n\nJulia \n\nR \n\nRuby \n\nRust \n\nGo \n\nT-SQL \n\nC# \n\n.NET \n\nSwift \n\nWorking with JavaScript \n\nNode.js Tutorial \n\nNode.js Debugging \n\nDeploy Node.js Apps \n\nBrowser Debugging \n\nAngular Tutorial \n\nReact Tutorial \n\nVue Tutorial \n\nDebugging Recipes \n\nPerformance Profiling \n\nExtensions \n\nTutorial \n\nTranspiling \n\nEditing \n\nRefactoring \n\nDebugging \n\nQuick Start \n\nTutorial \n\nRun Python Code \n\nEditing \n\nLinting \n\nFormatting \n\nDebugging \n\nEnvironments \n\nTesting \n\nPython Interactive \n\nDjango Tutorial \n\nFastAPI Tutorial \n\nFlask Tutorial \n\nCreate Containers \n\nDeploy Python Apps \n\nPython "
+    }
+  ],
+  "unresolvedQuestions": [
+    "Exact first announcement date and presenter of TypeScript.",
+    "Official dates when TypeScript became the default language for Azure SDKs.",
+    "Official dates when TypeScript became the default language for Visual Studio Code.",
+    "Quantitative adoption milestones (npm download thresholds, GitHub star counts, etc.).",
+    "Detailed timeline of early internal beta releases and design decisions prior to the public 0.8 release."
+  ],
+  "contradictions": [],
+  "completeness": "partial",
+  "limitations": [
+    "7 search requests or candidate pages failed or were unreadable.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 3 of 6 selected sources fit in the synthesis evidence budget."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 9,
+    "failedCount": 7,
+    "rounds": 1,
+    "searches": 5
+  },
+  "archivedAt": "2026-10-17T20:01:52.850Z"
+}

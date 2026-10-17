@@ -27,11 +27,14 @@ project API key with `project:read` and `project:write`, then configure:
 
 - `PHOTON_PROJECT_ID` — Beta project ID (`pho_prj_...`).
 - `PHOTON_API_KEY` — project-scoped bearer key; keep it in a secret manager.
-- `MUSE_LLM_PROVIDER` — `groq` (default), `openrouter`, or `agentrouter`.
+- `MUSE_LLM_PROVIDER` — `groq` (default when unset or blank), `openrouter`, or
+  `agentrouter`; the value is trimmed and case-insensitive.
 
 For Groq, set `GROQ_API_KEY`; `GROK_API_CODING_KEY` remains supported for
 backward compatibility. `GROQ_MODEL` is optional and defaults to
-`llama-3.3-70b-versatile`, the model used by Groq's current [quickstart](https://console.groq.com/docs/quickstart).
+`openai/gpt-oss-120b`, a [recommended replacement](https://console.groq.com/docs/deprecations)
+for the deprecated `llama-3.3-70b-versatile`. If overriding `GROQ_MODEL`, use
+an active model ID available to your Groq account.
 
 For OpenRouter, set `OPENROUTER_API_KEY` and `OPENROUTER_MODEL`. The model is
 required so deployment explicitly selects an available model; check its current
@@ -60,6 +63,17 @@ reported as limitations; when no page is readable Muse returns an insufficiency
 response rather than fabricating a sourced answer. Retrieved page text and
 archive context are passed to the model as untrusted evidence, and citations are
 checked for in-range references and lexical support.
+
+The candidate budget is distributed across search queries, with one retry for
+transient network, timeout, HTTP 408, and HTTP 5xx failures; HTTP 429 and other
+permanent responses are not retried. Neither retry increases the configured
+search or candidate count. Browser and iMessage research replies contain the
+answer and retrieved source URLs. Detailed retrieval counts, completeness,
+limitations, and unresolved questions remain in the research result/archive
+and research progress diagnostics rather than being appended to the chat reply.
+Short contextual follow-ups use the existing conversation without repeating a
+web search; explicit research requests and substantive factual questions still
+use live research.
 
 `MUSE_PHOTON_MEMORY_DIR` optionally changes the per-conversation memory folder.
 `MUSE_PHOTON_CURSOR_PATH` optionally changes the durable Photon event cursor
@@ -171,6 +185,10 @@ pnpm --filter @workspace/scripts run muse-server
 ```
 
 Open `http://localhost:3000` locally, or use the **Muse Chat Preview** workflow in Replit at port `3000` and path `/`. The server uses the selected LLM provider: configure Groq with `GROQ_API_KEY` (or the legacy `GROK_API_CODING_KEY`), OpenRouter with `OPENROUTER_API_KEY` and `OPENROUTER_MODEL`, or AgentRouter with `MUSE_LLM_PROVIDER=agentrouter` and `AGENTROUTER_API_KEY`. `SESSION_SECRET` is required to sign the browser's HTTP-only session cookie.
+
+At startup, the server logs the selected provider and model identifier only; it
+does not log provider credentials. This also makes a `GROQ_MODEL` override
+visible, including an override that still points to a deprecated model.
 
 Each browser session gets an independent `MuseAgent` and its own saved-memory file under `scripts/data/muse-http-sessions/`. Conversation history stays in that session's server memory and resets when the server restarts. The page sends messages only to this server; the server then sends them to the configured model provider.
 

@@ -16,6 +16,17 @@ export interface ProviderSelectionOptions {
   factories?: TextGenerationProviderFactories;
 }
 
+export function formatProviderDiagnostic(
+  provider: TextGenerationProvider,
+): string {
+  if (!provider.providerName || !provider.model) {
+    throw new Error(
+      "The selected LLM provider does not expose provider/model diagnostics.",
+    );
+  }
+  return `Muse LLM provider: ${provider.providerName} (model: ${provider.model}).`;
+}
+
 export function createTextGenerationProvider(
   options: ProviderSelectionOptions = {},
 ): TextGenerationProvider {

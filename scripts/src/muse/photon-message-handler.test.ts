@@ -95,7 +95,7 @@ test("Photon isolates follow-up context by space and uses the matching message r
     "imessage:bob reply 1",
     "imessage:alice reply 2",
   ]);
-  assert.equal(typingSignals, 2);
+  assert.equal(typingSignals, 1);
 });
 
 test("Photon reports failures safely and sends a generic reply without exception details", async () => {

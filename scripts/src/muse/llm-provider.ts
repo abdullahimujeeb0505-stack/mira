@@ -11,5 +11,7 @@ export interface TextGenerationRequest {
 }
 
 export interface TextGenerationProvider {
+  readonly providerName?: string;
+  readonly model?: string;
   generateText(request: TextGenerationRequest): Promise<string>;
 }

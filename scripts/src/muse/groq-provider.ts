@@ -10,7 +10,7 @@ import {
 
 const GROQ_CHAT_COMPLETIONS_URL =
   "https://api.groq.com/openai/v1/chat/completions";
-const DEFAULT_MODEL = "llama-3.3-70b-versatile";
+const DEFAULT_MODEL = "openai/gpt-oss-120b";
 const DEFAULT_TIMEOUT_MS = 60_000;
 
 export interface GroqProviderOptions {
@@ -20,8 +20,9 @@ export interface GroqProviderOptions {
 }
 
 export class GroqProvider implements TextGenerationProvider {
+  readonly providerName = "groq";
   private readonly apiKey: string;
-  private readonly model: string;
+  readonly model: string;
   private readonly fetchImplementation: typeof fetch;
   private readonly timeoutMs: number;
 

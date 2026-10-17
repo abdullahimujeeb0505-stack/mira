@@ -1,0 +1,108 @@
+{
+  "id": "2026-10-17T22-23-58-598Z-what-s-his-estimated-net-worth-use-recent-reliable-sources-a",
+  "question": "What's his estimated net worth? Use recent, reliable sources and state the date of the estimate.",
+  "plan": {
+    "objective": "Identify the individual's most recent estimated net worth, citing a reliable source and providing the date of the estimate.",
+    "taskType": "current",
+    "deliverable": "A concise statement of the net‑worth figure, the source of the estimate, and the date the estimate was published.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "Primary or authoritative financial publications (e.g., Forbes, Bloomberg Billionaires Index, CNBC)",
+      "Official filings or disclosures (e.g., SEC Form 13F, corporate proxy statements)",
+      "Reputable news outlets with fact‑checking (e.g., Reuters, Wall Street Journal)",
+      "Official statements from the individual's companies or personal website"
+    ],
+    "questions": [
+      "Could you please provide the full name of the person whose net worth you want to know?"
+    ],
+    "queries": [
+      "Forbes \"[Name]\" net worth 2024",
+      "Bloomberg Billionaires Index \"[Name]\" net worth",
+      "SEC Form 13F \"[Name]\" holdings valuation 2024",
+      "CNBC \"[Name]\" net worth latest estimate",
+      "Reuters profile \"[Name]\" wealth 2024"
+    ],
+    "unresolvedQuestions": [
+      "What is the full name of the person whose estimated net worth you are asking about?"
+    ]
+  },
+  "answer": "I cannot provide an estimated net worth because the individual's full name has not been identified (unverified: no matching retrieved evidence).\nPlease provide the person's name so I can locate a recent, reliable estimate (unverified: no matching retrieved evidence).",
+  "sources": [
+    {
+      "title": "50 Richest People in the World (October 2026): Full List",
+      "url": "https://networth.com/net-worth/the-richest-people-in-the-world/",
+      "canonicalUrl": "https://networth.com/net-worth/the-richest-people-in-the-world/",
+      "publisher": "networth.com",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "The 50 Richest People in the World (October 2026)",
+        "The 50 richest people in the world are worth a combined $5.96 trillion , according to Forbes real-time estimates as of October 2, 2026 . Elon Musk leads with about $919 billion, more than double the $368 billion of Jeff Bezos in second place. The ten richest alone hold just over $3 trillion, slightly more than the other 40 on this list combined.",
+        "Below is the full top 50 ranking, followed by what stands out in the data, how these fortunes are estimated, and why the numbers move so much from week to week. For individual profiles, see our celebrity net worth hub and the richest business people rankings.",
+        "Elon Musk is still No. 1 , with an estimated $919 billion from his stakes in Tesla and SpaceX, up from $839 billion on Forbes’ annual list in March 2026."
+      ],
+      "retrievedAt": "2026-10-17T22:23:57.280Z",
+      "content": "Home ›\nNetworth\nThe 50 Richest People in the World (October 2026)\nBy Cody Reynolds\nLast updated October 15, 2026 · 6 min read\nThe 50 richest people in the world are worth a combined $5.96 trillion , according to Forbes real-time estimates as of October 2, 2026 . Elon Musk leads with about $919 billion, more than double the $368 billion of Jeff Bezos in second place. The ten richest alone hold just over $3 trillion, slightly more than the other 40 on this list combined.\nBelow is the full top 50 ranking, followed by what stands out in the data, how these fortunes are estimated, and why the numbers move so much from week to week. For individual profiles, see our celebrity net worth hub and the richest business people rankings.\nKey takeaways\nElon Musk is still No. 1 , with an estimated $919 billion from his stakes in Tesla and SpaceX, up from $839 billion on Forbes’ annual list in March 2026.\nTechnology dominates: 13 of the 50 made their fortunes in tech, including all nine of the top nine.\nThe United States accounts for half the list (25 of 50), followed by China and Italy with three each.\n19 people are worth $100 billion or more (the “centibillionaires”).\nSeven women make the top 50, most of them heirs to family companies such as Walmart, L’Oréal, Koch, Mars and MSC. Abigail Johnson of Fidelity runs her family’s company as CEO.\nTop 10 richest people in the world\nElon Musk — $919 billion (Tesla, SpaceX)\nJeff Bezos — $368 billion (Amazon)\nLarry Page — $278 billion (Google)\nMichael Dell — $266 billion (Dell Technologies)\nSergey Brin — $256 billion (Google)\nMark Zuckerberg — $249 billion (Meta)\nJensen Huang — $200 billion (Nvidia)\nLarry Ellison — $179 billion (Oracle)\nSteve Ballmer — $159 billion (Microsoft)\nWarren Buffett — $142 billion (Berkshire Hathaway)\nNet worth is in U.S. dollars, rounded to the nearest billion. Figures are Forbes real-time estimates as of October 2, 2026. Family fortunes are listed under the person Forbes ranks.\nRank |\nName |\nNet worth |\nSource of wealth |\nCountry |\n1 |\nElon Musk |\n$919B |\nTesla, SpaceX |\nUnited States |\n2 |\nJeff Bezos |\n$368B |\nAmazon |\n3 |\nLarry Page |\n$278B |\nGoogle |\n4 |\nMichael Dell |\n$266B |\nDell Technologies |\n5 |\nSergey Brin |\n$256B |\n6 |\nMark Zuckerberg |\n$249B |\nMeta (Facebook) |\n7 |\nJensen Huang |\n$200B |\nNvidia |\n8 |\nLarry Ellison |\n$179B |\nOracle |\n9 |\nSteve Ballmer |\n$159B |\nMicrosoft |\n10 |\nWarren Buffett |\n$142B |\nBerkshire Hathaway |\n11 |\nAmancio Ortega |\nZara (Inditex) |\nSpain |\n12 |\nRob Walton |\n$129B |\nWalmart |\n13 |\nJim Walton |\n$126B |\n14 |\nBernard Arnault |\n$118B |\nLVMH |\nFrance |\n15 |\nAlice Walton |\n$116B |\n16 |\nChangpeng Zhao |\n$115B |\nBinance |\nCanada |\n17 |\nCarlos Slim Helú |\n$114B |\nTelecom (América Móvil) |\nMexico |\n18 |\nBill Gates |\n$113B |\n19 |\nThomas Peterffy |\n$100B |\nInteractive Brokers |\n20 |\nMichael Bloomberg |\n$95B |\nBloomberg LP |\n21 |\nFrançoise Bettencourt Meyers |\n$92B |\nL'Oréal |\n22 |\nGiancarlo Devasini |\n$89B |\nTether, Bitfinex |\nItaly |\n23 |\nJulia Koch |\n$85B |\nKoch In",
+      "sourceId": "SRC-2a83b8d05d25"
+    },
+    {
+      "title": "Forbes list of billionaires - Simple English Wikipedia, the free encyclopedia",
+      "url": "https://simple.wikipedia.org/wiki/Forbes_list_of_billionaires",
+      "canonicalUrl": "https://simple.wikipedia.org/wiki/Forbes_list_of_billionaires",
+      "publisher": "simple.wikipedia.org",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "From Simple English Wikipedia, the free encyclopedia",
+        "Forbes list of billionaires is based on an yearly measurement of wealth and assets which is published by Forbes magazine. The latest list was released in March 2014. [ 1 ] [ 2 ]",
+        "Larry Ellison ( Oracle Corporation founder, United States)",
+        "Unverified information: Billionaires List 2025 with their net worth. [ 3 ]"
+      ],
+      "retrievedAt": "2026-10-17T22:23:57.241Z",
+      "content": "From Simple English Wikipedia, the free encyclopedia\nForbes list of billionaires is based on an yearly measurement of wealth and assets which is published by Forbes magazine. The latest list was released in March 2014. [ 1 ] [ 2 ]\nSome wealthy people\nCarlos Slim (Mexico)\nBill Gates (United States)\nWarren Buffett (United States)\nLarry Ellison ( Oracle Corporation founder, United States)\n2025\n[ change | change source ]\nUnverified information: Billionaires List 2025 with their net worth. [ 3 ]\nRank |\nName |\nNet Worth (USD) |\nNationality |\nAge |\nSources |\nCountry |\n02. |\nElon Musk |\n$433.9 billion |\nUnited States |\n53 |\nTesla , SpaceX , etc. |\n03. |\nJeff Bezos |\n$239.4 billion |\n61 |\nAmazon |\n04. |\nMark Zuckerberg |\n$211.8 billion |\n40 |\nMeta (Facebook) |\n05. |\n|\n06. |\nLarry Ellison |\n$204.6 billion |\n80 |\nOracle |\n07. |\nBernard Arnault & family |\n$181.3 billion |\nFrance |\n75 |\nLVMH |\n08. |\nWarren Buffett |\n$118.4 billion |\n94 |\nBerkshire Hathaway |\n09. |\nBill Gates |\n$113.5 billion |\n69 |\nMicrosoft |\n10. |\nSergey Brin |\n$109.8 billion |\n51 |\nGoogle LLC |\n11. |\nLarry Page |\n$109.3 billion |\n12. |\nSteve Ballmer |\n$105.6 billion |\n68 |\n13. |\nMukesh Ambani |\n$100.5 billion |\nIndia |\n67 |\nReliance Industries |\n2024\nAs of 31 December 2024, the world's richest individual is Elon Musk , the mastermind behind the companies SpaceX and Tesla with a net wealth of $421.2 billion. Musk is the first individual to ever breach the $300 billion net worth, let alone $400 billion. He is followed by Jeff Bezos , albeit with a huge gap behind, with a net worth of $233.5 billion. [ 4 ] [ 5 ]\n2020\nNo. |\nSource(s) of wealth |\n1 | Jeff Bezos | $113 billion | 56 | United States | Amazon |\n2 | Bill Gates | $98 billion | 64 | United States | Microsoft |\n3 | Bernard Arnault and family | $76 billion | 71 | France | LVMH |\n4 | Warren Buffett | $67.5 billion | 89 | United States | Berkshire Hathaway |\n5 | Larry Ellison | $59 billion | 75 | United States | Oracle Corporation |\n6 | Amancio Ortega | $55.1 billion | 84 | Spain | Inditex , Zara |\n7 | Mark Zuckerberg | $54.7 billion | 35 | United States | Facebook |\n8 |\nJim Walton |\n$54.6 billion |\n71 |\nWalmart |\n9 |\nAlice Walton |\n$54.4 billion |\n70 |\nS. Robson Walton |\n$54.1 billion |\n77 |\n2018\nOn the 32nd list of world's billionaires, the gap between the top 1% of the billionaires and the rest continues to widen. [ 6 ] A record of 2,208 billionaires were in the ranking and the total wealth is $9.1 trillion, up 18% since 2017. For the first time, Jeff Bezos was listed as the top billionaire due to Amazon's rising stock price that resulted in one person's biggest one year gain in wealth since Forbes started tracking in 1987. [ 6 ]\n1 | Jeff Bezos | $112.0 billion | 54 | United States | Amazon |\n2 | Bill Gates | $90.0 billion | 62 | United States | Microsoft |\n3 | Warren Buffett | $84.0 billion | 87 | United States | Berkshire Hathaway |\n4 | Bernard Arnault | $72.0 billion | 69 | France | LVMH |\n5 | Mark Zuckerberg | $71.0 billion | 33 | ",
+      "sourceId": "SRC-2407a0d6c7f0"
+    },
+    {
+      "title": "FORBES WORLD'S BILLIONAIRES LIST: The Richest in 2024 - Forbes Africa",
+      "url": "https://www.forbesafrica.com/billionaires/2024/04/03/forbes-richest-worlds-billionaires-list-2024",
+      "canonicalUrl": "https://www.forbesafrica.com/billionaires/2024/04/03/forbes-richest-worlds-billionaires-list-2024/",
+      "publisher": "www.forbesafrica.com",
+      "publishedAt": "2024-04-03T07:50:20.000Z",
+      "updatedAt": "2025-03-30T06:18:05.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "By Edited by Rob LaFranco, Grace Chung, And Chase Peterson-Withorn , Forbes",
+        "Taylor Swift (Photo by Ashok Kumar/TAS24/Getty Images for TAS Rights Management), Aliko Dangote (Photo by Ernest Ankomah/Getty Images), Elon Musk (Photo by Steve Granitz/Getty Images) and Bernard Arnault (Photographer: Benjamin Girette/Bloomberg via Getty Images)",
+        "A record year for ten-figure wealth has left the billionaire class bigger and richer than ever.",
+        "What a year it’s been for the planet’s billionaires, whose fortunes continue to swell as global stock markets shrug off war, political unrest and lingering inflation. There are now more billionaires than ever: 2,781 in all, 141 more than last year and 26 more than the record set in 2021. They’re richer than ever, worth $14.2 trillion in aggregate, up by $2 t"
+      ],
+      "retrievedAt": "2026-10-17T22:23:57.766Z",
+      "content": "By Edited by Rob LaFranco, Grace Chung, And Chase Peterson-Withorn , Forbes\nPublished Apr 3, 2024, 11:50am GMT+2\nTaylor Swift (Photo by Ashok Kumar/TAS24/Getty Images for TAS Rights Management), Aliko Dangote (Photo by Ernest Ankomah/Getty Images), Elon Musk (Photo by Steve Granitz/Getty Images) and Bernard Arnault (Photographer: Benjamin Girette/Bloomberg via Getty Images)\nA record year for ten-figure wealth has left the billionaire class bigger and richer than ever.\nWhat a year it’s been for the planet’s billionaires, whose fortunes continue to swell as global stock markets shrug off war, political unrest and lingering inflation. There are now more billionaires than ever: 2,781 in all, 141 more than last year and 26 more than the record set in 2021. They’re richer than ever, worth $14.2 trillion in aggregate, up by $2 trillion from 2023 and $1.1 trillion above the previous record, also set in 2021.\nTwo-thirds of the list’s members are worth more than a year ago; only one fourth are poorer. Much of the gains come from the top 20, who added a combined $700 billion in wealth since 2023, and from the U.S., which now boasts a record 813 billionaires worth a combined $5.7 trillion. China remains second, with 473 (including Hong Kong) worth $1.7 trillion, despite weak consumer spending and a real estate bust that helped wipe out some $300 billion in wealth. India, which has 200 billionaires (also a record), ranks third.\nAdvertisement\nTo calculate net worths, we used stock prices and exchange rates from March 8, 2024. See below for the full list of the world’s billionaires and our methodology. For daily updated net worths of all 2,781 billionaires, check out our real-time billionaires rankings .\nLoading...\nRelated Topics: # Africa , # African billionaires , # Billionaires 2024 , # Featured , # News Letter , # newsletter , # Nigeria , # South Africa , # world's richest .\nMore from Forbes\nThe 2027 FORBES WOMEN AFRICA Leading Women Summit\nMar 9, 2027 · Time Square, Pretoria, Gauteng, South Africa · In Person Event\nView Event\nAfrican Billionaires in 2026\nClick on a billionaire to view their profile\nRANK | PROFILE | NET WORTH | TREND | COUNTRY |\nRANK: 1 | Aliko Dangote Open full profile\n| NET WORTH: $28.5 B | TREND:\n| COUNTRY: Nigeria |\nRANK: 2 | Johann Rupert & family Open full profile\n| NET WORTH: $16.1 B | TREND:\n| COUNTRY: South Africa |\nRANK: 3 | Abdulsamad Rabiu Open full profile\n| NET WORTH: $11.2 B | TREND:\nRANK: 4 | Nicky Oppenheimer & family Open full profile\n| NET WORTH: $10.6 B | TREND:\nRANK: 5 | Nassef Sawiris Open full profile\n| NET WORTH: $9.6 B | TREND:\n| COUNTRY: Egypt |\nRANK: 6 | Mike Adenuga Open full profile\n| NET WORTH: $6.5 B | TREND:\nRANK: 7 | Naguib Sawiris Open full profile\n| NET WORTH: $5.6 B | TREND:\nRANK: 8 | Patrice Motsepe Open full profile\n| NET WORTH: $4.3 B | TREND:\nRANK: 9 | Mohamed Mansour Open full profile\n| NET WORTH: $4 B | TREND:\nRANK: 10 | Michiel Le Roux Open full profile\n| NET WORTH: $3.8 B | TREND:\nRANK: 11 | Koos ",
+      "sourceId": "SRC-50a691c6b541"
+    }
+  ],
+  "unresolvedQuestions": [
+    "What is the full name of the person whose estimated net worth you are asking about?"
+  ],
+  "contradictions": [],
+  "completeness": "insufficient",
+  "limitations": [
+    "12 search requests or candidate pages failed or were unreadable.",
+    "Only 3 of 4 selected sources fit in the synthesis evidence budget.",
+    "The configured search budget of 8 queries was exhausted.",
+    "The configured research round limit of 2 was reached.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 15,
+    "retrievedCount": 4,
+    "failedCount": 12,
+    "rounds": 2,
+    "searches": 8
+  },
+  "archivedAt": "2026-10-17T22:23:58.600Z"
+}

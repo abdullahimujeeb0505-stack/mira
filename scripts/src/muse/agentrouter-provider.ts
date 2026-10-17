@@ -14,8 +14,9 @@ export interface AgentRouterProviderOptions {
 }
 
 export class AgentRouterProvider implements TextGenerationProvider {
+  readonly providerName = "agentrouter";
   private readonly apiKey: string;
-  private readonly model: string;
+  readonly model: string;
   private readonly fetchImplementation: typeof fetch;
   private readonly timeoutMs: number;
 
