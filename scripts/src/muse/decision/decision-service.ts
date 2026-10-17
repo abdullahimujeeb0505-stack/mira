@@ -113,6 +113,18 @@ export class DecisionService {
       reasons.push(formatLearningReason(match.record, contribution));
     }
 
+    if (event.watchRuleMatchCount !== undefined) {
+      const count = Math.max(0, Math.floor(event.watchRuleMatchCount));
+      const boost = Math.min(10, count * 5);
+      if (boost > 0) {
+        relevance += boost;
+        confidence += 5;
+        reasons.push(
+          `matched ${count} enabled watch rule(s) (+${boost} relevance)`,
+        );
+      }
+    }
+
     const currentTime = this.now();
     const urgencyScore = calculateUrgency(event.deadlineAt, currentTime);
     const potentialValueScore = calculatePotentialValue(event, learnedPatterns);

@@ -42,8 +42,11 @@ export class OpportunityService {
     this.now = options.now ?? (() => new Date());
   }
 
-  evaluate(input: NormalizedOpportunity): Promise<OpportunityEvaluation> {
-    const operation = this.serialQueue.then(() => this.evaluateInOrder(input));
+  evaluate(
+    input: NormalizedOpportunity,
+    context: { watchRuleMatch?: { ruleCount: number; priority?: number } } = {},
+  ): Promise<OpportunityEvaluation> {
+    const operation = this.serialQueue.then(() => this.evaluateInOrder(input, context));
     this.serialQueue = operation.then(
       () => undefined,
       () => undefined,
@@ -53,6 +56,7 @@ export class OpportunityService {
 
   private async evaluateInOrder(
     input: NormalizedOpportunity,
+    context: { watchRuleMatch?: { ruleCount: number; priority?: number } },
   ): Promise<OpportunityEvaluation> {
     const event = normalizeOpportunityInput(input, this.now());
     const candidate: Opportunity = {
@@ -60,7 +64,11 @@ export class OpportunityService {
       id: input.id?.trim() || randomUUID(),
       status: "IGNORED",
     };
-    const decision = await this.decisionService.evaluate(toDecisionEvent(candidate));
+    const decisionEvent = toDecisionEvent(candidate);
+    if (context.watchRuleMatch) {
+      decisionEvent.watchRuleMatchCount = context.watchRuleMatch.ruleCount;
+    }
+    const decision = await this.decisionService.evaluate(decisionEvent);
     candidate.status = statusForDecision(decision);
 
     const duplicate = (await this.repository.list()).find((existing) =>

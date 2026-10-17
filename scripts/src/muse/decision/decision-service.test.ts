@@ -92,6 +92,28 @@ test("an irrelevant opportunity is ignored", async () =>
     assert.equal(decision.relevanceScore, 15);
   }));
 
+test("a matched watch rule can save a borderline opportunity without notifying", async () =>
+  withDecisionService(async (service) => {
+    const baseline = await service.evaluate({
+      domain: "opportunity",
+      eventType: "airdrop",
+      description: "An ordinary community airdrop",
+    });
+    const watched = await service.evaluate({
+      domain: "opportunity",
+      eventType: "airdrop",
+      description: "An ordinary community airdrop",
+      watchRuleMatchCount: 1,
+    });
+
+    assert.equal(baseline.level, "IGNORE");
+    assert.equal(baseline.relevanceScore, 15);
+    assert.equal(watched.relevanceScore, 20);
+    assert.equal(watched.level, "IGNORE");
+    assert.equal(watched.shouldNotifyUser, false);
+    assert.ok(watched.reasons.some((reason) => reason.includes("matched 1 enabled watch rule(s) (+5 relevance)")));
+  }));
+
 test("a previously successful pattern increases relevance", async () =>
   withDecisionService(async (service, _memoryRepository, learningService) => {
     const before = await service.evaluate(opportunity);

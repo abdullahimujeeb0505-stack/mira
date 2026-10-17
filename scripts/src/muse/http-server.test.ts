@@ -86,53 +86,24 @@ test("Muse serves the chat page with same-origin security headers", async () =>
     },
   ));
 
-test("Muse requires a configured strong demo access code before chat", async () => {
+test("Muse chat works locally without an access code", async () => {
   let providerCreations = 0;
   const providerFactory = () => {
     providerCreations += 1;
     return { generateText: async () => "authorized reply" };
   };
 
-  await withServer(providerFactory, async (baseUrl) => {
-    const missing = await sendMessage(baseUrl, "No access code", undefined, null);
-    assert.equal(missing.status, 401);
-
-    const incorrect = await sendMessage(
-      baseUrl,
-      "Wrong access code",
-      undefined,
-      "incorrect-code",
-    );
-    assert.equal(incorrect.status, 401);
-    assert.equal(providerCreations, 0);
-
-    const authorized = await sendMessage(baseUrl, "Authorized message");
-    assert.equal(authorized.status, 200);
-    assert.equal(providerCreations, 1);
-  });
-
   await withServer(
     providerFactory,
     async (baseUrl) => {
-      const response = await sendMessage(baseUrl, "Access is not configured");
-      assert.equal(response.status, 503);
-      assert.match(await response.text(), /MUSE_CHAT_ACCESS_TOKEN/);
+      const response = await sendMessage(baseUrl, "Hello Muse", undefined, null);
+      assert.equal(response.status, 200);
+      const body = (await response.json()) as { reply: string };
+      assert.equal(body.reply, "authorized reply");
     },
-    "",
+    null,
   );
 
-  await withServer(
-    providerFactory,
-    async (baseUrl) => {
-      const response = await sendMessage(
-        baseUrl,
-        "The configured code is too weak",
-      );
-      assert.equal(response.status, 503);
-      assert.match(await response.text(), /at least 32 bytes/);
-    },
-    "short",
-  );
   assert.equal(providerCreations, 1);
 });
 

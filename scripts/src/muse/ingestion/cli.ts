@@ -8,15 +8,18 @@ import { JsonWatchRuleRepository } from "../watch/json-watch-rule-repository.js"
 import { WatchService } from "../watch/watch-service.js";
 import { JsonSourceRepository } from "./json-source-repository.js";
 import { MockSourceAdapter } from "./mock-source-adapter.js";
+import { AtomRssSourceAdapter } from "./atom-rss-source-adapter.js";
 import { SourceIngestionService } from "./source-ingestion-service.js";
 import { SourceRegistry } from "./source-registry.js";
 import { SourceScheduler } from "./source-scheduler.js";
+import { QualificationReviewRepository } from "../qualification/qualification-review-repository.js";
 
 async function main(): Promise<void> {
   const command = process.argv.slice(2).find((argument) => argument !== "--") ?? "inspect";
   const sourceRepository = new JsonSourceRepository();
   const sourceRegistry = new SourceRegistry();
   sourceRegistry.register(new MockSourceAdapter());
+  sourceRegistry.register(new AtomRssSourceAdapter());
 
   const memoryRepository = new JsonMemoryRepository();
   const learningService = new LearningService(new JsonLearningRepository());
@@ -33,6 +36,13 @@ async function main(): Promise<void> {
     sourceRepository,
     sourceRegistry,
     watchService,
+    {
+      qualificationEnabled: true,
+      qualificationReviewRepository: new QualificationReviewRepository(
+        process.env.MUSE_REVIEW_PATH ??
+          "data/muse-qualification-review.json",
+      ),
+    },
   );
   const scheduler = new SourceScheduler(sourceRepository, ingestionService);
 

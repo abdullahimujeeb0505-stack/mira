@@ -3,6 +3,7 @@ import type { OpportunityOutcome } from "../outcome-model.js";
 export const TRACKING_CATEGORIES = [
   "WL_APPLICATION",
   "AIRDROP",
+  "BOUNTY",
   "CAMPAIGN",
   "QUEST",
   "COMPETITION",

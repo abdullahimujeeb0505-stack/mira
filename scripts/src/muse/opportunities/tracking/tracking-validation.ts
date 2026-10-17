@@ -181,6 +181,8 @@ export function categoryForOpportunity(
       return "WL_APPLICATION";
     case "FREE_MINT":
       return "PUBLIC_MINT";
+    case "BOUNTY":
+      return "BOUNTY";
     case "AIRDROP":
     case "CAMPAIGN":
     case "COMPETITION":
@@ -200,6 +202,8 @@ export function opportunityTypeForTrackingCategory(
       return "WL";
     case "PUBLIC_MINT":
       return "FREE_MINT";
+    case "BOUNTY":
+      return "BOUNTY";
     case "AIRDROP":
     case "CAMPAIGN":
     case "COMPETITION":

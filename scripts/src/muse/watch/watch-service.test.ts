@@ -371,6 +371,12 @@ test("matching uses OpportunityService and DecisionService with memory and learn
       const result = await watchService.processUpdate({ opportunity });
 
       assert.equal(result.matchedRules.length, 1);
+      assert.ok(
+        result.evaluation?.decision.reasons.some((reason) =>
+          reason.includes("matched 1 enabled watch rule(s) (+5 relevance)"),
+        ),
+        "the decision should explain the relevance boost from the matched watch rule",
+      );
       assert.equal(result.evaluation?.decision.level, "SURFACE");
       assert.equal(result.evaluation?.saved, true);
       assert.ok(

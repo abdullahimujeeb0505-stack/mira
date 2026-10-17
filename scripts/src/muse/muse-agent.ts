@@ -3,6 +3,7 @@ import type {
   TextGenerationProvider,
 } from "./llm-provider.js";
 import { detectMemoryCandidate } from "./memory/auto-memory-policy.js";
+import { retrieveResearchContext } from "./research-context.js";
 import { JsonMemoryRepository } from "./memory/json-memory-repository.js";
 import { MemoryService } from "./memory/memory-service.js";
 import type { MemoryCategory, MemoryRecord } from "./memory/memory-types.js";
@@ -29,9 +30,10 @@ export class MuseAgent {
     const candidate = detectMemoryCandidate(content);
     if (candidate) await this.memories.remember(candidate);
 
-    const [sessionMemories, sharedMemories] = await Promise.all([
+    const [sessionMemories, sharedMemories, researchContext] = await Promise.all([
       this.memories.retrieve(content),
       this.sharedMemories?.retrieve(content) ?? Promise.resolve([]),
+      retrieveResearchContext(content, 3),
     ]);
     const recalledMemories = [
       ...sessionMemories,
@@ -57,7 +59,7 @@ export class MuseAgent {
 
     const pendingMessage: ConversationMessage = { role: "user", content };
     const response = await this.provider.generateText({
-      systemPrompt: [MUSE_SYSTEM_PROMPT, memoryContext]
+      systemPrompt: [MUSE_SYSTEM_PROMPT, memoryContext, researchContext]
         .filter(Boolean)
         .join("\n\n"),
       conversation: [...this.conversation, pendingMessage],

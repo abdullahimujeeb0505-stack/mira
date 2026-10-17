@@ -74,7 +74,12 @@ export class WatchService {
         update.opportunity,
         update.entities,
       );
-      const evaluation = await this.opportunityService.evaluate(opportunity);
+      const evaluation = await this.opportunityService.evaluate(opportunity, {
+        watchRuleMatch: {
+          ruleCount: matchedRules.length,
+          ...(priorities.length ? { priority: Math.max(...priorities) } : {}),
+        },
+      });
 
       return {
         matchedRules,

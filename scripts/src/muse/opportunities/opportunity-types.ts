@@ -4,6 +4,7 @@ export const OPPORTUNITY_TYPES = [
   "WL",
   "FREE_MINT",
   "AIRDROP",
+  "BOUNTY",
   "CAMPAIGN",
   "COMPETITION",
   "GRANT",

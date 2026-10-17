@@ -13,6 +13,8 @@ import type {
   SourceUpdateMapper,
 } from "./source-types.js";
 import type { WatchUpdate } from "../watch/watch-types.js";
+import { qualifyOpportunity } from "../qualification/opportunity-qualification.js";
+import { QualificationReviewRepository } from "../qualification/qualification-review-repository.js";
 
 const DEFAULT_MAX_RETRIES = 2;
 const DEFAULT_RETRY_DELAY_MS = 250;
@@ -33,6 +35,8 @@ export interface SourceIngestionServiceOptions {
   maxRetryDelayMs?: number;
   maxRateLimitDelayMs?: number;
   maxUpdatesPerFetch?: number;
+  qualificationEnabled?: boolean;
+  qualificationReviewRepository?: QualificationReviewRepository;
 }
 
 export class SourceRateLimitError extends Error {
@@ -72,6 +76,8 @@ export class SourceIngestionService {
   private readonly maxRetryDelayMs: number;
   private readonly maxRateLimitDelayMs: number;
   private readonly maxUpdatesPerFetch: number;
+  private readonly qualificationEnabled: boolean;
+  private readonly qualificationReviewRepository?: QualificationReviewRepository;
   private readonly inFlightSources = new Set<string>();
   private updateProcessingQueue: Promise<void> = Promise.resolve();
 
@@ -108,6 +114,8 @@ export class SourceIngestionService {
       1,
       5_000,
     );
+    this.qualificationEnabled = options.qualificationEnabled ?? false;
+    this.qualificationReviewRepository = options.qualificationReviewRepository;
   }
 
   async runSource(sourceId: string): Promise<SourceRunResult> {
@@ -215,6 +223,44 @@ export class SourceIngestionService {
         if (seen.has(update.id)) {
           duplicates += 1;
           continue;
+        }
+
+        if (this.qualificationEnabled) {
+          const qualification = qualifyOpportunity({
+            title: update.title,
+            description: update.text,
+            sourceUrl: update.sourceUrl,
+          });
+
+          if (qualification.decision === "REJECTED") {
+            seen.add(update.id);
+            processed += 1;
+            continue;
+          }
+
+          if (qualification.decision === "REVIEW") {
+            if (!this.qualificationReviewRepository) {
+              throw new Error(
+                "Qualification review repository is required when qualification is enabled.",
+              );
+            }
+            await this.qualificationReviewRepository.add({
+              id: `${source.id}:${update.id}`,
+              sourceId: source.id,
+              updateId: update.id,
+              title: update.title,
+              description: update.text,
+              sourceUrl: update.sourceUrl,
+              decision: "REVIEW",
+              reasons: qualification.reasons,
+              evidence: qualification.evidence,
+              detectedAt: retrievedAt,
+              status: "PENDING",
+            });
+            seen.add(update.id);
+            processed += 1;
+            continue;
+          }
         }
 
         const watchUpdate = this.mapper.toWatchUpdate(update, source);

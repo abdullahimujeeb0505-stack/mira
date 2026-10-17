@@ -7,7 +7,7 @@ if (!Number.isInteger(port) || port <= 0 || port > 65_535) {
 }
 
 const server = createMuseHttpServer();
-server.listen(port, "0.0.0.0", () => {
+server.listen(port, "127.0.0.1", () => {
   console.log(`Muse demo server listening on port ${port}.`);
 });
 

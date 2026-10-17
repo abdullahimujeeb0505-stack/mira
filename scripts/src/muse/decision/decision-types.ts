@@ -16,6 +16,8 @@ export interface DecisionEvent extends OutcomeContext {
   deadlineAt?: string;
   /** Optional caller estimate on a 0–100 scale. */
   potentialValue?: number;
+  /** Number of enabled watch rules matched by this opportunity. */
+  watchRuleMatchCount?: number;
 }
 
 export interface DecisionResult {
