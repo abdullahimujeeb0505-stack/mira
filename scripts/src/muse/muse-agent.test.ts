@@ -71,7 +71,7 @@ test("Muse handles casual messages without web research and researches factual q
     assert.equal(researchQuestions.length, 0);
 
     const answer = await agent.respond("How does this work?");
-    assert.match(answer, /Official guide - https:\/\/example\.org\/guide/);
+    assert.match(answer, /\[Official guide\]\(https:\/\/example\.org\/guide\)/);
     assert.doesNotMatch(answer, /candidate pages|Research completeness|Limitations:/);
     assert.equal(researchQuestions[0], "How does this work?");
     assert.equal(modelCalls, 1);
@@ -131,13 +131,51 @@ test("research reply is concise and retains citations, retrieved source links, a
 
   assert.match(answer, /The sources describe the mechanism/);
   assert.match(answer, /describe the mechanism\. \[1\]/);
-  assert.match(answer, /Sources:\n\[1\] Official guide - https:\/\/example\.org\/guide/);
+  assert.match(answer, /Sources:\n\[1\] \[Official guide\]\(https:\/\/example\.org\/guide\)/);
+  assert.doesNotMatch(answer, /Official guide - https:\/\/example\.org\/guide/);
   assert.doesNotMatch(answer, /Uncited extra source|example\.net\/unused/);
   assert.match(answer, /historical context and was not rechecked/);
   assert.doesNotMatch(
     answer,
     /candidate pages|Research completeness|Limitations:|Unresolved questions:|saved to Muse's local archive/,
   );
+});
+
+test("research replies replace internal source IDs with numbered citations and linked titles", () => {
+  const answer = formatResearchReply({
+    ...researchResult,
+    answer:
+      "The handbook documents control flow narrowing [SRC-handbook123]. " +
+      "Read more at https://www.typescriptlang.org/docs/handbook/2/narrowing.html.",
+    sources: [{
+      ...researchResult.sources[0]!,
+      sourceId: "SRC-handbook123",
+      title: "TypeScript Handbook: Narrowing",
+      url: "https://www.typescriptlang.org/docs/handbook/2/narrowing.html",
+    }],
+  });
+
+  assert.match(answer, /control flow narrowing \[1\]/);
+  assert.match(answer, /Read more at \[TypeScript Handbook: Narrowing\]\(https:\/\/www\.typescriptlang\.org\/docs\/handbook\/2\/narrowing\.html\)/);
+  assert.match(answer, /Sources:\n\[1\] \[TypeScript Handbook: Narrowing\]\(https:\/\/www\.typescriptlang\.org\/docs\/handbook\/2\/narrowing\.html\)/);
+  assert.doesNotMatch(answer, /SRC-handbook123|https:\/\/www\.typescriptlang\.org\/docs\/handbook\/2\/narrowing\.html(?!\))/);
+});
+
+test("research replies include raw source URLs only when requested", () => {
+  const url = "https://www.typescriptlang.org/docs/handbook/2/narrowing.html";
+  const answer = formatResearchReply({
+    ...researchResult,
+    question: "Please include the raw source URLs.",
+    answer: "The handbook covers control flow [SRC-handbook123].",
+    sources: [{
+      ...researchResult.sources[0]!,
+      sourceId: "SRC-handbook123",
+      title: "TypeScript Handbook: Narrowing",
+      url,
+    }],
+  });
+
+  assert.match(answer, new RegExp(`\\[TypeScript Handbook: Narrowing\\]\\(${url}\\) - ${url}`));
 });
 
 test("multi-turn chat keeps roles and routes simple follow-ups separately from explicit research", async () => {

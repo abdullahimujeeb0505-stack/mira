@@ -31,3 +31,44 @@ test("response formatting leaves block quotations untouched", () => {
   const quote = "> The quoted source says .; \\n 🚀";
   assert.equal(normalizeResponseFormatting(quote), quote);
 });
+
+test("response formatting removes literal HTML breaks only from Markdown tables", () => {
+  const formatted = normalizeResponseFormatting([
+    "| Milestone | Detail |",
+    "| --- | --- |",
+    "| First<br>step | **Second**<br/>step |",
+    "| Code | `<br>` remains literal |",
+    "",
+    "<br/>",
+  ].join("\n"));
+
+  assert.match(formatted, /\| First step \| \*\*Second\*\* step \|/);
+  assert.match(formatted, /\| Code \| `<br>` remains literal \|/);
+  assert.match(formatted, /\n<br\/>$/);
+  assert.doesNotMatch(
+    formatted.split("\n").slice(0, 4).join("\n").replace(/`[^`]*`/g, ""),
+    /<br\s*\/?>/i,
+  );
+});
+
+test("response formatting links retrieved source URLs and preserves URLs in code and quotes", () => {
+  const source = {
+    title: "Official guide",
+    url: "https://example.org/guide",
+  };
+  assert.equal(
+    normalizeResponseFormatting(
+      "Read https://example.org/guide. `https://example.org/guide` “https://example.org/guide”",
+      [source],
+    ),
+    "Read [Official guide](https://example.org/guide). `https://example.org/guide` “https://example.org/guide”",
+  );
+  assert.equal(
+    normalizeResponseFormatting(
+      "Read https://example.org/guide.",
+      [source],
+      { preserveSourceUrls: true },
+    ),
+    "Read https://example.org/guide.",
+  );
+});

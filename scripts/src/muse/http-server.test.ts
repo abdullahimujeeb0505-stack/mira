@@ -57,9 +57,17 @@ type FakeElement = {
   tagName: string;
   children: FakeElement[];
   textContent: string;
+  disabled: boolean;
+  value: string;
+  href?: string;
+  listeners: Record<string, (event: { preventDefault(): void }) => void | Promise<void>>;
   append(...elements: FakeElement[]): void;
-  addEventListener(): void;
+  addEventListener(
+    name: string,
+    listener: (event: { preventDefault(): void }) => void | Promise<void>,
+  ): void;
   scrollIntoView(): void;
+  focus(): void;
 };
 
 function fakeElement(tagName: string): FakeElement {
@@ -67,11 +75,17 @@ function fakeElement(tagName: string): FakeElement {
     tagName,
     children: [],
     textContent: "",
+    disabled: false,
+    value: "",
+    listeners: {},
     append(...elements) {
       this.children.push(...elements);
     },
-    addEventListener() {},
+    addEventListener(name, listener) {
+      this.listeners[name] = listener;
+    },
     scrollIntoView() {},
+    focus() {},
   };
 }
 
@@ -111,6 +125,10 @@ test("Muse serves the chat page with same-origin security headers", async () =>
       assert.match(html, /document\.createElement\("table"\)/);
       assert.match(html, /document\.createElement\(ordered \? "ol" : "ul"\)/);
       assert.match(html, /url\.protocol === "https:" \|\| url\.protocol === "http:"/);
+      assert.match(html, /table-layout: fixed/);
+      assert.match(html, /word-break: normal/);
+      assert.match(html, /overflow-wrap: break-word/);
+      assert.match(html, /max-width: 100%; overflow-x: auto/);
       assert.doesNotMatch(html, /\.innerHTML\s*=/);
       assert.equal(response.headers.get("cache-control"), "no-store");
       assert.equal(response.headers.get("x-content-type-options"), "nosniff");
@@ -157,12 +175,14 @@ test("browser Markdown rendering normalizes heading levels, tables, and code blo
           "```ts",
           "const line = \"# not heading | ;\";",
           "```",
+          "",
+          "[Official guide](https://example.org/guide)",
         ].join("\n"),
       );
 
       assert.deepEqual(
         root.children.map((child) => child.tagName),
-        ["h2", "h3", "table", "pre"],
+        ["h2", "h3", "table", "pre", "p"],
       );
       const table = root.children[2];
       assert.ok(table);
@@ -177,6 +197,78 @@ test("browser Markdown rendering normalizes heading levels, tables, and code blo
         root.children[3]?.children[0]?.textContent,
         "const line = \"# not heading | ;\";",
       );
+      const sourceLink = root.children[4]?.children.find(
+        (child) => child.tagName === "a",
+      );
+      assert.equal(sourceLink?.textContent, "Official guide");
+      assert.equal(sourceLink?.href, "https://example.org/guide");
+    },
+  ));
+
+test("a duplicate browser submit while a follow-up is pending sends and renders one response", async () =>
+  withServer(
+    () => ({ generateText: async () => "unused" }),
+    async (baseUrl) => {
+      const response = await fetch(baseUrl);
+      const html = await response.text();
+      const script = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
+      assert.ok(script);
+      const elements = new Map<string, FakeElement>([
+        ["#chat-form", fakeElement("form")],
+        ["#message", fakeElement("textarea")],
+        ["#send", fakeElement("button")],
+        ["#messages", fakeElement("section")],
+        ["#status", fakeElement("p")],
+      ]);
+      const document = {
+        querySelector: (selector: string) => elements.get(selector),
+        createElement: (tagName: string) => fakeElement(tagName),
+        createTextNode: (text: string) => {
+          const node = fakeElement("#text");
+          node.textContent = text;
+          return node;
+        },
+      };
+      let resolveFetch: ((value: {
+        ok: boolean;
+        json(): Promise<{ reply: string }>;
+      }) => void) | undefined;
+      let fetchCalls = 0;
+      const sandbox = {
+        document,
+        URL,
+        fetch: () => {
+          fetchCalls += 1;
+          return new Promise<{
+            ok: boolean;
+            json(): Promise<{ reply: string }>;
+          }>((resolve) => {
+            resolveFetch = resolve;
+          });
+        },
+      };
+      new Script(script).runInNewContext(sandbox);
+
+      const form = elements.get("#chat-form");
+      const input = elements.get("#message");
+      const messages = elements.get("#messages");
+      const submit = form?.listeners.submit;
+      assert.ok(input && messages && submit);
+      input.value = "Why?";
+
+      const firstSubmit = submit({ preventDefault() {} });
+      await submit({ preventDefault() {} });
+      assert.equal(fetchCalls, 1);
+      assert.equal(messages.children.length, 1);
+
+      resolveFetch?.({
+        ok: true,
+        json: async () => ({ reply: "The earlier evidence explains why." }),
+      });
+      await firstSubmit;
+
+      assert.equal(messages.children.length, 2);
+      assert.equal(fetchCalls, 1);
     },
   ));
 

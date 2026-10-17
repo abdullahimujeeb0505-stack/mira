@@ -91,6 +91,8 @@ test("research service returns synthesized evidence, retrieval counts, and archi
     jsonPath: "/archive/result.json",
   });
   assert.equal(requests.length, 2);
+  assert.match(requests[1]?.systemPrompt ?? "", /Do not use Markdown tables by default/);
+  assert.match(requests[1]?.systemPrompt ?? "", /historical timelines, use numbered milestones/);
   assert.ok(progress.some((message) => message.includes("Retrieved 1 of 1")));
 });
 

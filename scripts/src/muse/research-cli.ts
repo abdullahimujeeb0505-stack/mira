@@ -1269,6 +1269,9 @@ async function synthesize(
   const evidence = sources
     .map(sourceEvidenceBlock)
     .join("\n\n--- SOURCE BOUNDARY ---\n\n");
+  const explicitlyRequestsTable =
+    /\b(?:include|use|show|create|format(?: this)? as)\b[^.\n]{0,80}\b(?:table|tabular|matrix)\b|\bcomparison table\b/i
+      .test(`${question}\n${plan.deliverable}`);
 
   try {
     const raw = await askModel(
@@ -1295,8 +1298,12 @@ async function synthesize(
             "Do not mark it partial solely because the bounded search/candidate budget " +
             "was used or some returned pages were inaccessible; judge the relevance, " +
             "quality, diversity, and coverage of the readable evidence. Answer the " +
-            "current question directly in a few concise paragraphs by default. Do not " +
-            "include large tables unless explicitly requested, and do not repeat the " +
+            "current question directly with headings, short paragraphs, and lists as " +
+            "appropriate. " +
+            (explicitlyRequestsTable
+              ? "A table was explicitly requested; keep it narrow and concise. "
+              : "Do not use Markdown tables by default. For historical timelines, use numbered milestones or concise bullets. ") +
+            "Keep the answer concise and do not repeat the " +
             "previous answer or report. " +
             "Do not include internal labels, serialized conversation, planning prompts, " +
             "or research diagnostics in the answer.",

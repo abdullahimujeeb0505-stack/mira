@@ -13,6 +13,7 @@ import { shouldResearchMessage } from "./message-routing.js";
 import {
   extractWritingConstraints,
   generateWrittenDeliverable,
+  INSUFFICIENT_RESEARCH_REPLY,
   isWritingRequest,
   isWritingRevision,
   writingNeedsResearch,
@@ -31,8 +32,6 @@ const MUSE_SYSTEM_PROMPT =
 const PRIOR_RESEARCH_REFERENCE =
   /\b(?:those|these|the previous|the earlier|above|prior) (?:findings|results|research|sources|answer)\b|\bwhat you (?:just )?(?:found|researched|said)\b|\bwhat about\b|\bthat topic\b|\b(?:why|how so|and then|then what|explain that|make that simpler|what does (?:this|that|it) mean|can you clarify that)\b/i;
 
-const INSUFFICIENT_RESEARCH_REPLY =
-  "I couldn't verify enough relevant evidence to produce a reliable answer. Please narrow the question or provide authoritative sources, and I can try again.";
 const CONTEXT_STOP_WORDS = new Set([
   "about", "after", "before", "could", "does", "from", "have", "into",
   "more", "that", "their", "there", "these", "they", "this", "those",
@@ -320,13 +319,33 @@ export function formatResearchReply(
   if (!hasReliableResearchEvidence(result)) {
     return INSUFFICIENT_RESEARCH_REPLY;
   }
-  const sources = getCitedSources(result.answer, result.sources)
+  const citedSources = getCitedSources(result.answer, result.sources);
+  const sourceIndexes = new Map(
+    citedSources.map(({ source, index }) => [
+      source.sourceId ?? String(index + 1),
+      index + 1,
+    ]),
+  );
+  const preserveRawUrls =
+    /\b(?:raw|full|plain)\s+(?:source\s+)?urls?\b|\binclude (?:the )?(?:source )?urls?\b/i
+      .test(result.question);
+  const answer = normalizeResponseFormatting(
+    result.answer.trim(),
+    citedSources.map(({ source }) => source),
+    { preserveSourceUrls: preserveRawUrls },
+  )
+    .replace(/\[(SRC-[A-Za-z0-9_-]+)\]/g, (_marker, id: string) => {
+      const index = sourceIndexes.get(id);
+      return index ? `[${index}]` : "";
+    });
+  const sources = citedSources
     .map(({ source, index }) =>
-      `${source.sourceId ? `[${source.sourceId}]` : `[${index + 1}]`} ${source.title} - ${source.url}`,
+      `[${index + 1}] [${source.title}](${source.url})` +
+      `${preserveRawUrls ? ` - ${source.url}` : ""}`,
     )
     .join("\n");
   return [
-    normalizeResponseFormatting(result.answer.trim()),
+    answer,
     hasArchivedContext
       ? "Related archived research is historical context and was not rechecked."
       : "",

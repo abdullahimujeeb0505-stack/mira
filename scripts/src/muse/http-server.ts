@@ -47,14 +47,17 @@ const CHAT_PAGE = `<!doctype html>
       .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
       .access-code { display: grid; gap: 8px; margin: 10px 0 0; color: #cbd1df; font-size: 13px; }
       .access-code input { width: 100%; border: 1px solid #3b4354; border-radius: 12px; padding: 12px; color: inherit; background: #10131b; font: inherit; }
-      #messages { flex: 1; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; padding: 22px 0; }
-      .message { max-width: 88%; padding: 12px 15px; border-radius: 16px; line-height: 1.55; overflow-wrap: anywhere; white-space: pre-wrap; }
+      #messages { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; padding: 22px 0; }
+      .message { max-width: 88%; min-width: 0; padding: 12px 15px; border-radius: 16px; line-height: 1.55; overflow-wrap: break-word; word-break: normal; white-space: pre-wrap; }
       .message.muse { align-self: flex-start; background: #252c3a; }
       .message.muse h1, .message.muse h2, .message.muse h3, .message.muse h4, .message.muse h5, .message.muse h6 { margin: .4em 0; line-height: 1.25; }
       .message.muse p { margin: .35em 0; }
       .message.muse ul, .message.muse ol { margin: .35em 0; padding-left: 1.5em; }
-      .message.muse table { border-collapse: collapse; display: block; max-width: 100%; overflow-x: auto; white-space: normal; }
-      .message.muse th, .message.muse td { border: 1px solid #4a5365; padding: 6px 9px; text-align: left; }
+      .message.muse a { color: #a9bbff; text-decoration: underline; text-underline-offset: 2px; }
+      .message.muse table { border-collapse: collapse; table-layout: fixed; display: block; width: 100%; max-width: 100%; overflow-x: auto; white-space: normal; }
+      .message.muse th, .message.muse td { border: 1px solid #4a5365; padding: 6px 9px; text-align: left; vertical-align: top; overflow-wrap: anywhere; word-break: normal; }
+      .message.muse pre { max-width: 100%; overflow-x: auto; white-space: pre; }
+      .message.muse code { overflow-wrap: anywhere; white-space: break-spaces; }
       .message.you { align-self: flex-end; background: #526de2; }
       form { display: flex; gap: 10px; align-items: flex-end; margin-top: 4px; }
       textarea { flex: 1; min-height: 52px; max-height: 180px; resize: vertical; border: 1px solid #3b4354; border-radius: 14px; padding: 14px; color: inherit; background: #10131b; font: inherit; }
