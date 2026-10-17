@@ -14,6 +14,8 @@ const REVISION_ACTION =
 const CREATIVE_OR_EDITING_ONLY = /\b(poem|poetry|fiction|short story|fictional|song lyrics)\b/i;
 const PROVIDED_MATERIAL =
   /\b(based on|using|from)\s+(?:the\s+)?(?:provided|attached|following|my|these)\s+(?:source|sources|text|notes|material|references)\b/i;
+const SUPPLIED_MATERIAL_ACTION =
+  /^\s*(?:summari[sz]e|rewrite|rephrase|paraphrase|expand|shorten|proofread|edit)\b[\s\S]{0,120}(?:\b(?:following|provided|attached)\s+(?:text|passage|article|notes|material|content|draft|document)\b|\b(?:this|these|my)\s+(?:text|passage|article|notes|material|content|draft|document)\b|:\s*\S)/i;
 const STYLE_ONLY_REVISION =
   /\b(revise|rewrite|edit|expand|shorten|condense|simplify|restructure|polish|change the tone|make it (?:shorter|longer|simpler|more|less)|grammar|proofread)\b/i;
 
@@ -28,7 +30,8 @@ export type WritingConstraints = {
 
 export function isWritingRequest(message: string): boolean {
   const content = message.trim();
-  return DELIVERABLE.test(content) && WRITING_ACTION.test(content);
+  return SUPPLIED_MATERIAL_ACTION.test(content) ||
+    (DELIVERABLE.test(content) && WRITING_ACTION.test(content));
 }
 
 export function isWritingRevision(message: string, hasActiveAssignment: boolean): boolean {
@@ -40,7 +43,10 @@ export function writingNeedsResearch(
   isRevision: boolean,
 ): boolean {
   if (CREATIVE_OR_EDITING_ONLY.test(message)) return false;
-  if (PROVIDED_MATERIAL.test(message)) return false;
+  if (
+    PROVIDED_MATERIAL.test(message) ||
+    SUPPLIED_MATERIAL_ACTION.test(message)
+  ) return false;
   if (isRevision && STYLE_ONLY_REVISION.test(message) &&
     !/\b(add (?:more )?sources|incorporate (?:additional )?research|fact.?check|verify)\b/i.test(message)) {
     return false;
@@ -196,8 +202,14 @@ export async function generateWrittenDeliverable(
     conversation,
   });
   const sources = evidence?.sources ?? [];
+  const numberedCitationSources = sources.map((source) => ({
+    ...source,
+    sourceId: undefined,
+  }));
   const validated = sources.length
-    ? validateCitationReferences(raw, sources)
+    ? validateCitationReferences(raw, numberedCitationSources, {
+        autoCiteSupportedClaims: true,
+      })
     : raw;
   const formatted = applyCitationStyle(validated, sources, constraints.citationStyle);
   const references = renderReferences(sources, constraints.citationStyle);

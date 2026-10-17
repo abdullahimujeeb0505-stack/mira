@@ -12,6 +12,7 @@ import {
 import type { EvidenceSource, ResearchResult } from "./research-cli.js";
 
 const source: EvidenceSource = {
+  sourceId: "SRC-123456789abc",
   title: "TypeScript Handbook: Narrowing",
   url: "https://www.typescriptlang.org/docs/handbook/2/narrowing.html",
   retrievedAt: "2026-10-17T12:00:00.000Z",
@@ -165,6 +166,26 @@ test("word-count and requested citation styles are applied and references use re
   assert.doesNotMatch(answer, /DOI:/i);
 });
 
+test("writing adds numbered citations only to uncited claims supported by retrieved evidence", async () => {
+  const requests: TextGenerationRequest[] = [];
+  const answer = await generateWrittenDeliverable(
+    createProvider(
+      "TypeScript uses control flow analysis to narrow union types. Ocean tides are caused by distant stars.",
+      requests,
+    ),
+    "Write a short sourced explainer about TypeScript narrowing.",
+    [{ role: "user", content: "Write a short sourced explainer about TypeScript narrowing." }],
+    {},
+    researchResult(),
+    false,
+  );
+
+  assert.match(answer, /narrow union types\. \[1\]/);
+  assert.match(answer, /Ocean tides are caused by distant stars \(unverified: no matching retrieved evidence\)/);
+  assert.match(answer, /https:\/\/www\.typescriptlang\.org\/docs\/handbook\/2\/narrowing\.html/);
+  assert.doesNotMatch(answer, /\[INVALID CITATION/);
+});
+
 test("revision requests preserve assignment context without repeating research", async () => {
   const requests: TextGenerationRequest[] = [];
   const answer = await generateWrittenDeliverable(
@@ -233,4 +254,15 @@ test("research is skipped for creative writing and provided-material editing", (
   assert.equal(writingNeedsResearch("Write a research essay about lighthouse history.", false), true);
   assert.equal(writingNeedsResearch("Make it shorter and more direct.", true), false);
   assert.equal(writingNeedsResearch("Add more sources and research.", true), true);
+});
+
+test("summarizing, rewriting, and expanding explicitly supplied text use the writing flow without research", () => {
+  for (const request of [
+    "Summarize the following text: Photosynthesis converts light energy into chemical energy.",
+    "Rewrite this passage: The first draft is rough.",
+    "Expand the provided notes into a coherent explanation.",
+  ]) {
+    assert.equal(isWritingRequest(request), true, request);
+    assert.equal(writingNeedsResearch(request, false), false, request);
+  }
 });

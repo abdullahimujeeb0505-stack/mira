@@ -232,6 +232,37 @@ test("Muse researches factual writing requests and preserves the assignment for 
   }
 });
 
+test("Muse summarizes supplied text without invoking external research", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "muse-agent-supplied-text-"));
+  const modelRequests: TextGenerationRequest[] = [];
+  const researchQuestions: string[] = [];
+  const agent = new MuseAgent(
+    {
+      async generateText(request) {
+        modelRequests.push(request);
+        return "Photosynthesis converts light energy into chemical energy.";
+      },
+    },
+    new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
+    undefined,
+    async (question) => {
+      researchQuestions.push(question);
+      return researchResult;
+    },
+  );
+
+  try {
+    const answer = await agent.respond(
+      "Summarize the following text: Photosynthesis converts light energy into chemical energy.",
+    );
+    assert.match(answer, /Photosynthesis converts light energy/);
+    assert.deepEqual(researchQuestions, []);
+    assert.match(modelRequests[0]?.systemPrompt ?? "", /No external research was requested/);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
 test("Muse skips external research for a creative writing request", async () => {
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-creative-"));
   let researchCalls = 0;

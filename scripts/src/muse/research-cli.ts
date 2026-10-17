@@ -374,7 +374,7 @@ function removeBoilerplate(html: string): string {
     );
   }
   cleaned = cleaned.replace(
-    /<(div|section|ul|ol|aside|nav)\b[^>]*(?:id|class|role)\s*=\s*["'][^"']*(?:cookie|consent|sidebar|navigation|navbar|menu|related|recommend|promo|advert|subscribe|social|breadcrumb|share|footer|header|banner)[^"']*["'][^>]*>[\s\S]*?<\/\1\s*>/gi,
+    /<(div|section|ul|ol|aside|nav)\b[^>]*(?:id|class|role)\s*=\s*["'][^"']*(?:cookie|consent|sidebar|navigation|navbar|menu|related|recommend|promo|advert|subscribe|social|breadcrumb|share|footer|header|banner|product(?:s|[-_ ]?(?:listing|grid|card|catalog|recommendations?|carousel))?|catalog(?:[-_ ]?(?:listing|grid|products?))?|shop(?:[-_ ]?(?:listing|grid|products?))?)[^"']*["'][^>]*>[\s\S]*?<\/\1\s*>/gi,
     " ",
   );
   cleaned = cleaned.replace(
@@ -1325,6 +1325,7 @@ async function synthesize(
 export function validateCitationReferences(
   answer: string,
   sources: EvidenceSource[],
+  options: { autoCiteSupportedClaims?: boolean } = {},
 ): string {
   const byId = new Map<string, EvidenceSource | null>();
   const legacyNumeric = sources.every((source) => !source.sourceId);
@@ -1386,11 +1387,20 @@ export function validateCitationReferences(
       ];
       if (tokens.length === 0) {
         const claimTerms = tokenizeResearch(sentence);
-        markedClaims.push(
-          claimTerms.size >= 4
-            ? `${sentence.trimEnd().replace(/[.!?]?$/, "")} (unverified: no matching retrieved evidence).`
-            : sentence,
-        );
+        const supportingSource = options.autoCiteSupportedClaims
+          ? sources.find((source) => citationHasEvidence(sentence, source))
+          : undefined;
+        if (supportingSource) {
+          const id = supportingSource.sourceId ??
+            String(sources.indexOf(supportingSource) + 1);
+          markedClaims.push(`${sentence.trimEnd()} [${id}]`);
+        } else {
+          markedClaims.push(
+            claimTerms.size >= 4
+              ? `${sentence.trimEnd().replace(/[.!?]?$/, "")} (unverified: no matching retrieved evidence).`
+              : sentence,
+          );
+        }
         continue;
       }
 
@@ -1417,7 +1427,16 @@ export function validateCitationReferences(
         .replace(/([,;:])\s*([,;:])/g, "$2")
         .trim();
       if (!hasSupportedCitation) {
-        sanitized = `${sanitized.replace(/[.!?]?$/, "")} (unverified: no matching retrieved evidence).`;
+        const supportingSource = options.autoCiteSupportedClaims
+          ? sources.find((source) => citationHasEvidence(sanitized, source))
+          : undefined;
+        if (supportingSource) {
+          const id = supportingSource.sourceId ??
+            String(sources.indexOf(supportingSource) + 1);
+          sanitized = `${sanitized} [${id}]`;
+        } else {
+          sanitized = `${sanitized.replace(/[.!?]?$/, "")} (unverified: no matching retrieved evidence).`;
+        }
       }
       markedClaims.push(sanitized);
     }
@@ -1683,7 +1702,9 @@ export async function runResearch(
     gaps,
     conversationContext,
   );
-  const answer = validateCitationReferences(synthesis.answer, sources);
+  const answer = validateCitationReferences(synthesis.answer, sources, {
+    autoCiteSupportedClaims: true,
+  });
   if (answer.includes("(unverified:")) {
     limitations.push("One or more generated citations did not match a retrieved source or relevant page text.");
   }

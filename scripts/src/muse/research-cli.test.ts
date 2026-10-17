@@ -9,6 +9,7 @@ import {
   createResearchConfig,
   extractResearchPage,
   extractResearchPageContent,
+  getCitedSources,
   isSafeResearchUrl,
   runResearch,
   validateCitationReferences,
@@ -357,6 +358,41 @@ test("citation validator maps only exact retrieved URLs and removes fabricated U
   assert.match(answer, /unverified: no matching retrieved evidence/);
 });
 
+test("research maps an omitted citation only when retrieved evidence supports the claim", async () => {
+  let modelCalls = 0;
+  const result = await runResearch("Explain the subject", [], {
+    provider: {
+      async generateText() {
+        modelCalls += 1;
+        return modelCalls === 1
+          ? JSON.stringify({
+              objective: "Explain the subject.",
+              taskType: "general",
+              deliverable: "A sourced explanation.",
+              requiresCurrentInformation: false,
+              sourcePreferences: [],
+              questions: [],
+              queries: ["subject"],
+            })
+          : JSON.stringify({
+              answer: "The documentation describes the subject.",
+              unresolvedQuestions: [],
+              contradictions: [],
+              completeness: "supported",
+            });
+      },
+    },
+    search: async () => [{ title: source.title, url: source.url }],
+    retrieve: async () => source,
+    archive: async () => ({ markdownPath: "report.md", jsonPath: "report.json" }),
+    onProgress: () => {},
+  });
+
+  assert.match(result.answer, /The documentation describes the subject\. \[SRC-[a-f0-9]{12}\]/);
+  assert.doesNotMatch(result.answer, /unverified: no matching retrieved evidence/);
+  assert.equal(getCitedSources(result.answer, result.sources).length, 1);
+});
+
 test("research counts every readable candidate while citing domain-diverse sources", async () => {
   let modelCall = 0;
   const provider: TextGenerationProvider = {
@@ -667,6 +703,32 @@ test("page extraction prefers the article body, removes boilerplate and duplicat
   assert.doesNotMatch(extracted.content, /Home Products|Related articles|Privacy policy|Accept all cookies/);
   assert.equal(extracted.content.match(/TypeScript was designed/g)?.length, 1);
   assert.ok(extracted.content.length <= 500);
+});
+
+test("page extraction removes product listings and product recommendations from the evidence", () => {
+  const html = `
+    <main>
+      <article>
+        <h1>How solar panels work</h1>
+        <p>${"Photovoltaic cells convert sunlight into electrical current through a semiconductor junction. ".repeat(4)}</p>
+      </article>
+      <section class="product-listing">
+        <h2>Popular panels</h2>
+        <div class="product-card">SolarMax 5000 discount buy now $1,299</div>
+        <div class="product-card">SunBright Ultra sponsored offer $899</div>
+      </section>
+      <ul class="related-products">
+        <li>Recommended inverter bundle</li>
+      </ul>
+    </main>
+  `;
+  const extracted = extractResearchPageContent(html);
+
+  assert.match(extracted.content, /Photovoltaic cells convert sunlight/);
+  assert.doesNotMatch(
+    extracted.content,
+    /Popular panels|SolarMax|SunBright|discount buy now|sponsored offer|Recommended inverter bundle/,
+  );
 });
 
 test("page metadata extraction records a canonical URL, snippets, and a title fallback", () => {
