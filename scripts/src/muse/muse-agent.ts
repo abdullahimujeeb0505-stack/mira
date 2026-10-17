@@ -6,6 +6,13 @@ import { detectMemoryCandidate } from "./memory/auto-memory-policy.js";
 import { retrieveResearchContext } from "./research-context.js";
 import { runResearch, type ResearchResult } from "./research-cli.js";
 import { shouldResearchMessage } from "./message-routing.js";
+import {
+  extractWritingConstraints,
+  generateWrittenDeliverable,
+  isWritingRequest,
+  isWritingRevision,
+  writingNeedsResearch,
+} from "./writing-workflow.js";
 import { JsonMemoryRepository } from "./memory/json-memory-repository.js";
 import { MemoryService } from "./memory/memory-service.js";
 import type { MemoryCategory, MemoryRecord } from "./memory/memory-types.js";
@@ -22,6 +29,7 @@ export type ResearchRunner = (
 
 export class MuseAgent {
   private readonly conversation: ConversationMessage[] = [];
+  private hasActiveWritingAssignment = false;
 
   constructor(
     private readonly provider: TextGenerationProvider,
@@ -45,6 +53,11 @@ export class MuseAgent {
       content,
       this.conversation.length > 0,
     );
+    const writingRevision = isWritingRevision(
+      content,
+      this.hasActiveWritingAssignment,
+    );
+    const wantsWriting = isWritingRequest(content) || writingRevision;
     const candidate = detectMemoryCandidate(content);
     if (candidate) await this.memories.remember(candidate);
 
@@ -76,6 +89,32 @@ export class MuseAgent {
       : "";
 
     const pendingMessage: ConversationMessage = { role: "user", content };
+    if (wantsWriting) {
+      const researchWriting = writingNeedsResearch(content, writingRevision);
+      let evidence: ResearchResult | undefined;
+      if (researchWriting) {
+        const priorConversation = this.conversation
+          .slice(-8)
+          .map(({ role, content: message }) => `${role}: ${message}`)
+          .join("\n");
+        const researchQuestion = priorConversation
+          ? `Writing assignment:\n${content}\n\nRelevant conversation context:\n${priorConversation}`
+          : content;
+        evidence = await this.researcher(researchQuestion, researchContext);
+      }
+      const response = await generateWrittenDeliverable(
+        this.provider,
+        content,
+        [...this.conversation, pendingMessage],
+        extractWritingConstraints(content),
+        evidence,
+        writingRevision,
+      );
+      this.hasActiveWritingAssignment = true;
+      this.conversation.push(pendingMessage, { role: "assistant", content: response });
+      return response;
+    }
+
     if (wantsResearch) {
       const priorConversation = this.conversation
         .slice(-6)

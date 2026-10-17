@@ -110,3 +110,72 @@ test("research reply formatting includes retrieval status and only retrieved sou
   assert.match(answer, /Official guide/);
   assert.match(answer, /not rechecked/);
 });
+
+test("Muse researches factual writing requests and preserves the assignment for revisions", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "muse-agent-writing-"));
+  const generated: string[] = [];
+  const researchQuestions: string[] = [];
+  const agent = new MuseAgent(
+    {
+      async generateText(request) {
+        generated.push(request.systemPrompt);
+        return generated.length === 1
+          ? "## Thesis\nTypeScript narrowing improves safe handling of union values [1]."
+          : "## Revised thesis\nNarrowing makes union handling safer [1].";
+      },
+    },
+    new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
+    undefined,
+    async (question) => {
+      researchQuestions.push(question);
+      return researchResult;
+    },
+  );
+
+  try {
+    const article = await agent.respond(
+      "Write a short technical article about TypeScript narrowing with sources.",
+    );
+    assert.match(article, /TypeScript narrowing improves safe handling/);
+    assert.match(article, /Official guide/);
+    assert.equal(researchQuestions.length, 1);
+
+    const revision = await agent.respond("Make it shorter and more accessible.");
+    assert.match(revision, /Revised thesis/);
+    assert.equal(researchQuestions.length, 1);
+    assert.match(generated[1] ?? "", /Revise the existing active writing assignment/);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("Muse skips external research for a creative writing request", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "muse-agent-creative-"));
+  let researchCalls = 0;
+  let writingPrompt = "";
+  const agent = new MuseAgent(
+    {
+      generateText: async (request) => {
+        writingPrompt = request.systemPrompt;
+        return "A short article from the supplied notes.";
+      },
+    },
+    new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
+    undefined,
+    async () => {
+      researchCalls += 1;
+      return researchResult;
+    },
+  );
+
+  try {
+    assert.equal(
+      await agent.respond("Write a short article based on these notes about a lighthouse."),
+      "A short article from the supplied notes.",
+    );
+    assert.equal(researchCalls, 0);
+    assert.match(writingPrompt, /No external research was requested or retrieved/);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});

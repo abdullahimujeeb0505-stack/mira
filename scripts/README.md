@@ -7,6 +7,16 @@ page retrieval, citation validation, and local archive pipeline. Replies
 identify accessible pages and include their titles and URLs. Unavailable pages
 are not presented as retrieved sources.
 
+Muse also drafts complete general-purpose written deliverables, including
+articles, essays, literature reviews, technical tutorials, reports, study
+guides, outlines, and proposals. Factual work reuses the research pipeline;
+creative or provided-material writing can proceed without an unnecessary web
+search. It carries the current writing assignment into revision requests,
+formats available source metadata for the requested citation style, and flags
+unsupported numeric citations and evidence limitations. Citation checks are
+lexical safeguards rather than a substitute for expert fact-checking, and
+generated code is not executed by the writing workflow.
+
 ## Start Muse in iMessage
 
 Use Photon Spectrum Stable (`spectrum-ts` 12.11.0) and a project with an
