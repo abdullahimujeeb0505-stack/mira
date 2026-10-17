@@ -649,6 +649,18 @@ test("citation validation checks Markdown table cells independently", () => {
   assert.match(validated, /\| --- \| --- \|/);
 });
 
+test("cited-source selection accepts whitespace around valid citation IDs", () => {
+  const citedSource = {
+    ...source,
+    sourceId: "SRC-123456789abc",
+  };
+  const answer = "The documentation describes the subject [ SRC-123456789abc ].";
+
+  assert.deepEqual(getCitedSources(answer, [citedSource]), [
+    { source: citedSource, index: 0 },
+  ]);
+});
+
 test("retrieval and search failures are counted and produce an insufficiency response", async () => {
   const provider: TextGenerationProvider = {
     async generateText() {
@@ -718,7 +730,7 @@ test("synthesis failures return an explicitly labeled evidence brief without mod
   });
 
   assert.match(result.answer, /couldn't synthesize a reliable answer/);
-  assert.doesNotMatch(result.answer, /INVALID CITATION|private provider credential details|Research question|Evidence source/);
+  assert.doesNotMatch(result.answer, /INVALID CITATION|unverified:|private provider credential details|Research question|Evidence source/);
   assert.ok(progress.some((message) => message.includes("synthesis model was unavailable")));
   assert.equal(result.completeness, "partial");
 });

@@ -39,9 +39,33 @@ const CONTEXT_STOP_WORDS = new Set([
 ]);
 
 function hasReliableResearchEvidence(result: ResearchResult): boolean {
+  const supportedAnswer = removeUnsupportedResearchLines(result.answer);
   return result.completeness !== "insufficient" &&
     result.sources.length > 0 &&
-    !/couldn't synthesize a reliable answer|\(unverified:/i.test(result.answer);
+    !/couldn't synthesize a reliable answer/i.test(result.answer) &&
+    getCitedSources(supportedAnswer, result.sources).length > 0;
+}
+
+function removeUnsupportedResearchLines(answer: string): string {
+  return answer
+    .split("\n")
+    .filter((line) => !/\(unverified: no matching retrieved evidence\)/i.test(line))
+    .join("\n")
+    .trim();
+}
+
+function researchFailureReply(result: ResearchResult): string {
+  if (
+    result.answer.trim() &&
+    (result.sources.length === 0 ||
+      /couldn't synthesize a reliable answer/i.test(result.answer))
+  ) {
+    return result.answer.trim();
+  }
+  return (
+    "I couldn't verify a source-supported answer from the retrieved pages. " +
+    "Please narrow the question or provide authoritative sources, and I can try again."
+  );
 }
 
 function refersToLatestResearch(
@@ -162,11 +186,12 @@ export class MuseAgent {
           this.latestResearch = evidence;
         }
         if (!hasReliableResearchEvidence(evidence)) {
+          const reply = researchFailureReply(evidence);
           this.conversation.push(
             pendingMessage,
-            { role: "assistant", content: INSUFFICIENT_RESEARCH_REPLY },
+            { role: "assistant", content: reply },
           );
-          return INSUFFICIENT_RESEARCH_REPLY;
+          return reply;
         }
       }
       const response = await generateWrittenDeliverable(
@@ -223,11 +248,12 @@ export class MuseAgent {
       contextualResearch &&
       !hasReliableResearchEvidence(contextualResearch)
     ) {
+      const reply = researchFailureReply(contextualResearch);
       this.conversation.push(
         pendingMessage,
-        { role: "assistant", content: INSUFFICIENT_RESEARCH_REPLY },
+        { role: "assistant", content: reply },
       );
-      return INSUFFICIENT_RESEARCH_REPLY;
+      return reply;
     }
 
     const response = normalizeResponseFormatting(await this.provider.generateText({
@@ -316,10 +342,16 @@ export function formatResearchReply(
   result: ResearchResult,
   hasArchivedContext = false,
 ): string {
-  if (!hasReliableResearchEvidence(result)) {
-    return INSUFFICIENT_RESEARCH_REPLY;
+  const answerText = removeUnsupportedResearchLines(result.answer);
+  if (
+    result.completeness === "insufficient" ||
+    result.sources.length === 0 ||
+    getCitedSources(answerText, result.sources).length === 0 ||
+    /couldn't synthesize a reliable answer/i.test(answerText)
+  ) {
+    return researchFailureReply(result);
   }
-  const citedSources = getCitedSources(result.answer, result.sources);
+  const citedSources = getCitedSources(answerText, result.sources);
   const sourceIndexes = new Map(
     citedSources.map(({ source, index }) => [
       source.sourceId ?? String(index + 1),
@@ -330,7 +362,7 @@ export function formatResearchReply(
     /\b(?:raw|full|plain)\s+(?:source\s+)?urls?\b|\binclude (?:the )?(?:source )?urls?\b/i
       .test(result.question);
   const answer = normalizeResponseFormatting(
-    result.answer.trim(),
+    answerText,
     citedSources.map(({ source }) => source),
     { preserveSourceUrls: preserveRawUrls },
   )

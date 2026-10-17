@@ -1093,6 +1093,7 @@ type SynthesisResult = {
   unresolvedQuestions: string[];
   contradictions: string[];
   completeness: ResearchCompleteness;
+  failure?: "model-unavailable";
 };
 
 function sourceEvidenceBlock(source: EvidenceSource): string {
@@ -1349,6 +1350,7 @@ async function synthesize(
       unresolvedQuestions: plan.questions,
       contradictions: gaps.contradictions,
       completeness: "partial",
+      failure: "model-unavailable",
     };
   }
 }
@@ -1560,8 +1562,8 @@ export function getCitedSources(
   sources: EvidenceSource[],
 ): Array<{ source: EvidenceSource; index: number }> {
   const citationIds = new Set(
-    [...answer.matchAll(/\[(SRC-[A-Za-z0-9_-]+|\d+)\]/g)]
-      .map((match) => match[1] ?? ""),
+    [...answer.matchAll(/\[\s*(SRC-[A-Za-z0-9_-]+|\d+)\s*\]/g)]
+      .map((match) => match[1]?.trim() ?? ""),
   );
   const legacyNumeric = sources.every((source) => !source.sourceId);
   return sources
@@ -1809,7 +1811,7 @@ export async function runResearch(
     gaps,
     conversationContext,
   );
-  const answer = sources.length
+  const answer = sources.length && !synthesis.failure
     ? validateCitationReferences(
       normalizeResponseFormatting(synthesis.answer),
       sources,

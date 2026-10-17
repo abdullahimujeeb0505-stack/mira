@@ -161,6 +161,20 @@ test("research replies replace internal source IDs with numbered citations and l
   assert.doesNotMatch(answer, /SRC-handbook123|https:\/\/www\.typescriptlang\.org\/docs\/handbook\/2\/narrowing\.html(?!\))/);
 });
 
+test("research replies omit unsupported lines but retain sourced claims and links", () => {
+  const answer = formatResearchReply({
+    ...researchResult,
+    answer:
+      "Control flow analysis narrows union types [1].\n" +
+      "Distant galaxies are classified by this handbook (unverified: no matching retrieved evidence).",
+    completeness: "partial",
+  });
+
+  assert.match(answer, /Control flow analysis narrows union types \[1\]/);
+  assert.match(answer, /\[Official guide\]\(https:\/\/example\.org\/guide\)/);
+  assert.doesNotMatch(answer, /Distant galaxies|unverified/);
+});
+
 test("research replies include raw source URLs only when requested", () => {
   const url = "https://www.typescriptlang.org/docs/handbook/2/narrowing.html";
   const answer = formatResearchReply({
@@ -304,8 +318,8 @@ test("a failed synthesis stops article generation and gives one concise next ste
       "Turn those findings into a concise, publishable article.",
     );
     const expected =
-      "I couldn't verify enough relevant evidence to produce a reliable answer. " +
-      "Please narrow the question or provide authoritative sources, and I can try again.";
+      "I retrieved 3 readable sources, but couldn't synthesize a reliable answer. " +
+      "Please try again shortly.";
 
     assert.equal(first, expected);
     assert.equal(followUp, expected);
@@ -343,6 +357,89 @@ test("a draft with unsupported claims is withheld rather than returned as a full
     assert.equal(modelCalls, 1);
     assert.match(response, /couldn't verify enough relevant evidence/i);
     assert.doesNotMatch(response, /# TypeScript|ocean tides|unverified|\[1\]|Retrieved sources/);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("a brief history keeps validated research when an unrelated claim is unsupported", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "muse-agent-partial-research-"));
+  let researchCalls = 0;
+  let generationCalls = 0;
+  const source = {
+    title: "Elon Musk biography",
+    url: "https://example.org/elon-musk",
+    retrievedAt: "2026-10-17T12:00:00.000Z",
+    content:
+      "Elon Musk was born in Pretoria, South Africa, and later co-founded SpaceX.",
+  };
+  const agent = new MuseAgent(
+    {
+      async generateText() {
+        generationCalls += 1;
+        return "Elon Musk was born in Pretoria, South Africa, and later co-founded SpaceX [1].";
+      },
+    },
+    new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
+    undefined,
+    async (question) => {
+      researchCalls += 1;
+      return {
+        ...researchResult,
+        question,
+        answer:
+          "Musk was born in Pretoria and later co-founded SpaceX [1].\n" +
+          "He held an unsupported role in 2001 (unverified: no matching retrieved evidence).",
+        sources: [source],
+        completeness: "partial",
+      };
+    },
+  );
+
+  try {
+    const answer = await agent.respond("Give me a brief history of Elon Musk.");
+
+    assert.match(answer, /born in Pretoria, South Africa/);
+    assert.match(answer, /co-founded SpaceX/);
+    assert.match(answer, /\[Elon Musk biography\]\(https:\/\/example\.org\/elon-musk\)/);
+    assert.doesNotMatch(answer, /unsupported role|unverified/);
+    assert.equal(researchCalls, 1);
+    assert.equal(generationCalls, 1);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("writing requests retain the actionable no-readable-sources reason", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "muse-agent-search-failure-"));
+  let modelCalls = 0;
+  const failure =
+    "I could not retrieve any readable web sources for this question, so I can't provide a source-grounded answer yet. " +
+    "Search may be blocked or relevant pages may be inaccessible. Please try a narrower query or provide a source URL.";
+  const agent = new MuseAgent(
+    {
+      async generateText() {
+        modelCalls += 1;
+        return "This should not be generated without evidence.";
+      },
+    },
+    new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
+    undefined,
+    async (question) => ({
+      ...researchResult,
+      question,
+      answer: failure,
+      sources: [],
+      completeness: "insufficient",
+    }),
+  );
+
+  try {
+    assert.equal(
+      await agent.respond("Give me a brief history of Elon Musk."),
+      failure,
+    );
+    assert.equal(modelCalls, 0);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
