@@ -78,7 +78,9 @@ test("Muse serves the chat page with same-origin security headers", async () =>
       const response = await fetch(baseUrl);
       assert.equal(response.status, 200);
       const html = await response.text();
-      assert.match(html, /What are you working on\?/);
+      assert.match(html, /What would you like to learn\?/);
+      assert.match(html, /research assistant/i);
+      assert.doesNotMatch(html, /Connect X|Web3 intern|authorizationUrl/i);
       assert.equal(response.headers.get("cache-control"), "no-store");
       assert.equal(response.headers.get("x-content-type-options"), "nosniff");
       assert.equal(response.headers.get("content-security-policy")?.includes("connect-src 'self'"), true);
@@ -342,5 +344,22 @@ test("Muse hides model-generation failures from the HTTP response", async () =>
       const body = await response.text();
       assert.match(body, /could not generate a reply/i);
       assert.equal(body.includes("credential details"), false);
+    },
+  ));
+
+test("X endpoints are removed and publishing commands are ordinary chat messages", async () =>
+  withServer(
+    () => ({ generateText: async () => "I can help research that topic." }),
+    async (baseUrl) => {
+      const xStatus = await fetch(`${baseUrl}/api/x/status`, {
+        headers: { Authorization: `Bearer ${testAccessToken}` },
+      });
+      assert.equal(xStatus.status, 404);
+
+      const reply = await sendMessage(baseUrl, "publish quote draft 12345678");
+      assert.equal(reply.status, 200);
+      assert.deepEqual(await reply.json(), {
+        reply: "I can help research that topic.",
+      });
     },
   ));

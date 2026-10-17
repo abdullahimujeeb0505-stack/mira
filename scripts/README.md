@@ -1,4 +1,90 @@
-# Hello HTTP server
+# Muse Research Agent
+
+Muse is a general-purpose research assistant with a Photon-connected iMessage
+entry point. It avoids web searches for greetings and lightweight chat; factual
+questions and explicit research requests use the existing DuckDuckGo search,
+page retrieval, citation validation, and local archive pipeline. Replies
+identify accessible pages and include their titles and URLs. Unavailable pages
+are not presented as retrieved sources.
+
+## Start Muse in iMessage
+
+Use Photon Spectrum Stable (`spectrum-ts` 12.11.0) and a project with an
+iMessage line configured. The integration follows the official [Spectrum
+TypeScript quickstart](https://photon.codes/docs/spectrum-ts/getting-started)
+and [iMessage provider guide](https://photon.codes/docs/spectrum-ts/providers/imessage).
+Set these environment variables:
+
+- `SPECTRUM_PROJECT_ID` — required Photon project ID.
+- `SPECTRUM_PROJECT_SECRET` — required Photon project secret.
+- `GROK_API_CODING_KEY` — required by default for the existing Groq model
+  provider; despite the variable name, this is the configured Groq credential.
+
+Alternatively, set `MUSE_LLM_PROVIDER=agentrouter` and
+`AGENTROUTER_API_KEY` instead of `GROK_API_CODING_KEY`.
+`AGENTROUTER_MODEL` and `GROQ_MODEL` are optional model overrides.
+Research is bounded to two rounds, eight searches, 16 candidate pages, and six
+sources by default. `MUSE_RESEARCH_MAX_ROUNDS` (1–3),
+`MUSE_RESEARCH_MAX_SEARCHES` (1–12), `MUSE_RESEARCH_MAX_CANDIDATES` (1–24),
+`MUSE_RESEARCH_SOURCES` (1–10), and `MUSE_RESEARCH_MAX_PAGE_BYTES`
+(10,000–1,000,000; default 250,000) tune those limits. Invalid values stop
+research with a configuration error. Search and readable-page failures are
+reported as limitations; when no page is readable Muse returns an insufficiency
+response rather than fabricating a sourced answer. Retrieved page text and
+archive context are passed to the model as untrusted evidence, and citations are
+checked for in-range references and lexical support.
+
+`MUSE_PHOTON_MEMORY_DIR` optionally changes the per-conversation memory folder.
+No X developer account, X credentials, browser session secret, or search API
+key is required by the Photon agent.
+
+From the repository root, start the listener with:
+
+```sh
+pnpm --filter @workspace/scripts run muse-photon
+```
+
+Stop it with Ctrl-C or SIGTERM; the listener closes the Spectrum app cleanly.
+Each iMessage space has separate in-process conversation history and a
+separately hashed memory file under `scripts/data/muse-photon-spaces/` by
+default. The agent uses Photon typing indicators while researching, ignores
+outbound events and non-text content, and sends responses as replies to the
+incoming message. Search uses public DuckDuckGo HTML and only retrieves
+accessible HTML/text pages; search blocking, paywalls, dynamic sites, and
+conflicting evidence can limit results. Prior matching archive entries are
+identified as historical and are not treated as freshly verified. Conversations
+are not restored after a process restart.
+Research URLs are restricted to HTTP(S), checked against private and local
+addresses, and fetched with redirect, time, and response-size limits. Hostname
+validation uses a DNS preflight; DNS changes between that check and the HTTP
+connection are not pinned, so this is not a general-purpose URL-fetching service.
+
+Automated tests use deterministic providers and fake Photon events; they do not
+call a live model, search service, X API, or messaging API. No live iMessage
+interaction has been verified. Configure Photon credentials and a managed
+iMessage line, start the command above, then send a message to the configured
+line to complete end-to-end verification.
+
+## Research CLI
+
+Run one live research task and save the report in the local archive:
+
+```sh
+pnpm --filter @workspace/scripts run muse-research -- "How does TypeScript type narrowing work?"
+```
+
+## Muse CLI
+
+Start a general-purpose local conversation with Muse:
+
+```sh
+pnpm --filter @workspace/scripts run muse
+```
+
+Enter a message at the `You:` prompt. Type `/help` for memory commands or
+`/exit` to end the session. Conversation history is session-only.
+
+## Hello HTTP server
 
 A minimal TypeScript HTTP server using Node.js built-ins only.
 
@@ -20,20 +106,6 @@ pnpm --filter @workspace/scripts run groq-api-test
 ```
 
 The script sends `Reply with exactly: GROQ WORKS` to Groq's Responses API using `openai/gpt-oss-20b` and prints the model response.
-
-## Muse CLI
-
-Start a conversation with Muse, the personal Web3 intern:
-
-```sh
-pnpm --filter @workspace/scripts run muse
-```
-
-Enter a message at the `You:` prompt. Type `/help` for memory commands or `/exit` to end the session. By default, Muse uses the `GROK_API_CODING_KEY` secret and the Groq `openai/gpt-oss-20b` model. Conversation history is session-only.
-
-Set `MUSE_LLM_PROVIDER=agentrouter` to use AgentRouter instead. This requires `AGENTROUTER_API_KEY`; `AGENTROUTER_MODEL` optionally overrides the default `gpt-5.6-sol` model. AgentRouter models can change availability, so verify the current model list in its [AgentRouter Codex guide](https://ps.air-outer.com/docs/codex.html). Set `MUSE_LLM_PROVIDER=groq` or leave it unset to keep using Groq.
-
-Memories persist in `scripts/data/muse-memory.json` (ignored by Git); set `MUSE_MEMORY_PATH` to use a different file.
 
 ## Muse browser demo
 
@@ -62,6 +134,10 @@ Each browser session gets an independent `MuseAgent` and its own saved-memory fi
 Development URLs are public by default. Before starting the preview, set `MUSE_CHAT_ACCESS_TOKEN` in Replit Secrets to a random value of at least 32 bytes. The page requires this access code and sends it in an authorization header; it is held in the current browser tab and is not saved to a cookie or local storage. The server fails closed if this secret is missing or too short. Keep the Replit development URL private as an additional layer, and add user-level access control and rate limits before any public deployment.
 
 The Muse preview uses a separate workflow on port `3000`; it does not replace the API Server (`/api`) or Canvas (`/__mockup`). It can start only after the existing scripts dependencies, including `tsx`, are available.
+
+The opportunity, source-ingestion, tracking, watch, learning, and decision
+modules documented below remain standalone utilities. The Photon research agent
+does not load them or expose their workflows in iMessage.
 
 ## Muse learning records
 
