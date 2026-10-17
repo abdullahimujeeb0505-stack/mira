@@ -5,6 +5,7 @@ import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { createTextGenerationProvider } from "./provider-selection.js";
 import type { TextGenerationProvider } from "./llm-provider.js";
+import { normalizeResponseFormatting } from "./response-formatting.js";
 
 type ChatMessage = {
   role: "system" | "user";
@@ -699,6 +700,22 @@ async function searchWeb(query: string): Promise<SearchHit[]> {
   }
 
   const html = await readBoundedText(response, SEARCH_RESPONSE_LIMIT);
+  return parseDuckDuckGoSearchResults(html, response.status);
+}
+
+export function parseDuckDuckGoSearchResults(
+  html: string,
+  status = 200,
+): SearchHit[] {
+  if (
+    status === 202 ||
+    /anomaly-modal|challenge to confirm this search|bots use DuckDuckGo too/i.test(html)
+  ) {
+    throw new Error(
+      `Web search endpoint returned a bot challenge (HTTP ${status}).`,
+    );
+  }
+
   const hits: SearchHit[] = [];
 
   for (const match of html.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi)) {
@@ -1053,7 +1070,12 @@ function scoreSource(
   for (const term of preferenceTerms) {
     if (contentTerms.has(term)) score += 0.5;
   }
-  if (/\.(gov|edu)(\.|$)/i.test(new URL(source.url).hostname)) score += 3;
+  const sourceUrl = new URL(source.url);
+  const documentationTitle =
+    /\b(?:handbook|api reference|specification|standard)\b/i.test(source.title) &&
+    /(?:\/docs?\/|handbook|reference|specification)/i.test(sourceUrl.pathname);
+  if (/\.(gov|edu)(\.|$)/i.test(sourceUrl.hostname)) score += 3;
+  if (source.sourceType === "official" || documentationTitle) score += 4;
   if (source.sourceType === "research" || source.sourceType === "government") score += 3;
 
   if (needsCurrentInformation && source.publishedAt) {
@@ -1273,7 +1295,9 @@ async function synthesize(
             "Do not mark it partial solely because the bounded search/candidate budget " +
             "was used or some returned pages were inaccessible; judge the relevance, " +
             "quality, diversity, and coverage of the readable evidence. Answer the " +
-            "current question directly; do not repeat the previous answer or report. " +
+            "current question directly in a few concise paragraphs by default. Do not " +
+            "include large tables unless explicitly requested, and do not repeat the " +
+            "previous answer or report. " +
             "Do not include internal labels, serialized conversation, planning prompts, " +
             "or research diagnostics in the answer.",
         },
@@ -1377,7 +1401,29 @@ export function validateCitationReferences(
     );
   const markedClaims: string[] = [];
   const lines = safeAnswer.split("\n");
-  for (const line of lines) {
+  for (let lineIndex = 0; lineIndex < lines.length; lineIndex += 1) {
+    const line = lines[lineIndex] ?? "";
+    const tableCells = splitMarkdownTableRow(line);
+    const nextLine = lines[lineIndex + 1] ?? "";
+    if (tableCells && isMarkdownTableSeparator(nextLine)) {
+      markedClaims.push(line, nextLine);
+      lineIndex += 1;
+      continue;
+    }
+    if (isMarkdownTableSeparator(line)) {
+      markedClaims.push(line);
+      continue;
+    }
+    if (tableCells) {
+      markedClaims.push(
+        `| ${tableCells.slice(1, -1).map((cell) =>
+          cell.trim()
+            ? validateCitationReferences(cell.trim(), sources, options)
+            : ""
+        ).join(" | ")} |`,
+      );
+      continue;
+    }
     if (!line.trim() || /^\s{0,3}#{1,6}\s/.test(line)) {
       markedClaims.push(line);
       continue;
@@ -1450,6 +1496,56 @@ export function validateCitationReferences(
     .replace(/[ \t]{2,}/g, " ")
     .replace(/\s+([,.;:!?])/g, "$1")
     .trim();
+}
+
+function splitMarkdownTableRow(line: string): string[] | undefined {
+  const trimmed = line.trim();
+  if (!trimmed.startsWith("|") || !trimmed.endsWith("|")) return undefined;
+
+  const cells: string[] = [];
+  let cellStart = 1;
+  let codeTicks = 0;
+  let quote: string | undefined;
+  let escaped = false;
+  for (let index = 1; index < trimmed.length - 1; index += 1) {
+    const character = trimmed[index] ?? "";
+    if (escaped) {
+      escaped = false;
+      continue;
+    }
+    if (character === "\\") {
+      escaped = true;
+      continue;
+    }
+    if (character === "`") {
+      codeTicks = codeTicks === 0 ? 1 : 0;
+      continue;
+    }
+    if (codeTicks > 0) continue;
+    if (quote) {
+      if (character === quote) quote = undefined;
+      continue;
+    }
+    if (character === '"' || character === "“" || character === "‘") {
+      quote = character === "“" ? "”" : character === "‘" ? "’" : character;
+      continue;
+    }
+    if (character === "|") {
+      cells.push(trimmed.slice(cellStart, index));
+      cellStart = index + 1;
+    }
+  }
+  cells.push(trimmed.slice(cellStart, -1));
+  return cells.length > 1 ? ["", ...cells, ""] : undefined;
+}
+
+function isMarkdownTableSeparator(line: string): boolean {
+  const cells = splitMarkdownTableRow(line);
+  return Boolean(
+    cells &&
+      cells.slice(1, -1).length > 0 &&
+      cells.slice(1, -1).every((cell) => /^\s*:?-{3,}:?\s*$/.test(cell)),
+  );
 }
 
 export function getCitedSources(
@@ -1707,10 +1803,14 @@ export async function runResearch(
     conversationContext,
   );
   const answer = sources.length
-    ? validateCitationReferences(synthesis.answer, sources, {
+    ? validateCitationReferences(
+      normalizeResponseFormatting(synthesis.answer),
+      sources,
+      {
         autoCiteSupportedClaims: true,
-      })
-    : synthesis.answer;
+      },
+    )
+    : normalizeResponseFormatting(synthesis.answer);
   if (answer.includes("(unverified:")) {
     limitations.push("One or more generated citations did not match a retrieved source or relevant page text.");
   }
@@ -1728,7 +1828,9 @@ export async function runResearch(
     completeness:
       sources.length === 0
         ? "insufficient"
-        : synthesis.completeness,
+        : synthesis.completeness === "supported" && answer.includes("(unverified:")
+          ? "partial"
+          : synthesis.completeness,
     limitations,
     retrieval: { candidateCount, retrievedCount, failedCount, rounds, searches },
   };

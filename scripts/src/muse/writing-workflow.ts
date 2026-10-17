@@ -4,11 +4,12 @@ import {
   type EvidenceSource,
   type ResearchResult,
 } from "./research-cli.js";
+import { normalizeResponseFormatting } from "./response-formatting.js";
 
 const DELIVERABLE =
   /\b(article|essay|blog post|explainer|educational content|research essay|analytical essay|literature review|tutorial|guide|code explanation|technical documentation|report|investigative brief|company profile|profile|summary|study notes|learning guide|notes|comparison|brief|outline|proposal|introduction|conclusion|reference list)\b/i;
 const WRITING_ACTION =
-  /\b(write|draft|create|compose|prepare|produce|develop|generate|i need|i want|turn this into|make me|give me)\b/i;
+  /\b(write|draft|create|compose|prepare|produce|develop|generate|i need|i want|turn this into|turn (?:these|those|the|my|your) (?:findings|results|research|sources|notes) into|make me|give me)\b/i;
 const REVISION_ACTION =
   /\b(revise|rewrite|edit|expand|shorten|condense|simplify|restructure|improve|polish|change the tone|make it (?:shorter|longer|simpler|more|less)|add (?:more )?(?:detail|sources|research|examples)|incorporate (?:additional )?research)\b/i;
 const CREATIVE_OR_EDITING_ONLY = /\b(poem|poetry|fiction|short story|fictional|song lyrics)\b/i;
@@ -147,7 +148,7 @@ export function buildWritingPrompt(
   const hasSources = evidenceSources.length > 0;
   const wordCount = constraints.requestedWordCount
     ? `Target body length: ${constraints.requestedWordCount} words (acceptable range ${Math.floor(constraints.requestedWordCount * 0.9)}-${Math.ceil(constraints.requestedWordCount * 1.1)} words). Treat this range as a hard constraint: count and revise the deliverable before responding. Exclude appended references and research notes from this count.`
-    : "Use a length appropriate to the requested format and scope.";
+    : "Keep the main deliverable concise by default: about 500 words for an article or essay and shorter for a simple explainer. Do not add optional summaries, extensive tables, or repeated conclusions unless requested.";
   return [
     revision
       ? "Revise the existing active writing assignment in the conversation. Preserve relevant facts, sources, and the author's purpose unless the user asks to change them."
@@ -232,6 +233,7 @@ export async function generateWrittenDeliverable(
     systemPrompt,
     conversation,
   });
+  raw = normalizeResponseFormatting(raw);
   let validated = validateDraft(raw);
   let lengthNotice = "";
   const requestedWordCount = constraints.requestedWordCount;
@@ -261,6 +263,7 @@ export async function generateWrittenDeliverable(
           },
         ],
       });
+      raw = normalizeResponseFormatting(raw);
       validated = validateDraft(raw);
       const correctedWordCount = countWritingWords(validated);
       if (correctedWordCount < minimum || correctedWordCount > maximum) {
@@ -271,7 +274,9 @@ export async function generateWrittenDeliverable(
     }
   }
 
-  const formatted = applyCitationStyle(validated, sources, constraints.citationStyle);
+  const formatted = normalizeResponseFormatting(
+    applyCitationStyle(validated, sources, constraints.citationStyle),
+  );
   const references = renderReferences(sources, constraints.citationStyle);
   const notices: string[] = [];
 

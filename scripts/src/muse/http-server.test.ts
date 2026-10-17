@@ -53,6 +53,28 @@ function getSessionCookie(response: Response): string {
   return cookie;
 }
 
+type FakeElement = {
+  tagName: string;
+  children: FakeElement[];
+  textContent: string;
+  append(...elements: FakeElement[]): void;
+  addEventListener(): void;
+  scrollIntoView(): void;
+};
+
+function fakeElement(tagName: string): FakeElement {
+  return {
+    tagName,
+    children: [],
+    textContent: "",
+    append(...elements) {
+      this.children.push(...elements);
+    },
+    addEventListener() {},
+    scrollIntoView() {},
+  };
+}
+
 async function sendMessage(
   baseUrl: string,
   message: string,
@@ -94,6 +116,67 @@ test("Muse serves the chat page with same-origin security headers", async () =>
       assert.equal(response.headers.get("x-content-type-options"), "nosniff");
       assert.equal(response.headers.get("content-security-policy")?.includes("connect-src 'self'"), true);
       assert.match(html, /access-code/);
+    },
+  ));
+
+test("browser Markdown rendering normalizes heading levels, tables, and code blocks", async () =>
+  withServer(
+    () => ({ generateText: async () => "unused" }),
+    async (baseUrl) => {
+      const response = await fetch(baseUrl);
+      const html = await response.text();
+      const script = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
+      assert.ok(script);
+      const document = {
+        querySelector: () => fakeElement("input"),
+        createElement: (tagName: string) => fakeElement(tagName),
+        createTextNode: (text: string) => {
+          const node = fakeElement("#text");
+          node.textContent = text;
+          return node;
+        },
+      };
+      const sandbox = { document, URL };
+      new Script(
+        `${script}\nglobalThis.renderMarkdownForTest = renderMarkdown;`,
+      ).runInNewContext(sandbox);
+
+      const root = fakeElement("div");
+      (sandbox as typeof sandbox & {
+        renderMarkdownForTest: (parent: FakeElement, text: string) => void;
+      }).renderMarkdownForTest(
+        root,
+        [
+          "# Article",
+          "#### First section",
+          "",
+          "| Name | Code |",
+          "| --- | --- |",
+          "| Example | `a|b` |",
+          "",
+          "```ts",
+          "const line = \"# not heading | ;\";",
+          "```",
+        ].join("\n"),
+      );
+
+      assert.deepEqual(
+        root.children.map((child) => child.tagName),
+        ["h2", "h3", "table", "pre"],
+      );
+      const table = root.children[2];
+      assert.ok(table);
+      const body = table.children[1];
+      assert.ok(body);
+      assert.equal(body.children[0]?.children.length, 2);
+      const inlineCode = body.children[0]?.children[1]?.children.find(
+        (child) => child.tagName === "code",
+      );
+      assert.equal(inlineCode?.textContent, "a|b");
+      assert.equal(
+        root.children[3]?.children[0]?.textContent,
+        "const line = \"# not heading | ;\";",
+      );
     },
   ));
 

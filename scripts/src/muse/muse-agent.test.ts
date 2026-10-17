@@ -29,7 +29,8 @@ const researchResult: ResearchResult = {
     title: "Official guide",
     url: "https://example.org/guide",
     retrievedAt: "2026-10-17T12:00:00.000Z",
-    content: "Retrieved source text.",
+    content:
+      "TypeScript narrowing improves safe handling of union values. Control flow analysis narrows union types.",
   }],
   unresolvedQuestions: [],
   contradictions: [],
@@ -230,6 +231,166 @@ test("Muse researches factual writing requests and preserves the assignment for 
     assert.match(revision, /Revised thesis/);
     assert.equal(researchQuestions.length, 1);
     assert.match(generated[1] ?? "", /Revise the existing active writing assignment/);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("a failed synthesis stops article generation and gives one concise next step", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "muse-agent-insufficient-research-"));
+  let modelCalls = 0;
+  let researchCalls = 0;
+  const agent = new MuseAgent(
+    {
+      async generateText() {
+        modelCalls += 1;
+        return "This must not become an article.";
+      },
+    },
+    new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
+    undefined,
+    async (question) => {
+      researchCalls += 1;
+      return {
+        ...researchResult,
+        question,
+        answer: "I retrieved 3 readable sources, but couldn't synthesize a reliable answer. Please try again shortly.",
+        completeness: "partial",
+      };
+    },
+  );
+
+  try {
+    const first = await agent.respond("How does TypeScript improve JavaScript?");
+    const followUp = await agent.respond(
+      "Turn those findings into a concise, publishable article.",
+    );
+    const expected =
+      "I couldn't verify enough relevant evidence to produce a reliable answer. " +
+      "Please narrow the question or provide authoritative sources, and I can try again.";
+
+    assert.equal(first, expected);
+    assert.equal(followUp, expected);
+    assert.equal(researchCalls, 1);
+    assert.equal(modelCalls, 0);
+    assert.doesNotMatch(followUp, /unverified|Sources:|Research completeness/);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("a draft with unsupported claims is withheld rather than returned as a full article", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "muse-agent-unsupported-draft-"));
+  let modelCalls = 0;
+  const agent = new MuseAgent(
+    {
+      async generateText() {
+        modelCalls += 1;
+        return [
+          "# TypeScript",
+          "TypeScript narrowing improves safe handling of union values [1].",
+          "Ocean tides are caused by distant stars [1].",
+        ].join("\n\n");
+      },
+    },
+    new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
+    undefined,
+    async (question) => ({ ...researchResult, question }),
+  );
+
+  try {
+    const response = await agent.respond(
+      "Write a short sourced article about TypeScript narrowing.",
+    );
+    assert.equal(modelCalls, 1);
+    assert.match(response, /couldn't verify enough relevant evidence/i);
+    assert.doesNotMatch(response, /# TypeScript|ocean tides|unverified|\[1\]|Retrieved sources/);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("a writing follow-up reuses only its immediately relevant retrieved evidence", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "muse-agent-writing-followup-"));
+  const researchContexts: string[] = [];
+  let researchCalls = 0;
+  let modelCalls = 0;
+  const agent = new MuseAgent(
+    {
+      async generateText() {
+        modelCalls += 1;
+        return "## Type narrowing\nControl flow analysis narrows union types [1].";
+      },
+    },
+    new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
+    undefined,
+    async (question, _archive, context) => {
+      researchCalls += 1;
+      researchContexts.push(context ?? "");
+      return { ...researchResult, question };
+    },
+  );
+
+  try {
+    await agent.respond("How does TypeScript narrowing work?");
+    const article = await agent.respond(
+      "Turn those findings into a concise article about TypeScript narrowing.",
+    );
+
+    assert.match(article, /Control flow analysis narrows union types/);
+    assert.equal(researchCalls, 1);
+    assert.equal(modelCalls, 1);
+    assert.equal(researchContexts[0], "");
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("an unrelated new research request does not receive stale research as context", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "muse-agent-fresh-research-"));
+  const researchContexts: string[] = [];
+  const agent = new MuseAgent(
+    { generateText: async () => "unused" },
+    new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
+    undefined,
+    async (question, _archive, context) => {
+      researchContexts.push(context ?? "");
+      return { ...researchResult, question };
+    },
+  );
+
+  try {
+    await agent.respond("How does TypeScript narrowing work?");
+    await agent.respond("Search the web for current ocean tide predictions.");
+    assert.equal(researchContexts.length, 2);
+    assert.equal(researchContexts[1], "");
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("a writing request cannot reuse research after an unrelated conversational turn", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "muse-agent-expired-research-"));
+  const researchContexts: string[] = [];
+  let researchCalls = 0;
+  const agent = new MuseAgent(
+    { generateText: async () => "A concise reply." },
+    new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
+    undefined,
+    async (question, _archive, context) => {
+      researchCalls += 1;
+      researchContexts.push(context ?? "");
+      return { ...researchResult, question };
+    },
+  );
+
+  try {
+    await agent.respond("How does TypeScript narrowing work?");
+    await agent.respond("I prefer concise wording.");
+    await agent.respond("Turn those findings into a short article.");
+
+    assert.equal(researchCalls, 2);
+    assert.equal(researchContexts[1], "");
   } finally {
     await rm(directory, { recursive: true, force: true });
   }

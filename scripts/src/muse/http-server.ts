@@ -88,7 +88,7 @@ const CHAT_PAGE = `<!doctype html>
       const status = document.querySelector("#status");
 
       function addInlineFormatting(parent, text) {
-        const parts = text.split(/(\\*\\*[^*]+\\*\\*|\\*[^*]+\\*|\\[[^\\]]+\\]\\([^)]+\\))/g);
+        const parts = text.split(/(\\*\\*[^*]+\\*\\*|\\*[^*]+\\*|\`[^\`]+\`|\\[[^\\]]+\\]\\([^)]+\\))/g);
         for (const part of parts) {
           if (part.startsWith("**") && part.endsWith("**") && part.length > 4) {
             const strong = document.createElement("strong");
@@ -98,6 +98,10 @@ const CHAT_PAGE = `<!doctype html>
             const em = document.createElement("em");
             em.textContent = part.slice(1, -1);
             parent.append(em);
+          } else if (part.startsWith("\`") && part.endsWith("\`") && part.length > 2) {
+            const code = document.createElement("code");
+            code.textContent = part.slice(1, -1);
+            parent.append(code);
           } else if (part.startsWith("[") && part.includes("](") && part.endsWith(")")) {
             const match = part.match(/^\\[([^\\]]+)\\]\\(([^)]+)\\)$/);
             let url;
@@ -124,24 +128,78 @@ const CHAT_PAGE = `<!doctype html>
 
       function renderMarkdown(parent, text) {
         const lines = text.split("\\n");
-        const isTableRow = (line) => line.includes("|");
-        const cells = (line) => line.trim().replace(/^\\||\\|$/g, "").split("|").map((cell) => cell.trim());
+        const cells = (line) => {
+          const value = line.trim();
+          if (!value.startsWith("|") || !value.endsWith("|")) return null;
+          const result = [];
+          let cell = "";
+          let inCode = false;
+          let escaped = false;
+          for (let position = 1; position < value.length - 1; position += 1) {
+            const character = value[position];
+            if (escaped) {
+              cell += character;
+              escaped = false;
+            } else if (character === "\\\\") {
+              escaped = true;
+            } else if (character === "\`") {
+              inCode = !inCode;
+              cell += character;
+            } else if (character === "|" && !inCode) {
+              result.push(cell.trim());
+              cell = "";
+            } else {
+              cell += character;
+            }
+          }
+          result.push(cell.trim());
+          return result;
+        };
+        const isTableSeparator = (line) => {
+          const row = cells(line);
+          return Boolean(row && row.length && row.every((cell) => /^:?-{3,}:?$/.test(cell)));
+        };
+        const isTableStart = (position) =>
+          Boolean(cells(lines[position]) && isTableSeparator(lines[position + 1] || ""));
         let index = 0;
+        let previousHeadingLevel = 1;
         while (index < lines.length) {
           const line = lines[index].trim();
           if (!line) {
             index += 1;
             continue;
           }
+          const fence = line.match(/^(\`\`\`|~~~)(.*)$/);
+          if (fence) {
+            const closing = fence[1];
+            const codeLines = [];
+            index += 1;
+            while (index < lines.length && !lines[index].trim().startsWith(closing)) {
+              codeLines.push(lines[index]);
+              index += 1;
+            }
+            if (index < lines.length) index += 1;
+            const pre = document.createElement("pre");
+            const code = document.createElement("code");
+            code.textContent = codeLines.join("\\n");
+            pre.append(code);
+            parent.append(pre);
+            continue;
+          }
           const heading = line.match(/^(#{1,6})\\s+(.+)$/);
           if (heading) {
-            const element = document.createElement("h" + heading[1].length);
+            const level = Math.min(
+              6,
+              Math.max(2, Math.min(heading[1].length + 1, previousHeadingLevel + 1))
+            );
+            previousHeadingLevel = level;
+            const element = document.createElement("h" + level);
             addInlineFormatting(element, heading[2]);
             parent.append(element);
             index += 1;
             continue;
           }
-          if (isTableRow(line) && lines[index + 1] && /^\\s*\\|?\\s*:?-{3,}/.test(lines[index + 1])) {
+          if (isTableStart(index)) {
             const table = document.createElement("table");
             const head = document.createElement("thead");
             const headerRow = document.createElement("tr");
@@ -154,7 +212,7 @@ const CHAT_PAGE = `<!doctype html>
             table.append(head);
             index += 2;
             const body = document.createElement("tbody");
-            while (index < lines.length && isTableRow(lines[index].trim())) {
+            while (index < lines.length && cells(lines[index].trim()) && !isTableSeparator(lines[index])) {
               const row = document.createElement("tr");
               for (const cell of cells(lines[index])) {
                 const td = document.createElement("td");
@@ -186,8 +244,9 @@ const CHAT_PAGE = `<!doctype html>
           const paragraphLines = [];
           while (index < lines.length && lines[index].trim() &&
             !/^#{1,6}\\s/.test(lines[index].trim()) &&
+            !/^(\`\`\`|~~~)/.test(lines[index].trim()) &&
             !/^([-+*])\\s+|^\\d+\\.\\s+/.test(lines[index].trim()) &&
-            !(isTableRow(lines[index].trim()) && lines[index + 1] && /^\\s*\\|?\\s*:?-{3,}/.test(lines[index + 1]))) {
+            !isTableStart(index)) {
             paragraphLines.push(lines[index].trim());
             index += 1;
           }

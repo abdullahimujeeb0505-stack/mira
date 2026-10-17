@@ -11,6 +11,7 @@ import {
   extractResearchPageContent,
   getCitedSources,
   isSafeResearchUrl,
+  parseDuckDuckGoSearchResults,
   runResearch,
   validateCitationReferences,
   type EvidenceSource,
@@ -437,6 +438,54 @@ test("research counts every readable candidate while citing domain-diverse sourc
   assert.equal(result.sources.length, 1);
 });
 
+test("research prefers authoritative documentation when relevant sources are available", async () => {
+  const requests: TextGenerationRequest[] = [];
+  const provider: TextGenerationProvider = {
+    async generateText(request) {
+      requests.push(request);
+      return requests.length === 1
+        ? JSON.stringify({
+            objective: "Explain TypeScript narrowing.",
+            taskType: "technical",
+            deliverable: "A concise explanation.",
+            requiresCurrentInformation: false,
+            sourcePreferences: ["official documentation"],
+            questions: ["How does narrowing work?"],
+            queries: ["TypeScript narrowing"],
+          })
+        : `TypeScript control flow analysis narrows union types [${firstCitationId(request)}].`;
+    },
+  };
+  const result = await runResearch("Explain TypeScript narrowing", [], {
+    provider,
+    config: { maxRounds: 1, maxSearches: 1, maxCandidates: 2, maxSources: 1 },
+    search: async () => [
+      { title: "TypeScript narrowing tips", url: "https://blog.example.org/typescript/narrowing" },
+      { title: "TypeScript Handbook", url: "https://www.typescriptlang.org/docs/handbook/2/narrowing.html" },
+    ],
+    retrieve: async (hit) => ({
+      ...hit,
+      retrievedAt: "2026-10-17T12:00:00.000Z",
+      content: "TypeScript control flow analysis narrows union types based on guards.",
+    }),
+    archive: async () => ({ markdownPath: "report.md", jsonPath: "report.json" }),
+    onProgress: () => {},
+  });
+
+  assert.equal(result.sources.length, 1);
+  assert.equal(result.sources[0]?.title, "TypeScript Handbook");
+});
+
+test("DuckDuckGo search challenges are surfaced instead of treated as empty successful results", () => {
+  assert.throws(
+    () => parseDuckDuckGoSearchResults(
+      '<div class="anomaly-modal">Please complete the challenge.</div>',
+      202,
+    ),
+    /bot challenge \(HTTP 202\)/,
+  );
+});
+
 test("research adapts through a bounded follow-up round and labels hostile page text untrusted", async () => {
   const requests: TextGenerationRequest[] = [];
   const searched: string[] = [];
@@ -575,6 +624,27 @@ test("citations only address sources that fit the bounded synthesis evidence", a
   assert.doesNotMatch(suppliedContext, /Topic source 6/);
   assert.ok(result.limitations.some((item) => item.includes("fit in the synthesis evidence budget")));
   assert.doesNotMatch(result.answer, /INVALID CITATION/);
+});
+
+test("citation validation checks Markdown table cells independently", () => {
+  const citedSource = {
+    ...source,
+    sourceId: "SRC-123456789abc",
+    content: "TypeScript control flow analysis narrows union types based on guards.",
+  };
+  const answer = [
+    "| Claim | Evidence |",
+    "| --- | --- |",
+    `| TypeScript analysis | Control flow analysis narrows union types [${citedSource.sourceId}]. |`,
+    `| Unsupported claim | Ocean tides are caused by distant stars [${citedSource.sourceId}]. |`,
+  ].join("\n");
+
+  const validated = validateCitationReferences(answer, [citedSource]);
+
+  assert.match(validated, /\| Control flow analysis narrows union types \[SRC-123456789abc\]\. \|/);
+  assert.match(validated, /Ocean tides are caused by distant stars \(unverified: no matching retrieved evidence\)/);
+  assert.doesNotMatch(validated, /Ocean tides are caused by distant stars \[SRC-123456789abc\]/);
+  assert.match(validated, /\| --- \| --- \|/);
 });
 
 test("retrieval and search failures are counted and produce an insufficiency response", async () => {
