@@ -12,7 +12,7 @@ const INFORMATION_REQUEST =
 const EXPLANATION_REQUEST =
   /^(?:tell me about|explain|define|summari[sz]e|compare|investigate|look into)\b/i;
 const CONTEXTUAL_FOLLOW_UP =
-  /^(?:why|how so|what about(?: it| that)?|and then|then what|explain that simply|make that simpler|what does (?:this|that) mean|can you clarify that)\??$/i;
+  /^(?:why|how so|what about(?: it| that)?|and then|then what|explain that simply|make that simpler|what does (?:this|that|it) mean(?: in practice)?|can you clarify that)\??$/i;
 const CONTEXTUAL_RELATION_FOLLOW_UP =
   /\b(?:relate|related|connect|connection)\b.{0,100}\b(?:what you (?:just )?(?:researched|said|found)|previous (?:answer|research)|that topic)\b/i;
 

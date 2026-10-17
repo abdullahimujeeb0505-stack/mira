@@ -374,7 +374,7 @@ function removeBoilerplate(html: string): string {
     );
   }
   cleaned = cleaned.replace(
-    /<(div|section|ul|ol|aside|nav)\b[^>]*(?:id|class|role)\s*=\s*["'][^"']*(?:cookie|consent|sidebar|navigation|navbar|menu|related|recommend|promo|advert|subscribe|social|breadcrumb|share|footer|header|banner|product(?:s|[-_ ]?(?:listing|grid|card|catalog|recommendations?|carousel))?|catalog(?:[-_ ]?(?:listing|grid|products?))?|shop(?:[-_ ]?(?:listing|grid|products?))?)[^"']*["'][^>]*>[\s\S]*?<\/\1\s*>/gi,
+    /<(div|section|ul|ol|aside|nav)\b[^>]*(?:id|class|role)\s*=\s*["'][^"']*(?:cookie|consent|sidebar|navigation|navbar|menu|related|recommend|promo|advert|subscribe|social|breadcrumb|share|feedback|helpful|rating|footer|header|banner|product(?:s|[-_ ]?(?:listing|grid|card|catalog|recommendations?|carousel))?|catalog(?:[-_ ]?(?:listing|grid|products?))?|shop(?:[-_ ]?(?:listing|grid|products?))?)[^"']*["'][^>]*>[\s\S]*?<\/\1\s*>/gi,
     " ",
   );
   cleaned = cleaned.replace(
@@ -1360,7 +1360,11 @@ export function validateCitationReferences(
       if (key) allowedUrls.set(key, id);
     }
   }
-  const safeAnswer = answer
+  const normalizedAnswer = answer.replace(
+    /\u3010((?:SRC-[A-Za-z0-9_-]+|\d+))\u3011/g,
+    "[$1]",
+  );
+  const safeAnswer = normalizedAnswer
     .replace(/\[([^\]\n]*)\]\((https?:\/\/[^)\s]+)\)/gi, (whole, label: string, url: string) => {
       const key = citationUrlKey(url);
       const sourceId = key ? allowedUrls.get(key) : undefined;
@@ -1702,9 +1706,11 @@ export async function runResearch(
     gaps,
     conversationContext,
   );
-  const answer = validateCitationReferences(synthesis.answer, sources, {
-    autoCiteSupportedClaims: true,
-  });
+  const answer = sources.length
+    ? validateCitationReferences(synthesis.answer, sources, {
+        autoCiteSupportedClaims: true,
+      })
+    : synthesis.answer;
   if (answer.includes("(unverified:")) {
     limitations.push("One or more generated citations did not match a retrieved source or relevant page text.");
   }

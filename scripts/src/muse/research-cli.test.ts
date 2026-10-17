@@ -610,6 +610,7 @@ test("retrieval and search failures are counted and produce an insufficiency res
   assert.equal(result.retrieval.failedCount, 2);
   assert.equal(result.completeness, "insufficient");
   assert.match(result.answer, /could not retrieve any readable web sources/);
+  assert.doesNotMatch(result.answer, /unverified: no matching retrieved evidence/);
   assert.ok(result.limitations.some((item) => item.includes("2 search requests or candidate pages")));
 });
 
@@ -693,6 +694,10 @@ test("page extraction prefers the article body, removes boilerplate and duplicat
     </article></main>
     <footer>Privacy policy Cookie preferences</footer>
     <div class="cookie-banner">Accept all cookies</div>
+    <div class="page-popup" id="page-helpful-popup" role="status">
+      <p>Was this page helpful?</p>
+      <button>Yes</button>
+    </div>
   `;
   const extracted = extractResearchPageContent(html, 500);
 
@@ -700,7 +705,10 @@ test("page extraction prefers the article body, removes boilerplate and duplicat
   assert.match(extracted.content, /Why TypeScript Exists/);
   assert.match(extracted.content, /Static checks before runtime/);
   assert.match(extracted.content, /Feature \| Purpose/);
-  assert.doesNotMatch(extracted.content, /Home Products|Related articles|Privacy policy|Accept all cookies/);
+  assert.doesNotMatch(
+    extracted.content,
+    /Home Products|Related articles|Privacy policy|Accept all cookies|Was this page helpful/,
+  );
   assert.equal(extracted.content.match(/TypeScript was designed/g)?.length, 1);
   assert.ok(extracted.content.length <= 500);
 });

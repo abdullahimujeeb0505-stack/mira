@@ -146,7 +146,7 @@ export function buildWritingPrompt(
   const evidenceSources = evidence?.sources ?? [];
   const hasSources = evidenceSources.length > 0;
   const wordCount = constraints.requestedWordCount
-    ? `Aim for ${constraints.requestedWordCount} words, within about 10% when practical.`
+    ? `Target body length: ${constraints.requestedWordCount} words (acceptable range ${Math.floor(constraints.requestedWordCount * 0.9)}-${Math.ceil(constraints.requestedWordCount * 1.1)} words). Treat this range as a hard constraint: count and revise the deliverable before responding. Exclude appended references and research notes from this count.`
     : "Use a length appropriate to the requested format and scope.";
   return [
     revision
@@ -189,6 +189,19 @@ export function buildWritingPrompt(
   ].filter(Boolean).join("\n\n");
 }
 
+function countWritingWords(text: string): number {
+  const referencesStart = text.search(
+    /(?:^|\n)\s{0,3}(?:#{1,3}\s*)?(?:references(?:\s*\([^)]*\))?|retrieved sources)\s*:?\s*\n/i,
+  );
+  const body = referencesStart >= 0 ? text.slice(0, referencesStart) : text;
+  return (
+    body
+      .replace(/\[(?:SRC-[A-Za-z0-9_-]+|\d+)\]/g, "")
+      .replace(/\u3010(?:SRC-[A-Za-z0-9_-]+|\d+)\u3011/g, "")
+      .match(/[\p{L}\p{N}]+(?:[’'-][\p{L}\p{N}]+)*/gu)?.length ?? 0
+  );
+}
+
 export async function generateWrittenDeliverable(
   provider: TextGenerationProvider,
   assignment: string,
@@ -197,20 +210,67 @@ export async function generateWrittenDeliverable(
   evidence: ResearchResult | undefined,
   revision: boolean,
 ): Promise<string> {
-  const raw = await provider.generateText({
-    systemPrompt: buildWritingPrompt(assignment, constraints, evidence, revision),
-    conversation,
-  });
+  const systemPrompt = buildWritingPrompt(
+    assignment,
+    constraints,
+    evidence,
+    revision,
+  );
   const sources = evidence?.sources ?? [];
   const numberedCitationSources = sources.map((source) => ({
     ...source,
     sourceId: undefined,
   }));
-  const validated = sources.length
-    ? validateCitationReferences(raw, numberedCitationSources, {
-        autoCiteSupportedClaims: true,
-      })
-    : raw;
+  const validateDraft = (draft: string): string =>
+    evidence
+      ? validateCitationReferences(draft, numberedCitationSources, {
+          autoCiteSupportedClaims: true,
+        })
+      : draft;
+
+  let raw = await provider.generateText({
+    systemPrompt,
+    conversation,
+  });
+  let validated = validateDraft(raw);
+  let lengthNotice = "";
+  const requestedWordCount = constraints.requestedWordCount;
+  if (requestedWordCount) {
+    const minimum = Math.floor(requestedWordCount * 0.9);
+    const maximum = Math.ceil(requestedWordCount * 1.1);
+    const initialWordCount = countWritingWords(validated);
+
+    if (initialWordCount < minimum || initialWordCount > maximum) {
+      raw = await provider.generateText({
+        systemPrompt:
+          `${systemPrompt}\n\nThe previous final-body draft, after citation validation, ` +
+          "did not meet the requested length. Rewrite the complete deliverable within " +
+          "the stated word-count range. Preserve factual accuracy, required structure, " +
+          "and citation constraints. Output only the revised deliverable; do not include a preface.",
+        conversation: [
+          ...conversation,
+          { role: "assistant", content: validated },
+          {
+            role: "user",
+            content:
+              `The previous final body contained ${initialWordCount} words after citation ` +
+              `validation. Rewrite it within ${minimum}-${maximum} body words for the ` +
+              `${requestedWordCount}-word target. Keep supported citations accurate and ` +
+              "avoid unsupported claims that would require validation notices. Muse appends " +
+              "references and research notes separately; do not include those.",
+          },
+        ],
+      });
+      validated = validateDraft(raw);
+      const correctedWordCount = countWritingWords(validated);
+      if (correctedWordCount < minimum || correctedWordCount > maximum) {
+        lengthNotice =
+          `Requested length: ${requestedWordCount} words (${minimum}-${maximum}); ` +
+          `the final draft contains ${correctedWordCount} words after one revision.`;
+      }
+    }
+  }
+
   const formatted = applyCitationStyle(validated, sources, constraints.citationStyle);
   const references = renderReferences(sources, constraints.citationStyle);
   const notices: string[] = [];
@@ -228,5 +288,7 @@ export async function generateWrittenDeliverable(
     notices.push(`Research limitations: ${evidence.limitations.join("; ")}.`);
   }
 
-  return [formatted.trim(), references, ...notices].filter(Boolean).join("\n\n");
+  return [formatted.trim(), references, ...notices, lengthNotice]
+    .filter(Boolean)
+    .join("\n\n");
 }

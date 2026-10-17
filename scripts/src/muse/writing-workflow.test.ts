@@ -156,7 +156,9 @@ test("word-count and requested citation styles are applied and references use re
     false,
   );
 
-  assert.match(requests[0]?.systemPrompt ?? "", /Aim for 1000 words/);
+  assert.match(requests[0]?.systemPrompt ?? "", /Target body length: 1000 words/);
+  assert.match(requests[0]?.systemPrompt ?? "", /acceptable range 900-1100 words/);
+  assert.match(requests[0]?.systemPrompt ?? "", /Treat this range as a hard constraint/);
   assert.match(requests[0]?.systemPrompt ?? "", /Use APA in-text citation conventions/);
   assert.match(answer, /References \(APA; retrieved source metadata\)/);
   assert.match(answer, /supports this claim \(TypeScript, n\.d\.\)/);
@@ -164,6 +166,81 @@ test("word-count and requested citation styles are applied and references use re
   assert.match(answer, /not provided/);
   assert.match(answer, /typescriptlang\.org/);
   assert.doesNotMatch(answer, /DOI:/i);
+});
+
+test("writing makes one bounded retry when the requested word count is missed", async () => {
+  const requests: TextGenerationRequest[] = [];
+  const article = Array.from({ length: 220 }, (_, index) => `initial${index}`).join(" ");
+  const corrected = `## Article\n${Array.from({ length: 150 }, () => "revised").join(" ")}`;
+  const answer = await generateWrittenDeliverable(
+    {
+      async generateText(request) {
+        requests.push(request);
+        return requests.length === 1 ? article : corrected;
+      },
+    },
+    "Write a 150-word article.",
+    [{ role: "user", content: "Write a 150-word article." }],
+    extractWritingConstraints("Write a 150-word article."),
+    undefined,
+    false,
+  );
+
+  assert.equal(requests.length, 2);
+  assert.match(requests[1]?.systemPrompt ?? "", /Rewrite the complete deliverable/);
+  assert.match(requests[1]?.conversation.at(-1)?.content ?? "", /135-165 body words/);
+  assert.match(answer, /## Article/);
+  assert.doesNotMatch(answer, /Requested length:/);
+});
+
+test("word-count correction includes citation-validation notices in the final body", async () => {
+  const requests: TextGenerationRequest[] = [];
+  const unsupportedDraft = Array.from(
+    { length: 13 },
+    () => "An unrelated report describes ocean tides and distant stars [1].",
+  ).join("\n");
+  const supportedDraft = Array.from(
+    { length: 13 },
+    () => "TypeScript uses control flow analysis to narrow union types based on guards. [1]",
+  ).join("\n");
+  const answer = await generateWrittenDeliverable(
+    {
+      async generateText(request) {
+        requests.push(request);
+        return requests.length === 1 ? unsupportedDraft : supportedDraft;
+      },
+    },
+    "Write a 150-word article.",
+    [{ role: "user", content: "Write a 150-word article." }],
+    extractWritingConstraints("Write a 150-word article."),
+    researchResult(),
+    false,
+  );
+
+  assert.equal(requests.length, 2);
+  assert.match(requests[1]?.conversation.at(-1)?.content ?? "", /after citation validation/);
+  assert.doesNotMatch(answer, /unverified: no matching retrieved evidence|Requested length:/);
+});
+
+test("writing discloses when the bounded word-count correction still misses the target", async () => {
+  const requests: TextGenerationRequest[] = [];
+  const tooLong = Array.from({ length: 220 }, (_, index) => `word${index}`).join(" ");
+  const answer = await generateWrittenDeliverable(
+    {
+      async generateText(request) {
+        requests.push(request);
+        return tooLong;
+      },
+    },
+    "Write a 150-word article.",
+    [{ role: "user", content: "Write a 150-word article." }],
+    extractWritingConstraints("Write a 150-word article."),
+    undefined,
+    false,
+  );
+
+  assert.equal(requests.length, 2);
+  assert.match(answer, /Requested length: 150 words \(135-165\); the final draft contains 220 words after one revision/);
 });
 
 test("writing adds numbered citations only to uncited claims supported by retrieved evidence", async () => {
@@ -184,6 +261,26 @@ test("writing adds numbered citations only to uncited claims supported by retrie
   assert.match(answer, /Ocean tides are caused by distant stars \(unverified: no matching retrieved evidence\)/);
   assert.match(answer, /https:\/\/www\.typescriptlang\.org\/docs\/handbook\/2\/narrowing\.html/);
   assert.doesNotMatch(answer, /\[INVALID CITATION/);
+});
+
+test("writing normalizes model citation markers before validating source numbers", async () => {
+  const requests: TextGenerationRequest[] = [];
+  const answer = await generateWrittenDeliverable(
+    createProvider(
+      "TypeScript uses control flow analysis to narrow union types \u30101\u3011. " +
+        "Ocean tides are caused by distant stars \u3010999\u3011.",
+      requests,
+    ),
+    "Write a sourced explanation of TypeScript narrowing.",
+    [{ role: "user", content: "Write a sourced explanation of TypeScript narrowing." }],
+    {},
+    researchResult(),
+    false,
+  );
+
+  assert.match(answer, /narrow union types \[1\]/);
+  assert.match(answer, /Ocean tides.*unverified: no matching retrieved evidence/);
+  assert.doesNotMatch(answer, /\u3010|\u3011|\[999\]/);
 });
 
 test("revision requests preserve assignment context without repeating research", async () => {
@@ -226,6 +323,25 @@ test("missing and contradictory research is disclosed in the final writing respo
   assert.match(answer, /inconclusive/);
   assert.match(answer, /Reported outcomes conflict/);
   assert.match(answer, /No readable source was available/);
+});
+
+test("writing with no retrieved sources removes fabricated citations", async () => {
+  const requests: TextGenerationRequest[] = [];
+  const answer = await generateWrittenDeliverable(
+    createProvider(
+      "TypeScript was designed as a typed superset of JavaScript [1].",
+      requests,
+    ),
+    "Write a short sourced explanation of TypeScript.",
+    [{ role: "user", content: "Write a short sourced explanation of TypeScript." }],
+    {},
+    researchResult({ sources: [], completeness: "insufficient" }),
+    false,
+  );
+
+  assert.doesNotMatch(answer, /\[\d+\]|\[SRC-[^\]]+\]/);
+  assert.match(answer, /unverified: no matching retrieved evidence/);
+  assert.doesNotMatch(answer, /References\n/);
 });
 
 test("irrelevant and fabricated source numbers are removed and marked unverified", async () => {

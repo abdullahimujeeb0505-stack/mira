@@ -100,12 +100,15 @@ test("research follow-ups use prior conversation without repeating research", as
 
   try {
     await agent.respond("How does this work?");
-    const followUp = await agent.respond("Why?");
+    const followUp = await agent.respond("What does that mean in practice?");
     assert.match(followUp, /earlier evidence supports/);
     assert.equal(questions.length, 1);
     assert.match(modelRequests[0]?.systemPrompt ?? "", /Question: How does this work\?/);
     assert.match(modelRequests[0]?.systemPrompt ?? "", /Official guide/);
-    assert.match(modelRequests[0]?.conversation.at(-1)?.content ?? "", /^Why\?$/);
+    assert.match(
+      modelRequests[0]?.conversation.at(-1)?.content ?? "",
+      /^What does that mean in practice\?$/,
+    );
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
