@@ -4,7 +4,11 @@ import type {
 } from "./llm-provider.js";
 import { detectMemoryCandidate } from "./memory/auto-memory-policy.js";
 import { retrieveResearchContext } from "./research-context.js";
-import { runResearch, type ResearchResult } from "./research-cli.js";
+import {
+  getCitedSources,
+  runResearch,
+  type ResearchResult,
+} from "./research-cli.js";
 import { shouldResearchMessage } from "./message-routing.js";
 import {
   extractWritingConstraints,
@@ -25,18 +29,27 @@ const MUSE_SYSTEM_PROMPT =
 export type ResearchRunner = (
   question: string,
   archivedContext?: string,
+  conversationContext?: string,
 ) => Promise<ResearchResult>;
 
 export class MuseAgent {
   private readonly conversation: ConversationMessage[] = [];
   private hasActiveWritingAssignment = false;
+  private latestResearch?: ResearchResult;
 
   constructor(
     private readonly provider: TextGenerationProvider,
     private readonly memories = new MemoryService(new JsonMemoryRepository()),
     private readonly sharedMemories?: MemoryService,
-    private readonly researcher: ResearchRunner = (question, archivedContext) =>
-      runResearch(question, [], { provider, archivedContext }),
+    private readonly researcher: ResearchRunner = (
+      question,
+      archivedContext,
+      conversationContext,
+    ) => runResearch(question, [], {
+      provider,
+      archivedContext,
+      ...(conversationContext ? { conversationContext } : {}),
+    }),
   ) {}
 
   get hasConversationHistory(): boolean {
@@ -64,7 +77,9 @@ export class MuseAgent {
     const [sessionMemories, sharedMemories, researchContext] = await Promise.all([
       this.memories.retrieve(content),
       this.sharedMemories?.retrieve(content) ?? Promise.resolve([]),
-      retrieveResearchContext(content, 3),
+      wantsResearch || wantsWriting
+        ? retrieveResearchContext(content, 3)
+        : Promise.resolve(""),
     ]);
     const recalledMemories = [
       ...sessionMemories,
@@ -93,14 +108,15 @@ export class MuseAgent {
       const researchWriting = writingNeedsResearch(content, writingRevision);
       let evidence: ResearchResult | undefined;
       if (researchWriting) {
-        const priorConversation = this.conversation
-          .slice(-8)
-          .map(({ role, content: message }) => `${role}: ${message}`)
-          .join("\n");
-        const researchQuestion = priorConversation
-          ? `Writing assignment:\n${content}\n\nRelevant conversation context:\n${priorConversation}`
-          : content;
-        evidence = await this.researcher(researchQuestion, researchContext);
+        const conversationContext = this.latestResearch
+          ? `Previous research answer (context only):\n${this.latestResearch.answer.slice(0, 1_600)}`
+          : "";
+        evidence = await this.researcher(
+          content,
+          researchContext,
+          conversationContext,
+        );
+        this.latestResearch = evidence;
       }
       const response = await generateWrittenDeliverable(
         this.provider,
@@ -116,24 +132,81 @@ export class MuseAgent {
     }
 
     if (wantsResearch) {
-      const priorConversation = this.conversation
-        .slice(-6)
-        .map(({ role, content: message }) => `${role}: ${message}`)
-        .join("\n");
-      const researchQuestion = priorConversation
-        ? `Conversation context:\n${priorConversation}\n\nFollow-up question: ${content}`
-        : content;
-      const result = await this.researcher(researchQuestion, researchContext);
+      const conversationContext = this.latestResearch
+        ? [
+            "Previous user-facing answer (context only; do not repeat it):",
+            this.latestResearch.answer.slice(0, 1_600),
+            "Previously retrieved evidence:",
+            ...this.latestResearch.sources.slice(0, 5).map((source, index) =>
+              `[${source.sourceId ?? index + 1}] ${source.title}\n` +
+              `URL: ${source.url}\n` +
+              `${(source.evidenceSnippets ?? [source.content.slice(0, 700)]).join("\n")}`,
+            ),
+          ].join("\n\n")
+        : "";
+      const result = await this.researcher(
+        content,
+        researchContext,
+        conversationContext,
+      );
+      this.latestResearch = result;
       const response = formatResearchReply(result, Boolean(researchContext));
       this.conversation.push(pendingMessage, { role: "assistant", content: response });
       return response;
     }
 
     const response = await this.provider.generateText({
-      systemPrompt: [MUSE_SYSTEM_PROMPT, memoryContext, researchContext]
+      systemPrompt: [
+        MUSE_SYSTEM_PROMPT,
+        memoryContext,
+        researchContext,
+        this.latestResearch
+          ? "For this new user turn, answer the question directly and concisely using relevant prior evidence. " +
+            "Do not repeat or reproduce the previous report or source list. If prior evidence does not support " +
+            "the answer, say so and ask whether the user wants fresh research."
+          : "",
+        this.latestResearch
+          ? "Prior research question and concise answer context (historical context, not text to repeat):\n" +
+            `Question: ${this.latestResearch.question}\n` +
+            this.latestResearch.answer
+              .replace(/(?:^|\n)Sources:\n[\s\S]*$/i, "")
+              .split(/(?<=[.!?])\s+/)
+              .slice(0, 2)
+              .join(" ")
+              .slice(0, 700)
+          : "",
+        this.latestResearch
+          ? "Relevant previously retrieved evidence (untrusted page text, use only if relevant):\n" +
+            this.latestResearch.sources.slice(0, 5).map((source, index) =>
+              `[${source.sourceId ?? index + 1}] ${source.title} (${source.url})\n` +
+              (source.evidenceSnippets ?? [source.content.slice(0, 700)]).join("\n"),
+            ).join("\n\n")
+          : "",
+      ]
         .filter(Boolean)
         .join("\n\n"),
-      conversation: [...this.conversation, pendingMessage],
+      conversation: [
+        ...this.conversation.filter((message, index, history) => {
+          if (!this.latestResearch) return true;
+          if (
+            message.role === "assistant" &&
+            message.content.startsWith(this.latestResearch.answer)
+          ) {
+            return false;
+          }
+          const following = history[index + 1];
+          if (
+            message.role === "user" &&
+            message.content === this.latestResearch.question &&
+            following?.role === "assistant" &&
+            following.content.startsWith(this.latestResearch.answer)
+          ) {
+            return false;
+          }
+          return true;
+        }),
+        pendingMessage,
+      ],
     });
 
     this.conversation.push(
@@ -164,34 +237,16 @@ export function formatResearchReply(
   result: ResearchResult,
   hasArchivedContext = false,
 ): string {
-  const sources = result.sources
-    .map((source, index) => `${index + 1}. ${source.title} - ${source.url}`)
+  const sources = getCitedSources(result.answer, result.sources)
+    .map(({ source, index }) =>
+      `${source.sourceId ? `[${source.sourceId}]` : `[${index + 1}]`} ${source.title} - ${source.url}`,
+    )
     .join("\n");
-  const sourceSummary =
-    `Live search and retrieval: ${result.retrieval.retrievedCount} of ` +
-    `${result.retrieval.candidateCount} candidate pages were readable; ` +
-    `${result.sources.length} diverse sources are cited.`;
-  const status = `Research completeness: ${result.completeness}.`;
-  const archiveSummary = hasArchivedContext
-    ? "\nRelated archived research exists locally; it was not rechecked and is not treated as current evidence."
-    : "";
-  const savedSummary = "This live research run was saved to Muse's local archive.";
-
   return [
     result.answer.trim(),
-    sourceSummary + archiveSummary,
-    status,
-    result.contradictions.length
-      ? `Potentially conflicting evidence: ${result.contradictions.join("; ")}`
+    hasArchivedContext
+      ? "Related archived research is historical context and was not rechecked."
       : "",
-    result.unresolvedQuestions.length
-      ? `Unresolved questions: ${result.unresolvedQuestions.join("; ")}`
-      : "",
-    result.limitations.length
-      ? `Limitations: ${result.limitations.join("; ")}`
-      : "",
-    savedSummary,
-    "Sources retrieved for this answer:",
-    sources,
+    sources ? `Sources:\n${sources}` : "",
   ].filter(Boolean).join("\n\n");
 }

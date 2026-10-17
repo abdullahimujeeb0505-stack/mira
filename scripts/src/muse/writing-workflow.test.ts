@@ -207,7 +207,7 @@ test("missing and contradictory research is disclosed in the final writing respo
   assert.match(answer, /No readable source was available/);
 });
 
-test("irrelevant and fabricated source numbers are marked as invalid", async () => {
+test("irrelevant and fabricated source numbers are removed and marked unverified", async () => {
   const requests: TextGenerationRequest[] = [];
   const answer = await generateWrittenDeliverable(
     createProvider(
@@ -222,9 +222,9 @@ test("irrelevant and fabricated source numbers are marked as invalid", async () 
   );
 
   assert.match(answer, /control flow analysis \[1\]/);
-  assert.match(answer, /ocean tides \[INVALID CITATION 1\]/);
-  assert.match(answer, /fabricated citation \[INVALID CITATION 2\]/);
-  assert.match(answer, /Citation integrity warning/);
+  assert.match(answer, /ocean tides.*unverified: no matching retrieved evidence/);
+  assert.match(answer, /fabricated citation.*unverified: no matching retrieved evidence/);
+  assert.doesNotMatch(answer, /INVALID CITATION/);
 });
 
 test("research is skipped for creative writing and provided-material editing", () => {

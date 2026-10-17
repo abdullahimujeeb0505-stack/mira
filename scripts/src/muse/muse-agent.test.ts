@@ -3,7 +3,10 @@ import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
-import type { TextGenerationProvider } from "./llm-provider.js";
+import type {
+  TextGenerationProvider,
+  TextGenerationRequest,
+} from "./llm-provider.js";
 import { formatResearchReply, MuseAgent } from "./muse-agent.js";
 import type { ResearchResult } from "./research-cli.js";
 import { JsonMemoryRepository } from "./memory/json-memory-repository.js";
@@ -68,47 +71,127 @@ test("Muse handles casual messages without web research and researches factual q
 
     const answer = await agent.respond("How does this work?");
     assert.match(answer, /Official guide - https:\/\/example\.org\/guide/);
-    assert.match(answer, /1 of 3 candidate pages/);
-    assert.match(researchQuestions[0] ?? "", /Follow-up question: How does this work\?/);
+    assert.doesNotMatch(answer, /candidate pages|Research completeness|Limitations:/);
+    assert.equal(researchQuestions[0], "How does this work?");
     assert.equal(modelCalls, 1);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
 });
 
-test("research follow-ups carry prior messages and disclose archived context status", async () => {
+test("research follow-ups use prior conversation without repeating research", async () => {
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-followup-"));
-  let receivedArchiveContext = "";
   const questions: string[] = [];
+  const modelRequests: TextGenerationRequest[] = [];
   const agent = new MuseAgent(
-    { generateText: async () => "Hello!" },
+    {
+      generateText: async (request) => {
+        modelRequests.push(request);
+        return "The earlier evidence supports that because of the documented mechanism.";
+      },
+    },
     new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
     undefined,
-    async (question, archivedContext) => {
+    async (question) => {
       questions.push(question);
-      receivedArchiveContext = archivedContext ?? "";
       return researchResult;
     },
   );
 
   try {
     await agent.respond("How does this work?");
-    await agent.respond("Why?");
-    assert.match(questions[1] ?? "", /Follow-up question: Why\?/);
-    assert.match(questions[1] ?? "", /How does this work\?/);
-    assert.equal(receivedArchiveContext, "");
+    const followUp = await agent.respond("Why?");
+    assert.match(followUp, /earlier evidence supports/);
+    assert.equal(questions.length, 1);
+    assert.match(modelRequests[0]?.systemPrompt ?? "", /Question: How does this work\?/);
+    assert.match(modelRequests[0]?.systemPrompt ?? "", /Official guide/);
+    assert.match(modelRequests[0]?.conversation.at(-1)?.content ?? "", /^Why\?$/);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
 });
 
-test("research reply formatting includes retrieval status and only retrieved source links", () => {
-  const answer = formatResearchReply(researchResult, true);
+test("research reply is concise and retains citations, retrieved source links, and archive provenance", () => {
+  const answer = formatResearchReply({
+    ...researchResult,
+    sources: [
+      ...researchResult.sources,
+      {
+        title: "Uncited extra source",
+        url: "https://example.net/unused",
+        retrievedAt: "2026-10-17T12:00:00.000Z",
+        content: "This retrieved source was not cited in the answer.",
+      },
+    ],
+  }, true);
 
   assert.match(answer, /The sources describe the mechanism/);
-  assert.match(answer, /Live search and retrieval: 1 of 3/);
-  assert.match(answer, /Official guide/);
-  assert.match(answer, /not rechecked/);
+  assert.match(answer, /describe the mechanism\. \[1\]/);
+  assert.match(answer, /Sources:\n\[1\] Official guide - https:\/\/example\.org\/guide/);
+  assert.doesNotMatch(answer, /Uncited extra source|example\.net\/unused/);
+  assert.match(answer, /historical context and was not rechecked/);
+  assert.doesNotMatch(
+    answer,
+    /candidate pages|Research completeness|Limitations:|Unresolved questions:|saved to Muse's local archive/,
+  );
+});
+
+test("multi-turn chat keeps roles and routes simple follow-ups separately from explicit research", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "muse-agent-multiturn-"));
+  const requests: TextGenerationRequest[] = [];
+  const researchQuestions: string[] = [];
+  const researchContexts: string[] = [];
+  const agent = new MuseAgent(
+    {
+      generateText: async (request) => {
+        requests.push(request);
+        return requests.length === 1
+          ? "Hello!"
+          : requests.length === 2
+            ? "It was created to add static types to JavaScript."
+            : "In simple terms, it helps catch mistakes before code runs.";
+      },
+    },
+    new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
+    undefined,
+    async (question, _archive, context) => {
+      researchQuestions.push(question);
+      researchContexts.push(context ?? "");
+      return { ...researchResult, question };
+    },
+  );
+
+  try {
+    assert.equal(await agent.respond("Hi Muse"), "Hello!");
+    await agent.respond("What is TypeScript?");
+    const why = await agent.respond("Why?");
+    assert.match(why, /static types/);
+    const simpler = await agent.respond("Explain that simply");
+    assert.match(simpler, /simple terms/);
+    await agent.respond("Search the web for TypeScript release history.");
+
+    assert.deepEqual(researchQuestions, [
+      "What is TypeScript?",
+      "Search the web for TypeScript release history.",
+    ]);
+    assert.match(researchContexts[1] ?? "", /Previous user-facing answer/);
+    assert.match(requests[1]?.systemPrompt ?? "", /Do not repeat or reproduce the previous report/);
+    assert.deepEqual(
+      requests[1]?.conversation.map(({ role }) => role),
+      ["user", "assistant", "user"],
+    );
+    assert.match(requests[1]?.systemPrompt ?? "", /Question: What is TypeScript\?/);
+    assert.doesNotMatch(requests[1]?.conversation.map(({ content }) => content).join("\n") ?? "", /Sources:\n/);
+    assert.deepEqual(
+      requests[2]?.conversation.slice(-2).map(({ role, content }) => [role, content]),
+      [
+        ["assistant", "It was created to add static types to JavaScript."],
+        ["user", "Explain that simply"],
+      ],
+    );
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
 });
 
 test("Muse researches factual writing requests and preserves the assignment for revisions", async () => {

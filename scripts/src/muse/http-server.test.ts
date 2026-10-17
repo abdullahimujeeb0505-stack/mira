@@ -3,6 +3,7 @@ import { mkdtemp, readFile, readdir, rm, writeFile, mkdir } from "node:fs/promis
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
+import { Script } from "node:vm";
 import type {
   TextGenerationProvider,
   TextGenerationRequest,
@@ -78,9 +79,17 @@ test("Muse serves the chat page with same-origin security headers", async () =>
       const response = await fetch(baseUrl);
       assert.equal(response.status, 200);
       const html = await response.text();
+      const script = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
+      assert.ok(script);
+      assert.doesNotThrow(() => new Script(script));
       assert.match(html, /What would you like to learn\?/);
       assert.match(html, /research assistant/i);
       assert.doesNotMatch(html, /Connect X|Web3 intern|authorizationUrl/i);
+      assert.match(html, /function renderMarkdown/);
+      assert.match(html, /document\.createElement\("table"\)/);
+      assert.match(html, /document\.createElement\(ordered \? "ol" : "ul"\)/);
+      assert.match(html, /url\.protocol === "https:" \|\| url\.protocol === "http:"/);
+      assert.doesNotMatch(html, /\.innerHTML\s*=/);
       assert.equal(response.headers.get("cache-control"), "no-store");
       assert.equal(response.headers.get("x-content-type-options"), "nosniff");
       assert.equal(response.headers.get("content-security-policy")?.includes("connect-src 'self'"), true);

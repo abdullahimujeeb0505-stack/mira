@@ -25,7 +25,18 @@ test("substantive factual questions and explicit research requests use live rese
   }
 });
 
-test("question follow-ups are researched when conversational context exists", () => {
-  assert.equal(shouldResearchMessage("Why?", true), true);
-  assert.equal(shouldResearchMessage("Why?", false), false);
+test("contextual follow-ups use conversation context instead of repeating research", () => {
+  for (const message of [
+    "Why?",
+    "How so?",
+    "What about that?",
+    "And then?",
+    "Explain that simply",
+    "What does this mean?",
+    "Why was TypeScript created, and how does that relate to what you just researched?",
+  ]) {
+    assert.equal(shouldResearchMessage(message, true), false, message);
+  }
+  assert.equal(shouldResearchMessage("Search the web: why?", true), true);
+  assert.equal(shouldResearchMessage("What about the security impact?", true), true);
 });

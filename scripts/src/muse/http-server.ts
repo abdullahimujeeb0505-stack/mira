@@ -50,6 +50,11 @@ const CHAT_PAGE = `<!doctype html>
       #messages { flex: 1; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; padding: 22px 0; }
       .message { max-width: 88%; padding: 12px 15px; border-radius: 16px; line-height: 1.55; overflow-wrap: anywhere; white-space: pre-wrap; }
       .message.muse { align-self: flex-start; background: #252c3a; }
+      .message.muse h1, .message.muse h2, .message.muse h3, .message.muse h4, .message.muse h5, .message.muse h6 { margin: .4em 0; line-height: 1.25; }
+      .message.muse p { margin: .35em 0; }
+      .message.muse ul, .message.muse ol { margin: .35em 0; padding-left: 1.5em; }
+      .message.muse table { border-collapse: collapse; display: block; max-width: 100%; overflow-x: auto; white-space: normal; }
+      .message.muse th, .message.muse td { border: 1px solid #4a5365; padding: 6px 9px; text-align: left; }
       .message.you { align-self: flex-end; background: #526de2; }
       form { display: flex; gap: 10px; align-items: flex-end; margin-top: 4px; }
       textarea { flex: 1; min-height: 52px; max-height: 180px; resize: vertical; border: 1px solid #3b4354; border-radius: 14px; padding: 14px; color: inherit; background: #10131b; font: inherit; }
@@ -83,7 +88,7 @@ const CHAT_PAGE = `<!doctype html>
       const status = document.querySelector("#status");
 
       function addInlineFormatting(parent, text) {
-        const parts = text.split(/(\\*\\*[^*]+\\*\\*|\\*[^*]+\\*)/g);
+        const parts = text.split(/(\\*\\*[^*]+\\*\\*|\\*[^*]+\\*|\\[[^\\]]+\\]\\([^)]+\\))/g);
         for (const part of parts) {
           if (part.startsWith("**") && part.endsWith("**") && part.length > 4) {
             const strong = document.createElement("strong");
@@ -93,8 +98,103 @@ const CHAT_PAGE = `<!doctype html>
             const em = document.createElement("em");
             em.textContent = part.slice(1, -1);
             parent.append(em);
+          } else if (part.startsWith("[") && part.includes("](") && part.endsWith(")")) {
+            const match = part.match(/^\\[([^\\]]+)\\]\\(([^)]+)\\)$/);
+            let url;
+            try {
+              url = match ? new URL(match[2]) : null;
+            } catch {
+              url = null;
+            }
+            if (match && url && (url.protocol === "https:" || url.protocol === "http:")) {
+              const link = document.createElement("a");
+              link.href = url.href;
+              link.rel = "noopener noreferrer";
+              link.target = "_blank";
+              link.textContent = match[1];
+              parent.append(link);
+            } else {
+              parent.append(document.createTextNode(match ? match[1] : part));
+            }
           } else {
             parent.append(document.createTextNode(part));
+          }
+        }
+      }
+
+      function renderMarkdown(parent, text) {
+        const lines = text.split("\\n");
+        const isTableRow = (line) => line.includes("|");
+        const cells = (line) => line.trim().replace(/^\\||\\|$/g, "").split("|").map((cell) => cell.trim());
+        let index = 0;
+        while (index < lines.length) {
+          const line = lines[index].trim();
+          if (!line) {
+            index += 1;
+            continue;
+          }
+          const heading = line.match(/^(#{1,6})\\s+(.+)$/);
+          if (heading) {
+            const element = document.createElement("h" + heading[1].length);
+            addInlineFormatting(element, heading[2]);
+            parent.append(element);
+            index += 1;
+            continue;
+          }
+          if (isTableRow(line) && lines[index + 1] && /^\\s*\\|?\\s*:?-{3,}/.test(lines[index + 1])) {
+            const table = document.createElement("table");
+            const head = document.createElement("thead");
+            const headerRow = document.createElement("tr");
+            for (const cell of cells(line)) {
+              const th = document.createElement("th");
+              addInlineFormatting(th, cell);
+              headerRow.append(th);
+            }
+            head.append(headerRow);
+            table.append(head);
+            index += 2;
+            const body = document.createElement("tbody");
+            while (index < lines.length && isTableRow(lines[index].trim())) {
+              const row = document.createElement("tr");
+              for (const cell of cells(lines[index])) {
+                const td = document.createElement("td");
+                addInlineFormatting(td, cell);
+                row.append(td);
+              }
+              body.append(row);
+              index += 1;
+            }
+            table.append(body);
+            parent.append(table);
+            continue;
+          }
+          const list = line.match(/^([-+*])\\s+(.+)|^(\\d+)\\.\\s+(.+)$/);
+          if (list) {
+            const ordered = Boolean(list[3]);
+            const element = document.createElement(ordered ? "ol" : "ul");
+            while (index < lines.length) {
+              const item = lines[index].trim().match(/^([-+*])\\s+(.+)|^(\\d+)\\.\\s+(.+)$/);
+              if (!item || Boolean(item[3]) !== ordered) break;
+              const li = document.createElement("li");
+              addInlineFormatting(li, item[2] || item[4]);
+              element.append(li);
+              index += 1;
+            }
+            parent.append(element);
+            continue;
+          }
+          const paragraphLines = [];
+          while (index < lines.length && lines[index].trim() &&
+            !/^#{1,6}\\s/.test(lines[index].trim()) &&
+            !/^([-+*])\\s+|^\\d+\\.\\s+/.test(lines[index].trim()) &&
+            !(isTableRow(lines[index].trim()) && lines[index + 1] && /^\\s*\\|?\\s*:?-{3,}/.test(lines[index + 1]))) {
+            paragraphLines.push(lines[index].trim());
+            index += 1;
+          }
+          if (paragraphLines.length) {
+            const paragraph = document.createElement("p");
+            addInlineFormatting(paragraph, paragraphLines.join(" "));
+            parent.append(paragraph);
           }
         }
       }
@@ -103,11 +203,7 @@ const CHAT_PAGE = `<!doctype html>
         const item = document.createElement("div");
         item.className = "message " + kind;
         if (kind === "muse") {
-          const lines = text.split("\\n");
-          lines.forEach((line, index) => {
-            if (index) item.append(document.createElement("br"));
-            addInlineFormatting(item, line);
-          });
+          renderMarkdown(item, text);
         } else {
           item.textContent = text;
         }
