@@ -9,6 +9,7 @@ out-tsc
 .expo-shared
 /scripts/data/muse-memory.json
 /scripts/data/muse-http-sessions/
+/scripts/data/muse-photon-beta/
 /scripts/data/muse-learning.json
 /scripts/data/muse-opportunities.json
 /scripts/data/muse-tracked-opportunities.json

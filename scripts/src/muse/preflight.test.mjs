@@ -20,6 +20,19 @@ test("reports readiness for Groq without exposing configured values", () => {
   assert.doesNotMatch(output, /configured-session-secret|configured-provider-key/);
 });
 
+test("prefers the canonical Groq credential when both variables are available", () => {
+  const report = inspectMuseReadiness(
+    {
+      ...validEnv,
+      GROQ_API_KEY: "canonical-provider-key",
+    },
+    true,
+  );
+
+  assert.equal(report.ready, true);
+  assert.ok(report.checks.some(({ name, ready }) => name === "GROQ_API_KEY" && ready));
+});
+
 test("selects AgentRouter's key without requiring the Groq key", () => {
   const report = inspectMuseReadiness(
     {
@@ -51,6 +64,25 @@ test("uses Groq when the provider setting is blank, matching server selection", 
   assert.ok(!report.checks.some(({ name }) => name === "MUSE_LLM_PROVIDER"));
 });
 
+test("requires the selected OpenRouter key and model without requiring Groq credentials", () => {
+  const report = inspectMuseReadiness(
+    {
+      ...validEnv,
+      MUSE_LLM_PROVIDER: "openrouter",
+      OPENROUTER_API_KEY: "configured-openrouter-key",
+      OPENROUTER_MODEL: "",
+      GROQ_API_KEY: "",
+      GROK_API_CODING_KEY: "",
+    },
+    true,
+  );
+
+  assert.equal(report.ready, false);
+  assert.ok(report.checks.some(({ name, ready }) => name === "OPENROUTER_API_KEY" && ready));
+  assert.ok(report.checks.some(({ name, ready }) => name === "OPENROUTER_MODEL" && !ready));
+  assert.ok(!report.checks.some(({ name }) => name.includes("GROQ")));
+});
+
 test("reports missing secrets and unavailable tsx by name without printing values", () => {
   const report = inspectMuseReadiness(
     {
@@ -65,7 +97,7 @@ test("reports missing secrets and unavailable tsx by name without printing value
   assert.equal(report.ready, false);
   assert.match(output, /BLOCKED: SESSION_SECRET/);
   assert.match(output, /BLOCKED: MUSE_CHAT_ACCESS_TOKEN/);
-  assert.match(output, /BLOCKED: GROK_API_CODING_KEY/);
+  assert.match(output, /BLOCKED: GROQ_API_KEY or GROK_API_CODING_KEY/);
   assert.match(output, /BLOCKED: tsx/);
   assert.doesNotMatch(output, /short/);
 });

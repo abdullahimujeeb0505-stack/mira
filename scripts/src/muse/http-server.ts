@@ -175,8 +175,17 @@ export function createMuseHttpServer(
     options.memoryDirectory ??
     process.env.MUSE_HTTP_MEMORY_DIR ??
     DEFAULT_MEMORY_DIRECTORY;
+  const defaultProvider = options.providerFactory
+    ? undefined
+    : createTextGenerationProvider();
   const providerFactory =
-    options.providerFactory ?? (() => createTextGenerationProvider());
+    options.providerFactory ??
+    (() => {
+      if (!defaultProvider) {
+        throw new Error("Muse's default LLM provider was not initialized.");
+      }
+      return defaultProvider;
+    });
   const sharedMemories = new MemoryService(
     new JsonMemoryRepository(options.sharedMemoryPath),
   );

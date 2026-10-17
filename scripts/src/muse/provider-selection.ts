@@ -1,12 +1,14 @@
 import { AgentRouterProvider } from "./agentrouter-provider.js";
-import { GroqResponsesProvider } from "./groq-responses-provider.js";
+import { GroqProvider } from "./groq-provider.js";
 import type { TextGenerationProvider } from "./llm-provider.js";
+import { OpenRouterProvider } from "./openrouter-provider.js";
 
-export type MuseProviderName = "groq" | "agentrouter";
+export type MuseProviderName = "groq" | "agentrouter" | "openrouter";
 
 export interface TextGenerationProviderFactories {
   groq?: () => TextGenerationProvider;
   agentrouter?: () => TextGenerationProvider;
+  openrouter?: () => TextGenerationProvider;
 }
 
 export interface ProviderSelectionOptions {
@@ -22,7 +24,7 @@ export function createTextGenerationProvider(
   const provider = configuredProvider.trim().toLowerCase() || "groq";
 
   if (provider === "groq") {
-    return (options.factories?.groq ?? (() => new GroqResponsesProvider()))();
+    return (options.factories?.groq ?? (() => new GroqProvider()))();
   }
 
   if (provider === "agentrouter") {
@@ -31,7 +33,13 @@ export function createTextGenerationProvider(
     )();
   }
 
+  if (provider === "openrouter") {
+    return (
+      options.factories?.openrouter ?? (() => new OpenRouterProvider())
+    )();
+  }
+
   throw new Error(
-    `Unsupported MUSE_LLM_PROVIDER "${configuredProvider}". Choose "groq" or "agentrouter".`,
+    `Unsupported MUSE_LLM_PROVIDER "${configuredProvider}". Choose "groq", "openrouter", or "agentrouter".`,
   );
 }

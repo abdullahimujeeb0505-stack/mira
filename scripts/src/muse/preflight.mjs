@@ -29,20 +29,38 @@ export function inspectMuseReadiness(
 
   const provider =
     (env.MUSE_LLM_PROVIDER ?? "").trim().toLowerCase() || "groq";
-  if (provider !== "groq" && provider !== "agentrouter") {
+  if (!["groq", "openrouter", "agentrouter"].includes(provider)) {
     addCheck(
       "MUSE_LLM_PROVIDER",
       false,
-      "Use groq or agentrouter for MUSE_LLM_PROVIDER.",
+      "Use groq, openrouter, or agentrouter for MUSE_LLM_PROVIDER.",
     );
   } else {
-    const keyName =
-      provider === "agentrouter" ? "AGENTROUTER_API_KEY" : "GROK_API_CODING_KEY";
-    addCheck(
-      keyName,
-      typeof env[keyName] === "string" && env[keyName].trim().length > 0,
-      `Add ${keyName} in Replit Secrets for the selected provider.`,
+    const keyNames = {
+      groq: ["GROQ_API_KEY", "GROK_API_CODING_KEY"],
+      openrouter: ["OPENROUTER_API_KEY"],
+      agentrouter: ["AGENTROUTER_API_KEY"],
+    }[provider];
+    const configuredKey = keyNames.find(
+      (name) => typeof env[name] === "string" && env[name].trim().length > 0,
     );
+    const keyLabel =
+      provider === "groq" && !configuredKey
+        ? "GROQ_API_KEY or GROK_API_CODING_KEY"
+        : configuredKey ?? keyNames[0];
+    addCheck(
+      keyLabel,
+      Boolean(configuredKey),
+      `Add ${keyLabel} in Replit Secrets for the selected provider.`,
+    );
+    if (provider === "openrouter") {
+      addCheck(
+        "OPENROUTER_MODEL",
+        typeof env.OPENROUTER_MODEL === "string" &&
+          env.OPENROUTER_MODEL.trim().length > 0,
+        "Set OPENROUTER_MODEL to an available model after reviewing its pricing and limits.",
+      );
+    }
   }
 
   addCheck(

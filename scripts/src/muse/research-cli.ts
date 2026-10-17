@@ -104,7 +104,7 @@ const SEARCH_RESPONSE_LIMIT = 1_000_000;
 const SOURCE_RESPONSE_LIMIT = 250_000;
 const MUSE_EVIDENCE_CHAR_LIMIT = 1_800;
 const MUSE_EVIDENCE_TOTAL_LIMIT = 7_000;
-const COMMON_TERMS = new Set([
+const COMMON_TERMS: Set<string> = new Set([
   "a", "an", "and", "are", "as", "at", "be", "by", "can", "do", "does",
   "for", "from", "how", "i", "in", "is", "it", "of", "on", "or", "the",
   "this", "to", "was", "what", "when", "where", "which", "who", "why",
@@ -364,21 +364,11 @@ function safeHttpUrl(raw: string): string | null {
   }
 }
 
-let sharedProvider: ReturnType<
-  typeof createTextGenerationProvider
-> | undefined;
-
 async function askModel(
   messages: ChatMessage[],
   _maxTokens: number,
-  provider?: TextGenerationProvider,
+  provider: TextGenerationProvider,
 ): Promise<string> {
-  const selectedProvider = provider ?? (
-    sharedProvider ??= createTextGenerationProvider({
-      provider: process.env.MUSE_LLM_PROVIDER ?? "groq",
-    })
-  );
-
   const systemPrompt = messages
     .filter((message) => message.role === "system")
     .map((message) => message.content)
@@ -391,7 +381,7 @@ async function askModel(
       content: message.content,
     }));
 
-  return selectedProvider.generateText({
+  return provider.generateText({
     systemPrompt,
     conversation,
   });
@@ -467,7 +457,7 @@ function parsePlan(raw: string, question: string): ResearchPlan {
 
 async function buildPlan(
   question: string,
-  provider: TextGenerationProvider | undefined,
+  provider: TextGenerationProvider,
   progress: (message: string) => void,
 ): Promise<ResearchPlan> {
   progress("Planning the research...");
@@ -939,7 +929,7 @@ async function findFollowUpQueries(
   question: string,
   plan: ResearchPlan,
   sources: EvidenceSource[],
-  provider: TextGenerationProvider | undefined,
+  provider: TextGenerationProvider,
   progress: (message: string) => void,
 ): Promise<{ queries: string[]; unresolvedQuestions: string[]; contradictions: string[] }> {
   const needsDepth =
@@ -1011,7 +1001,7 @@ async function synthesize(
   question: string,
   plan: ResearchPlan,
   sources: EvidenceSource[],
-  provider: TextGenerationProvider | undefined,
+  provider: TextGenerationProvider,
   progress: (message: string) => void,
   archivedContext: string,
   limitations: string[],
@@ -1232,8 +1222,9 @@ export async function runResearch(
 ): Promise<ResearchResult> {
   const progress = options.onProgress ?? ((message: string) => console.log(message));
   const config = createResearchConfig(options.config);
+  const provider = options.provider ?? createTextGenerationProvider();
   const now = options.now ?? (() => new Date());
-  const plan = await buildPlan(question, options.provider, progress);
+  const plan = await buildPlan(question, provider, progress);
   const safeSeedUrls = seedUrls
     .map((url) => safeHttpUrl(url))
     .filter((url): url is string => url !== null);
@@ -1290,7 +1281,7 @@ export async function runResearch(
       question,
       plan,
       [...allSources.values()],
-      options.provider,
+      provider,
       progress,
     );
     gaps = {
@@ -1335,7 +1326,7 @@ export async function runResearch(
     question,
     plan,
     sources,
-    options.provider,
+    provider,
     progress,
     options.archivedContext ?? "",
     limitations,

@@ -7,7 +7,18 @@ import { imessage } from "spectrum-ts/providers/imessage";
 import { JsonMemoryRepository } from "./memory/json-memory-repository.js";
 import { MemoryService } from "./memory/memory-service.js";
 import { MuseAgent } from "./muse-agent.js";
+import {
+  PhotonBetaMessageHandler,
+  readPhotonBetaConfiguration,
+} from "./photon-beta.js";
+import { sendPhotonBetaReply } from "./photon-beta-api.js";
+import { PhotonCursorStore } from "./photon-cursor-store.js";
+import {
+  defaultPhotonCursorPath,
+  PhotonBetaTransport,
+} from "./photon-beta-transport.js";
 import { PhotonMessageHandler } from "./photon-message-handler.js";
+import { selectMusePhotonTransport } from "./photon-transport-selection.js";
 import { createTextGenerationProvider } from "./provider-selection.js";
 
 const DEFAULT_MEMORY_DIRECTORY = path.resolve(
@@ -16,14 +27,63 @@ const DEFAULT_MEMORY_DIRECTORY = path.resolve(
 );
 
 async function main(): Promise<void> {
+  const transport = selectMusePhotonTransport(
+    process.env.MUSE_PHOTON_TRANSPORT,
+  );
+  if (transport === "spectrum") {
+    await runSpectrum();
+    return;
+  }
+  await runPhoton2();
+}
+
+async function runPhoton2(): Promise<void> {
+  const configuration = readPhotonBetaConfiguration();
+  const { projectId } = configuration;
+  const provider = createTextGenerationProvider();
+  const memoryDirectory =
+    process.env.MUSE_PHOTON_MEMORY_DIR?.trim() || DEFAULT_MEMORY_DIRECTORY;
+  await mkdir(memoryDirectory, { recursive: true });
+
+  const handler = new PhotonBetaMessageHandler(
+    projectId,
+    (spaceKey) => createAgent(memoryDirectory, spaceKey, provider),
+    (reply) => sendPhotonBetaReply(configuration, reply),
+  );
+  const cursorPath =
+    process.env.MUSE_PHOTON_CURSOR_PATH?.trim() ||
+    defaultPhotonCursorPath(projectId);
+  const transport = new PhotonBetaTransport(
+    configuration,
+    handler,
+    new PhotonCursorStore(cursorPath),
+  );
+
+  let stopPromise: Promise<void> | undefined;
+  const shutdown = () => {
+    stopPromise ??= transport.stop();
+  };
+  process.once("SIGINT", shutdown);
+  process.once("SIGTERM", shutdown);
+  try {
+    await transport.run();
+  } finally {
+    process.off("SIGINT", shutdown);
+    process.off("SIGTERM", shutdown);
+    await (stopPromise ?? transport.stop());
+  }
+}
+
+async function runSpectrum(): Promise<void> {
   const projectId = process.env.SPECTRUM_PROJECT_ID?.trim();
   const projectSecret = process.env.SPECTRUM_PROJECT_SECRET?.trim();
   if (!projectId || !projectSecret) {
     throw new Error(
-      "Set SPECTRUM_PROJECT_ID and SPECTRUM_PROJECT_SECRET before starting Muse Photon.",
+      "Set SPECTRUM_PROJECT_ID and SPECTRUM_PROJECT_SECRET before starting the Spectrum legacy transport.",
     );
   }
 
+  const provider = createTextGenerationProvider();
   const memoryDirectory =
     process.env.MUSE_PHOTON_MEMORY_DIR?.trim() || DEFAULT_MEMORY_DIRECTORY;
   await mkdir(memoryDirectory, { recursive: true });
@@ -33,19 +93,13 @@ async function main(): Promise<void> {
     projectSecret,
     providers: [imessage.config()],
   });
-  const handler = new PhotonMessageHandler((spaceKey) => {
-    const filename = createHash("sha256").update(spaceKey).digest("hex");
-    return new MuseAgent(
-      createTextGenerationProvider(),
-      new MemoryService(
-        new JsonMemoryRepository(path.join(memoryDirectory, `${filename}.json`)),
-      ),
-    );
-  });
+  const handler = new PhotonMessageHandler((spaceKey) =>
+    createAgent(memoryDirectory, spaceKey, provider),
+  );
 
   const shutdown = () => {
     void app.stop().catch(() => {
-      console.error("Muse Photon shutdown did not complete cleanly.");
+      console.error("Muse Spectrum shutdown did not complete cleanly.");
     });
   };
   process.once("SIGINT", shutdown);
@@ -66,11 +120,25 @@ async function main(): Promise<void> {
   }
 }
 
+function createAgent(
+  memoryDirectory: string,
+  spaceKey: string,
+  provider: ReturnType<typeof createTextGenerationProvider>,
+): MuseAgent {
+  const filename = createHash("sha256").update(spaceKey).digest("hex");
+  return new MuseAgent(
+    provider,
+    new MemoryService(
+      new JsonMemoryRepository(path.join(memoryDirectory, `${filename}.json`)),
+    ),
+  );
+}
+
 void main().catch((error: unknown) => {
   console.error(
-    error instanceof Error && error.message.startsWith("Set SPECTRUM_")
+    error instanceof Error
       ? error.message
-      : "Muse Photon agent failed to start or stopped unexpectedly. Check the configuration and provider logs.",
+      : "Muse Photon agent failed to start or stopped unexpectedly.",
   );
   process.exitCode = 1;
 });

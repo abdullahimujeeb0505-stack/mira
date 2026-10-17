@@ -209,6 +209,6 @@ test("provider selection reads MUSE_LLM_PROVIDER and rejects unknown values", as
     );
     assert.throws(
       () => createTextGenerationProvider({ provider: "unknown" }),
-      /Choose "groq" or "agentrouter"/,
+      /Choose "groq", "openrouter", or "agentrouter"/,
     );
   }));
