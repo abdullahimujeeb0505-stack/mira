@@ -62,7 +62,9 @@ sources by default. `MUSE_RESEARCH_MAX_ROUNDS` (1–3),
 (10,000–1,000,000; default 250,000) tune those limits. Invalid values stop
 research with a configuration error. Search and readable-page failures are
 reported as limitations; when no page is readable Muse returns an insufficiency
-response rather than fabricating a sourced answer. Retrieved page text and
+response for research answers rather than fabricating sources. Requested writing
+can proceed from general knowledge when retrieval fails, with a clear notice
+that it is not independently source-verified. Retrieved page text and
 archive context are passed to the model as untrusted evidence, and citations are
 checked for in-range references and lexical support.
 

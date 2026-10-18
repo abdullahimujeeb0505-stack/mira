@@ -46,6 +46,36 @@ const researchResult: ResearchResult = {
   },
 };
 
+test("Muse identifies itself as a research agent without delegating identity to the model", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "muse-agent-identity-"));
+  let modelCalls = 0;
+  let researchCalls = 0;
+  const agent = new MuseAgent(
+    {
+      async generateText() {
+        modelCalls += 1;
+        return "I am ChatGPT.";
+      },
+    },
+    new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
+    undefined,
+    async () => {
+      researchCalls += 1;
+      return researchResult;
+    },
+  );
+
+  try {
+    const answer = await agent.respond("What are you?");
+    assert.match(answer, /I'm Muse, a conversational research agent/);
+    assert.doesNotMatch(answer, /ChatGPT|OpenAI/);
+    assert.equal(modelCalls, 0);
+    assert.equal(researchCalls, 0);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
 test("Muse handles casual messages without web research and researches factual questions", async () => {
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-test-"));
   let modelCalls = 0;
@@ -440,7 +470,7 @@ test("a brief history keeps validated research when an unrelated claim is unsupp
   }
 });
 
-test("writing requests retain the actionable no-readable-sources reason", async () => {
+test("writing requests still answer when no readable sources were retrieved", async () => {
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-search-failure-"));
   let modelCalls = 0;
   const failure =
@@ -465,11 +495,48 @@ test("writing requests retain the actionable no-readable-sources reason", async 
   );
 
   try {
-    assert.equal(
-      await agent.respond("Give me a brief history of Elon Musk."),
-      failure,
-    );
-    assert.equal(modelCalls, 0);
+    const answer = await agent.respond("Give me a brief history of Elon Musk.");
+    assert.match(answer, /This should not be generated without evidence/);
+    assert.match(answer, /not independently source-verified/);
+    assert.equal(modelCalls, 1);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("research-based writing falls back to general knowledge when retrieval has no sources", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "muse-agent-writing-fallback-"));
+  const requests: TextGenerationRequest[] = [];
+  let researchCalls = 0;
+  const agent = new MuseAgent(
+    {
+      async generateText(request) {
+        requests.push(request);
+        return "# Photosynthesis\n\nPhotosynthesis is the process plants use to convert light into chemical energy.";
+      },
+    },
+    new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
+    undefined,
+    async (question) => {
+      researchCalls += 1;
+      return {
+        ...researchResult,
+        question,
+        answer: "I could not retrieve readable sources.",
+        sources: [],
+        completeness: "insufficient",
+      };
+    },
+  );
+
+  try {
+    const answer = await agent.respond("Write me an essay on photosynthesis.");
+
+    assert.match(answer, /Photosynthesis is the process plants use/);
+    assert.match(answer, /based on general knowledge and is not independently source-verified/);
+    assert.match(requests[0]?.systemPrompt ?? "", /stable general knowledge/);
+    assert.doesNotMatch(answer, /\[1\]|Sources:|example\.org/);
+    assert.equal(researchCalls, 1);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
@@ -586,7 +653,7 @@ test("Muse summarizes supplied text without invoking external research", async (
     );
     assert.match(answer, /Photosynthesis converts light energy/);
     assert.deepEqual(researchQuestions, []);
-    assert.match(modelRequests[0]?.systemPrompt ?? "", /No external research was requested/);
+    assert.match(modelRequests[0]?.systemPrompt ?? "", /No external research was requested or retrieved/);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
