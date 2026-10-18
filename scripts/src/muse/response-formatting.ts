@@ -9,7 +9,80 @@ const PROTECTED_SPANS = [
 
 const EMOJI =
   /(?:\p{Extended_Pictographic}(?:\uFE0F|\uFE0E)?(?:\u200D\p{Extended_Pictographic}(?:\uFE0F|\uFE0E)?)*)|(?:\p{Regional_Indicator}{2})/gu;
-const TABLE_SEPARATOR = /^\s*\|(?:\s*:?-{3,}:?\s*\|)+\s*$/;
+
+export function requestsSources(text: string): boolean {
+  return /\b(?:show|give|list|include|provide|send|cite|attach|add)\b[^.!?\n]{0,50}\b(?:sourced|sources?|citations?|references?|bibliography|works cited)\b/i.test(text) ||
+    /\bwhat\s+(?:are\s+)?(?:the\s+)?(?:sources?|citations?|references?)\b/i.test(text) ||
+    /\b(?:where are|what were)\s+(?:(?:the|your)\s+)?(?:sources?|citations?|references?)\b/i.test(text) ||
+    /\b(?:with|using)\s+(?:the\s+)?(?:sources?|citations?|references?)\b/i.test(text) ||
+    /\bwhere did you get (?:that|this|the information)\b/i.test(text);
+}
+
+function splitMarkdownTableRow(line: string): string[] | undefined {
+  const value = line.trim();
+  if (!value.startsWith("|") || !value.endsWith("|")) return undefined;
+
+  const cells: string[] = [];
+  let cell = "";
+  let inCode = false;
+  let escaped = false;
+  for (let position = 1; position < value.length - 1; position += 1) {
+    const character = value[position] ?? "";
+    if (escaped) {
+      cell += character;
+      escaped = false;
+    } else if (character === "\\") {
+      escaped = true;
+    } else if (character === "`") {
+      inCode = !inCode;
+      cell += character;
+    } else if (character === "|" && !inCode) {
+      cells.push(cell.trim());
+      cell = "";
+    } else {
+      cell += character;
+    }
+  }
+  cells.push(cell.trim());
+  return cells;
+}
+
+function isMarkdownTableSeparator(line: string): boolean {
+  const cells = splitMarkdownTableRow(line);
+  return Boolean(
+    cells?.length && cells.every((cell) => /^:?-{3,}:?$/.test(cell)),
+  );
+}
+
+function formatMarkdownTablesAsBullets(lines: string[]): string[] {
+  const formatted: string[] = [];
+  for (let index = 0; index < lines.length; index += 1) {
+    const headerRow = splitMarkdownTableRow(lines[index] ?? "");
+    if (!headerRow || !isMarkdownTableSeparator(lines[index + 1] ?? "")) {
+      formatted.push(lines[index] ?? "");
+      continue;
+    }
+
+    const headers = headerRow.filter(Boolean);
+    index += 2;
+    while (index < lines.length) {
+      const row = splitMarkdownTableRow(lines[index] ?? "");
+      if (!row || isMarkdownTableSeparator(lines[index] ?? "")) break;
+
+      const values = row.filter(Boolean);
+      const fields = values
+        .map((value, cellIndex) => {
+          const header = headers[cellIndex];
+          return header ? `**${header}:** ${value}` : value;
+        })
+        .filter(Boolean);
+      if (fields.length) formatted.push(`- ${fields.join("; ")}`);
+      index += 1;
+    }
+    index -= 1;
+  }
+  return formatted;
+}
 
 export type ResponseSourceLink = {
   title: string;
@@ -36,28 +109,14 @@ export function normalizeResponseFormatting(
     });
   }
 
-  const lines = normalized.split("\n");
-  const tableLines = new Set<number>();
-  for (let index = 0; index < lines.length - 1; index += 1) {
-    if (
-      !/^\s*\|.*\|\s*$/.test(lines[index] ?? "") ||
-      !TABLE_SEPARATOR.test(lines[index + 1] ?? "")
-    ) continue;
-    tableLines.add(index);
-    tableLines.add(index + 1);
-    for (let row = index + 2; /^\s*\|.*\|\s*$/.test(lines[row] ?? ""); row += 1) {
-      tableLines.add(row);
-    }
-  }
-
-  normalized = normalized
-    .split("\n")
+  const lines = formatMarkdownTablesAsBullets(normalized.split("\n"));
+  normalized = lines
     .map((line, index) => {
       if (/^\s{0,3}>/.test(line)) return line;
       return line
         .replace(
-          tableLines.has(index) ? /<br\s*\/?>/gi : /$^/,
-          tableLines.has(index) ? " " : "",
+          /^\s*- /.test(line) ? /<br\s*\/?>/gi : /$^/,
+          /^\s*- /.test(line) ? " " : "",
         )
         .replace(/\\n/g, "\n")
         .replace(/;\./g, ".")

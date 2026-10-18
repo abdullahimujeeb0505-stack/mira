@@ -4,8 +4,10 @@ Muse is a general-purpose research assistant with a Photon 2.0-connected
 iMessage entry point. It avoids web searches for greetings and lightweight chat; factual
 questions and explicit research requests use the existing DuckDuckGo search,
 page retrieval, citation validation, and local archive pipeline. Replies
-identify accessible pages and include their titles and URLs. Unavailable pages
-are not presented as retrieved sources.
+use retrieved evidence internally; citation markers and source lists are shown
+only when requested. Unavailable pages are not presented as retrieved sources.
+Muse honors the requested answer format, avoids tables, and offers relevant
+follow-up topics to continue the conversation.
 
 Muse also drafts complete general-purpose written deliverables, including
 articles, essays, literature reviews, technical tutorials, reports, study
@@ -67,8 +69,9 @@ checked for in-range references and lexical support.
 The candidate budget is distributed across search queries, with one retry for
 transient network, timeout, HTTP 408, and HTTP 5xx failures; HTTP 429 and other
 permanent responses are not retried. Neither retry increases the configured
-search or candidate count. Browser and iMessage research replies contain the
-answer and retrieved source URLs. Detailed retrieval counts, completeness,
+search or candidate count. Browser and iMessage research replies provide a
+direct answer without citation labels or an automatic source list; ask for
+sources to receive the retrieved links. Detailed retrieval counts, completeness,
 limitations, and unresolved questions remain in the research result/archive
 and research progress diagnostics rather than being appended to the chat reply.
 Short contextual follow-ups use the existing conversation without repeating a

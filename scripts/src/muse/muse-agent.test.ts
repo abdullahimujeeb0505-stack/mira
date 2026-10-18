@@ -61,7 +61,10 @@ test("Muse handles casual messages without web research and researches factual q
     undefined,
     async (question) => {
       researchQuestions.push(question);
-      return researchResult;
+      return {
+        ...researchResult,
+        followUpQuestions: ["how the process works", "its main types"],
+      };
     },
   );
 
@@ -71,7 +74,8 @@ test("Muse handles casual messages without web research and researches factual q
     assert.equal(researchQuestions.length, 0);
 
     const answer = await agent.respond("How does this work?");
-    assert.match(answer, /\[Official guide\]\(https:\/\/example\.org\/guide\)/);
+    assert.match(answer, /Would you like to explore how the process works or its main types next\?/);
+    assert.doesNotMatch(answer, /\[1\]|\[SRC-|Sources:|example\.org\/guide/);
     assert.doesNotMatch(answer, /candidate pages|Research completeness|Limitations:/);
     assert.equal(researchQuestions[0], "How does this work?");
     assert.equal(modelCalls, 1);
@@ -115,7 +119,7 @@ test("research follow-ups use prior conversation without repeating research", as
   }
 });
 
-test("research reply is concise and retains citations, retrieved source links, and archive provenance", () => {
+test("research reply hides citations and sources unless requested", () => {
   const answer = formatResearchReply({
     ...researchResult,
     sources: [
@@ -130,20 +134,19 @@ test("research reply is concise and retains citations, retrieved source links, a
   }, true);
 
   assert.match(answer, /The sources describe the mechanism/);
-  assert.match(answer, /describe the mechanism\. \[1\]/);
-  assert.match(answer, /Sources:\n\[1\] \[Official guide\]\(https:\/\/example\.org\/guide\)/);
+  assert.doesNotMatch(answer, /\[1\]|\[SRC-|Sources:|example\.org\/guide/);
   assert.doesNotMatch(answer, /Official guide - https:\/\/example\.org\/guide/);
   assert.doesNotMatch(answer, /Uncited extra source|example\.net\/unused/);
-  assert.match(answer, /historical context and was not rechecked/);
   assert.doesNotMatch(
     answer,
     /candidate pages|Research completeness|Limitations:|Unresolved questions:|saved to Muse's local archive/,
   );
 });
 
-test("research replies replace internal source IDs with numbered citations and linked titles", () => {
+test("research replies show unnumbered source links when explicitly requested", () => {
   const answer = formatResearchReply({
     ...researchResult,
+    question: "What sources support this explanation?",
     answer:
       "The handbook documents control flow narrowing [SRC-handbook123]. " +
       "Read more at https://www.typescriptlang.org/docs/handbook/2/narrowing.html.",
@@ -155,13 +158,13 @@ test("research replies replace internal source IDs with numbered citations and l
     }],
   });
 
-  assert.match(answer, /control flow narrowing \[1\]/);
-  assert.match(answer, /Read more at \[TypeScript Handbook: Narrowing\]\(https:\/\/www\.typescriptlang\.org\/docs\/handbook\/2\/narrowing\.html\)/);
-  assert.match(answer, /Sources:\n\[1\] \[TypeScript Handbook: Narrowing\]\(https:\/\/www\.typescriptlang\.org\/docs\/handbook\/2\/narrowing\.html\)/);
-  assert.doesNotMatch(answer, /SRC-handbook123|https:\/\/www\.typescriptlang\.org\/docs\/handbook\/2\/narrowing\.html(?!\))/);
+  assert.match(answer, /control flow narrowing/);
+  assert.match(answer, /\[TypeScript Handbook: Narrowing\]\(https:\/\/www\.typescriptlang\.org\/docs\/handbook\/2\/narrowing\.html\)/);
+  assert.match(answer, /Sources:\n- \[TypeScript Handbook: Narrowing\]\(https:\/\/www\.typescriptlang\.org\/docs\/handbook\/2\/narrowing\.html\)/);
+  assert.doesNotMatch(answer, /\[1\]|SRC-handbook123/);
 });
 
-test("research replies omit unsupported lines but retain sourced claims and links", () => {
+test("research replies omit unsupported lines without displaying citations", () => {
   const answer = formatResearchReply({
     ...researchResult,
     answer:
@@ -170,9 +173,8 @@ test("research replies omit unsupported lines but retain sourced claims and link
     completeness: "partial",
   });
 
-  assert.match(answer, /Control flow analysis narrows union types \[1\]/);
-  assert.match(answer, /\[Official guide\]\(https:\/\/example\.org\/guide\)/);
-  assert.doesNotMatch(answer, /Distant galaxies|unverified/);
+  assert.match(answer, /Control flow analysis narrows union types/);
+  assert.doesNotMatch(answer, /\[1\]|\[SRC-|Sources:|example\.org\/guide|Distant galaxies|unverified/);
 });
 
 test("research replies include raw source URLs only when requested", () => {
@@ -190,6 +192,31 @@ test("research replies include raw source URLs only when requested", () => {
   });
 
   assert.match(answer, new RegExp(`\\[TypeScript Handbook: Narrowing\\]\\(${url}\\) - ${url}`));
+});
+
+test("a source request reuses the latest research without rerunning search", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "muse-agent-source-followup-"));
+  const researchQuestions: string[] = [];
+  const agent = new MuseAgent(
+    { generateText: async () => "unused" },
+    new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
+    undefined,
+    async (question) => {
+      researchQuestions.push(question);
+      return { ...researchResult, question };
+    },
+  );
+
+  try {
+    await agent.respond("What is photosynthesis?");
+    const sources = await agent.respond("Show me the sources");
+
+    assert.match(sources, /Sources:\n- \[Official guide\]/);
+    assert.doesNotMatch(sources, /\[1\]|\[SRC-/);
+    assert.deepEqual(researchQuestions, ["What is photosynthesis?"]);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
 });
 
 test("multi-turn chat keeps roles and routes simple follow-ups separately from explicit research", async () => {
@@ -236,6 +263,9 @@ test("multi-turn chat keeps roles and routes simple follow-ups separately from e
       requests[1]?.conversation.map(({ role }) => role),
       ["user", "assistant", "user"],
     );
+    assert.match(requests[1]?.systemPrompt ?? "", /conversational research agent/);
+    assert.match(requests[1]?.systemPrompt ?? "", /answer follow-ups directly/);
+    assert.match(requests[1]?.systemPrompt ?? "", /never use tables/i);
     assert.match(requests[1]?.systemPrompt ?? "", /Question: What is TypeScript\?/);
     assert.doesNotMatch(requests[1]?.conversation.map(({ content }) => content).join("\n") ?? "", /Sources:\n/);
     assert.deepEqual(
@@ -401,7 +431,7 @@ test("a brief history keeps validated research when an unrelated claim is unsupp
 
     assert.match(answer, /born in Pretoria, South Africa/);
     assert.match(answer, /co-founded SpaceX/);
-    assert.match(answer, /\[Elon Musk biography\]\(https:\/\/example\.org\/elon-musk\)/);
+    assert.doesNotMatch(answer, /Elon Musk biography|example\.org\/elon-musk|\[1\]/);
     assert.doesNotMatch(answer, /unsupported role|unverified/);
     assert.equal(researchCalls, 1);
     assert.equal(generationCalls, 1);
@@ -584,7 +614,7 @@ test("Muse skips external research for a creative writing request", async () => 
   try {
     assert.equal(
       await agent.respond("Write a short article based on these notes about a lighthouse."),
-      "A short article from the supplied notes.",
+      "A short article from the supplied notes.\n\nWould you like me to adjust the format, tone, or length?",
     );
     assert.equal(researchCalls, 0);
     assert.match(writingPrompt, /No external research was requested or retrieved/);

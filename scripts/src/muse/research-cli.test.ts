@@ -60,7 +60,13 @@ test("research service returns synthesized evidence, retrieval counts, and archi
             questions: ["What is known?"],
             queries: ["example subject"],
           })
-        : `The documentation describes the subject. [${firstCitationId(request)}]`;
+        : JSON.stringify({
+            answer: `The documentation describes the subject. [${firstCitationId(request)}]`,
+            followUpQuestions: ["how the subject works", "where it is used"],
+            unresolvedQuestions: [],
+            contradictions: [],
+            completeness: "supported",
+          });
     },
   };
 
@@ -79,6 +85,7 @@ test("research service returns synthesized evidence, retrieval counts, and archi
 
   assert.match(result.answer, /^The documentation describes the subject\. \[SRC-[a-f0-9]{12}\]$/);
   assert.equal(result.sources[0]?.url, source.url);
+  assert.deepEqual(result.followUpQuestions, ["how the subject works", "where it is used"]);
   assert.deepEqual(result.retrieval, {
     candidateCount: 1,
     retrievedCount: 1,
@@ -91,7 +98,9 @@ test("research service returns synthesized evidence, retrieval counts, and archi
     jsonPath: "/archive/result.json",
   });
   assert.equal(requests.length, 2);
-  assert.match(requests[1]?.systemPrompt ?? "", /Do not use Markdown tables by default/);
+  assert.match(requests[1]?.systemPrompt ?? "", /Never use Markdown tables/);
+  assert.match(requests[1]?.systemPrompt ?? "", /followUpQuestions/);
+  assert.match(requests[1]?.systemPrompt ?? "", /Honor the user's requested format exactly/);
   assert.match(requests[1]?.systemPrompt ?? "", /historical timelines, use numbered milestones/);
   assert.ok(progress.some((message) => message.includes("Retrieved 1 of 1")));
 });

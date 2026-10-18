@@ -4,7 +4,10 @@ import {
   type EvidenceSource,
   type ResearchResult,
 } from "./research-cli.js";
-import { normalizeResponseFormatting } from "./response-formatting.js";
+import {
+  normalizeResponseFormatting,
+  requestsSources,
+} from "./response-formatting.js";
 
 const DELIVERABLE =
   /\b(article|essay|blog post|explainer|educational content|research essay|analytical essay|literature review|tutorial|guide|code explanation|technical documentation|report|investigative brief|company profile|profile|summary|study notes|learning guide|notes|comparison|brief|outline|proposal|introduction|conclusion|reference list)\b/i;
@@ -99,7 +102,7 @@ function renderReferences(
   const heading = citationStyle
     ? `Sources (${citationStyle} metadata)`
     : "Sources";
-  const entries = sources.map((source, index) => {
+  const entries = sources.map((source) => {
     const author = source.author ?? "Author not provided";
     const publisher = source.publisher ? `${source.publisher}. ` : "";
     const date = source.publishedAt?.slice(0, 10) ?? "date not provided";
@@ -107,18 +110,18 @@ function renderReferences(
     const linkedTitle = `[${source.title}](${source.url})`;
     const rawUrl = preserveRawUrls ? ` ${source.url}` : "";
     if (style.startsWith("apa")) {
-      return `${index + 1}. ${author}. (${date === "date not provided" ? "n.d." : date}). ${linkedTitle}.${rawUrl} ${publisher}`;
+      return `- ${author}. (${date === "date not provided" ? "n.d." : date}). ${linkedTitle}.${rawUrl} ${publisher}`;
     }
     if (style.startsWith("mla")) {
-      return `${index + 1}. ${author}. "${linkedTitle}."${rawUrl} ${publisher}${date}.`;
+      return `- ${author}. "${linkedTitle}."${rawUrl} ${publisher}${date}.`;
     }
     if (style.startsWith("chicago")) {
-      return `${index + 1}. ${author}. "${linkedTitle}."${rawUrl} ${publisher}${date}.`;
+      return `- ${author}. "${linkedTitle}."${rawUrl} ${publisher}${date}.`;
     }
     if (style.startsWith("ieee")) {
-      return `[${index + 1}] ${author}, "${linkedTitle},"${rawUrl} ${publisher}${date}. Accessed: ${accessed}.`;
+      return `- ${author}, "${linkedTitle},"${rawUrl} ${publisher}${date}. Accessed: ${accessed}.`;
     }
-    return `${index + 1}. ${linkedTitle}.${rawUrl} ${source.publisher ? `${source.publisher}; ` : ""}${date}; author: ${source.author ?? "not provided"}.`;
+        return `- ${linkedTitle}.${rawUrl} ${source.publisher ? `${source.publisher}; ` : ""}${date}; author: ${source.author ?? "not provided"}.`;
   });
   return `${heading}\n${entries.join("\n")}`;
 }
@@ -157,11 +160,9 @@ export function buildWritingPrompt(
   const hasSources = evidenceSources.length > 0;
   const wordCount = constraints.requestedWordCount
     ? `Target body length: ${constraints.requestedWordCount} words (acceptable range ${Math.floor(constraints.requestedWordCount * 0.9)}-${Math.ceil(constraints.requestedWordCount * 1.1)} words). Treat this range as a hard constraint: count and revise the deliverable before responding. Exclude appended references and research notes from this count.`
-    : "Keep the main deliverable concise by default: about 500 words for an article or essay and shorter for a simple explainer. Do not add optional summaries, extensive tables, or repeated conclusions unless requested.";
+    : "Keep the main deliverable concise by default: about 500 words for an article or essay and shorter for a simple explainer. Do not add optional summaries or repeated conclusions unless requested.";
   const tableInstruction =
-    /\b(?:table|tabular|matrix)\b/i.test(assignment)
-      ? "Use a Markdown table only for the explicitly requested comparison; keep it narrow and readable."
-      : "Do not use Markdown tables by default. Present timelines as numbered milestones and comparisons as concise prose, numbered sections, or bullets.";
+    "Never use Markdown tables, even when requested. Present timelines as numbered milestones and comparisons as concise prose, numbered sections, or labeled bullets.";
   return [
     revision
       ? "Revise the existing active writing assignment in the conversation. Preserve relevant facts, sources, and the author's purpose unless the user asks to change them."
@@ -298,16 +299,21 @@ export async function generateWrittenDeliverable(
   const preserveRawUrls =
     /\b(?:raw|full|plain)\s+(?:source\s+)?urls?\b|\binclude (?:the )?(?:source )?urls?\b/i
       .test(assignment);
-  const formatted = normalizeResponseFormatting(
-    applyCitationStyle(validated, sources, constraints.citationStyle),
-    sources,
-    { preserveSourceUrls: preserveRawUrls },
-  );
-  const references = renderReferences(
+  const asksForSources =
+    Boolean(constraints.citationStyle) || requestsSources(assignment);
+  const withoutCitationMarkers = applyCitationStyle(
+    validated,
     sources,
     constraints.citationStyle,
-    preserveRawUrls,
+  ).replace(/\[(?:SRC-[A-Za-z0-9_-]+|\d+)\]/g, "");
+  const formatted = normalizeResponseFormatting(
+    withoutCitationMarkers,
+    asksForSources ? sources : [],
+    { preserveSourceUrls: asksForSources && preserveRawUrls },
   );
+  const references = asksForSources
+    ? renderReferences(sources, constraints.citationStyle, preserveRawUrls)
+    : "";
   const notices: string[] = [];
 
   if (evidence?.completeness === "partial") {

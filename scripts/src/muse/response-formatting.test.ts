@@ -1,6 +1,16 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { normalizeResponseFormatting } from "./response-formatting.js";
+import {
+  normalizeResponseFormatting,
+  requestsSources,
+} from "./response-formatting.js";
+
+test("source links are shown only for explicit source requests", () => {
+  assert.equal(requestsSources("Show me the sources"), true);
+  assert.equal(requestsSources("What sources support this answer?"), true);
+  assert.equal(requestsSources("Include raw source URLs"), true);
+  assert.equal(requestsSources("What are the main energy sources?"), false);
+});
 
 test("response formatting repairs stray punctuation and escaped line breaks", () => {
   assert.equal(
@@ -32,7 +42,7 @@ test("response formatting leaves block quotations untouched", () => {
   assert.equal(normalizeResponseFormatting(quote), quote);
 });
 
-test("response formatting removes literal HTML breaks only from Markdown tables", () => {
+test("response formatting converts Markdown tables to labeled bullets", () => {
   const formatted = normalizeResponseFormatting([
     "| Milestone | Detail |",
     "| --- | --- |",
@@ -42,13 +52,10 @@ test("response formatting removes literal HTML breaks only from Markdown tables"
     "<br/>",
   ].join("\n"));
 
-  assert.match(formatted, /\| First step \| \*\*Second\*\* step \|/);
-  assert.match(formatted, /\| Code \| `<br>` remains literal \|/);
+  assert.match(formatted, /- \*\*Milestone:\*\* First step; \*\*Detail:\*\* \*\*Second\*\* step/);
+  assert.match(formatted, /- \*\*Milestone:\*\* Code; \*\*Detail:\*\* `<br>` remains literal/);
   assert.match(formatted, /\n<br\/>$/);
-  assert.doesNotMatch(
-    formatted.split("\n").slice(0, 4).join("\n").replace(/`[^`]*`/g, ""),
-    /<br\s*\/?>/i,
-  );
+  assert.doesNotMatch(formatted, /^\s*\|/m);
 });
 
 test("response formatting links retrieved source URLs and preserves URLs in code and quotes", () => {
