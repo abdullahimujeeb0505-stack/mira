@@ -5,6 +5,7 @@ import type {
 import { detectMemoryCandidate } from "./memory/auto-memory-policy.js";
 import { retrieveResearchContext } from "./research-context.js";
 import {
+  extractWebsiteTargets,
   getCitedSources,
   runResearch,
   type ResearchResult,
@@ -128,7 +129,7 @@ export class MuseAgent {
       question,
       archivedContext,
       conversationContext,
-    ) => runResearch(question, [], {
+    ) => runResearch(question, extractWebsiteTargets(question), {
       provider,
       archivedContext,
       ...(conversationContext ? { conversationContext } : {}),

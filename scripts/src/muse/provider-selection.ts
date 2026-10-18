@@ -1,14 +1,16 @@
 import { AgentRouterProvider } from "./agentrouter-provider.js";
+import { GeminiProvider } from "./gemini-provider.js";
 import { GroqProvider } from "./groq-provider.js";
 import type { TextGenerationProvider } from "./llm-provider.js";
 import { OpenRouterProvider } from "./openrouter-provider.js";
 
-export type MuseProviderName = "groq" | "agentrouter" | "openrouter";
+export type MuseProviderName = "groq" | "agentrouter" | "openrouter" | "gemini";
 
 export interface TextGenerationProviderFactories {
   groq?: () => TextGenerationProvider;
   agentrouter?: () => TextGenerationProvider;
   openrouter?: () => TextGenerationProvider;
+  gemini?: () => TextGenerationProvider;
 }
 
 export interface ProviderSelectionOptions {
@@ -50,7 +52,11 @@ export function createTextGenerationProvider(
     )();
   }
 
+  if (provider === "gemini") {
+    return (options.factories?.gemini ?? (() => new GeminiProvider()))();
+  }
+
   throw new Error(
-    `Unsupported MUSE_LLM_PROVIDER "${configuredProvider}". Choose "groq", "openrouter", or "agentrouter".`,
+    `Unsupported MUSE_LLM_PROVIDER "${configuredProvider}". Choose "groq", "openrouter", "agentrouter", or "gemini".`,
   );
 }

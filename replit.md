@@ -5,7 +5,7 @@ _Replace the heading above with the project's name, and this line with one sente
 ## Run & Operate
 
 - Muse chat preview: use the **Muse Chat Preview** workflow, which runs `pnpm --filter @workspace/scripts run muse-server` on port `3000`; open the workflow preview at `/`. This is separate from the API preview at `/api` and the Canvas preview at `/__mockup`.
-- Muse chat requires `SESSION_SECRET`, `MUSE_CHAT_ACCESS_TOKEN` (at least 32 bytes), and credentials for the selected `MUSE_LLM_PROVIDER`: Groq uses `GROQ_API_KEY` (or legacy `GROK_API_CODING_KEY`), OpenRouter uses `OPENROUTER_API_KEY` plus `OPENROUTER_MODEL`, and AgentRouter uses `AGENTROUTER_API_KEY`. The Photon listener defaults to Photon 2.0 Beta and requires `PHOTON_PROJECT_ID` and `PHOTON_API_KEY`; set `MUSE_PHOTON_TRANSPORT=spectrum` to opt into legacy Spectrum.
+- Muse chat requires `SESSION_SECRET`, `MUSE_CHAT_ACCESS_TOKEN` (at least 32 bytes), and credentials for the selected `MUSE_LLM_PROVIDER`: Groq uses `GROQ_API_KEY` (or legacy `GROK_API_CODING_KEY`), OpenRouter uses `OPENROUTER_API_KEY` plus `OPENROUTER_MODEL`, AgentRouter uses `AGENTROUTER_API_KEY`, and Gemini uses `GEMINI_API_KEY` (optional `GEMINI_MODEL`, default `gemini-2.5-flash`). The Photon listener defaults to Photon 2.0 Beta and requires `PHOTON_PROJECT_ID` and `PHOTON_API_KEY`; set `MUSE_PHOTON_TRANSPORT=spectrum` to opt into legacy Spectrum.
 - The Muse workflow requires the workspace dependencies, including `tsx`. If its log says `tsx: not found`, the dependencies are not installed; do not replace the existing API or Canvas workflows to work around that.
 - `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
 - `pnpm run typecheck` — full typecheck across all packages

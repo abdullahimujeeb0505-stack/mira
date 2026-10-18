@@ -29,17 +29,18 @@ export function inspectMuseReadiness(
 
   const provider =
     (env.MUSE_LLM_PROVIDER ?? "").trim().toLowerCase() || "groq";
-  if (!["groq", "openrouter", "agentrouter"].includes(provider)) {
+  if (!["groq", "openrouter", "agentrouter", "gemini"].includes(provider)) {
     addCheck(
       "MUSE_LLM_PROVIDER",
       false,
-      "Use groq, openrouter, or agentrouter for MUSE_LLM_PROVIDER.",
+      "Use groq, openrouter, agentrouter, or gemini for MUSE_LLM_PROVIDER.",
     );
   } else {
     const keyNames = {
       groq: ["GROQ_API_KEY", "GROK_API_CODING_KEY"],
       openrouter: ["OPENROUTER_API_KEY"],
       agentrouter: ["AGENTROUTER_API_KEY"],
+      gemini: ["GEMINI_API_KEY"],
     }[provider];
     const configuredKey = keyNames.find(
       (name) => typeof env[name] === "string" && env[name].trim().length > 0,

@@ -49,6 +49,39 @@ test("selects AgentRouter's key without requiring the Groq key", () => {
   assert.ok(!report.checks.some(({ name }) => name === "GROK_API_CODING_KEY"));
 });
 
+test("selects Gemini's key without requiring Groq credentials", () => {
+  const report = inspectMuseReadiness(
+    {
+      ...validEnv,
+      MUSE_LLM_PROVIDER: "gemini",
+      GEMINI_API_KEY: "configured-gemini-key",
+      GROQ_API_KEY: "",
+      GROK_API_CODING_KEY: "",
+    },
+    true,
+  );
+
+  assert.equal(report.ready, true);
+  assert.ok(report.checks.some(({ name, ready }) => name === "GEMINI_API_KEY" && ready));
+  assert.ok(!report.checks.some(({ name }) => name === "GROK_API_CODING_KEY"));
+});
+
+test("Gemini selection blocks until GEMINI_API_KEY is set", () => {
+  const report = inspectMuseReadiness(
+    {
+      ...validEnv,
+      MUSE_LLM_PROVIDER: "gemini",
+      GEMINI_API_KEY: "",
+      GROQ_API_KEY: "",
+      GROK_API_CODING_KEY: "",
+    },
+    true,
+  );
+
+  assert.equal(report.ready, false);
+  assert.ok(report.checks.some(({ name, ready }) => name === "GEMINI_API_KEY" && !ready));
+});
+
 test("uses Groq when the provider setting is blank, matching server selection", () => {
   const report = inspectMuseReadiness(
     { ...validEnv, MUSE_LLM_PROVIDER: "  " },

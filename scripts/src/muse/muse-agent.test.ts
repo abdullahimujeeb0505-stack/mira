@@ -802,3 +802,42 @@ test("Muse skips external research for a creative writing request", async () => 
     await rm(directory, { recursive: true, force: true });
   }
 });
+
+test("a message naming a website reaches research so the link can be read", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "muse-agent-link-"));
+  const researchQuestions: string[] = [];
+  const agent = new MuseAgent(
+    {
+      async generateText() {
+        return "A plain-chat reply.";
+      },
+    },
+    new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
+    undefined,
+    async (question) => {
+      researchQuestions.push(question);
+      return {
+        ...researchResult,
+        question,
+        answer: "Photon is a framework connecting agents to messaging apps. [1]",
+      };
+    },
+  );
+
+  try {
+    // The exact phrasings that previously fell through to plain chat.
+    for (const message of [
+      "look through photon.codes for me",
+      "Look throught photon.codes up for me",
+      "check out https://photon.codes/pricing",
+    ]) {
+      const answer = await agent.respond(message);
+      assert.match(answer, /Photon is a framework/);
+    }
+    assert.equal(researchQuestions.length, 3);
+    assert.equal(researchQuestions[0], "look through photon.codes for me");
+    assert.equal(researchQuestions[2], "check out https://photon.codes/pricing");
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
