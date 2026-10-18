@@ -15,7 +15,7 @@ import { fileURLToPath } from "node:url";
 import { JsonMemoryRepository } from "./memory/json-memory-repository.js";
 import { MemoryService } from "./memory/memory-service.js";
 import { MuseAgent } from "./muse-agent.js";
-import { createTextGenerationProvider } from "./provider-selection.js";
+import { createTaskAwareProviders } from "./provider-selection.js";
 import type { TextGenerationProvider } from "./llm-provider.js";
 import type { ResearchRunner } from "./muse-agent.js";
 
@@ -334,6 +334,10 @@ export interface MuseHttpServerOptions {
   memoryDirectory?: string;
   sharedMemoryPath?: string;
   providerFactory?: () => TextGenerationProvider;
+  /** Provider for research planning, synthesis, and long-form writing.
+   *  Defaults to `providerFactory` (or the task-aware research provider when
+   *  neither factory is supplied). */
+  researchProviderFactory?: () => TextGenerationProvider;
   researchRunner?: ResearchRunner;
   maxActiveSessions?: number;
   sessionTtlMs?: number;
@@ -352,16 +356,16 @@ export function createMuseHttpServer(
     options.memoryDirectory ??
     process.env.MUSE_HTTP_MEMORY_DIR ??
     DEFAULT_MEMORY_DIRECTORY;
-  const defaultProvider = options.providerFactory
+  const defaultTasks = options.providerFactory
     ? undefined
-    : createTextGenerationProvider();
+    : createTaskAwareProviders();
   const providerFactory =
     options.providerFactory ??
     (() => {
-      if (!defaultProvider) {
+      if (!defaultTasks) {
         throw new Error("Muse's default LLM provider was not initialized.");
       }
-      return defaultProvider;
+      return defaultTasks.chat.provider;
     });
   const sharedMemories = new MemoryService(
     new JsonMemoryRepository(options.sharedMemoryPath),
@@ -494,14 +498,25 @@ export function createMuseHttpServer(
     if (!session) {
       if (sessions.size >= maxActiveSessions) return undefined;
       session = {
-        agent: new MuseAgent(
-          providerFactory(),
-          new MemoryService(
-            new JsonMemoryRepository(join(memoryDirectory, `${id}.json`)),
-          ),
-          sharedMemories,
-          options.researchRunner,
-        ),
+        agent: (() => {
+          const chatProvider = providerFactory();
+          return new MuseAgent(
+            chatProvider,
+            new MemoryService(
+              new JsonMemoryRepository(join(memoryDirectory, `${id}.json`)),
+            ),
+            sharedMemories,
+            options.researchRunner,
+            undefined,
+            {
+              research: options.researchProviderFactory
+                ? options.researchProviderFactory()
+                : defaultTasks
+                ? defaultTasks.research.provider
+                : chatProvider,
+            },
+          );
+        })(),
         lastUsedAt: now,
         pending: Promise.resolve(),
       };

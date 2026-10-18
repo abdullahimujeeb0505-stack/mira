@@ -228,11 +228,16 @@ Codespaces port forwarding, the Replit workflow preview, e2b sandboxes) can
 reach it; set `MUSE_BIND_HOST=127.0.0.1` to restrict it to loopback when
 running on a shared machine.
 
-Open `http://localhost:3000` locally. In **GitHub Codespaces**, forward port `3000` and open the forwarded URL at path `/`; the startup log line `Muse LLM provider: … (model: …)` confirms exactly which API is live. Or use the **Muse Chat Preview** workflow in Replit at port `3000` and path `/`. The server uses the selected LLM provider: configure Groq with `GROQ_API_KEY` (or the legacy `GROK_API_CODING_KEY`), OpenRouter with `OPENROUTER_API_KEY` and `OPENROUTER_MODEL`, AgentRouter with `MUSE_LLM_PROVIDER=agentrouter` and `AGENTROUTER_API_KEY`, or Gemini with `MUSE_LLM_PROVIDER=gemini` and `GEMINI_API_KEY`. `SESSION_SECRET` is required to sign the browser's HTTP-only session cookie.
+Open `http://localhost:3000` locally. In **GitHub Codespaces**, forward port `3000` and open the forwarded URL at path `/`. Or use the **Muse Chat Preview** workflow in Replit at port `3000` and path `/`. The server is **task-aware** and can use two providers: quick chat turns default to **Groq** (`MUSE_CHAT_LLM_PROVIDER`, credential `GROQ_API_KEY` or the legacy `GROK_API_CODING_KEY`), while research planning, answer synthesis, and long-form writing default to **Gemini** (`MUSE_RESEARCH_LLM_PROVIDER`, credential `GEMINI_API_KEY`, optional `GEMINI_MODEL` default `gemini-2.5-flash`). If the preferred provider's key is missing, that task falls back to the other provider and the startup log says why. `MUSE_LLM_PROVIDER` still pins both tasks to one provider, and `groq`/`openrouter` (`OPENROUTER_API_KEY` + `OPENROUTER_MODEL`)/`agentrouter` (`AGENTROUTER_API_KEY`)/`gemini` are all accepted values. `SESSION_SECRET` is required to sign the browser's HTTP-only session cookie.
 
-At startup, the server logs the selected provider and model identifier only; it
-does not log provider credentials. This also makes a `GROQ_MODEL` override
-visible, including an override that still points to a deprecated model.
+At startup, the server logs both resolved providers and model identifiers
+(`Muse chat LLM: …` / `Muse research LLM: …`, plus any fallback reason) and then
+probes each one with a minimal request (`Muse LLM probe (…): ok` or a classified
+failure such as `auth error`), so a bad key or quota problem is visible
+immediately instead of on the first research. Set `MUSE_LLM_STARTUP_PROBE=0` to
+skip the probe requests. Credentials are never logged. A `GROQ_MODEL` override
+is visible in the startup line, including an override that still points to a
+deprecated model.
 
 Each browser session gets an independent `MuseAgent` and its own saved-memory file under `scripts/data/muse-http-sessions/`. Conversation history stays in that session's server memory and resets when the server restarts. The page sends messages only to this server; the server then sends them to the configured model provider.
 

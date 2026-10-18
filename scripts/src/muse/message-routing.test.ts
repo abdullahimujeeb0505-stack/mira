@@ -100,3 +100,36 @@ test("web-target detection accepts real domains and rejects unsafe schemes", () 
   assert.equal(containsWebTarget("no links in this sentence"), false);
   assert.equal(containsWebTarget("javascript:alert(1)"), false);
 });
+
+test("questions about the assistant itself are chat, not research", () => {
+  for (
+    const message of [
+      "What AI model is this",
+      "What AI model is this?",
+      "Which agent is this",
+      "What model is this",
+      "Which model are you",
+      "What kind of AI are you",
+      "Is this a real person",
+      "Are you a bot",
+      "what llm powers you",
+      "What model runs this",
+    ]
+  ) {
+    assert.equal(shouldResearchMessage(message, true), false, message);
+    assert.equal(shouldResearchMessage(message, false), false, message);
+  }
+});
+
+test("ordinary what/which questions still route to research", () => {
+  for (
+    const message of [
+      "What's the history of Trump",
+      "What model of car does Toyota make in Nigeria",
+      "Which team won the 2018 World Cup",
+      "What is photosynthesis",
+    ]
+  ) {
+    assert.equal(shouldResearchMessage(message), true, message);
+  }
+});

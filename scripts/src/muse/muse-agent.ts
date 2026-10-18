@@ -116,26 +116,38 @@ export type ResearchRunner = (
 
 export type ResearchImageFinder = (message: string) => Promise<ResearchImage[]>;
 
+/** Optional task-aware providers: `research` backs planning, synthesis, and
+ *  long-form deliverables; plain chat keeps using the constructor provider. */
+export interface MuseTaskProviders {
+  research?: TextGenerationProvider;
+}
+
 export class MuseAgent {
   private readonly conversation: ConversationMessage[] = [];
   private hasActiveWritingAssignment = false;
   private latestResearch?: ResearchResult;
+  private readonly researcher: ResearchRunner;
+  private readonly qualityProvider: TextGenerationProvider;
 
   constructor(
     private readonly provider: TextGenerationProvider,
     private readonly memories = new MemoryService(new JsonMemoryRepository()),
     private readonly sharedMemories?: MemoryService,
-    private readonly researcher: ResearchRunner = (
-      question,
-      archivedContext,
-      conversationContext,
-    ) => runResearch(question, extractWebsiteTargets(question), {
-      provider,
-      archivedContext,
-      ...(conversationContext ? { conversationContext } : {}),
-    }),
+    researcher?: ResearchRunner,
     private readonly imageFinder: ResearchImageFinder = searchResearchImages,
-  ) {}
+    taskProviders?: MuseTaskProviders,
+  ) {
+    this.qualityProvider = taskProviders?.research ?? provider;
+    const researchProvider = this.qualityProvider;
+    this.researcher =
+      researcher ??
+      ((question, archivedContext, conversationContext) =>
+        runResearch(question, extractWebsiteTargets(question), {
+          provider: researchProvider,
+          archivedContext,
+          ...(conversationContext ? { conversationContext } : {}),
+        }));
+  }
 
   get hasConversationHistory(): boolean {
     return this.conversation.length > 0;
@@ -237,7 +249,7 @@ export class MuseAgent {
         }
       }
       const response = await generateWrittenDeliverable(
-        this.provider,
+        this.qualityProvider,
         content,
         [...this.conversation, pendingMessage],
         extractWritingConstraints(content),

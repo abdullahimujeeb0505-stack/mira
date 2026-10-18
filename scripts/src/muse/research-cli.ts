@@ -2,7 +2,10 @@ import { createHash } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { createTextGenerationProvider } from "./provider-selection.js";
+import {
+  classifyProviderFailure,
+  createTaskAwareProviders,
+} from "./provider-selection.js";
 import type { TextGenerationProvider } from "./llm-provider.js";
 import {
   normalizeResponseFormatting,
@@ -1085,13 +1088,16 @@ async function synthesize(
       provider,
     );
     return parseSynthesis(raw);
-  } catch {
-    progress("The synthesis model was unavailable; returning a concise status message.");
+  } catch (error) {
+    const cause = classifyProviderFailure(error);
+    progress(
+      `The synthesis model was unavailable (${cause}); returning a concise status message.`,
+    );
 
     return {
       answer:
         `I retrieved ${sources.length} readable source${sources.length === 1 ? "" : "s"}, ` +
-        "but couldn't synthesize a reliable answer. Please try again shortly.",
+        `but couldn't synthesize a reliable answer (${cause}). Please try again shortly.`,
       followUpQuestions: [],
       unresolvedQuestions: plan.questions,
       contradictions: gaps.contradictions,
@@ -1480,7 +1486,7 @@ export async function runResearch(
 ): Promise<ResearchResult> {
   const progress = options.onProgress ?? ((message: string) => console.log(message));
   const config = createResearchConfig(options.config);
-  const provider = options.provider ?? createTextGenerationProvider();
+  const provider = options.provider ?? createTaskAwareProviders().research.provider;
   const now = options.now ?? (() => new Date());
   const conversationContext = options.conversationContext ?? "";
   const plan = await buildPlan(question, provider, progress, conversationContext);

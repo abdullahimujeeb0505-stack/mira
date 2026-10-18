@@ -9,10 +9,14 @@ const IDENTITY_PROMPT =
   String.raw`(?:who are you|what are you|what (?:kind|type) of (?:agent|assistant|bot|AI|model) are you|tell me (?:who|what) you are|tell me about yourself|describe yourself|introduce yourself)`;
 const PURPOSE_PROMPT =
   String.raw`(?:what(?:'s|s| is) your (?:purpose|role|job|function)|why do you exist|what do you do|what can you do|what can you help (?:me )?with|how can you help(?: me)?|what are you for)`;
+/** "What AI model is this", "Which agent is this", "Is this a real person" —
+ *  questions about the assistant itself, not research topics. */
+const SELF_MODEL_PROMPT =
+  String.raw`(?:(?:what|which)(?:\s+(?:kind|type)\s+of)?\s+(?:ai\s+|llm\s+|language\s+model\s+)?(?:model|agent|assistant|bot|ai|llm)(?:\s+model)?\s+(?:is|are)\s+(?:this|that|it|you)(?:\s+(?:one|right now|here))?|what\s+(?:model|ai|llm)(?:\s+model)?\s+(?:powers?|drives?|runs?)\s+(?:you|this|that)|(?:is|are)\s+(?:this|that|you)\s+(?:an?\s+)?(?:ai|bot|agent|model|human|person|real(?:\s+(?:person|human|agent|ai))?))`;
 const INTENT_CONNECTOR =
   String.raw`(?:\s*(?:[,;.!?]\s*(?:(?:and|also|plus)\s+)?|\s+(?:and|also|plus)\s+))`;
 const IDENTITY_REQUEST = new RegExp(
-  String.raw`^(?:(?:hey|hi|yo)[,! ]+)?(?:${IDENTITY_PROMPT}(?:${INTENT_CONNECTOR}${PURPOSE_PROMPT})?|${PURPOSE_PROMPT}(?:${INTENT_CONNECTOR}${IDENTITY_PROMPT})?)(?:\s+(?:man|dude|bro|please|exactly))*[?.!]*$`,
+  String.raw`^(?:(?:hey|hi|yo)[,! ]+)?(?:${IDENTITY_PROMPT}(?:${INTENT_CONNECTOR}${PURPOSE_PROMPT})?|${PURPOSE_PROMPT}(?:${INTENT_CONNECTOR}${IDENTITY_PROMPT})?|${SELF_MODEL_PROMPT})(?:\s+(?:man|dude|bro|please|exactly))*[?.!]*$`,
   "i",
 );
 
