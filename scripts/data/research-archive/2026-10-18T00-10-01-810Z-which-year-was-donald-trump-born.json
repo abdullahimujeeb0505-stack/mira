@@ -1,0 +1,102 @@
+{
+  "id": "2026-10-18T00-10-01-810Z-which-year-was-donald-trump-born",
+  "question": "Which year was Donald Trump born",
+  "plan": {
+    "objective": "Identify the year of birth of Donald Trump.",
+    "taskType": "definition",
+    "deliverable": "A concise answer stating the year Donald Trump was born, with citations to authoritative sources.",
+    "requiresCurrentInformation": false,
+    "sourcePreferences": [
+      "primary documents",
+      "academic historical sources",
+      "reputable reference works"
+    ],
+    "questions": [
+      "In which year was Donald Trump born?"
+    ],
+    "queries": [
+      "Donald Trump date of birth official record",
+      "Donald J. Trump birth year biography",
+      "Donald Trump birth certificate year",
+      "Donald Trump born year reputable source",
+      "Donald Trump year of birth encyclopedia"
+    ],
+    "unresolvedQuestions": []
+  },
+  "answer": "Donald Trump was born in 1946. [SRC-09bec8b731ba] [SRC-89fc3c06a46c] [SRC-145d02c70f11]",
+  "sources": [
+    {
+      "title": "Donald J. Trump | The White House",
+      "url": "https://bidenwhitehouse.archives.gov/about-the-white-house/presidents/donald-j-trump/",
+      "canonicalUrl": "https://bidenwhitehouse.archives.gov/about-the-white-house/presidents/donald-j-trump/",
+      "publisher": "The White House",
+      "updatedAt": "2022-12-23T22:00:05.000Z",
+      "sourceType": "government",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "The biography for President Trump and past presidents is courtesy of the White House Historical Association.",
+        "Donald John Trump was born in Queens, New York, on June 14, 1946. His father, Fred Trump was a successful real estate developer. Trump was educated at the New York Military Academy and the Wharton School of Finance and Commerce at the University of Pennsylvania.",
+        "In 1971, he took over his father’s real estate company, renaming it the Trump Organization. The business soon became involved in variety of projects, including hotels, resorts, residential and commercial building, casinos, and golf courses. His first of many books was The Art of the Deal , published in 1987. In 2004, he launched the reality television show T",
+        "In 2005, Donald Trump married Melania Knauss. They have one son, Barron. Trump also has four adult children from previous marriages: Donald Jr., Ivanka, Eric, and Tiffany."
+      ],
+      "retrievedAt": "2026-10-18T00:09:40.648Z",
+      "content": "The biography for President Trump and past presidents is courtesy of the White House Historical Association.\nDonald John Trump was born in Queens, New York, on June 14, 1946. His father, Fred Trump was a successful real estate developer. Trump was educated at the New York Military Academy and the Wharton School of Finance and Commerce at the University of Pennsylvania.\nIn 1971, he took over his father’s real estate company, renaming it the Trump Organization. The business soon became involved in variety of projects, including hotels, resorts, residential and commercial building, casinos, and golf courses. His first of many books was The Art of the Deal , published in 1987. In 2004, he launched the reality television show The Apprentice .\nIn 2005, Donald Trump married Melania Knauss. They have one son, Barron. Trump also has four adult children from previous marriages: Donald Jr., Ivanka, Eric, and Tiffany.\nDuring the 2016 primary, Trump defeated more than a dozen rivals to win the Republican nomination. While he lost the popular vote, Trump defeated former Secretary of State Hillary Clinton in the general election by winning a majority of Electoral College votes. His campaign slogan was “Make America Great Again.”\nWithout previous elected political experience, President Trump used unconventional methods to communicate his priorities. Most notably, he used the social media platform Twitter as a primary mechanism for direct communication with the American public, other politicians, and the press corps.\nAs president, he signed a major tax reform bill into law and oversaw a reduction of federal regulations. His protectionist trade policies included tariffs in foreign aluminum, steel, and other products. The Trump administration also renegotiated trade agreements with Mexico, Canada, China, Japan, and South Korea. Other domestic priorities included Supreme Court and federal judiciary appointments, increased military budgets, aggressive border and immigration control, criminal justice reform, and the reduction of prescription drug prices.\nIn foreign policy, the Trump administration moved the U.S. Embassy in Israel from Tel Aviv to Jerusalem and brokered normalization agreements between Israel and a number of countries. In 2018, President Trump attended a summit with Kim Jong Un, marking the first time a sitting president met with a North Korean leader.\nIn 2018, there was a partial government shutdown as Trump disagreed with Congress over funding for a border wall between the United States and Mexico. The funding lapse lasted thirty-five days before it was resolved.\nIn 2019, a federal whistleblower filed a complaint that Trump had pressured Ukrainian President Volodymyr Zelensky to investigate former Vice President Joe Biden’s son Hunter, who had served on the board of Bursima Holdings, a natural gas company in Ukraine. Later that year, the House of Representatives impeached President Trump based upon allegations of obstruction of Congress and abuse of ",
+      "sourceId": "SRC-09bec8b731ba"
+    },
+    {
+      "title": "Donald Trump | Encyclopedia.com",
+      "url": "https://www.encyclopedia.com/people/social-sciences-and-law/business-leaders/donald-trump",
+      "canonicalUrl": "https://www.encyclopedia.com/people/social-sciences-and-law/business-leaders/donald-trump",
+      "publisher": "www.encyclopedia.com",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Chairman, president, and chief executive officer, Trump Organization",
+        "Born: June 14, 1946, in New York City, New York .",
+        "Education: University of Pennsylvania , BA, 1968.",
+        "Family: Son of Frederick C. Trump (real estate developer and builder, self-made millionaire) and Mary (MacLeod) Trump (homemaker who raised five children); married Ivana Zelnickova Winkimayr (a New York fashion model), 1977 (divorced 1991); children: three; married Marla Maples (an actress), 1993 (divorced June 1999); children: one."
+      ],
+      "retrievedAt": "2026-10-18T00:09:40.208Z",
+      "content": "Trump, Donald 1946–\ngale\nviews updated May 08 2018\nDonald Trump 1946 –\nChairman, president, and chief executive officer, Trump Organization\nNationality: American.\nBorn: June 14, 1946, in New York City, New York .\nEducation: University of Pennsylvania , BA, 1968.\nFamily: Son of Frederick C. Trump (real estate developer and builder, self-made millionaire) and Mary (MacLeod) Trump (homemaker who raised five children); married Ivana Zelnickova Winkimayr (a New York fashion model), 1977 (divorced 1991); children: three; married Marla Maples (an actress), 1993 (divorced June 1999); children: one.\nCareer: Trump Organization, president, chairman, and CEO, 1975 – .\nAwards: Entrepreneur of the Year, Wharton Entrepreneurial Club, 1984; Ellis Island Medal of Honor, 1986; Developer of the Year, Construction Management Association of America, 1999; Hotel and Real Visionary of the Century, UTA Federation, 2000.\nPublications: Trump: The Art of the Deal (with Tony Schwartz), 1987; Trump: Surviving at the Top (with Charles Leerhsen), 1990; Trump: The Art of the Comeback (with Kate Bohner), 1997; The America We Deserve (with Dave Shiflett), 2000.\nAddress: Trump Organization, 725 Fifth Avenue, New York, New York 10022-2519; http://www.trump.com.\n■ By the early 2000s the American real estate development and construction businessman Donald John Trump had designed a billion-dollar empire with his name branded on luxury properties to identify them as international symbols of wealth and privilege. Trump even summoned a court to protect his surname from being used by anyone else in connection with real estate. He built his empire in a big way, making his name synonymous with the hustle, money, and glamour of New York City and other U.S. locations.\nLEARNED FROM HIS FATHER\nTrump learned his deal-making and entrepreneurial skills from his father, Frederick, who was forced at eleven years of age — upon his father's death — to run the family business. acquired the ability to recognize good deals when he constructed and operated 24,000 affordable housing units in Brooklyn , Queens , and Staten Island.\nAs a child, Trump assisted his father with the rental property business; at age five he was taken along to inspect building sites, and at thirteen he drove a bulldozer. Even at this early stage, Trump was described as self-assured, determined, and positive. He was strongly influenced by his father in his decision to make a career in real estate, but he envisioned buying and selling rather than collecting rents. He learned showman-ship and how to advertise himself from his mother, Mary, who liked to be in the center of the spotlight.\nGROWING UP TRUMP\nTrump spent his high school years at the New York Military Academy, where his energetic aggression and competitiveness were encouraged. He performed well academically and socially, but he never formed close relationships because his drive to win repelled friendships. After graduating in 1964, Trump entered Fordham University, where he ",
+      "sourceId": "SRC-89fc3c06a46c"
+    },
+    {
+      "title": "How Old Is Donald Trump? Birth Date, Age and Presidential Records - Canada Current",
+      "url": "https://canadacurrent.org/blog/how-old-is-donald-trump/",
+      "canonicalUrl": "https://canadacurrent.org/blog/how-old-is-donald-trump/",
+      "publisher": "Canada Current",
+      "author": "Lucas Nathan Mitchell Bennett",
+      "publishedAt": "2026-05-12T23:00:54.000Z",
+      "updatedAt": "2026-05-12T23:01:03.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "How Old Is Donald Trump? Birth Date, Age and Presidential Records",
+        "Lucas Nathan Mitchell Bennett • 2026-05-12 • Reviewed by Oliver Bennett",
+        "If you’ve found yourself wondering exactly how old Donald Trump is, you’re not alone — the answer is straightforward: Donald John Trump was born on June 14, 1946, making him 79 years old as of 2025. But his age takes on added significance because of the presidential records he now holds and how it compares with other recent presidents.",
+        "Place of birth: Queens, New York City, U.S. ·"
+      ],
+      "retrievedAt": "2026-10-18T00:09:40.478Z",
+      "content": "How Old Is Donald Trump? Birth Date, Age and Presidential Records\nLucas Nathan Mitchell Bennett • 2026-05-12 • Reviewed by Oliver Bennett\nIf you’ve found yourself wondering exactly how old Donald Trump is, you’re not alone — the answer is straightforward: Donald John Trump was born on June 14, 1946, making him 79 years old as of 2025. But his age takes on added significance because of the presidential records he now holds and how it compares with other recent presidents.\nFull name: Donald John Trump ·\nBirth date: June 14, 1946 ·\nAge (as of 2026): 79 or 80 ·\nPlace of birth: Queens, New York City, U.S. ·\nPolitical party: Republican ·\nPresidency terms: 45th (2017–2021), 47th (2025–)\nQuick snapshot\nBorn June 14, 1946 ( Britannica, established encyclopedia )\n79 years old as of 2025 ( Britannica )\nWill be 80 on June 14, 2026 ( Britannica, established encyclopedia )\nOldest person to assume the presidency at inauguration ( Wikipedia, online encyclopedia )\nHeld record in 2017, then again in 2025 ( Wikipedia, online encyclopedia )\nSecond president to serve nonconsecutive terms ( White House Historical Association, official presidential history organization )\nJoe Biden (born Nov 20, 1942) is older by 3.5 years ( Miller Center, University of Virginia presidential research center )\nTrump younger than Biden at respective inaugurations ( Miller Center, University of Virginia presidential research center )\nOldest president in US history overall ( Miller Center, University of Virginia presidential research center )\nTurns 80 on June 14, 2026 (Britannica)\nWould extend age record if still president then (Britannica)\nHealth details beyond public records remain unclear (Britannica)\nSix biographical facts, one pattern: each one reinforces that Trump’s age is both a simple number and a record-setting data point.\nKey facts about Donald Trump’s age and biography\nLabel |\nValue |\nFull name |\nDonald John Trump |\nBirth date |\nJune 14, 1946 |\nAge (2025) |\n79 |\nPlace of birth |\nQueens, New York |\nPresidency |\n45th and 47th president |\nPolitical party |\nRepublican |\nHow old is Donald Trump?\nDonald Trump was born on June 14, 1946, in Queens, New York City, according to Wikipedia (online encyclopedia) . As of mid-2025, he is 79 years old. He will turn 80 on June 14, 2026.\nWhy this matters\nTrump’s age isn’t just a trivia fact — it’s a constitutional and logistical reality. At 79, he is the oldest person ever to take the presidential oath, which affects everything from succession planning to public perception of stamina.\nCurrent age and birth date\nAge in 2025: 79 years old (Britannica)\nBirthplace: Jamaica Hospital, Queens, New York (Wikipedia)\nParents: Fred Trump and Mary Anne MacLeod Trump (Wikipedia)\nThe implication: Trump’s age places him firmly in the upper tier of older U.S. presidents, a group that includes Joe Biden, Ronald Reagan, and William Henry Harrison. The difference? Trump took office at 78 — the oldest inauguration age on record.\nHow old is Donald Trump in 2026?\nOn J",
+      "sourceId": "SRC-145d02c70f11"
+    }
+  ],
+  "unresolvedQuestions": [],
+  "contradictions": [],
+  "completeness": "supported",
+  "limitations": [
+    "13 search requests or candidate pages failed or were unreadable.",
+    "The configured candidate-page budget of 16 was exhausted."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 3,
+    "failedCount": 13,
+    "rounds": 1,
+    "searches": 5
+  },
+  "archivedAt": "2026-10-18T00:10:01.811Z"
+}

@@ -1,0 +1,45 @@
+{
+  "id": "2026-10-17T23-47-56-893Z-what-s-his-net-worth",
+  "question": "What's his net worth",
+  "plan": {
+    "objective": "Determine the current net worth of the specified individual and provide a concise estimate with source citations.",
+    "taskType": "current",
+    "deliverable": "A brief statement of the person's net worth (including currency) along with links to authoritative sources supporting the figure.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "authoritative financial publications (e.g., Forbes, Bloomberg, Fortune)",
+      "official filings or disclosures (e.g., SEC filings, company annual reports)",
+      "reputable news organizations (e.g., Reuters, Wall Street Journal)",
+      "verified databases or industry analysts"
+    ],
+    "questions": [
+      "Could you please specify the full name of the person whose net worth you would like to know?"
+    ],
+    "queries": [
+      "\"[Full Name]\" net worth 2024 site:forbes.com",
+      "\"[Full Name]\" net worth 2024 site:bloomberg.com",
+      "\"[Full Name]\" net worth 2024 site:reuters.com",
+      "\"[Full Name]\" net worth 2024 site:sec.gov",
+      "\"[Full Name]\" wealth estimate 2024"
+    ],
+    "unresolvedQuestions": [
+      "Could you please specify the full name of the person whose net worth you would like to know?"
+    ]
+  },
+  "answer": "I could not retrieve any readable web sources for this question, so I can't provide a source-grounded answer yet. Search may be blocked or relevant pages may be inaccessible. Please try a narrower query or provide a source URL.",
+  "sources": [],
+  "unresolvedQuestions": [
+    "Could you please specify the full name of the person whose net worth you would like to know?"
+  ],
+  "contradictions": [],
+  "completeness": "insufficient",
+  "limitations": [],
+  "retrieval": {
+    "candidateCount": 0,
+    "retrievedCount": 0,
+    "failedCount": 0,
+    "rounds": 1,
+    "searches": 5
+  },
+  "archivedAt": "2026-10-17T23:47:56.893Z"
+}

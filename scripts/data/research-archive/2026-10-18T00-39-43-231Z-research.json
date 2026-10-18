@@ -1,0 +1,106 @@
+{
+  "id": "2026-10-18T00-39-43-231Z-research",
+  "question": "?",
+  "plan": {
+    "objective": "?",
+    "taskType": "general",
+    "deliverable": "A direct answer with supporting evidence and limitations.",
+    "requiresCurrentInformation": false,
+    "sourcePreferences": [
+      "primary sources",
+      "authoritative references",
+      "independent corroboration"
+    ],
+    "questions": [
+      "?"
+    ],
+    "queries": [
+      "?",
+      "? authoritative sources",
+      "? evidence and limitations"
+    ],
+    "unresolvedQuestions": [
+      "What specific information is the user seeking?"
+    ]
+  },
+  "answer": "The request does not contain a specific question to answer, so a factual response cannot be provided (unverified: no matching retrieved evidence).",
+  "followUpQuestions": [
+    "Define authoritative source",
+    "Explain limitations in medical research"
+  ],
+  "sources": [
+    {
+      "title": "Authoritative Source - Glossary | CSRC",
+      "url": "https://csrc.nist.gov/glossary/term/Authoritative_Source",
+      "canonicalUrl": "https://csrc.nist.gov/glossary/term/Authoritative_Source",
+      "publisher": "csrc.nist.gov",
+      "sourceType": "government",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "You are viewing this page in an unauthorized frame window.",
+        "This is a potential security issue, you are being redirected to https://csrc.nist.gov .",
+        "An entity that has access to or verified copies of accurate information from an issuing source such that a CSP has high confidence that the source can confirm the validity of the identity attributes or evidence supplied by an applicant during identity proofing. An issuing source may also be an authoritative source. Often, authoritative sources are determined",
+        "See the identified Source document to understand each term-definition pair in its proper context."
+      ],
+      "retrievedAt": "2026-10-18T00:39:41.528Z",
+      "content": "Authoritative Source - Glossary | CSRC\nYou are viewing this page in an unauthorized frame window.\nThis is a potential security issue, you are being redirected to https://csrc.nist.gov .\nTopics\nExpand or Collapse\nNews & Updates\nEvents\nGlossary\nAbout CSRC\nA\n|\nB\nC\nD\nE\nF\nG\nH\nI\nJ\nK\nL\nM\nN\nO\nP\nQ\nR\nS\nT\nU\nV\nW\nX\nY\nZ\nAuthoritative Source\nDefinitions:\nAn entity that has access to or verified copies of accurate information from an issuing source such that a CSP has high confidence that the source can confirm the validity of the identity attributes or evidence supplied by an applicant during identity proofing. An issuing source may also be an authoritative source. Often, authoritative sources are determined by a policy decision of the agency or CSP before they can be used in the identity proofing validation phase.\nSources:\nNIST SP 800-63-4\nunder authoritative source\nNIST SP 800-63A-4\nAbout\nSee the identified Source document to understand each term-definition pair in its proper context.\nSend inquiries about terminology to the Source's authors; NIST publications will usually include a contact email for that Source.\nFor other inquiries, such as comments about the Glossary's presentation and functionality, use this link .\nSee the Glossary homepage for more guidance.",
+      "sourceId": "SRC-ee34c0e3f348"
+    },
+    {
+      "title": "Limitations in Medical Research: Recognition, Influence, and Warning - PMC",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10882193/",
+      "canonicalUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10882193/",
+      "publisher": "PubMed Central (PMC)",
+      "sourceType": "government",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        ". 2024 Jan-Mar;28(1):e2023.00049. doi: 10.4293/JSLS.2023.00049",
+        "Limitations in Medical Research: Recognition, Influence, and Warning",
+        "✉ Address correspondence to: Douglas E. Ott, MD, MBA, 109 Preston Court, Macon, GA 31210, USA, Telephone: 478-747-1655, E-mail: gabiomed83@gmail.com .",
+        "© 2024 by SLS, Society of Laparoscopic & Robotic Surgeons."
+      ],
+      "retrievedAt": "2026-10-18T00:39:41.583Z",
+      "content": "JSLS\n. 2024 Jan-Mar;28(1):e2023.00049. doi: 10.4293/JSLS.2023.00049\nLimitations in Medical Research: Recognition, Influence, and Warning\nDouglas E Ott\nDouglas E Ott , MD, MBA\n1 Mercer University, Macon, Georgia, USA.\nFind articles by Douglas E Ott\n1, ✉\nAuthor information\nCopyright and License information\n✉ Address correspondence to: Douglas E. Ott, MD, MBA, 109 Preston Court, Macon, GA 31210, USA, Telephone: 478-747-1655, E-mail: gabiomed83@gmail.com .\n✉ Corresponding author.\n© 2024 by SLS, Society of Laparoscopic & Robotic Surgeons.\nPMC Copyright notice\nPMCID: PMC10882193 PMID: 38405216\nAbstract\nBackground:\nAs the number of limitations increases in a medical research article, their consequences multiply and the validity of findings decreases. How often do limitations occur in a medical article? What are the implications of limitation interaction? How often are the conclusions hedged in their explanation?\nObjective:\nTo identify the number, type, and frequency of limitations and words used to describe conclusion(s) in medical research articles.\nMethods:\nSearch, analysis, and evaluation of open access research articles from 2021 and 2022 from the Journal of the Society of Laparoscopic and Robotic Surgery and 2022 Surgical Endoscopy for type(s) of limitation(s) admitted to by author(s) and the number of times they occurred. Limitations not admitted to were found, obvious, and not claimed. An automated text analysis was performed for hedging words in conclusion statements. A limitation index score is proposed to gauge the validity of statements and conclusions as the number of limitations increases.\nResults:\nA total of 298 articles were reviewed and analyzed, finding 1,764 limitations. Four articles had no limitations. The average was between 3.7% and 6.9% per article. Hedging, weasel words and words of estimative probability description was found in 95.6% of the conclusions.\nConclusions:\nLimitations and their number matter. The greater the number of limitations and ramifications of their effects, the more outcomes and conclusions are affected. Wording ambiguity using hedging or weasel words shows that limitations affect the uncertainty of claims. The limitation index scoring method shows the diminished validity of finding(s) and conclusion(s).\nKeywords: Bias, Hedging, Limitations, Methods, Research, Uncertainty, Validity\nINTRODUCTION\nAs the number of limitations in a medical research article increases, does their influence have a more significant effect than each one considered separately, making the findings and conclusions less reliable and valid? Limitations are known variables that influence data collection and findings and compromise outcomes, conclusions, and inferences. A large body of work recognizes the effect(s) and consequence(s) of limitations. 1 – 77 Other than the ones known to the author(s), unknown and unrecognized limitations influence research credibility. This study and analysis aim to determine how frequently and what limitations",
+      "sourceId": "SRC-defc76870cc1"
+    },
+    {
+      "title": "What is an Authoritative Source? - How to Search for Sources and Manage Them - LibGuides at Graduate Institute of International and Development Studies",
+      "url": "https://libguides.graduateinstitute.ch/how_to_search/authority",
+      "canonicalUrl": "https://libguides.graduateinstitute.ch/how_to_search/authority",
+      "publisher": "libguides.graduateinstitute.ch",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "What is an Authoritative Source? - How to Search for Sources and Manage Them - LibGuides at Graduate Institute of International and Development Studies",
+        "&ldquo;A source that is official. Also, a work known to be reliable because its authenticity or integrity is widely recognized by experts in the field.&rdquo;",
+        "(Reitz, Joan. ODLIS: Online Dictionary for Library and Information Science )",
+        "&ldquo; Authority is constructed and contextual . Information resources reflect their creators&rsquo; expertise and credibility, and are evaluated based on the information need and the context in which the information will be used. Authority is constructed in that various communities may recognize different types of authority. It is contextual in that the in"
+      ],
+      "retrievedAt": "2026-10-18T00:39:41.328Z",
+      "content": "What is an Authoritative Source? - How to Search for Sources and Manage Them - LibGuides at Graduate Institute of International and Development Studies\nSkip to Main Content\nWhat is an Authoritative Source?\nPhoto CC BY-SA Mark Fischer\n&ldquo;A source that is official. Also, a work known to be reliable because its authenticity or integrity is widely recognized by experts in the field.&rdquo;\n(Reitz, Joan. ODLIS: Online Dictionary for Library and Information Science )\n&ldquo; Authority is constructed and contextual . Information resources reflect their creators&rsquo; expertise and credibility, and are evaluated based on the information need and the context in which the information will be used. Authority is constructed in that various communities may recognize different types of authority. It is contextual in that the information need may help to determine the level of authority required.&rdquo;\n( ACRL Framework for Information Literacy for Higher Education , adopted 2016)\nIn the general context of academic writing, authority partly derives from current academic research activity and employment in the designated field . The following are necessary to consider a work as a valid scholarly publication:\nClaims are referenced and a bibliography is included\nThe work is published by a recognised institution/publisher\nThe work is peer-reviewed\nBut other people and media can be authoritative sources in the appropriate context.\nWhat Source Types Can Be Considered Authoritative?\nThe source type provides a preliminary idea, but it is not sufficient to determine authority. The expertise of the author matters even for traditional scholarly publications, and verification grows more necessary as we go further down the categories and gatekeeping decreases.\nScholarly publications &ndash; must be used as references\nPeer reviewed books and journals\nNon-PR academic books and journals (lesser value)\nGrey literature &ndash; can be used as references\nPreprints, working papers, etc. &ndash; non-published academic research\nReports and publications from groups and institutions\nPopular and trade/professional sources &ndash; require careful consideration before using as references\nNews, magazines\nBooks (non-academic)\nOther websites\nPublic conversation and social media &ndash; should not be used as references\nDiscussion forums\nSocial media (Facebook, X, Instagram, TikTok, etc.)",
+      "sourceId": "SRC-1095d850e32b"
+    }
+  ],
+  "unresolvedQuestions": [
+    "What specific information is the user seeking?"
+  ],
+  "contradictions": [],
+  "completeness": "insufficient",
+  "limitations": [
+    "11 search requests or candidate pages failed or were unreadable.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 3 of 5 selected sources fit in the synthesis evidence budget.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 5,
+    "failedCount": 11,
+    "rounds": 1,
+    "searches": 3
+  },
+  "archivedAt": "2026-10-18T00:39:43.232Z"
+}

@@ -70,8 +70,11 @@ test("Muse identifies itself as a research agent without delegating identity to 
     const modelCallsAfterGreeting = modelCalls;
     for (const question of [
       "What are you?",
-      "What are you, man?",
+      "What are you man?",
       "Who are you and whats your purpose?",
+      "What's your purpose, and who are you?",
+      "Tell me about yourself.",
+      "How can you help me?",
     ]) {
       const answer = await agent.respond(question);
       assert.match(answer, /I'm Muse, a conversational research agent/);

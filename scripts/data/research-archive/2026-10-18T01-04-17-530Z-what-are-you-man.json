@@ -1,0 +1,119 @@
+{
+  "id": "2026-10-18T01-04-17-530Z-what-are-you-man",
+  "question": "What are you man",
+  "plan": {
+    "objective": "Provide a clear, authoritative definition of the term “man” across common contexts (general English usage, etymology, gender studies, legal and cultural perspectives).",
+    "taskType": "definition",
+    "deliverable": "A concise, multi‑sentence definition with brief notes on etymology, usage variations, and relevant scholarly perspectives.",
+    "requiresCurrentInformation": false,
+    "sourcePreferences": [
+      "Oxford English Dictionary",
+      "Merriam‑Webster Dictionary",
+      "Encyclopaedia Britannica",
+      "Peer‑reviewed articles in gender studies and anthropology",
+      "Official legal dictionaries or statutes where applicable"
+    ],
+    "questions": [
+      "What is the standard dictionary definition of “man”?",
+      "What is the etymology of the word “man”?",
+      "How is “man” defined in gender‑studies literature?",
+      "Are there notable legal or cultural variations in the definition of “man”?"
+    ],
+    "queries": [
+      "definition of man Oxford English Dictionary",
+      "etymology of the word man Merriam-Webster",
+      "man definition gender studies scholarly article",
+      "legal definition of man statute",
+      "cultural variations in the meaning of man anthropology"
+    ],
+    "unresolvedQuestions": [
+      "What specific definitions of \"man\" appear in gender‑studies scholarship?",
+      "How do UK statutes or case law formally define \"man\"?",
+      "Are there notable cultural variations in the term’s meaning outside English‑speaking contexts?"
+    ]
+  },
+  "answer": "In contemporary general English, man is most commonly defined as an adult male human being  (SRC-b50283393e34). [SRC-965b925aec0b]\nHistorically, the Old English word mann was gender‑neutral, meaning “person” or “human,” and the term man derived from Proto‑Germanic *mann‑ originally designated any human regardless of sex or age (SRC-965b925aec0b). [SRC-965b925aec0b]\nOver time the sense “adult male” became dominant, a shift noted in the Wikipedia article. [SRC-965b925aec0b]\n\nEtymologically, the word traces back to Proto‑Germanic *mann‑ and further to a Proto‑Indo‑European root *man‑/*mon‑/*men‑, with cognates in Sanskrit, Avestan, and Slavic languages (SRC-965b925aec0b). [SRC-965b925aec0b]\n\nIn gender‑studies literature and legal statutes, the term can be contested or specifically defined, but no such definitions were present in the retrieved sources, so those perspectives remain unaddressed here (unverified: no matching retrieved evidence).\n\nThus, man can be understood as:\n- A modern lexical noun meaning “adult male person” (Oxford Advanced Learner’s Dictionary). [SRC-b50283393e34]\n- An older, broader term for “human being” (Wikipedia), reflecting its gender‑neutral origins (unverified: no matching retrieved evidence).",
+  "followUpQuestions": [
+    "Gender‑studies perspectives on \"man\"",
+    "Legal definitions of \"man\" in UK law"
+  ],
+  "sources": [
+    {
+      "title": "Man (word) - Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Man_(word)",
+      "canonicalUrl": "https://en.wikipedia.org/wiki/Man_(word)",
+      "publisher": "en.wikipedia.org",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "This article contains runic characters. Without proper rendering support , you may see question marks, boxes, or other symbols instead of runes.",
+        "The term man (from Proto-Germanic * mann- ' person ' ) and words derived from it can designate any or even all of the human race regardless of their sex or age. In traditional usage, man (without an article) itself refers to the species or to humanity (mankind) as a whole.",
+        "The Germanic word developed into Old English mann . In Old English, the word still primarily meant \"person\" or \"human,\" and was used for men, women, and children alike. [ 1 ] [ 2 ] The sense \"adult male\" was very rare, at least in the written language. That meaning is not recorded at all until about the year 1000, over a hundred years after the writings of A",
+        "Adopting the term for humans in general to refer to men is a common development of Romance and Germanic languages, but is not found in most other European languages (Slavic * čelověkъ vs. * mǫžь , Greek ἄνθρωπος vs. άνδρας , Finnish ihminen vs. mies etc.)."
+      ],
+      "retrievedAt": "2026-10-18T01:04:13.612Z",
+      "content": "From Wikipedia, the free encyclopedia\nEnglish word\nThis article contains runic characters. Without proper rendering support , you may see question marks, boxes, or other symbols instead of runes.\nThe term man (from Proto-Germanic * mann- ' person ' ) and words derived from it can designate any or even all of the human race regardless of their sex or age. In traditional usage, man (without an article) itself refers to the species or to humanity (mankind) as a whole.\nThe Germanic word developed into Old English mann . In Old English, the word still primarily meant \"person\" or \"human,\" and was used for men, women, and children alike. [ 1 ] [ 2 ] The sense \"adult male\" was very rare, at least in the written language. That meaning is not recorded at all until about the year 1000, over a hundred years after the writings of Alfred the Great and perhaps nearly three centuries after Beowulf . [ 3 ] Male and female gender qualifiers were used with mann in compound words.\nAdopting the term for humans in general to refer to men is a common development of Romance and Germanic languages, but is not found in most other European languages (Slavic * čelověkъ vs. * mǫžь , Greek ἄνθρωπος vs. άνδρας , Finnish ihminen vs. mies etc.).\nEtymology\n[ edit ]\nAccording to one etymology, Proto-Germanic * man-n- is derived from a Proto-Indo-European root * man- , * mon- or * men- (see Sanskrit / Avestan manu- , Slavic * mǫž \"man, male\"). [ 4 ] The Slavic forms ( Russian muzh \"man, male\" etc.) are derived from a suffixed stem * man-gyo- . [ citation needed ]\nIn Hindu mythology , Manu is the name of the traditional progenitor of humankind who survives a deluge and gives mankind laws. The hypothetically reconstructed Proto-Indo-European form * Manus may also have played a role in Proto-Indo-European religion based on this, if there is any connection with the figure of Mannus — reported by the Roman historian Tacitus in ca. AD 70 to be the name of a traditional ancestor of the Germanic peoples and son of Tuisto ; modern sources other than Tacitus have reinterpreted this as \"first man\". [ 5 ]\nIn Old English the words wer and wīf were used to refer to \"a male\" and \"a female\" respectively, while mann had the primary meaning of \"person\" or \"human\" regardless of gender. Both wer and wyf may be used to qualify \"man\"; for example:\nGod gesceop ða æt fruman twegen men, wer and wif (then at the beginning, God created two human beings, man and woman ) [ 6 ]\nThese terms are also used to qualify compounds; wifmann (variant wimman ) developed into the modern word \"woman\". Wæpned also meant \"male\", and was used to qualify \"man\": wæpnedmann (variant wepman , \"male person\"). There was also the term wæpenwifestre, meaning either an armed woman, or a woman with a penis. [ 7 ] These terms were not restricted to adults; Old English also used wæpnedcild and wifcild , literally \"male-child\" and \"female-child\". [ 8 ] [ 9 ] The Old English wer may survive today in the compound \"werewolf\" (from Old Englis",
+      "sourceId": "SRC-965b925aec0b"
+    },
+    {
+      "title": "Oxford English Dictionary",
+      "url": "https://www.oed.com/?tl=true",
+      "canonicalUrl": "https://www.oed.com/",
+      "publisher": "www.oed.com",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "An unsurpassed guide for researchers in any discipline to the meaning, history, and usage of over 500,000 words and phrases across the English-speaking world.",
+        "Glossaries, abbreviations, pronunciation guides, frequency, symbols, and more",
+        "Explore different words used for the same concept or meaning over time",
+        "Change display settings, save searches and purchase subscriptions"
+      ],
+      "retrievedAt": "2026-10-18T01:04:13.830Z",
+      "content": "Oxford English Dictionary\nThe historical English dictionary\nAn unsurpassed guide for researchers in any discipline to the meaning, history, and usage of over 500,000 words and phrases across the English-speaking world.\nFind out more about OED\nUnderstanding entries\nGlossaries, abbreviations, pronunciation guides, frequency, symbols, and more\nExplore resources\nHistorical Thesaurus\nExplore different words used for the same concept or meaning over time\nAbout the thesaurus\nPersonal account\nChange display settings, save searches and purchase subscriptions\nAccount features\nRecently added\nKanaka Maoli\nfantasizer\nCafé Brûlot\nwhingebag\ncaps lock\ninseam\ntour company\nthesaural\ncafé racer\ndouen\nfantasy land\nno-gi\nemerger\ntourist trail\njablesse\nLappon\nWord of the day\nlutefisk\nnoun\nA Scandinavian dish prepared by soaking dried whitefish (esp. cod) in lye, then cooking the fish to a gelatinous consistency.\nRecently updated\ndeclarative\ncream puff\nSiamese\nseniority\njumper\nfosterage\nconclusive\ntour\nfantastical\ndoubtful\ndoubtless\nback end\nwhale\nsolarize\nconclude\nstony\nWord stories\nRead our collection of word stories detailing the etymology and semantic development of a wide range of words, including ‘dungarees’, ‘codswallop’, and ‘witch’.\nWord lists\nAccess our word lists and commentaries on an array of fascinating topics, from film-based coinages to Tex-Mex terms.\nWorld Englishes\nExplore our World Englishes hub and access our resources on the varieties of English spoken throughout the world by people of diverse cultural backgrounds.\nHistory of English\nHere you can find a series of commentaries on the History of English, charting the history of the English language from Old English to the present day.",
+      "sourceId": "SRC-4bce9b89b35d"
+    },
+    {
+      "title": "man noun - Definition, pictures, pronunciation and usage notes | Oxford Advanced Learner's Dictionary at OxfordLearnersDictionaries.com",
+      "url": "https://www.oxfordlearnersdictionaries.com/definition/english/man_1",
+      "canonicalUrl": "https://www.oxfordlearnersdictionaries.com/definition/english/man_1",
+      "publisher": "www.oxfordlearnersdictionaries.com",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "man noun - Definition, pictures, pronunciation and usage notes | Oxford Advanced Learner's Dictionary at OxfordLearnersDictionaries.com",
+        "[countable] an adult male human a good-looking young man",
+        "the men's team/game/race/doubles/singles/event",
+        "The board of directors is dominated by middle-aged white men."
+      ],
+      "retrievedAt": "2026-10-18T01:04:13.798Z",
+      "content": "man noun - Definition, pictures, pronunciation and usage notes | Oxford Advanced Learner's Dictionary at OxfordLearnersDictionaries.com\nRedeem\nUpgrade\nHelp\nGrammar\nWord Lists\nResources\nTOP\nman\nnoun\n/mæn/\n(plural men\n/men/\n)\nIdioms\njump to other results\nmale person\n[countable] an adult male human a good-looking young man\nthe relationships between men and women\nthe men's team/game/race/doubles/singles/event\nThe board of directors is dominated by middle-aged white men.\nHe was one of the great men of history.\nFour armed men burst into the room.\nHe is an average working man trying to make ends meet.\nsee also best man , danger man , dirty old man , Green Man , ladies’ man , leading man , men’s room , new man , straw man Extra Examples The men's team won their third gold medal last year.\nThe picture shows a man in his thirties.\nthe man she sits next to at work\nI gave some money to a homeless man in the park.\nIs he the funniest man on earth?\nHe walked out of court a free man.\nHe was a lucky man to have found such a partner.\nHe was a self-made man who raised himself from poverty to success.\nMr Locke is a man of means who owns a vast business empire.\nPolice have arrested two men and a woman.\nI was helped by two burly men with tattoos.\nOver 150 men, women and children were killed.\nSeveral people made speeches in honour of the great man.\nVincente is a wanted man back in his own country.\nWhat a horrible man!\nmen in grey suits\na little old man\na middle-aged, balding man\nOnly the dead man's young son knows what happened.\nTopics Life stages a1 , People in society a1 Oxford Collocations Dictionary adjective elderly\nmiddle-aged\nold\nSee full entry\nJoin us\nJoin our community to access the latest language learning and assessment tips from Oxford University Press!\nhumans\n(also Man )\n[uncountable] humans as a group, both male and female the damage caused by man to the environment\nThe common man (= ordinary people) is losing faith in democratic institutions.\nSensitive Language The human race The human race Man and mankind have traditionally been used to mean ‘all men and women’. Many people now prefer to use humanity , the human race , human beings , humans or people : Many of the worst wildfires are started by people.\nScarcity of water is one of the biggest problems facing humanity.\nHumans have developed a sophisticated capacity for language.\nExtra Examples the most poisonous substance known to man\nIt's a powerful indictment of the horrors of war and man's inhumanity to man.\nIn man the brain is highly developed.\nThe working man wants more and better jobs.\nOxford Collocations Dictionary adjective early\nprehistoric\nprimitive\npreposition in man\nphrases known to man\nman’s inhumanity to man\n[countable] (literary or old-fashioned) a person, either male or female All men must die.\nHow could a human torture his fellow man?\nWhile no man is an island, we do function independently for the most part.\n[uncountable] humans from a particular period of history early/modern/Prehistoric",
+      "sourceId": "SRC-b50283393e34"
+    }
+  ],
+  "unresolvedQuestions": [
+    "What specific definitions of \"man\" appear in gender‑studies scholarship?",
+    "How do UK statutes or case law formally define \"man\"?",
+    "Are there notable cultural variations in the term’s meaning outside English‑speaking contexts?"
+  ],
+  "contradictions": [
+    "Oxford Advanced Learner’s Dictionary defines \"man\" as \"male person\" (SRC-b50283393e34), whereas Wikipedia notes the original Old English meaning was gender‑neutral \"person\" (SRC-965b925aec0b)."
+  ],
+  "completeness": "partial",
+  "limitations": [
+    "10 search requests or candidate pages failed or were unreadable.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 3 of 4 selected sources fit in the synthesis evidence budget.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 6,
+    "failedCount": 10,
+    "rounds": 1,
+    "searches": 5
+  },
+  "archivedAt": "2026-10-18T01:04:17.531Z"
+}

@@ -1,0 +1,75 @@
+{
+  "id": "2026-10-18T00-04-58-982Z-what-are-your-capabilities",
+  "question": "What are your capabilities",
+  "plan": {
+    "objective": "Provide a concise, authoritative overview of the capabilities of the current ChatGPT model, including functional, technical, and usage aspects.",
+    "taskType": "definition",
+    "deliverable": "A brief summary that outlines ChatGPT's core abilities (e.g., natural language understanding, generation, code assistance, reasoning, multimodal support) and any known limitations.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "OpenAI official documentation (e.g., help.openai.com, platform.openai.com docs)",
+      "OpenAI blog posts and release notes",
+      "Peer‑reviewed papers authored by OpenAI (e.g., the GPT‑4 technical report)",
+      "Authoritative technology news outlets (e.g., Wired, The Verge) for recent updates"
+    ],
+    "questions": [
+      "What are the main capabilities of the current ChatGPT model?"
+    ],
+    "queries": [
+      "ChatGPT capabilities site:openai.com",
+      "GPT‑4 technical report capabilities",
+      "OpenAI ChatGPT features documentation",
+      "ChatGPT limitations and known issues",
+      "ChatGPT multimodal support official announcement"
+    ],
+    "unresolvedQuestions": [
+      "Support for multimodal inputs (e.g., images, audio)",
+      "Specific code‑generation or programming assistance abilities",
+      "Detailed technical specifications such as model size, architecture, or inference speed"
+    ]
+  },
+  "answer": "ChatGPT is a large language model that produces natural‑language output by predicting the next word in a sequence. [SRC-275dcf282678]\nThe available source describes several functional aspects of the service: (unverified: no matching retrieved evidence).\n\n* **Text generation and drafting** – The model is used for “ideation and drafting rather than as a sole source of factual information” and is discussed under “Content Generation Challenges”[SRC-275dcf282678].\n* **Question answering** – It “rarely admits uncertainty” and can provide answers, as noted in the discussion of model behavior (unverified: no matching retrieved evidence).\n* **Knowledge scope** – Its knowledge is limited to a cutoff date, referenced in the “Knowledge Cutoff and Real‑Time Information” section[SRC-275dcf282678].\n* **Usage limits** – Different subscription tiers impose limits on usage (e.g., free vs. [SRC-275dcf282678]\nPlus/Team), described in “Usage Limits by Subscription Tier”[SRC-275dcf282678].\n* **Reasoning and common‑sense** – The source states a “Lack of True Reasoning and Common Sense,” indicating that while the model can perform some reasoning, it is not a strong point[SRC-275dcf282678].\n* **Emotional and ethical handling** – Limitations such as “Limited Emotional Intelligence” and “Ethical and Security Concerns” are listed, implying the model can engage in conversational contexts but with constraints[SRC-275dcf282678].\n\nThese points together outline the core capabilities of the current ChatGPT model: natural‑language understanding and generation, answer provision within a fixed knowledge window, support for drafting and ideation tasks, and operation under tiered usage limits (unverified: no matching retrieved evidence).\nThe source also highlights key limitations that temper these capabilities. [SRC-275dcf282678]\n\n**Known limitations** (from the same source) include hallucinations, incomplete reasoning, limited emotional insight, and security/ethical concerns, all of which affect how the capabilities can be applied. [SRC-275dcf282678]",
+  "sources": [
+    {
+      "title": "ChatGPT Limitations: Complete Guide | AI Wiki",
+      "url": "https://artificial-intelligence-wiki.com/ai-tools/chatgpt/chatgpt-limitations/",
+      "canonicalUrl": "https://artificial-intelligence-wiki.com/ai-tools/chatgpt/chatgpt-limitations/",
+      "publisher": "Artificial Intelligence Wiki",
+      "author": "Theo Marchetti",
+      "publishedAt": "2025-08-26T11:11:27.000Z",
+      "updatedAt": "2025-12-11T11:11:27.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "By Theo Marchetti · 2025-08-26 · Reviewed by Bobby Johnson",
+        "2. Knowledge Cutoff and Real-Time Information",
+        "One of the most significant limitations of ChatGPT is its tendency to generate \"hallucinations\"—instances where the AI produces incorrect or fabricated information with a confident tone, making it appear factual. This phenomenon occurs because ChatGPT is a language model trained to predict the most likely next words in a sequence, not to verify factual accur",
+        "The model rarely admits uncertainty or uses phrases like \"I don't know,\" which can mislead users into accepting incorrect information as truth. This is particularly problematic in fields requiring high accuracy such as medicine, law, or technical documentation. Users must independently verify critical information, especially when the consequences of errors a"
+      ],
+      "retrievedAt": "2026-10-18T00:04:56.358Z",
+      "content": "By Theo Marchetti · 2025-08-26 · Reviewed by Bobby Johnson\nContents\n1. Accuracy Issues and Hallucinations\n2. Knowledge Cutoff and Real-Time Information\n3. Usage Limits by Subscription Tier\n3.1 Free Tier Limits\n3.2 Plus and Team Limits\n4. Lack of True Reasoning and Common Sense\n5. Limited Emotional Intelligence\n6. Content Generation Challenges\n7. Ethical and Security Concerns\n8. Strategies for Overcoming Limitations\nAccuracy Issues and Hallucinations\nOne of the most significant limitations of ChatGPT is its tendency to generate \"hallucinations\"—instances where the AI produces incorrect or fabricated information with a confident tone, making it appear factual. This phenomenon occurs because ChatGPT is a language model trained to predict the most likely next words in a sequence, not to verify factual accuracy.\nThe model rarely admits uncertainty or uses phrases like \"I don't know,\" which can mislead users into accepting incorrect information as truth. This is particularly problematic in fields requiring high accuracy such as medicine, law, or technical documentation. Users must independently verify critical information, especially when the consequences of errors are significant.\nHallucinations can manifest in various ways:\nInventing non-existent sources or citations\nCreating plausible-sounding but incorrect statistics\nGenerating fictional names, dates, or events\nMixing accurate information with fabricated details\nProviding outdated information as current\nTo mitigate this limitation, users should cross-reference important information with authoritative sources, ask ChatGPT to cite sources (though these may also be fabricated), and use the tool primarily for ideation and drafting rather than as a sole source of factual information.\nKnowledge Cutoff and Real-Time Information\nChatGPT operates with a knowledge cutoff date, meaning its training data only extends to a specific point in time. Earlier versions like GPT-3.5 were limited to knowledge up to 2021, while GPT-4 and GPT-4o extend training data through April 2024. This creates a fundamental limitation: the model cannot provide information about events, discoveries, or developments that occurred after its training cutoff.\nWhile newer versions of ChatGPT include web browsing capabilities for Plus and Team subscribers, the base model still doesn't access real-time information natively. This means:\nCurrent news and events may not be reflected in responses\nRecently published research or studies won't be included\nUpdated product information, pricing, or features may be outdated\nNew regulations, policies, or laws won't be considered\nEmerging technologies and trends may not be discussed accurately\nFor users seeking current information, it's essential to verify time-sensitive details through up-to-date sources. The browsing feature in paid tiers partially addresses this limitation but isn't always reliable or comprehensive. Understanding the knowledge cutoff helps set appropriate expectations for what ChatGP",
+      "sourceId": "SRC-275dcf282678"
+    }
+  ],
+  "unresolvedQuestions": [
+    "Support for multimodal inputs (e.g., images, audio)",
+    "Specific code‑generation or programming assistance abilities",
+    "Detailed technical specifications such as model size, architecture, or inference speed"
+  ],
+  "contradictions": [],
+  "completeness": "partial",
+  "limitations": [
+    "15 search requests or candidate pages failed or were unreadable.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 1,
+    "failedCount": 15,
+    "rounds": 1,
+    "searches": 5
+  },
+  "archivedAt": "2026-10-18T00:04:58.982Z"
+}

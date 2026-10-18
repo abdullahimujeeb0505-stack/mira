@@ -1,0 +1,49 @@
+{
+  "id": "2026-10-18T01-04-53-762Z-who-are-you-and-whats-your-purpose",
+  "question": "Who are you and whats your purpose",
+  "plan": {
+    "objective": "Provide a concise definition of ChatGPT, including its origin, nature as an AI language model, and its intended purpose as described by its creators.",
+    "taskType": "definition",
+    "deliverable": "A brief summary that answers who ChatGPT is and what its purpose is.",
+    "requiresCurrentInformation": false,
+    "sourcePreferences": [
+      "Official OpenAI documentation",
+      "OpenAI blog posts",
+      "Peer‑reviewed papers on GPT models (e.g., the original GPT‑3 paper)",
+      "Authoritative tech news outlets (e.g., Wired, The Verge) for contextual statements"
+    ],
+    "questions": [
+      "Who is ChatGPT and what is its purpose?"
+    ],
+    "queries": [
+      "\"ChatGPT\" definition site:openai.com",
+      "\"What is ChatGPT\" OpenAI",
+      "\"ChatGPT purpose\" OpenAI mission",
+      "\"ChatGPT\" official documentation",
+      "\"ChatGPT\" capabilities and goals"
+    ],
+    "unresolvedQuestions": [
+      "Who is ChatGPT and what is its purpose?"
+    ]
+  },
+  "answer": "I could not retrieve any readable web sources for this question, so I can't provide a source-grounded answer yet. Search may be blocked or relevant pages may be inaccessible. Please try a narrower query or provide a source URL.",
+  "followUpQuestions": [],
+  "sources": [],
+  "unresolvedQuestions": [
+    "Who is ChatGPT and what is its purpose?"
+  ],
+  "contradictions": [],
+  "completeness": "insufficient",
+  "limitations": [
+    "16 search requests or candidate pages failed or were unreadable.",
+    "The configured candidate-page budget of 16 was exhausted."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 0,
+    "failedCount": 16,
+    "rounds": 1,
+    "searches": 5
+  },
+  "archivedAt": "2026-10-18T01:04:53.763Z"
+}

@@ -14,12 +14,27 @@ test("greetings and lightweight chat do not trigger web research", () => {
   }
 });
 
+test("identity and capability questions stay conversational across phrasing and order", () => {
+  for (const message of [
+    "What are you man?",
+    "Who are you, and what's your purpose?",
+    "What's your purpose and who are you?",
+    "What is your role?",
+    "Tell me about yourself.",
+    "What are you for?",
+    "How can you help me?",
+  ]) {
+    assert.equal(shouldResearchMessage(message), false, message);
+  }
+});
+
 test("substantive factual questions and explicit research requests use live research", () => {
   for (const message of [
     "Who invented the telephone?",
     "How does TypeScript type narrowing work?",
     "Tell me about the history of the printing press.",
     "Search the web for current Node.js LTS versions.",
+    "What can you do with Python?",
   ]) {
     assert.equal(shouldResearchMessage(message), true, message);
   }
