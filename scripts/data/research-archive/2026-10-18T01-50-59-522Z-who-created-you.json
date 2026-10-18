@@ -1,0 +1,88 @@
+{
+  "id": "2026-10-18T01-50-59-522Z-who-created-you",
+  "question": "Who created you",
+  "plan": {
+    "objective": "Identify the organization and individuals responsible for creating the AI model known as ChatGPT.",
+    "taskType": "definition",
+    "deliverable": "A concise factual statement naming OpenAI as the creator, supported by citations from official OpenAI sources or reputable publications.",
+    "requiresCurrentInformation": false,
+    "sourcePreferences": [
+      "Official OpenAI website (openai.com)",
+      "OpenAI press releases or blog posts",
+      "Peer‑reviewed papers or technical reports authored by OpenAI",
+      "Reputable news outlets covering AI (e.g., The New York Times, Wired, The Verge)",
+      "Encyclopedic references (e.g., Wikipedia) for corroboration"
+    ],
+    "questions": [
+      "Who created ChatGPT?"
+    ],
+    "queries": [
+      "ChatGPT creator OpenAI",
+      "Who developed ChatGPT",
+      "OpenAI founders and ChatGPT development",
+      "Official OpenAI announcement ChatGPT launch",
+      "ChatGPT development history OpenAI"
+    ],
+    "unresolvedQuestions": []
+  },
+  "answer": "ChatGPT was created by OpenAI, the artificial‑intelligence research organization founded in December 2015 by Sam Altman, Elon Musk, Ilya Sutskever, Greg Brockman and others. [SRC-0af955c6b8fe]\nOpenAI developed and released the ChatGPT product on 30 November 2022 [SRC-0af955c6b8fe].",
+  "followUpQuestions": [
+    "Key milestones in ChatGPT’s development",
+    "Founders and leadership of OpenAI"
+  ],
+  "sources": [
+    {
+      "title": "Everything OpenAI Announced at DevDay 2026",
+      "url": "https://codewalkers.com/news/ai-tools/openai-devday-2026-announcements/",
+      "canonicalUrl": "https://codewalkers.com/news/ai-tools/openai-devday-2026-announcements/",
+      "publisher": "CodeWalkers: Practical Guides on Coding Tools, Programming, and AI Agents",
+      "author": "Bobby Smart",
+      "publishedAt": "2026-10-01T01:35:27.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "OpenAI's 29 September DevDay brought more than 20 launches: GPT-6.1 Sol at a fifth of Astra's price, a $500 Pro 500 plan with Ultrafast, Codex in the cloud, and computer use in the Agents API.",
+        "OpenAI used its 29 September DevDay to launch GPT-6.1 Sol at a fifth of GPT-6 Astra's token prices, computer use in the Agents API , Codex in the cloud and a $500-a-month Pro 500 plan with a faster Ultrafast tier. They were among more than 20 announcements listed in OpenAI's recap .",
+        "This round-up groups the launches by product, with the plans each one needs, as OpenAI's own posts, help center and developer docs listed them on 30 September.",
+        "The keynote's lead launch was dots , always-on agents in ChatGPT that run on GPT-6 Astra with their own cloud computer, for Pro and Business Premium users. Our report on OpenAI's dots covers how they work, what they cost, their safeguards, and how they compare with Muse, Grok Bot and OpenClaw."
+      ],
+      "retrievedAt": "2026-10-18T01:50:57.385Z",
+      "content": "More on this page\nThe Headline Launch: Always-On Agents\nModels: GPT-6.1 Sol, Ultrafast, and Pro 500\nCodex: Cloud, CLI, Review, and Security\nThe API: Agents, Decisions, and Bedrock\nChatGPT for Teams\nPlugins and MCP Events\nPlans and Partners\nWhat Matters for Developers\nWhat Is Still to Come\nAI Tools Launch 7 min read\nEverything OpenAI Announced at DevDay 2026\nOpenAI's 29 September DevDay brought more than 20 launches: GPT-6.1 Sol at a fifth of Astra's price, a $500 Pro 500 plan with Ultrafast, Codex in the cloud, and computer use in the Agents API.\nOctober 1, 2026 at 1:35 AM UTC\nBobby Smart\n@mrbobbysmart\nIllustration: AI-generated with OpenAI\nOpenAI used its 29 September DevDay to launch GPT-6.1 Sol at a fifth of GPT-6 Astra's token prices, computer use in the Agents API , Codex in the cloud and a $500-a-month Pro 500 plan with a faster Ultrafast tier. They were among more than 20 announcements listed in OpenAI's recap .\nThis round-up groups the launches by product, with the plans each one needs, as OpenAI's own posts, help center and developer docs listed them on 30 September.\nThe keynote's lead launch was dots , always-on agents in ChatGPT that run on GPT-6 Astra with their own cloud computer, for Pro and Business Premium users. Our report on OpenAI's dots covers how they work, what they cost, their safeguards, and how they compare with Muse, Grok Bot and OpenClaw.\nGPT-6.1 Sol is an upgrade to GPT-6 Sol that OpenAI says nearly matches GPT-6 Astra on agentic coding, computer use and professional work at one-fifth of Astra's standard token prices . In the API it is gpt-6.1-sol , and it keeps GPT-6 Sol's input and output prices while halving cached input.\nModel | Input | Cached | Output |\ngpt-6.1-sol | $2 | $0.10 | $10 |\ngpt-6-sol (22 Sep launch) | $2 | $0.20 | $10 |\ngpt-6-astra | $10 | $1 | $50 |\ngpt-6-astra Ultrafast | $60 | $6 | $300 |\nPrices are US dollars per million tokens for prompts up to 272K input tokens, from OpenAI's API pricing page and API changelog, read 30 September. The gpt-6-sol row is its launch price from the 22 September changelog entry, and the pricing page's main table now lists gpt-6.1-sol in its place.\nOpenAI's own benchmarks put GPT-6.1 Sol level with Astra on DeepSWE v1.1 at about one-fifth of the cost. On Terminal-Bench Science 0.1 it cost $5.47 per task against $23.80 for Astra and $23.21 for Claude Opus 5.5, though Astra kept the top score at 68.1%. In ChatGPT, GPT-6.1 Sol is available in ChatGPT Work and Codex on Plus, Pro, Business, Enterprise and Edu, and OpenAI says it is not yet in regular Chat. Our GPT-6 Sol and Luna report covers the model it replaces.\nUltrafast is a premium speed tier, and OpenAI says it generates tokens up to 8 times faster in Codex, at 300 tokens per second, and up to 6 times faster in the API. GPT-6 Astra Ultrafast is live in the Responses API through service_tier: \"ultrafast\" , with global processing and US data residency only, and in ChatGPT Work and Codex on Pro 500 and Enterprise. OpenAI ",
+      "sourceId": "SRC-652c3b63e147"
+    },
+    {
+      "title": "OpenAI: founders, history and what happened | Founded",
+      "url": "https://www.founded.org/companies/openai/",
+      "canonicalUrl": "https://www.founded.org/companies/openai/",
+      "publisher": "Founded",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "OpenAI builds artificial intelligence models and products, including the ChatGPT assistant, the Codex coding agent and APIs that developers use to build on its models. Its stated mission is to ensure that artificial general intelligence benefits all of humanity. Source [ 6 ] Source [ 9 ]",
+        "It was announced in December 2015 as a nonprofit research company with Sam Altman and Elon Musk as co-chairs, Ilya Sutskever as research director and Greg Brockman as CTO, backed by $1 billion in pledged funding. In 2019 it created a for-profit subsidiary, and ChatGPT, released on November 30, 2022, became its main consumer product. Source [ 1 ] Source [ 10 ",
+        "Under a recapitalization announced on October 28, 2025, the nonprofit became the OpenAI Foundation and the for-profit became OpenAI Group PBC, a public benefit corporation. The Foundation controls the company, appoints its board and held a 26% stake at closing, Microsoft held about 27%, and employees and investors held the rest. The Foundation board is chair",
+        "OpenAI said in March 2026 that it was generating $2 billion in revenue per month, and CNBC reported 2025 revenue of $13.1 billion. ChatGPT had more than 900 million weekly active users by May 2026. The company closed a $122 billion funding round at an $852 billion post-money valuation in March 2026, and in September 2026 Altman said it would not go public th"
+      ],
+      "retrievedAt": "2026-10-18T01:50:58.086Z",
+      "content": "About OpenAI\nOpenAI builds artificial intelligence models and products, including the ChatGPT assistant, the Codex coding agent and APIs that developers use to build on its models. Its stated mission is to ensure that artificial general intelligence benefits all of humanity. Source [ 6 ] Source [ 9 ]\nIt was announced in December 2015 as a nonprofit research company with Sam Altman and Elon Musk as co-chairs, Ilya Sutskever as research director and Greg Brockman as CTO, backed by $1 billion in pledged funding. In 2019 it created a for-profit subsidiary, and ChatGPT, released on November 30, 2022, became its main consumer product. Source [ 1 ] Source [ 10 ] Source [ 9 ] Source [ 11 ]\nUnder a recapitalization announced on October 28, 2025, the nonprofit became the OpenAI Foundation and the for-profit became OpenAI Group PBC, a public benefit corporation. The Foundation controls the company, appoints its board and held a 26% stake at closing, Microsoft held about 27%, and employees and investors held the rest. The Foundation board is chaired by Bret Taylor and includes CEO Sam Altman. Source [ 9 ] Source [ 12 ]\nOpenAI said in March 2026 that it was generating $2 billion in revenue per month, and CNBC reported 2025 revenue of $13.1 billion. ChatGPT had more than 900 million weekly active users by May 2026. The company closed a $122 billion funding round at an $852 billion post-money valuation in March 2026, and in September 2026 Altman said it would not go public that year. Source [ 6 ] Source [ 13 ] Source [ 14 ] Source [ 15 ]\nWatch\nOpenAI DevDay 2026 Keynote (FULL) by OpenAI on YouTube\nWhat happened\nAnnounced in December 2015 as a nonprofit AI research company, with Sam Altman and Elon Musk as co-chairs and founding members including Greg Brockman and Ilya Sutskever. Musk left the nonprofit's board in February 2018, and in 2019 OpenAI created a for-profit entity, OpenAI LP, with Altman as CEO. In November 2023 the board removed Altman as CEO, saying he had not been consistently candid in his communications with it; he returned as CEO later that month under a new board, and a law firm review commissioned by the board concluded in March 2024. In October 2025 OpenAI completed a recapitalization: the nonprofit, renamed the OpenAI Foundation, controls a public benefit corporation, OpenAI Group PBC, in which Microsoft holds roughly 27 percent. In May 2026 a federal jury found Musk's lawsuit against OpenAI, Altman and others was filed too late, and Musk said he would appeal. In September 2026 Altman, still CEO, said the company would not go public in 2026. Source [ 1 ] Source [ 10 ] Source [ 16 ] Source [ 17 ] Source [ 18 ] Source [ 19 ] Source [ 12 ] Source [ 20 ] Source [ 15 ]\nTimeline\n2026-09-12 Altman said OpenAI would not go public in 2026. Source [ 15 ]\n2026-05-18 A federal jury found Elon Musk's lawsuit against OpenAI and Altman was filed too late; Musk said he would appeal. Source [ 20 ]\n2026-05-15 Greg Brockman took over product strategy as OpenAI",
+      "sourceId": "SRC-0af955c6b8fe"
+    }
+  ],
+  "unresolvedQuestions": [],
+  "contradictions": [],
+  "completeness": "supported",
+  "limitations": [
+    "14 search requests or candidate pages failed or were unreadable.",
+    "The configured candidate-page budget of 16 was exhausted."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 2,
+    "failedCount": 14,
+    "rounds": 1,
+    "searches": 5
+  },
+  "archivedAt": "2026-10-18T01:50:59.523Z"
+}

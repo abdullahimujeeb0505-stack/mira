@@ -2,8 +2,29 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   normalizeResponseFormatting,
+  requestsEmoji,
+  requestsImages,
   requestsSources,
 } from "./response-formatting.js";
+
+test("emoji are preserved when explicitly requested", () => {
+  assert.equal(requestsEmoji("Use emojis in your reply."), true);
+  assert.equal(requestsEmoji("Reply with 🚀, please."), true);
+  assert.equal(requestsEmoji("I dislike emojis."), false);
+  assert.equal(requestsEmoji("I hate replies with emojis."), false);
+  assert.equal(requestsEmoji("Answer with emojis."), true);
+  assert.equal(
+    normalizeResponseFormatting("Sure 🚀!", [], { preserveEmoji: true }),
+    "Sure 🚀!",
+  );
+});
+
+test("image results are only requested when the user asks for visuals", () => {
+  assert.equal(requestsImages("Show me illustrations of photosynthesis."), true);
+  assert.equal(requestsImages("Could I see a picture of a butterfly?"), true);
+  assert.equal(requestsImages("Explain photosynthesis without pictures."), false);
+  assert.equal(requestsImages("I like looking at pictures."), false);
+});
 
 test("source links are shown only for explicit source requests", () => {
   assert.equal(requestsSources("Show me the sources"), true);

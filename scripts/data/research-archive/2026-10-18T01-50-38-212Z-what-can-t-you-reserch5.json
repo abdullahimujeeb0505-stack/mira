@@ -1,0 +1,46 @@
+{
+  "id": "2026-10-18T01-50-38-212Z-what-can-t-you-reserch5",
+  "question": "What can't you reserch5",
+  "plan": {
+    "objective": "Identify and summarize the categories of subjects that are prohibited, unethical, illegal, or otherwise infeasible to research, including legal restrictions, ethical guidelines, and practical limitations.",
+    "taskType": "definition",
+    "deliverable": "A concise summary outlining the main reasons and examples of topics that cannot be researched, citing authoritative guidelines and legal statutes.",
+    "requiresCurrentInformation": false,
+    "sourcePreferences": [
+      "official government or regulatory documents",
+      "peer‑reviewed ethics and policy journals",
+      "authoritative institutional review board (IRB) guidelines",
+      "international treaties or conventions"
+    ],
+    "questions": [
+      "What types of research are prohibited by law or ethics?"
+    ],
+    "queries": [
+      "\"research prohibited by law\"",
+      "\"ethical restrictions on scientific research\"",
+      "\"topics that cannot be studied\"",
+      "\"IRB guidelines prohibited research\"",
+      "\"international treaties limiting research\""
+    ],
+    "unresolvedQuestions": [
+      "What types of research are prohibited by law or ethics?"
+    ]
+  },
+  "answer": "I could not retrieve any readable web sources for this question, so I can't provide a source-grounded answer yet. Search may be blocked or relevant pages may be inaccessible. Please try a narrower query or provide a source URL.",
+  "followUpQuestions": [],
+  "sources": [],
+  "unresolvedQuestions": [
+    "What types of research are prohibited by law or ethics?"
+  ],
+  "contradictions": [],
+  "completeness": "insufficient",
+  "limitations": [],
+  "retrieval": {
+    "candidateCount": 0,
+    "retrievedCount": 0,
+    "failedCount": 0,
+    "rounds": 1,
+    "searches": 5
+  },
+  "archivedAt": "2026-10-18T01:50:38.213Z"
+}

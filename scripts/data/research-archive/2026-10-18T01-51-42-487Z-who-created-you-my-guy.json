@@ -1,0 +1,69 @@
+{
+  "id": "2026-10-18T01-51-42-487Z-who-created-you-my-guy",
+  "question": "Who created you my guy",
+  "plan": {
+    "objective": "Identify the individual(s) or organization responsible for creating ChatGPT.",
+    "taskType": "definition",
+    "deliverable": "A concise statement naming the creator(s) of ChatGPT with supporting citation.",
+    "requiresCurrentInformation": false,
+    "sourcePreferences": [
+      "OpenAI official website and blog",
+      "Peer‑reviewed AI literature or conference proceedings referencing ChatGPT's development",
+      "Reputable technology news outlets (e.g., Wired, The Verge, MIT Technology Review)",
+      "Encyclopedic entries (e.g., Wikipedia) for cross‑checking"
+    ],
+    "questions": [
+      "Who or which organization created ChatGPT?"
+    ],
+    "queries": [
+      "ChatGPT creator OpenAI",
+      "Who developed ChatGPT?",
+      "OpenAI founders ChatGPT development",
+      "History of ChatGPT creation",
+      "Official OpenAI announcement ChatGPT launch"
+    ],
+    "unresolvedQuestions": []
+  },
+  "answer": "ChatGPT was created by OpenAI, an artificial‑intelligence research organization. [SRC-5f134ff1d4b8]\nOpenAI was founded in 2015 by a group that included Sam Altman, Greg Brockman, Ilya Sutskever, Elon Musk, John Schulman, Wojciech Zaremba, and other early research engineers and scientists. [SRC-5f134ff1d4b8]",
+  "followUpQuestions": [
+    "OpenAI development timeline",
+    "Differences between GPT‑3.5 and GPT‑4"
+  ],
+  "sources": [
+    {
+      "title": "Who Created ChatGPT? The Founders' Story",
+      "url": "https://chatai.guide/concepts/who-created-chatgpt/",
+      "canonicalUrl": "https://chatai.guide/concepts/who-created-chatgpt/",
+      "publisher": "ChatAI Guide",
+      "publishedAt": "2026-02-28T17:58:03.000Z",
+      "updatedAt": "2026-05-05T13:46:20.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "ChatGPT was created by OpenAI, not by one individual. OpenAI introduced ChatGPT on November 30, 2022, as a conversational model built from the GPT‑3.5 series and trained with reinforcement learning from human feedback. [2] [3] The company behind it was founded in 2015 by a group that included Sam Altman, Greg Brockman, Ilya Sutskever, Elon Musk, John Schulma",
+        "OpenAI created ChatGPT. That is the cleanest answer for a reader who wants the company behind the chatbot. OpenAI’s launch post introduced the model as ChatGPT, explained its dialogue format, and listed OpenAI as the author rather than naming a single inventor. [2] OpenAI has not published an official figure for this; the launch page uses an acknowledgment s",
+        "ChatGPT was not a weekend side project by a lone founder. It was a product interface built on model training, human feedback, infrastructure, and safety work. OpenAI said ChatGPT was a sibling model to InstructGPT, was fine-tuned from the GPT‑3.5 series, and used reinforcement learning from human feedback. [2] For the product basics, start with what ChatGPT ",
+        "OpenAI came before ChatGPT. It was announced in December 2015 as a nonprofit artificial intelligence research company focused on advancing digital intelligence for broad human benefit. [1] [7] OpenAI’s charter later framed the mission as ensuring that artificial general intelligence benefits all of humanity. [6] For a company-level explainer, see what OpenAI"
+      ],
+      "retrievedAt": "2026-10-18T01:51:41.246Z",
+      "content": "ChatGPT was created by OpenAI, not by one individual. OpenAI introduced ChatGPT on November 30, 2022, as a conversational model built from the GPT‑3.5 series and trained with reinforcement learning from human feedback. [2] [3] The company behind it was founded in 2015 by a group that included Sam Altman, Greg Brockman, Ilya Sutskever, Elon Musk, John Schulman, Wojciech Zaremba, and other early research engineers and scientists. [1] [7] The practical answer is simple: OpenAI created ChatGPT; the founders created the lab, assembled the research team, and set the direction that made the product possible.\nThe short answer\nOpenAI created ChatGPT. That is the cleanest answer for a reader who wants the company behind the chatbot. OpenAI’s launch post introduced the model as ChatGPT, explained its dialogue format, and listed OpenAI as the author rather than naming a single inventor. [2] OpenAI has not published an official figure for this; the launch page uses an acknowledgment section for contributors instead of a single creator credit. [2]\nChatGPT was not a weekend side project by a lone founder. It was a product interface built on model training, human feedback, infrastructure, and safety work. OpenAI said ChatGPT was a sibling model to InstructGPT, was fine-tuned from the GPT‑3.5 series, and used reinforcement learning from human feedback. [2] For the product basics, start with what ChatGPT is , what GPT means , and what an LLM is .\nThe founding group behind OpenAI\nOpenAI came before ChatGPT. It was announced in December 2015 as a nonprofit artificial intelligence research company focused on advancing digital intelligence for broad human benefit. [1] [7] OpenAI’s charter later framed the mission as ensuring that artificial general intelligence benefits all of humanity. [6] For a company-level explainer, see what OpenAI is .\nThe founder story is more nuanced than one fixed roster. OpenAI’s own founding announcement named Ilya Sutskever as research director, Greg Brockman as CTO, several other founding members, and Sam Altman and Elon Musk as co-chairs. [1] TIME later summarized the core co-founder group as Sam Altman, Elon Musk, Ilya Sutskever, Greg Brockman, John Schulman, and Wojciech Zaremba. [7] That is why founder lists vary. Some sources use a tighter co-founder shorthand. OpenAI’s announcement described a broader launch group.\nThe founders mattered because they created the institution, recruited talent, shaped the mission, and helped obtain the compute and capital needed to train large models. But that does not mean each founder personally built ChatGPT. The public ChatGPT launch page points to a much larger group of contributors, including founders, researchers, engineers, product staff, and safety specialists. [2]\nFounder roles and ChatGPT roles compared\nThe easiest way to avoid confusion is to separate company creation from product creation. The founders created OpenAI. OpenAI’s teams created ChatGPT. The table below shows the practical diff",
+      "sourceId": "SRC-5f134ff1d4b8"
+    }
+  ],
+  "unresolvedQuestions": [],
+  "contradictions": [],
+  "completeness": "supported",
+  "limitations": [
+    "15 search requests or candidate pages failed or were unreadable.",
+    "The configured candidate-page budget of 16 was exhausted."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 1,
+    "failedCount": 15,
+    "rounds": 1,
+    "searches": 5
+  },
+  "archivedAt": "2026-10-18T01:51:42.488Z"
+}

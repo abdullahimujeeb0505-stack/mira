@@ -8,6 +8,10 @@ use retrieved evidence internally; citation markers and source lists are shown
 only when requested. Unavailable pages are not presented as retrieved sources.
 Muse honors the requested answer format, avoids tables, and offers relevant
 follow-up topics to continue the conversation.
+When explicitly requested, Muse can find relevant images in Wikimedia Commons
+and include the image, its source page, creator attribution, and license when
+available. The browser preview renders these sourced images; other clients may
+show them as links or previews.
 
 Muse also drafts complete general-purpose written deliverables, including
 articles, essays, literature reviews, technical tutorials, reports, study

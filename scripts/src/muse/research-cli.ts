@@ -5,7 +5,11 @@ import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { createTextGenerationProvider } from "./provider-selection.js";
 import type { TextGenerationProvider } from "./llm-provider.js";
-import { normalizeResponseFormatting } from "./response-formatting.js";
+import {
+  normalizeResponseFormatting,
+  requestsEmoji,
+  requestsImages,
+} from "./response-formatting.js";
 
 type ChatMessage = {
   role: "system" | "user";
@@ -1309,10 +1313,14 @@ async function synthesize(
             "quality, diversity, and coverage of the readable evidence. Answer the " +
             "current question directly with headings, short paragraphs, and lists as " +
             "appropriate. " +
+            "Avoid emoji unless the user explicitly asks for them; if requested, use appropriate emoji. " +
             "Never use Markdown tables. For historical timelines, use numbered milestones; present comparisons as concise prose or labeled bullets. " +
             "Suggest one or two specific, natural next topics the user could explore based on this answer. Put short topic phrases in followUpQuestions, not inside answer. " +
             "Keep the answer concise and do not repeat the " +
             "previous answer or report. " +
+            (requestsImages(question)
+              ? "Requested images will be attached separately; do not invent image links or claim to create artwork. "
+              : "") +
             "Do not include internal labels, serialized conversation, planning prompts, " +
             "or research diagnostics in the answer.",
         },
@@ -1821,13 +1829,17 @@ export async function runResearch(
   );
   const answer = sources.length && !synthesis.failure
     ? validateCitationReferences(
-      normalizeResponseFormatting(synthesis.answer),
+      normalizeResponseFormatting(synthesis.answer, [], {
+        preserveEmoji: requestsEmoji(question),
+      }),
       sources,
       {
         autoCiteSupportedClaims: true,
       },
     )
-    : normalizeResponseFormatting(synthesis.answer);
+    : normalizeResponseFormatting(synthesis.answer, [], {
+        preserveEmoji: requestsEmoji(question),
+      });
   if (answer.includes("(unverified:")) {
     limitations.push("One or more generated citations did not match a retrieved source or relevant page text.");
   }

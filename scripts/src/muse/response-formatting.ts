@@ -91,7 +91,28 @@ export type ResponseSourceLink = {
 
 export type ResponseFormattingOptions = {
   preserveSourceUrls?: boolean;
+  preserveEmoji?: boolean;
 };
+
+export function requestsEmoji(text: string): boolean {
+  const action =
+    String.raw`(?:use|include|add|send|reply|respond|answer|write|explain|tell|describe|decorate|sprinkle|put|show)`;
+  return new RegExp(
+    String.raw`^(?:please\s+)?${action}\b[^.!?\n]{0,60}(?:\bemoji(?:s)?\b|\p{Extended_Pictographic})|` +
+    String.raw`\b(?:can|could|would)\s+you\s+(?:please\s+)?${action}\b[^.!?\n]{0,60}\bemoji(?:s)?\b|` +
+    String.raw`\b(?:I want|I'd like)\s+(?:you to\s+)?${action}\b[^.!?\n]{0,60}\bemoji(?:s)?\b|` +
+    String.raw`^(?:some\s+)?emoji(?:s)?\s+please[?.!]*$`,
+    "iu",
+  ).test(text.trim());
+}
+
+export function requestsImages(text: string): boolean {
+  if (/\b(?:don't|do not|never|without|no)\b[^.!?\n]{0,30}\b(?:pictures?|images?|photos?|illustrations?|diagrams?|visuals?)\b/i.test(text)) {
+    return false;
+  }
+  return /\b(?:show|find|include|add|send|provide|fetch|search for|look for|see|view|display|illustrate|back up|support)\b[^.!?\n]{0,80}\b(?:pictures?|images?|photos?|illustrations?|diagrams?|visuals?)\b|\b(?:I want|I'd like|I'd love|can I|could I)\b[^.!?\n]{0,50}\b(?:pictures?|images?|photos?|illustrations?|diagrams?|visuals?)\b|\bwith\s+(?:some\s+)?(?:pictures?|images?|photos?|illustrations?|diagrams?|visuals?)\b|\b(?:pictures?|images?|photos?|illustrations?|diagrams?|visuals?)\b[^.!?\n]{0,60}\b(?:please|to support|to back up|for my research)\b/i
+    .test(text);
+}
 
 export function normalizeResponseFormatting(
   response: string,
@@ -113,7 +134,7 @@ export function normalizeResponseFormatting(
   normalized = lines
     .map((line, index) => {
       if (/^\s{0,3}>/.test(line)) return line;
-      return line
+      const formattedLine = line
         .replace(
           /^\s*- /.test(line) ? /<br\s*\/?>/gi : /$^/,
           /^\s*- /.test(line) ? " " : "",
@@ -124,8 +145,11 @@ export function normalizeResponseFormatting(
         .replace(/“([^”\n]*)"/g, "“$1”")
         .replace(/‘([^’\n]*)'/g, "‘$1’")
         .replace(/“([^”\n]*)’/g, "“$1”")
-        .replace(/‘([^’\n]*)”/g, "‘$1’")
-        .replace(EMOJI, "")
+        .replace(/‘([^’\n]*)”/g, "‘$1’");
+      const emojiNormalized = options.preserveEmoji
+        ? formattedLine
+        : formattedLine.replace(EMOJI, "");
+      return emojiNormalized
         .replace(/[ \t]{2,}/g, " ")
         .replace(/[ \t]+([,.;!?])/g, "$1")
         .trimEnd();

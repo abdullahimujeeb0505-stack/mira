@@ -6,6 +6,8 @@ import {
 } from "./research-cli.js";
 import {
   normalizeResponseFormatting,
+  requestsEmoji,
+  requestsImages,
   requestsSources,
 } from "./response-formatting.js";
 
@@ -172,6 +174,10 @@ export function buildWritingPrompt(
     "Infer the topic, purpose, audience, tone, structure, approximate length, and citation requirements from the request; honor every explicit constraint. Do not ask for details that can reasonably be inferred.",
     wordCount,
     tableInstruction,
+    requestsImages(assignment)
+      ? "Requested images will be sourced and attached separately; do not invent image links or claim to create artwork."
+      : "",
+    "Avoid emoji unless the user explicitly asks for them; when requested, use appropriate emoji.",
     constraints.audience ? `Audience: ${constraints.audience}.` : "",
     constraints.purpose ? `Purpose: ${constraints.purpose}.` : "",
     constraints.tone ? `Tone: ${constraints.tone}.` : "",
@@ -260,7 +266,8 @@ export async function generateWrittenDeliverable(
     systemPrompt,
     conversation,
   });
-  raw = normalizeResponseFormatting(raw);
+  const preserveEmoji = requestsEmoji(assignment);
+  raw = normalizeResponseFormatting(raw, [], { preserveEmoji });
   let validated = validateDraft(raw);
   let lengthNotice = "";
   const requestedWordCount = constraints.requestedWordCount;
@@ -290,7 +297,7 @@ export async function generateWrittenDeliverable(
           },
         ],
       });
-      raw = normalizeResponseFormatting(raw);
+      raw = normalizeResponseFormatting(raw, [], { preserveEmoji });
       validated = validateDraft(raw);
       const correctedWordCount = countWritingWords(validated);
       if (correctedWordCount < minimum || correctedWordCount > maximum) {
@@ -314,7 +321,10 @@ export async function generateWrittenDeliverable(
   const formatted = normalizeResponseFormatting(
     withoutCitationMarkers,
     asksForSources ? sources : [],
-    { preserveSourceUrls: asksForSources && preserveRawUrls },
+    {
+      preserveSourceUrls: asksForSources && preserveRawUrls,
+      preserveEmoji,
+    },
   );
   const references = asksForSources
     ? renderReferences(sources, constraints.citationStyle, preserveRawUrls)

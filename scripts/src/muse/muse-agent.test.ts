@@ -9,6 +9,7 @@ import type {
 } from "./llm-provider.js";
 import { formatResearchReply, MuseAgent } from "./muse-agent.js";
 import type { ResearchResult } from "./research-cli.js";
+import type { ResearchImage } from "./research-images.js";
 import { JsonMemoryRepository } from "./memory/json-memory-repository.js";
 import { MemoryService } from "./memory/memory-service.js";
 
@@ -126,6 +127,27 @@ test("Muse handles casual messages without web research and researches factual q
   }
 });
 
+test("Muse can use emoji when requested", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "muse-agent-emoji-"));
+  let systemPrompt = "";
+  const agent = new MuseAgent(
+    {
+      async generateText(request) {
+        systemPrompt = request.systemPrompt;
+        return "Sure 🚀!";
+      },
+    },
+    new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
+  );
+
+  try {
+    assert.equal(await agent.respond("Use emojis in your reply."), "Sure 🚀!");
+    assert.match(systemPrompt, /unless the user explicitly asks for them/);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
 test("research follow-ups use prior conversation without repeating research", async () => {
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-followup-"));
   const questions: string[] = [];
@@ -204,6 +226,52 @@ test("research replies show unnumbered source links when explicitly requested", 
   assert.match(answer, /\[TypeScript Handbook: Narrowing\]\(https:\/\/www\.typescriptlang\.org\/docs\/handbook\/2\/narrowing\.html\)/);
   assert.match(answer, /Sources:\n- \[TypeScript Handbook: Narrowing\]\(https:\/\/www\.typescriptlang\.org\/docs\/handbook\/2\/narrowing\.html\)/);
   assert.doesNotMatch(answer, /\[1\]|SRC-handbook123/);
+});
+
+test("research replies preserve emoji when they are requested", () => {
+  const answer = formatResearchReply({
+    ...researchResult,
+    question: "Explain this with emojis.",
+    answer: "The sources describe the mechanism 🚀. [1]",
+  });
+
+  assert.match(answer, /🚀/);
+});
+
+test("Muse adds attributed Commons images when requested to support research", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "muse-agent-images-"));
+  const imageRequests: string[] = [];
+  const image: ResearchImage = {
+    title: "Monarch butterfly",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/1/1a/Monarch.jpg",
+    pageUrl: "https://commons.wikimedia.org/wiki/File:Monarch.jpg",
+    creator: "Photographer",
+    license: "CC BY-SA 4.0",
+  };
+  const agent = new MuseAgent(
+    { generateText: async () => "unused" },
+    new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
+    undefined,
+    async (question) => ({ ...researchResult, question }),
+    async (request) => {
+      imageRequests.push(request);
+      return [image];
+    },
+  );
+
+  try {
+    const answer = await agent.respond(
+      "Research monarch butterflies and show me pictures to support the research.",
+    );
+    assert.match(answer, /!\[Monarch butterfly\]\(https:\/\/upload\.wikimedia\.org/);
+    assert.match(answer, /\[Monarch butterfly — Wikimedia Commons\]/);
+    assert.match(answer, /Photographer; license: CC BY-SA 4\.0/);
+    assert.deepEqual(imageRequests, [
+      "Research monarch butterflies and show me pictures to support the research.",
+    ]);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
 });
 
 test("research replies omit unsupported lines without displaying citations", () => {

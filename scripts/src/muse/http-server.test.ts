@@ -60,6 +60,10 @@ type FakeElement = {
   disabled: boolean;
   value: string;
   href?: string;
+  src?: string;
+  alt?: string;
+  loading?: string;
+  referrerPolicy?: string;
   listeners: Record<string, (event: { preventDefault(): void }) => void | Promise<void>>;
   append(...elements: FakeElement[]): void;
   addEventListener(
@@ -129,6 +133,10 @@ test("Muse serves the chat page with same-origin security headers", async () =>
       assert.match(html, /word-break: normal/);
       assert.match(html, /overflow-wrap: break-word/);
       assert.match(html, /max-width: 100%; overflow-x: auto/);
+      assert.match(
+        response.headers.get("content-security-policy") ?? "",
+        /img-src https:\/\/upload\.wikimedia\.org/,
+      );
       assert.doesNotMatch(html, /\.innerHTML\s*=/);
       assert.equal(response.headers.get("cache-control"), "no-store");
       assert.equal(response.headers.get("x-content-type-options"), "nosniff");
@@ -137,7 +145,7 @@ test("Muse serves the chat page with same-origin security headers", async () =>
     },
   ));
 
-test("browser Markdown rendering normalizes heading levels, tables, and code blocks", async () =>
+test("browser Markdown rendering handles sourced images and normalizes other Markdown", async () =>
   withServer(
     () => ({ generateText: async () => "unused" }),
     async (baseUrl) => {
@@ -177,12 +185,16 @@ test("browser Markdown rendering normalizes heading levels, tables, and code blo
           "```",
           "",
           "[Official guide](https://example.org/guide)",
+          "",
+          "![Butterfly](https://upload.wikimedia.org/wikipedia/commons/b/b0/Butterfly.jpg)",
+          "",
+          "![Untrusted](https://example.com/image.jpg)",
         ].join("\n"),
       );
 
       assert.deepEqual(
         root.children.map((child) => child.tagName),
-        ["h2", "h3", "table", "pre", "p"],
+        ["h2", "h3", "table", "pre", "p", "p", "p"],
       );
       const table = root.children[2];
       assert.ok(table);
@@ -202,6 +214,10 @@ test("browser Markdown rendering normalizes heading levels, tables, and code blo
       );
       assert.equal(sourceLink?.textContent, "Official guide");
       assert.equal(sourceLink?.href, "https://example.org/guide");
+      const image = root.children[5]?.children.find((child) => child.tagName === "img");
+      assert.equal(image?.src, "https://upload.wikimedia.org/wikipedia/commons/b/b0/Butterfly.jpg");
+      assert.equal(image?.alt, "Butterfly");
+      assert.equal(root.children[6]?.children.some((child) => child.tagName === "img"), false);
     },
   ));
 

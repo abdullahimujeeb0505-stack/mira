@@ -124,6 +124,21 @@ test("research-based article prompt asks for a complete source-grounded article"
   assert.doesNotMatch(answer, /Retrieved sources|Research completeness|SRC-/);
 });
 
+test("writing preserves emoji when the assignment requests them", async () => {
+  const requests: TextGenerationRequest[] = [];
+  const answer = await generateWrittenDeliverable(
+    createProvider("A cheerful note about learning 🚀.", requests),
+    "Write a short note using emojis.",
+    [{ role: "user", content: "Write a short note using emojis." }],
+    {},
+    undefined,
+    false,
+  );
+
+  assert.match(requests[0]?.systemPrompt ?? "", /unless the user explicitly asks for them/);
+  assert.match(answer, /🚀/);
+});
+
 test("essay and literature-review prompts establish argument, findings, disputes, and limits", () => {
   const essay = buildWritingPrompt("Write an analytical essay on public transit", {}, undefined, false);
   const literatureReview = buildWritingPrompt(

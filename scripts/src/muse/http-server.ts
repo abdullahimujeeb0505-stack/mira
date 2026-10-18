@@ -54,6 +54,7 @@ const CHAT_PAGE = `<!doctype html>
       .message.muse p { margin: .35em 0; }
       .message.muse ul, .message.muse ol { margin: .35em 0; padding-left: 1.5em; }
       .message.muse a { color: #a9bbff; text-decoration: underline; text-underline-offset: 2px; }
+      .message.muse img { display: block; max-width: min(100%, 680px); height: auto; margin: 10px 0; border-radius: 10px; }
       .message.muse table { border-collapse: collapse; table-layout: fixed; display: block; width: 100%; max-width: 100%; overflow-x: auto; white-space: normal; }
       .message.muse th, .message.muse td { border: 1px solid #4a5365; padding: 6px 9px; text-align: left; vertical-align: top; overflow-wrap: anywhere; word-break: normal; }
       .message.muse pre { max-width: 100%; overflow-x: auto; white-space: pre; }
@@ -91,7 +92,7 @@ const CHAT_PAGE = `<!doctype html>
       const status = document.querySelector("#status");
 
       function addInlineFormatting(parent, text) {
-        const parts = text.split(/(\\*\\*[^*]+\\*\\*|\\*[^*]+\\*|\`[^\`]+\`|\\[[^\\]]+\\]\\([^)]+\\))/g);
+        const parts = text.split(/(\\*\\*[^*]+\\*\\*|\\*[^*]+\\*|\`[^\`]+\`|!?\\[[^\\]]+\\]\\([^)]+\\))/g);
         for (const part of parts) {
           if (part.startsWith("**") && part.endsWith("**") && part.length > 4) {
             const strong = document.createElement("strong");
@@ -105,6 +106,24 @@ const CHAT_PAGE = `<!doctype html>
             const code = document.createElement("code");
             code.textContent = part.slice(1, -1);
             parent.append(code);
+          } else if (part.startsWith("![") && part.endsWith(")")) {
+            const match = part.match(/^!\\[([^\\]]*)\\]\\(([^)]+)\\)$/);
+            let url;
+            try {
+              url = match ? new URL(match[2]) : null;
+            } catch {
+              url = null;
+            }
+            if (match && url && url.protocol === "https:" && url.hostname === "upload.wikimedia.org") {
+              const image = document.createElement("img");
+              image.src = url.href;
+              image.alt = match[1];
+              image.loading = "lazy";
+              image.referrerPolicy = "no-referrer";
+              parent.append(image);
+            } else {
+              parent.append(document.createTextNode(match ? match[1] : part));
+            }
           } else if (part.startsWith("[") && part.includes("](") && part.endsWith(")")) {
             const match = part.match(/^\\[([^\\]]+)\\]\\(([^)]+)\\)$/);
             let url;
@@ -576,7 +595,7 @@ function writeSessionCookie(
 
 function setSecurityHeaders(response: ServerResponse): void {
   response.setHeader("Cache-Control", "no-store");
-  response.setHeader("Content-Security-Policy", "default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'self'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'");
+  response.setHeader("Content-Security-Policy", "default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'self'; img-src https://upload.wikimedia.org; form-action 'self'; base-uri 'none'; frame-ancestors 'none'");
   response.setHeader("Referrer-Policy", "no-referrer");
   response.setHeader("X-Content-Type-Options", "nosniff");
   response.setHeader("X-Frame-Options", "DENY");
