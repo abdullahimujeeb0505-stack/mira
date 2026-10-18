@@ -117,6 +117,15 @@ export function classifyProviderFailure(error: unknown): string {
   if (/safety|recitation|blocked/i.test(message)) {
     return "blocked by provider safety filters";
   }
+  const httpStatus = message.match(/HTTP (\d{3})/i);
+  if (httpStatus) {
+    const status = Number(httpStatus[1]);
+    if (status >= 500) return `provider outage (HTTP ${status})`;
+    return `the provider rejected the request (HTTP ${status})`;
+  }
+  if (/without text output|malformed|unsupported response/i.test(message)) {
+    return "the provider returned an unusable response";
+  }
   return "provider error";
 }
 

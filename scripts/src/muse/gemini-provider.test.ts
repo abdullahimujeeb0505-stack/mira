@@ -69,7 +69,7 @@ test("Gemini builds its generateContent request with system instruction and role
     assert.equal(provider.model, "gemini-test-model");
 
     const endpoint = String(url);
-    assert.match(endpoint, /generativelanguage\.googleapis\.com\/v1beta\/models\/gemini-test-model:generateContent/);
+    assert.match(endpoint, /generativelanguage\.googleapis\.com\/v1beta\/models\/gemini-test-model:streamGenerateContent/);
     assert.match(endpoint, /alt=sse/);
 
     const headers = init?.headers as Record<string, string>;
@@ -113,15 +113,29 @@ test("Gemini merges consecutive same-role turns", async () =>
     ]);
   }));
 
-test("Gemini reassembles streamed SSE events and keeps the last complete candidate", async () =>
+test("Gemini accumulates streamed SSE delta events into the full answer", async () =>
   withEnvironment({ GEMINI_API_KEY: GEMINI_KEY }, async () => {
     const provider = new GeminiProvider({
       fetchImplementation: async () =>
         sseResponse([
-          JSON.stringify({ candidates: [{ content: { parts: [{ text: "Photon " }] } }] }),
-          JSON.stringify({ candidates: [{ content: { parts: [{ text: "Photon is a framework" }] } }] }),
           JSON.stringify({
-            candidates: [{ content: { parts: [{ text: FULL_ANSWER }] } }],
+            candidates: [{ index: 0, content: { parts: [{ text: "Photon is " }] } }],
+          }),
+          JSON.stringify({
+            candidates: [
+              { index: 0, content: { parts: [{ text: "an open-source framework " }] } },
+            ],
+          }),
+          JSON.stringify({
+            candidates: [
+              {
+                index: 0,
+                content: {
+                  parts: [{ text: "connecting agents to messaging apps." }],
+                },
+                finishReason: "STOP",
+              },
+            ],
             usageMetadata: { promptTokenCount: 10 },
           }),
         ]),
