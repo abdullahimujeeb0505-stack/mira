@@ -223,11 +223,12 @@ Start the lightweight HTTP chat demo:
 pnpm --filter @workspace/scripts run muse-server
 ```
 
-The server binds `0.0.0.0` by default so container previews (the Replit
-workflow preview, e2b sandboxes) can reach it; set `MUSE_BIND_HOST=127.0.0.1`
-to restrict it to loopback when running on a shared machine.
+The server binds `0.0.0.0` by default so container previews (GitHub
+Codespaces port forwarding, the Replit workflow preview, e2b sandboxes) can
+reach it; set `MUSE_BIND_HOST=127.0.0.1` to restrict it to loopback when
+running on a shared machine.
 
-Open `http://localhost:3000` locally, or use the **Muse Chat Preview** workflow in Replit at port `3000` and path `/`. The server uses the selected LLM provider: configure Groq with `GROQ_API_KEY` (or the legacy `GROK_API_CODING_KEY`), OpenRouter with `OPENROUTER_API_KEY` and `OPENROUTER_MODEL`, AgentRouter with `MUSE_LLM_PROVIDER=agentrouter` and `AGENTROUTER_API_KEY`, or Gemini with `MUSE_LLM_PROVIDER=gemini` and `GEMINI_API_KEY`. `SESSION_SECRET` is required to sign the browser's HTTP-only session cookie.
+Open `http://localhost:3000` locally. In **GitHub Codespaces**, forward port `3000` and open the forwarded URL at path `/`; the startup log line `Muse LLM provider: … (model: …)` confirms exactly which API is live. Or use the **Muse Chat Preview** workflow in Replit at port `3000` and path `/`. The server uses the selected LLM provider: configure Groq with `GROQ_API_KEY` (or the legacy `GROK_API_CODING_KEY`), OpenRouter with `OPENROUTER_API_KEY` and `OPENROUTER_MODEL`, AgentRouter with `MUSE_LLM_PROVIDER=agentrouter` and `AGENTROUTER_API_KEY`, or Gemini with `MUSE_LLM_PROVIDER=gemini` and `GEMINI_API_KEY`. `SESSION_SECRET` is required to sign the browser's HTTP-only session cookie.
 
 At startup, the server logs the selected provider and model identifier only; it
 does not log provider credentials. This also makes a `GROQ_MODEL` override
@@ -235,7 +236,7 @@ visible, including an override that still points to a deprecated model.
 
 Each browser session gets an independent `MuseAgent` and its own saved-memory file under `scripts/data/muse-http-sessions/`. Conversation history stays in that session's server memory and resets when the server restarts. The page sends messages only to this server; the server then sends them to the configured model provider.
 
-Development URLs are public by default. Before starting the preview, set `MUSE_CHAT_ACCESS_TOKEN` in Replit Secrets to a random value of at least 32 bytes. The page requires this access code and sends it in an authorization header; it is held in the current browser tab and is not saved to a cookie or local storage. The server fails closed if this secret is missing or too short. Keep the Replit development URL private as an additional layer, and add user-level access control and rate limits before any public deployment.
+Development URLs are public by default. Before starting the preview, set `MUSE_CHAT_ACCESS_TOKEN` (Codespaces secrets, Replit Secrets, or your shell environment) to a random value of at least 32 bytes. The page requires this access code and sends it in an authorization header; it is held in the current browser tab and is not saved to a cookie or local storage. The server fails closed if this secret is missing or too short. Keep the development URL private as an additional layer, and add user-level access control and rate limits before any public deployment.
 
 The Muse preview uses a separate workflow on port `3000`; it does not replace the API Server (`/api`) or Canvas (`/__mockup`). It can start only after the existing scripts dependencies, including `tsx`, are available.
 
