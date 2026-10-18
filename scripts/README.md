@@ -18,8 +18,9 @@ show them as links or previews.
 Muse also drafts complete general-purpose written deliverables, including
 articles, essays, literature reviews, technical tutorials, reports, study
 guides, outlines, and proposals. Factual work reuses the research pipeline;
-creative or provided-material writing can proceed without an unnecessary web
-search. It carries the current writing assignment into revision requests,
+creative writing and personal-narrative prompts (such as "the day I will never
+forget") can proceed without an unnecessary web search unless sources or
+research are explicitly requested. It carries the current writing assignment into revision requests,
 formats available source metadata for the requested citation style, and flags
 unsupported numeric citations and evidence limitations. Citation checks are
 lexical safeguards rather than a substitute for expert fact-checking, and

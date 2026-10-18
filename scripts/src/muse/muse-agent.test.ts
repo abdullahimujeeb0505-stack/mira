@@ -803,6 +803,38 @@ test("Muse skips external research for a creative writing request", async () => 
   }
 });
 
+test("Muse drafts a personal narrative without requiring web sources", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "muse-agent-personal-narrative-"));
+  let researchCalls = 0;
+  let writingPrompt = "";
+  const agent = new MuseAgent(
+    {
+      generateText: async (request) => {
+        writingPrompt = request.systemPrompt;
+        return "Sample essay: The day I will never forget was the day I learned to be brave.";
+      },
+    },
+    new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
+    undefined,
+    async () => {
+      researchCalls += 1;
+      return researchResult;
+    },
+  );
+
+  try {
+    const answer = await agent.respond(
+      "Write essay on 'the day I will never forget'.",
+    );
+    assert.match(answer, /Sample essay/);
+    assert.equal(researchCalls, 0);
+    assert.match(writingPrompt, /No external research was requested or retrieved/);
+    assert.match(writingPrompt, /illustrative sample they can personalize/);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
 test("a message naming a website reaches research so the link can be read", async () => {
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-link-"));
   const researchQuestions: string[] = [];

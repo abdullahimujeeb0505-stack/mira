@@ -17,7 +17,12 @@ const WRITING_ACTION =
   /\b(write|draft|create|compose|prepare|produce|develop|generate|i need|i want|turn this into|turn (?:these|those|the|my|your) (?:findings|results|research|sources|notes) into|make me|give me)\b/i;
 const REVISION_ACTION =
   /\b(revise|rewrite|edit|expand|shorten|condense|simplify|restructure|improve|polish|change the tone|make it (?:shorter|longer|simpler|more|less)|add (?:more )?(?:detail|sources|research|examples)|incorporate (?:additional )?research)\b/i;
-const CREATIVE_OR_EDITING_ONLY = /\b(poem|poetry|fiction|short story|fictional|song lyrics)\b/i;
+const CREATIVE_OR_EDITING_ONLY =
+  /\b(poem|poetry|fiction|short story|fictional|song lyrics|creative writing)\b/i;
+const PERSONAL_NARRATIVE_TOPIC =
+  /\b(?:the|a) day (?:i will|i['’]ll) never forget\b|\bpersonal narrative\b|\bmemoir\b|\bautobiographical\b/i;
+const EXPLICIT_RESEARCH_OR_SOURCING =
+  /\b(research|sourc(?:e|es|ed)|citations?|references|fact.?check|verify|evidence)\b/i;
 const PROVIDED_MATERIAL =
   /\b(based on|using|from)\s+(?:the\s+)?(?:provided|attached|following|my|these)\s+(?:source|sources|text|notes|material|references)\b/i;
 const SUPPLIED_MATERIAL_ACTION =
@@ -51,13 +56,25 @@ export function writingNeedsResearch(
   message: string,
   isRevision: boolean,
 ): boolean {
-  if (CREATIVE_OR_EDITING_ONLY.test(message)) return false;
+  const explicitlyRequestsResearch = EXPLICIT_RESEARCH_OR_SOURCING.test(message);
   if (
     PROVIDED_MATERIAL.test(message) ||
     SUPPLIED_MATERIAL_ACTION.test(message)
-  ) return false;
-  if (isRevision && STYLE_ONLY_REVISION.test(message) &&
-    !/\b(add (?:more )?sources|incorporate (?:additional )?research|fact.?check|verify)\b/i.test(message)) {
+  ) {
+    return false;
+  }
+  if (
+    isRevision &&
+    STYLE_ONLY_REVISION.test(message) &&
+    !explicitlyRequestsResearch
+  ) {
+    return false;
+  }
+  if (explicitlyRequestsResearch) return true;
+  if (
+    CREATIVE_OR_EDITING_ONLY.test(message) ||
+    PERSONAL_NARRATIVE_TOPIC.test(message)
+  ) {
     return false;
   }
   return true;
@@ -166,12 +183,16 @@ export function buildWritingPrompt(
     : "Keep the main deliverable concise by default: about 500 words for an article or essay, about 150 words for a note, and shorter for a simple explainer. Do not add optional summaries or repeated conclusions unless requested.";
   const tableInstruction =
     "Never use Markdown tables, even when requested. Present timelines as numbered milestones and comparisons as concise prose, numbered sections, or labeled bullets.";
+  const personalNarrativeInstruction = PERSONAL_NARRATIVE_TOPIC.test(assignment)
+    ? "If the assignment calls for a first-person personal experience the user has not described, clearly label the draft as an illustrative sample they can personalize. Do not claim to know events from the user's life."
+    : "";
   return [
     revision
       ? "Revise the existing active writing assignment in the conversation. Preserve relevant facts, sources, and the author's purpose unless the user asks to change them."
       : "Create the complete requested written deliverable, not merely a plan or outline unless an outline was explicitly requested.",
     "First form a concise internal outline, then deliver the finished document with a clear thesis, purpose, or findings, logical sections, useful transitions, and a conclusion appropriate to the format.",
     "Infer the topic, purpose, audience, tone, structure, approximate length, and citation requirements from the request; honor every explicit constraint. Do not ask for details that can reasonably be inferred.",
+    personalNarrativeInstruction,
     wordCount,
     tableInstruction,
     requestsImages(assignment)

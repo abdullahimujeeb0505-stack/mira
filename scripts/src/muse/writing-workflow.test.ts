@@ -418,12 +418,23 @@ test("irrelevant and fabricated source numbers are removed and marked unverified
   assert.doesNotMatch(answer, /INVALID CITATION/);
 });
 
-test("research is skipped for creative writing and provided-material editing", () => {
+test("research is skipped for creative writing, personal narratives, and provided material", () => {
   assert.equal(writingNeedsResearch("Write a fictional short story about a lighthouse.", false), false);
   assert.equal(writingNeedsResearch("Write an essay based on these notes.", false), false);
+  assert.equal(writingNeedsResearch("Write essay on 'the day I will never forget'.", false), false);
+  assert.equal(writingNeedsResearch("Write a personal narrative about my first day at school.", false), false);
+  assert.equal(writingNeedsResearch("Write a sourced personal narrative about migration.", false), true);
   assert.equal(writingNeedsResearch("Write a research essay about lighthouse history.", false), true);
   assert.equal(writingNeedsResearch("Make it shorter and more direct.", true), false);
   assert.equal(writingNeedsResearch("Add more sources and research.", true), true);
+
+  const prompt = buildWritingPrompt(
+    "Write essay on 'the day I will never forget'.",
+    {},
+    undefined,
+    false,
+  );
+  assert.match(prompt, /illustrative sample they can personalize/);
 });
 
 test("summarizing, rewriting, and expanding explicitly supplied text use the writing flow without research", () => {
