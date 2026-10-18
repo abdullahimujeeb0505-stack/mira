@@ -223,7 +223,11 @@ Start the lightweight HTTP chat demo:
 pnpm --filter @workspace/scripts run muse-server
 ```
 
-Open `http://localhost:3000` locally, or use the **Muse Chat Preview** workflow in Replit at port `3000` and path `/`. The server uses the selected LLM provider: configure Groq with `GROQ_API_KEY` (or the legacy `GROK_API_CODING_KEY`), OpenRouter with `OPENROUTER_API_KEY` and `OPENROUTER_MODEL`, or AgentRouter with `MUSE_LLM_PROVIDER=agentrouter` and `AGENTROUTER_API_KEY`. `SESSION_SECRET` is required to sign the browser's HTTP-only session cookie.
+The server binds `0.0.0.0` by default so container previews (the Replit
+workflow preview, e2b sandboxes) can reach it; set `MUSE_BIND_HOST=127.0.0.1`
+to restrict it to loopback when running on a shared machine.
+
+Open `http://localhost:3000` locally, or use the **Muse Chat Preview** workflow in Replit at port `3000` and path `/`. The server uses the selected LLM provider: configure Groq with `GROQ_API_KEY` (or the legacy `GROK_API_CODING_KEY`), OpenRouter with `OPENROUTER_API_KEY` and `OPENROUTER_MODEL`, AgentRouter with `MUSE_LLM_PROVIDER=agentrouter` and `AGENTROUTER_API_KEY`, or Gemini with `MUSE_LLM_PROVIDER=gemini` and `GEMINI_API_KEY`. `SESSION_SECRET` is required to sign the browser's HTTP-only session cookie.
 
 At startup, the server logs the selected provider and model identifier only; it
 does not log provider credentials. This also makes a `GROQ_MODEL` override
