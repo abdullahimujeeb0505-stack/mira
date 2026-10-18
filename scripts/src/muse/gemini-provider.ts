@@ -72,7 +72,11 @@ export class GeminiProvider implements TextGenerationProvider {
   }
 
   private get endpoint(): string {
-    const path = `${GEMINI_API_BASE}/models/${encodeURIComponent(this.model)}:generateContent`;
+    // Google's streaming method is `:streamGenerateContent` (`?alt=sse` for
+    // SSE framing). The non-streaming `:generateContent` does not accept
+    // `alt=sse`, so the two are distinct endpoints — not one plus a flag.
+    const method = this.stream ? "streamGenerateContent" : "generateContent";
+    const path = `${GEMINI_API_BASE}/models/${encodeURIComponent(this.model)}:${method}`;
     return this.stream ? `${path}?alt=sse` : path;
   }
 
@@ -99,10 +103,6 @@ export class GeminiProvider implements TextGenerationProvider {
           ...(systemPrompt.trim()
             ? { systemInstruction: { parts: [{ text: systemPrompt }] } }
             : {}),
-          generationConfig: {
-            // Muse needs reasoning traces, so the token budget stays open.
-            candidateCount: 1,
-          },
         }),
         signal: AbortSignal.timeout(this.timeoutMs),
       });
@@ -224,10 +224,12 @@ function parseJsonPayload(body: string): Record<string, unknown> | null {
 /**
  * Reassembles a `text/event-stream` body into one response object.
  *
- * Gemini sends the full candidate in each event as generation progresses, so
- * the last well-formed event wins rather than concatenating chunks — that keeps
- * partial duplicates out of the answer. Falls back to the first parsed object
- * when no later event carries candidates.
+ * Gemini's stream events carry incremental text deltas per candidate — each
+ * event's `parts[].text` is only the new fragment since the previous event —
+ * so fragments are accumulated per candidate index in arrival order and then
+ * wrapped into a single full-shaped response. Events without candidates (for
+ * example a trailing usage-only event) still contribute `promptFeedback` and
+ * `usageMetadata`.
  */
 function parseSsePayload(body: string): Record<string, unknown> | null {
   const events: Record<string, unknown>[] = [];
@@ -246,10 +248,55 @@ function parseSsePayload(body: string): Record<string, unknown> | null {
     return parseJsonPayload(body.trim());
   }
 
-  for (let index = events.length - 1; index >= 0; index -= 1) {
-    if (Array.isArray(events[index]?.candidates)) return events[index];
+  const perCandidate = new Map<
+    number,
+    { texts: string[]; finishReason?: string }
+  >();
+  let promptFeedback: Record<string, unknown> | undefined;
+  let usageMetadata: Record<string, unknown> | undefined;
+
+  for (const event of events) {
+    const feedback = readPromptFeedback(event);
+    if (feedback) promptFeedback = feedback;
+    if (isRecord(event.usageMetadata)) usageMetadata = event.usageMetadata;
+
+    const candidates = Array.isArray(event.candidates) ? event.candidates : [];
+    for (const candidate of candidates) {
+      if (!isRecord(candidate)) continue;
+      const index = typeof candidate.index === "number" ? candidate.index : 0;
+      const entry = perCandidate.get(index) ?? { texts: [] };
+      const content = isRecord(candidate.content) ? candidate.content : undefined;
+      const parts = content && Array.isArray(content.parts) ? content.parts : [];
+      for (const part of parts) {
+        if (!isRecord(part) || part.thought === true) continue;
+        if (typeof part.text === "string" && part.text.length > 0) {
+          entry.texts.push(part.text);
+        }
+      }
+      if (typeof candidate.finishReason === "string") {
+        entry.finishReason = candidate.finishReason;
+      }
+      perCandidate.set(index, entry);
+    }
   }
-  return events[events.length - 1] ?? null;
+
+  if (perCandidate.size === 0) {
+    return events[events.length - 1] ?? null;
+  }
+
+  const candidates = [...perCandidate.entries()]
+    .sort(([left], [right]) => left - right)
+    .map(([index, entry]) => ({
+      index,
+      content: { role: "model", parts: [{ text: entry.texts.join("") }] },
+      ...(entry.finishReason ? { finishReason: entry.finishReason } : {}),
+    }));
+
+  return {
+    ...(promptFeedback ? { promptFeedback } : {}),
+    ...(usageMetadata ? { usageMetadata } : {}),
+    candidates,
+  };
 }
 
 type ParsedGeminiText =
@@ -269,6 +316,7 @@ function parseGeminiText(payload: Record<string, unknown>): ParsedGeminiText {
     }
     for (const part of content.parts) {
       if (!isRecord(part)) return { kind: "unsupported" };
+      if (part.thought === true) continue;
       if (typeof part.text === "string" && part.text.length > 0) {
         blocks.push(part.text);
       }
