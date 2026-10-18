@@ -28,7 +28,7 @@ export function inspectMuseReadiness(
   );
 
   const provider =
-    (env.MUSE_LLM_PROVIDER ?? "").trim().toLowerCase() || "groq";
+    (env.MUSE_LLM_PROVIDER ?? "").trim().toLowerCase() || "gemini";
   if (!["groq", "openrouter", "agentrouter", "gemini"].includes(provider)) {
     addCheck(
       "MUSE_LLM_PROVIDER",

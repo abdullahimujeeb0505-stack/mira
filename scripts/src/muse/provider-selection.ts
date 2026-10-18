@@ -33,8 +33,8 @@ export function createTextGenerationProvider(
   options: ProviderSelectionOptions = {},
 ): TextGenerationProvider {
   const configuredProvider =
-    options.provider ?? process.env.MUSE_LLM_PROVIDER ?? "groq";
-  const provider = configuredProvider.trim().toLowerCase() || "groq";
+    options.provider ?? process.env.MUSE_LLM_PROVIDER ?? "gemini";
+  const provider = configuredProvider.trim().toLowerCase() || "gemini";
 
   if (provider === "groq") {
     return (options.factories?.groq ?? (() => new GroqProvider()))();

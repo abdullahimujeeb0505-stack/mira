@@ -172,10 +172,10 @@ test("AgentRouter requires AGENTROUTER_API_KEY", async () =>
     );
   }));
 
-test("provider selection defaults to Groq and accepts AgentRouter", async () =>
+test("provider selection defaults to Gemini and accepts AgentRouter", async () =>
   withEnvironment({ MUSE_LLM_PROVIDER: undefined }, () => {
-    const groqProvider: TextGenerationProvider = {
-      generateText: async () => "groq",
+    const geminiProvider: TextGenerationProvider = {
+      generateText: async () => "gemini",
     };
     const agentRouterProvider: TextGenerationProvider = {
       generateText: async () => "agentrouter",
@@ -183,9 +183,9 @@ test("provider selection defaults to Groq and accepts AgentRouter", async () =>
 
     assert.equal(
       createTextGenerationProvider({
-        factories: { groq: () => groqProvider },
+        factories: { gemini: () => geminiProvider },
       }),
-      groqProvider,
+      geminiProvider,
     );
     assert.equal(
       createTextGenerationProvider({
