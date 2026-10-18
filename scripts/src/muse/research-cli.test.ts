@@ -747,16 +747,168 @@ test("synthesis failures return an explicitly labeled evidence brief without mod
   assert.equal(result.completeness, "partial");
 });
 
-test("research planning is bounded and classifies different research modes", () => {
-  assert.equal(classifyResearchQuestion("Compare two database designs"), "comparison");
-  assert.equal(classifyResearchQuestion("What is a database index?"), "definition");
-  assert.equal(classifyResearchQuestion("How did the Roman Republic develop?"), "historical");
-  assert.equal(classifyResearchQuestion("How do I debug this TypeScript API?"), "technical");
-  assert.equal(classifyResearchQuestion("What is the latest release?"), "current");
-  assert.equal(classifyResearchQuestion("What does this clinical study show?"), "scientific");
-  assert.equal(classifyResearchQuestion("Tell me about an obscure topic"), "general");
+test("research planning classifies a broad question matrix into useful source modes", () => {
+  const cases: Array<[
+    question: string,
+    expected: ReturnType<typeof classifyResearchQuestion>,
+  ]> = [
+    ["What is photosynthesis?", "scientific"],
+    ["How does photosynthesis work?", "scientific"],
+    ["What year was Donald Trump born?", "historical"],
+    ["What is the history of Donald Trump?", "historical"],
+    ["Who invented the telephone?", "historical"],
+    ["Who won the 2023 Nigerian election?", "historical"],
+    ["What did Bitcoin cost in 2017?", "historical"],
+    ["Who is the current president of Nigeria?", "current"],
+    ["What is the latest Node.js LTS version?", "current"],
+    ["What is Elon Musk's net worth?", "current"],
+    ["What's his net worth?", "current"],
+    ["What's Elon networth", "current"],
+    ["How much does a new iPhone cost?", "current"],
+    ["What is the unemployment rate in Nigeria?", "current"],
+    ["What is the current exchange rate for the naira?", "current"],
+    ["What are the differences between Gemini and Groq?", "comparison"],
+    ["Compare Gemini and Groq for research", "comparison"],
+    ["How does TypeScript narrow a union type?", "technical"],
+    ["How do React hooks work?", "technical"],
+    ["How does the Go language concurrency model work?", "technical"],
+    ["What is a database index?", "definition"],
+    ["What are the side effects of metformin?", "scientific"],
+    ["What evidence supports climate change?", "scientific"],
+    ["What does this clinical study show?", "scientific"],
+    ["What does Mercury refer to?", "general"],
+    ["How should I go to Lagos?", "general"],
+    ["Tell me about an obscure topic", "general"],
+  ];
+
+  for (const [question, expected] of cases) {
+    assert.equal(classifyResearchQuestion(question), expected, question);
+  }
   assert.throws(() => createResearchConfig({ maxRounds: 4 }), /maxRounds/);
   assert.throws(() => createResearchConfig({ maxRounds: 3, maxSearches: 2 }), /maxSearches/);
+});
+
+test("fallback planning runs evidence-backed research across twelve synthetic topic fixtures", async () => {
+  const scenarios = [
+    {
+      id: "photosynthesis",
+      question: "How does photosynthesis work?",
+      taskType: "scientific",
+      answer: "Photosynthesis uses light energy to convert carbon dioxide and water into sugars and oxygen.",
+    },
+    {
+      id: "roman-republic",
+      question: "How did the Roman Republic form?",
+      taskType: "historical",
+      answer: "The Roman Republic was traditionally founded in 509 BCE after the expulsion of its last king.",
+    },
+    {
+      id: "react-hooks",
+      question: "How do React hooks work?",
+      taskType: "technical",
+      answer: "React hooks let function components use state and other React features without writing a class.",
+    },
+    {
+      id: "typescript-javascript",
+      question: "Compare TypeScript and JavaScript.",
+      taskType: "comparison",
+      answer: "TypeScript adds static types to JavaScript, while JavaScript runs without a separate type-checking step.",
+    },
+    {
+      id: "node-lts",
+      question: "What is the latest Node.js LTS version?",
+      taskType: "current",
+      answer: "The synthetic fixture reports Node.js 24 as its latest LTS release, dated 18 October 2026.",
+    },
+    {
+      id: "metformin",
+      question: "What are the side effects of metformin?",
+      taskType: "scientific",
+      answer: "The synthetic study reports gastrointestinal symptoms among common side effects associated with metformin.",
+    },
+    {
+      id: "musk-net-worth",
+      question: "What is Elon Musk's net worth?",
+      taskType: "current",
+      answer: "The synthetic source publishes a dated net-worth estimate as of 18 October 2026.",
+    },
+    {
+      id: "iphone-price",
+      question: "How much does a new iPhone cost?",
+      taskType: "current",
+      answer: "The synthetic listing gives the device price as 999 dollars, dated 18 October 2026.",
+    },
+    {
+      id: "nigeria-unemployment",
+      question: "What is the unemployment rate in Nigeria?",
+      taskType: "current",
+      answer: "The synthetic data series reports Nigeria's unemployment rate as 4.2 percent for October 2026.",
+    },
+    {
+      id: "climate-evidence",
+      question: "What evidence supports human-caused climate change?",
+      taskType: "scientific",
+      answer: "The synthetic assessment attributes most recent global warming to human greenhouse gas emissions.",
+    },
+    {
+      id: "telephone-invention",
+      question: "Who invented the telephone?",
+      taskType: "historical",
+      answer: "The synthetic history source records that Alexander Graham Bell received a telephone patent in 1876.",
+    },
+    {
+      id: "database-index",
+      question: "What is a database index?",
+      taskType: "definition",
+      answer: "A database index is a data structure that helps a database find rows without scanning every row.",
+    },
+  ] as const;
+
+  for (const scenario of scenarios) {
+    let modelCalls = 0;
+    const title = `Synthetic fixture: ${scenario.question}`;
+    const fixture: EvidenceSource = {
+      title,
+      url: `https://example.org/research/${scenario.id}`,
+      retrievedAt: "2026-10-18T00:00:00.000Z",
+      publisher: "Offline test fixture",
+      sourceType: scenario.taskType === "current" ? "official" : "research",
+      publishedAt: "2026-10-17T00:00:00.000Z",
+      content: scenario.answer,
+    };
+    const result = await runResearch(scenario.question, [], {
+      provider: {
+        async generateText(request) {
+          modelCalls += 1;
+          if (modelCalls === 1) {
+            throw new Error("simulated planning-model outage");
+          }
+          const sourceId = firstCitationId(request);
+          return JSON.stringify({
+            answer: `${scenario.answer} [${sourceId}]`,
+            followUpQuestions: [],
+            unresolvedQuestions: [],
+            contradictions: [],
+            completeness: "supported",
+          });
+        },
+      },
+      search: async () => [{ title, url: fixture.url }],
+      retrieve: async () => fixture,
+      archive: async () => ({ markdownPath: "fixture.md", jsonPath: "fixture.json" }),
+      onProgress: () => {},
+      config: { maxRounds: 1, maxSearches: 1, maxCandidates: 1, maxSources: 1 },
+      now: () => new Date("2026-10-18T00:00:00.000Z"),
+    });
+
+    assert.equal(modelCalls, 2, scenario.question);
+    assert.equal(result.plan.taskType, scenario.taskType, scenario.question);
+    assert.equal(result.plan.requiresCurrentInformation, scenario.taskType === "current", scenario.question);
+    assert.equal(result.sources.length, 1, scenario.question);
+    assert.equal(result.completeness, "supported", scenario.question);
+    assert.match(result.answer, /\[SRC-[a-f0-9]{12}\]/, scenario.question);
+    assert.doesNotMatch(result.answer, /unverified:/, scenario.question);
+  }
 });
 
 test("research URL validation rejects unsupported and non-public destinations", () => {

@@ -10,7 +10,7 @@ import {
   runResearch,
   type ResearchResult,
 } from "./research-cli.js";
-import { isIdentityQuestion, shouldResearchMessage } from "./message-routing.js";
+import { isContextualConfirmation, isIdentityQuestion, shouldResearchMessage } from "./message-routing.js";
 import {
   extractWritingConstraints,
   generateWrittenDeliverable,
@@ -52,7 +52,9 @@ const IDENTITY_REPLY =
   "I'm Muse, a conversational research agent. My purpose is to help you understand topics, investigate questions with web research when useful, and turn information into clear writing such as notes, essays, and articles. What would you like to explore?";
 
 const PRIOR_RESEARCH_REFERENCE =
-  /\b(?:those|these|the previous|the earlier|above|prior) (?:findings|results|research|sources|answer)\b|\bwhat you (?:just )?(?:found|researched|said)\b|\bwhat about\b|\bthat topic\b|\b(?:why|how so|and then|then what|explain that|make that simpler|what does (?:this|that|it) mean|can you clarify that)\b/i;
+  /\b(?:those|these|the previous|the earlier|above|prior) (?:findings|results|research|sources|answer)\b|\b(?:your|my) (?:previous )?(?:answer|response|report)\b|\bwhat you (?:just )?(?:found|researched|said)\b|\bwhat about\b|\bthat topic\b|\b(?:why|how so|and then|then what|explain that|make that simpler|what does (?:this|that|it) mean|can you clarify that)\b/i;
+const CONTEXTUAL_ENTITY_FOLLOW_UP =
+  /^(?:who|what|when|where|why|how|which|is|are|was|were|do|does|did|can|could|would|should)\b.{0,120}\b(?:he|she|they|his|her|their|it|its|this|that|those|these|former|latter)\b/i;
 
 const CONTEXT_STOP_WORDS = new Set([
   "about", "after", "before", "could", "does", "from", "have", "into",
@@ -97,6 +99,8 @@ function refersToLatestResearch(
 ): boolean {
   if (!result) return false;
   if (requestsSources(message)) return true;
+  if (isContextualConfirmation(message)) return true;
+  if (CONTEXTUAL_ENTITY_FOLLOW_UP.test(message)) return true;
   if (PRIOR_RESEARCH_REFERENCE.test(message)) return true;
   if (!wantsResearch) return false;
 
@@ -292,6 +296,7 @@ export class MuseAgent {
       const conversationContext = contextualResearch
         ? [
             "Previous user-facing answer (context only; do not repeat it):",
+            `Previous research question: ${contextualResearch.question}`,
             contextualResearch.answer.slice(0, 1_600),
             "Previously retrieved evidence:",
             ...contextualResearch.sources.slice(0, 5).map((source, index) =>

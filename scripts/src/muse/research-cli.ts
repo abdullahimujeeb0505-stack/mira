@@ -202,22 +202,29 @@ export function createResearchConfig(
 }
 
 export function classifyResearchQuestion(question: string): ResearchPlan["taskType"] {
-  if (/\b(compare|comparison|versus|vs\.?|better than|differences?)\b/i.test(question)) {
+  const content = question.trim();
+  if (/\b(compare|comparison|versus|vs\.?|better than|differences?)\b/i.test(content)) {
     return "comparison";
   }
-  if (/\b(current|latest|recent|today|this year|release|version|news|now)\b/i.test(question)) {
+  if (/\b(current(?:ly)?|latest|newest|most recent|recent|today|this year|as of now|release|version|news|now|live)\b/i.test(content)) {
     return "current";
   }
-  if (/\b(history|historical|biograph|born|died|century|ancient|war|revolution|dynasty|empire|republic)\b/i.test(question)) {
+  if (
+    /\b(history|historical|biograph|born|died|century|ancient|war|revolution|dynasty|empire|republic|invented|founded|discovered)\b/i.test(content) ||
+    /\b(?:18|19|20)\d{2}\b/.test(content)
+  ) {
     return "historical";
   }
-  if (/\b(science|scientific|medical|medicine|pharmacy|clinical|study|research paper)\b/i.test(question)) {
+  if (/\b(net[\s-]*worth|price|prices|cost|costs|population|unemployment|inflation|exchange rate|interest rate|market cap|market capitalization|salary|weather|forecast)\b/i.test(content)) {
+    return "current";
+  }
+  if (/\b(science|scientific|medical|medicine|pharmacy|clinical|study|research paper|evidence|health|healthcare|drug|medication|side effects?|dosage|symptom|treatment|diagnos\w*|vaccine|trial|disease|biology|photosynthesis|climate|physics|chemistry|genetics|neuroscience|nutrition|risk)\b/i.test(content)) {
     return "scientific";
   }
-  if (/\b(code|program|debug|software|API|library|framework|repository|GitHub|implementation|TypeScript|JavaScript|Python)\b/i.test(question)) {
+  if (/\b(code|program|debug|software|API|library|framework|repository|GitHub|implementation|TypeScript|JavaScript|Python|React|Vue|Angular|Svelte|Next\.js|Node\.js|npm|pnpm|Rust|Golang|Go language|SQL|hooks?|component|frontend|backend)\b/i.test(content)) {
     return "technical";
   }
-  if (/^(?:what is|what are|define|meaning of)\b/i.test(question.trim())) {
+  if (/^(?:what is|what are|define|meaning of)\b/i.test(content)) {
     return "definition";
   }
   return "general";

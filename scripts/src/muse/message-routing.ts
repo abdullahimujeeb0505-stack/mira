@@ -1,6 +1,6 @@
 const LIGHTWEIGHT_MESSAGES = [
   /^(?:hi|hello|hey|good morning|good afternoon|good evening)\b/i,
-  /^(?:how are you|how's it going|what's up)\??$/i,
+  /^(?:how are you(?: doing)?(?: today| right now)?|how's it going|what's up)[\s.!?…\p{Extended_Pictographic}\uFE0F]*$/iu,
   /^(?:what(?:'s| is) your name|who are you|what can you do|can you help me(?: study)?)\??$/i,
   /^(?:thanks|thank you|thx|bye|goodbye)\b/i,
 ];
@@ -8,7 +8,8 @@ const LIGHTWEIGHT_MESSAGES = [
 const IDENTITY_PROMPT =
   String.raw`(?:who are you|what are you|what (?:kind|type) of (?:agent|assistant|bot|AI|model) are you|tell me (?:who|what) you are|tell me about yourself|describe yourself|introduce yourself)`;
 const PURPOSE_PROMPT =
-  String.raw`(?:what(?:'s|s| is) your (?:purpose|role|job|function)|why do you exist|what do you do|what can you do|what can you help (?:me )?with|how can you help(?: me)?|what are you for)`;
+  String.raw`(?:what(?:'s|s| is) your (?:purpose|role|job|function)|what are your capabilities|why do you exist|what do you do|what can you do|what can you help (?:me )?with|how can you help(?: me)?|what are you for)`;
+const IDENTITY_CHALLENGE_PROMPT = String.raw`(?:(?:no[,! ]+)?i(?:'m| am) asking(?: you)?(?: that)?[,;:]?\s+)?(?:are you (?:sure|certain) (?:that )?you are (?:a|an) (?:research\s+)?(?:agent|assistant|bot|ai|model)|are you (?:really|actually) (?:a|an) (?:research\s+)?(?:agent|assistant|bot|ai|model))`;
 /** "What AI model is this", "Which agent is this", "Is this a real person" —
  *  questions about the assistant itself, not research topics. */
 const SELF_MODEL_PROMPT =
@@ -16,12 +17,12 @@ const SELF_MODEL_PROMPT =
 const INTENT_CONNECTOR =
   String.raw`(?:\s*(?:[,;.!?]\s*(?:(?:and|also|plus)\s+)?|\s+(?:and|also|plus)\s+))`;
 const IDENTITY_REQUEST = new RegExp(
-  String.raw`^(?:(?:hey|hi|yo)[,! ]+)?(?:${IDENTITY_PROMPT}(?:${INTENT_CONNECTOR}${PURPOSE_PROMPT})?|${PURPOSE_PROMPT}(?:${INTENT_CONNECTOR}${IDENTITY_PROMPT})?|${SELF_MODEL_PROMPT})(?:\s+(?:man|dude|bro|please|exactly))*[?.!]*$`,
+  String.raw`^(?:(?:hey|hi|yo)[,! ]+)?(?:${IDENTITY_PROMPT}(?:${INTENT_CONNECTOR}${PURPOSE_PROMPT})?|${PURPOSE_PROMPT}(?:${INTENT_CONNECTOR}${IDENTITY_PROMPT})?|${SELF_MODEL_PROMPT}|${IDENTITY_CHALLENGE_PROMPT})(?:\s+(?:man|dude|bro|please|exactly))*[?.!]*$`,
   "i",
 );
 
 const EXPLICIT_RESEARCH_REQUEST =
-  /\b(research|search the web|look up|find sources|cite sources|latest|current|today|recently|as of now)\b/i;
+  /(?:^\s*(?:please\s+)?(?:research|search)\b|\b(?:please|can you|could you|would you|will you|should|must|need to|want to|want you to|let's|do(?: some)?|help me)\s+(?:also\s+)?research\b|\b(?:search the web|search online|look up|find sources|cite sources)\b|\b(?:latest|current|today|recently|as of now)\b)/i;
 const INSPECTION_REQUEST =
   /\b(?:look (?:through|over|at)|check (?:out|through)|go through|take a look|browse through|read through|dig through)\b/i;
 const INFORMATION_REQUEST =
@@ -75,7 +76,13 @@ export function containsWebTarget(message: string): boolean {
   return false;
 }
 const CONTEXTUAL_FOLLOW_UP =
-  /^(?:why|how so|what about(?: it| that)?|and then|then what|explain that simply|make that simpler|what does (?:this|that|it) mean(?: in practice)?|can you clarify that)\??$/i;
+  /^(?:why|how so|what about(?: it| that)?|and then|then what|explain that simply|make that simpler|what does (?:this|that|it) mean(?: in practice)?|can you clarify that)\s*[?.!]*$/i;
+const CONTEXTUAL_CONFIRMATION =
+  /^(?:are you (?:sure|certain)(?: about (?:that|this))?|can you confirm(?: that)?|please confirm(?: that)?|confirm(?: that)?)\s*[?.!]*$/i;
+const CONTEXTUAL_EDIT_FOLLOW_UP =
+  /^(?:rewrite|rephrase|summari[sz]e|simplify|shorten|condense|remove|keep|retain|clean up|format)\b.{0,500}\b(?:your|my|the|that|this|above|previous|earlier)\s+(?:answer|response|report|findings|results|research|sources?)\b/i;
+const ASSISTANT_CAPABILITY_QUESTION =
+  /^(?:what (?:can(?:not|'t)?|cannot|can not) you (?:rese(?:a)?rch|search|browse|access|read)\d*(?:\s+on (?:the )?(?:web|internet))?|can (?:you|this agent) (?:generate|create|draw|make)\s+(?:an?\s+)?(?:pictures?|pics?|images?|artwork)\b(?:\s+.*)?)\s*[?.!]*$/i;
 const CONTEXTUAL_RELATION_FOLLOW_UP =
   /\b(?:relate|related|connect|connection)\b.{0,100}\b(?:what you (?:just )?(?:researched|said|found)|previous (?:answer|research)|that topic)\b/i;
 
@@ -85,11 +92,16 @@ export function isIdentityQuestion(message: string): boolean {
   );
 }
 
+export function isContextualConfirmation(message: string): boolean {
+  return CONTEXTUAL_CONFIRMATION.test(message.trim());
+}
+
 export function shouldResearchMessage(
   message: string,
   hasConversationHistory = false,
 ): boolean {
   const content = message.trim();
+  const normalizedContent = content.normalize("NFKC").replace(/[’‘]/g, "'");
   if (
     !content ||
     isIdentityQuestion(content) ||
@@ -98,10 +110,13 @@ export function shouldResearchMessage(
     return false;
   }
 
+  if (ASSISTANT_CAPABILITY_QUESTION.test(normalizedContent)) return false;
   if (EXPLICIT_RESEARCH_REQUEST.test(content)) return true;
   if (containsWebTarget(content)) return true;
   if (INSPECTION_REQUEST.test(content)) return true;
   if (hasConversationHistory && CONTEXTUAL_RELATION_FOLLOW_UP.test(content)) return false;
+  if (isContextualConfirmation(content)) return false;
+  if (CONTEXTUAL_EDIT_FOLLOW_UP.test(content)) return false;
   if (CONTEXTUAL_FOLLOW_UP.test(content)) return false;
   if (EXPLANATION_REQUEST.test(content)) return true;
   if (INFORMATION_REQUEST.test(content)) return true;

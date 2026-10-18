@@ -1,11 +1,13 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { containsWebTarget, shouldResearchMessage } from "./message-routing.js";
+import { containsWebTarget, isIdentityQuestion, shouldResearchMessage } from "./message-routing.js";
 
 test("greetings and lightweight chat do not trigger web research", () => {
   for (const message of [
     "Hi Muse",
     "How are you?",
+    "How are you doing today 😊😘",
+    "How are you right now?",
     "What's your name?",
     "What can you do?",
     "Thanks!",
@@ -22,10 +24,24 @@ test("identity and capability questions stay conversational across phrasing and 
     "What is your role?",
     "Tell me about yourself.",
     "What are you for?",
+    "What are your capabilities",
+    "What can't you research?",
+    "What can’t you research?",
+    "What can you research?",
+    "What can't you reserch5",
+    "Can you generate pics?",
+    "Can you generate a picture of a cat?",
+    "Are you sure you are a research agent?",
+    "No, I'm asking you that: are you sure you are a research agent?",
     "How can you help me?",
   ]) {
     assert.equal(shouldResearchMessage(message), false, message);
   }
+  assert.equal(isIdentityQuestion("What are your capabilities"), true);
+  assert.equal(
+    isIdentityQuestion("No, I'm asking you that: are you sure you are a research agent?"),
+    true,
+  );
 });
 
 test("substantive factual questions and explicit research requests use live research", () => {
@@ -49,11 +65,27 @@ test("contextual follow-ups use conversation context instead of repeating resear
     "Explain that simply",
     "What does this mean?",
     "Why was TypeScript created, and how does that relate to what you just researched?",
+    "Rewrite your answer as a simple explanation for a beginner. Keep the important facts, remove unnecessary research diagnostics, and retain appropriate citations.",
   ]) {
     assert.equal(shouldResearchMessage(message, true), false, message);
   }
   assert.equal(shouldResearchMessage("Search the web: why?", true), true);
   assert.equal(shouldResearchMessage("What about the security impact?", true), true);
+  assert.equal(shouldResearchMessage("Rewrite your answer with the latest research.", true), true);
+});
+
+test("short confirmation challenges stay conversational and can reuse prior research", () => {
+  for (const message of [
+    "Are you sure?",
+    "Are you sure ?",
+    "Are you certain about that?",
+    "Can you confirm that?",
+    "Confirm?",
+  ]) {
+    assert.equal(shouldResearchMessage(message, true), false, message);
+    assert.equal(shouldResearchMessage(message, false), false, message);
+  }
+  assert.equal(shouldResearchMessage("Can you confirm the current exchange rate?", true), true);
 });
 
 test("a message naming a website triggers research regardless of phrasing", () => {

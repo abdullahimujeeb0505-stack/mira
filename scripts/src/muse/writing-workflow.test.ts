@@ -421,6 +421,7 @@ test("irrelevant and fabricated source numbers are removed and marked unverified
 test("research is skipped for creative writing, personal narratives, and provided material", () => {
   assert.equal(writingNeedsResearch("Write a fictional short story about a lighthouse.", false), false);
   assert.equal(writingNeedsResearch("Write an essay based on these notes.", false), false);
+  assert.equal(writingNeedsResearch("Write me an essay on photosynthesis.", false), true);
   assert.equal(writingNeedsResearch("Write essay on 'the day I will never forget'.", false), false);
   assert.equal(writingNeedsResearch("Write a personal narrative about my first day at school.", false), false);
   assert.equal(writingNeedsResearch("Write a sourced personal narrative about migration.", false), true);
