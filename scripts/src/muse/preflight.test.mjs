@@ -12,10 +12,7 @@ const validEnv = {
 };
 
 test("reports readiness for Groq without exposing configured values", () => {
-  const report = inspectMuseReadiness(
-    { ...validEnv, MUSE_LLM_PROVIDER: "groq" },
-    true,
-  );
+  const report = inspectMuseReadiness(validEnv, true);
   const output = formatMuseReadiness(report);
 
   assert.equal(report.ready, true);
@@ -27,7 +24,6 @@ test("prefers the canonical Groq credential when both variables are available", 
   const report = inspectMuseReadiness(
     {
       ...validEnv,
-      MUSE_LLM_PROVIDER: "groq",
       GROQ_API_KEY: "canonical-provider-key",
     },
     true,
@@ -86,20 +82,16 @@ test("Gemini selection blocks until GEMINI_API_KEY is set", () => {
   assert.ok(report.checks.some(({ name, ready }) => name === "GEMINI_API_KEY" && !ready));
 });
 
-test("uses Gemini when the provider setting is blank, matching server selection", () => {
+test("uses Groq when the provider setting is blank, matching server selection", () => {
   const report = inspectMuseReadiness(
-    {
-      ...validEnv,
-      MUSE_LLM_PROVIDER: "  ",
-      GEMINI_API_KEY: "configured-gemini-key",
-    },
+    { ...validEnv, MUSE_LLM_PROVIDER: "  " },
     true,
   );
 
   assert.equal(report.ready, true);
   assert.ok(
     report.checks.some(
-      ({ name, ready }) => name === "GEMINI_API_KEY" && ready,
+      ({ name, ready }) => name === "GROK_API_CODING_KEY" && ready,
     ),
   );
   assert.ok(!report.checks.some(({ name }) => name === "MUSE_LLM_PROVIDER"));
@@ -138,7 +130,7 @@ test("reports missing secrets and unavailable tsx by name without printing value
   assert.equal(report.ready, false);
   assert.match(output, /BLOCKED: SESSION_SECRET/);
   assert.match(output, /BLOCKED: MUSE_CHAT_ACCESS_TOKEN/);
-  assert.match(output, /BLOCKED: GEMINI_API_KEY/);
+  assert.match(output, /BLOCKED: GROQ_API_KEY or GROK_API_CODING_KEY/);
   assert.match(output, /BLOCKED: tsx/);
   assert.doesNotMatch(output, /short/);
 });
