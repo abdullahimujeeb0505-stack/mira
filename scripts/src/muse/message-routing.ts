@@ -1,6 +1,7 @@
 const LIGHTWEIGHT_MESSAGES = [
   /^(?:hi|hello|hey|good morning|good afternoon|good evening)\b/i,
   /^(?:how are you(?: doing)?(?: today| right now)?|how's it going|what's up)[\s.!?…\p{Extended_Pictographic}\uFE0F]*$/iu,
+  /^are you (?:doing )?(?:ok(?:ay)?|alright|all right|well)(?: today| right now)?[\s.!?…\p{Extended_Pictographic}\uFE0F]*$/iu,
   /^(?:what(?:'s| is) your name|who are you|what can you do|can you help me(?: study)?)\??$/i,
   /^(?:thanks|thank you|thx|bye|goodbye)\b/i,
 ];

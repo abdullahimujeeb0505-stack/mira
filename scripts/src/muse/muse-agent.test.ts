@@ -119,12 +119,16 @@ test("Muse handles casual messages without web research and researches factual q
     assert.equal(modelCalls, 1);
     assert.equal(researchQuestions.length, 0);
 
+    assert.equal(await agent.respond("Are you okay?"), "Hello!");
+    assert.equal(modelCalls, 2);
+    assert.equal(researchQuestions.length, 0);
+
     const answer = await agent.respond("How does this work?");
     assert.match(answer, /Would you like to explore how the process works or its main types next\?/);
     assert.doesNotMatch(answer, /\[1\]|\[SRC-|Sources:|example\.org\/guide/);
     assert.doesNotMatch(answer, /candidate pages|Research completeness|Limitations:/);
     assert.equal(researchQuestions[0], "How does this work?");
-    assert.equal(modelCalls, 1);
+    assert.equal(modelCalls, 2);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
