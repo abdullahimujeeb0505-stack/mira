@@ -10,7 +10,7 @@ import {
 } from "./response-formatting.js";
 
 const DELIVERABLE =
-  /\b(article|essay|blog post|explainer|educational content|research essay|analytical essay|literature review|tutorial|guide|code explanation|technical documentation|report|investigative brief|company profile|profile|summary|study notes|learning guide|notes|comparison|brief|outline|proposal|introduction|conclusion|reference list)\b/i;
+  /\b(article|essay|blog post|explainer|educational content|research essay|analytical essay|literature review|tutorial|guide|code explanation|technical documentation|report|investigative brief|company profile|profile|summary|study notes|learning guide|notes?|comparison|brief|outline|proposal|introduction|conclusion|reference list)\b/i;
 const WRITING_ACTION =
   /\b(write|draft|create|compose|prepare|produce|develop|generate|i need|i want|turn this into|turn (?:these|those|the|my|your) (?:findings|results|research|sources|notes) into|make me|give me)\b/i;
 const REVISION_ACTION =
@@ -161,7 +161,7 @@ export function buildWritingPrompt(
   const hasSources = evidenceSources.length > 0;
   const wordCount = constraints.requestedWordCount
     ? `Target body length: ${constraints.requestedWordCount} words (acceptable range ${Math.floor(constraints.requestedWordCount * 0.9)}-${Math.ceil(constraints.requestedWordCount * 1.1)} words). Treat this range as a hard constraint: count and revise the deliverable before responding. Exclude appended references and research notes from this count.`
-    : "Keep the main deliverable concise by default: about 500 words for an article or essay and shorter for a simple explainer. Do not add optional summaries or repeated conclusions unless requested.";
+    : "Keep the main deliverable concise by default: about 500 words for an article or essay, about 150 words for a note, and shorter for a simple explainer. Do not add optional summaries or repeated conclusions unless requested.";
   const tableInstruction =
     "Never use Markdown tables, even when requested. Present timelines as numbered milestones and comparisons as concise prose, numbered sections, or labeled bullets.";
   return [

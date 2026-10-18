@@ -66,6 +66,7 @@ function createProvider(
 test("writing requests cover complete general-purpose deliverables and detect revisions", () => {
   for (const request of [
     "Write a research article about early printing.",
+    "Write me a note on photosynthesis.",
     "Draft a literature review of memory research.",
     "Create a technical tutorial for a REST API.",
     "Prepare a company profile for a local startup.",

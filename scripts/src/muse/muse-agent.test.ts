@@ -66,10 +66,12 @@ test("Muse identifies itself as a research agent without delegating identity to 
   );
 
   try {
+    await agent.respond("Hey");
+    const modelCallsAfterGreeting = modelCalls;
     const answer = await agent.respond("What are you?");
     assert.match(answer, /I'm Muse, a conversational research agent/);
     assert.doesNotMatch(answer, /ChatGPT|OpenAI/);
-    assert.equal(modelCalls, 0);
+    assert.equal(modelCalls, modelCallsAfterGreeting);
     assert.equal(researchCalls, 0);
   } finally {
     await rm(directory, { recursive: true, force: true });
@@ -537,6 +539,39 @@ test("research-based writing falls back to general knowledge when retrieval has 
     assert.match(requests[0]?.systemPrompt ?? "", /stable general knowledge/);
     assert.doesNotMatch(answer, /\[1\]|Sources:|example\.org/);
     assert.equal(researchCalls, 1);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("Muse writes a concise note when research retrieves no usable sources", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "muse-agent-note-fallback-"));
+  const requests: TextGenerationRequest[] = [];
+  const agent = new MuseAgent(
+    {
+      async generateText(request) {
+        requests.push(request);
+        return "Photosynthesis is the process by which plants use light to make sugars from carbon dioxide and water.";
+      },
+    },
+    new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
+    undefined,
+    async (question) => ({
+      ...researchResult,
+      question,
+      answer: "I could not retrieve readable sources.",
+      sources: [],
+      completeness: "insufficient",
+    }),
+  );
+
+  try {
+    const answer = await agent.respond("Write me a note on photosynthesis.");
+
+    assert.match(answer, /Photosynthesis is the process/);
+    assert.match(answer, /not independently source-verified/);
+    assert.match(requests[0]?.systemPrompt ?? "", /about 150 words for a note/);
+    assert.equal(requests.length, 1);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
