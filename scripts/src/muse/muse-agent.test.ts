@@ -68,9 +68,16 @@ test("Muse identifies itself as a research agent without delegating identity to 
   try {
     await agent.respond("Hey");
     const modelCallsAfterGreeting = modelCalls;
-    const answer = await agent.respond("What are you?");
-    assert.match(answer, /I'm Muse, a conversational research agent/);
-    assert.doesNotMatch(answer, /ChatGPT|OpenAI/);
+    for (const question of [
+      "What are you?",
+      "What are you, man?",
+      "Who are you and whats your purpose?",
+    ]) {
+      const answer = await agent.respond(question);
+      assert.match(answer, /I'm Muse, a conversational research agent/);
+      assert.match(answer, /My purpose is to help you understand topics/);
+      assert.doesNotMatch(answer, /ChatGPT|OpenAI/);
+    }
     assert.equal(modelCalls, modelCallsAfterGreeting);
     assert.equal(researchCalls, 0);
   } finally {
