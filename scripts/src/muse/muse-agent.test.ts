@@ -75,6 +75,9 @@ test("Muse identifies itself as a research agent without delegating identity to 
       "Who are you and whats your purpose?",
       "What's your purpose, and who are you?",
       "Tell me about yourself.",
+      "What are your capabilities",
+      "Are you sure you are a research agent?",
+      "No, I'm asking you that: are you sure you are a research agent?",
       "How can you help me?",
     ]) {
       const answer = await agent.respond(question);
@@ -178,6 +181,107 @@ test("research follow-ups use prior conversation without repeating research", as
       modelRequests[0]?.conversation.at(-1)?.content ?? "",
       /^What does that mean in practice\?$/,
     );
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("rewrite requests about the previous answer reuse prior research instead of searching its diagnostics", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "muse-agent-rewrite-followup-"));
+  const questions: string[] = [];
+  const requests: TextGenerationRequest[] = [];
+  const agent = new MuseAgent(
+    {
+      async generateText(request) {
+        requests.push(request);
+        return "TypeScript narrows values by analyzing control flow.";
+      },
+    },
+    new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
+    undefined,
+    async (question) => {
+      questions.push(question);
+      return { ...researchResult, question };
+    },
+  );
+  const rewrite = "Rewrite your answer as a simple explanation for a beginner. Keep the important facts, remove unnecessary research diagnostics, and retain appropriate citations.";
+
+  try {
+    await agent.respond("Research how TypeScript narrowing works?");
+    assert.match(await agent.respond(rewrite), /TypeScript narrows values/);
+
+    assert.deepEqual(questions, ["Research how TypeScript narrowing works?"]);
+    assert.equal(requests.length, 1);
+    assert.match(requests[0]?.systemPrompt ?? "", /Question: Research how TypeScript narrowing works\?/);
+    assert.match(requests[0]?.systemPrompt ?? "", /Relevant previously retrieved evidence/);
+    assert.equal(requests[0]?.conversation.at(-1)?.content, rewrite);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("Are you sure and Confirm follow-ups reuse prior research instead of researching the phrase", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "muse-agent-confirmation-"));
+  const questions: string[] = [];
+  const requests: TextGenerationRequest[] = [];
+  const agent = new MuseAgent(
+    {
+      async generateText(request) {
+        requests.push(request);
+        return "Yes. The earlier source supports that claim.";
+      },
+    },
+    new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
+    undefined,
+    async (question) => {
+      questions.push(question);
+      return { ...researchResult, question };
+    },
+  );
+
+  try {
+    await agent.respond("What is photosynthesis?");
+    assert.match(await agent.respond("Are you sure ?"), /earlier source supports/);
+    assert.match(await agent.respond("Confirm?"), /earlier source supports/);
+
+    assert.deepEqual(questions, ["What is photosynthesis?"]);
+    assert.equal(requests.length, 2);
+    assert.match(requests[0]?.systemPrompt ?? "", /Question: What is photosynthesis\?/);
+    assert.match(requests[0]?.systemPrompt ?? "", /Relevant previously retrieved evidence/);
+    assert.equal(requests[0]?.conversation.at(-1)?.content, "Are you sure ?");
+    assert.equal(requests[1]?.conversation.at(-1)?.content, "Confirm?");
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("pronoun-based research follow-ups receive the previous topic and evidence", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "muse-agent-pronoun-followup-"));
+  const questions: string[] = [];
+  const researchContexts: string[] = [];
+  const agent = new MuseAgent(
+    { generateText: async () => "unused" },
+    new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
+    undefined,
+    async (question, _archive, conversationContext) => {
+      questions.push(question);
+      researchContexts.push(conversationContext ?? "");
+      return { ...researchResult, question };
+    },
+  );
+
+  try {
+    await agent.respond("What can you say about Elon Musk's flying cars?");
+    await agent.respond("What's his net worth? Use recent sources and state the date.");
+
+    assert.deepEqual(questions, [
+      "What can you say about Elon Musk's flying cars?",
+      "What's his net worth? Use recent sources and state the date.",
+    ]);
+    assert.match(researchContexts[1] ?? "", /Previous user-facing answer/);
+    assert.match(researchContexts[1] ?? "", /Previous research question: What can you say about Elon Musk's flying cars\?/);
+    assert.match(researchContexts[1] ?? "", /Previously retrieved evidence/);
+    assert.match(researchContexts[1] ?? "", /Official guide/);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
