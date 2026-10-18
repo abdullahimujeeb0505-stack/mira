@@ -190,7 +190,10 @@ test("classifyProviderFailure names honest causes", () => {
     classifyProviderFailure(new Error("429 too many requests")),
     /rate limited/,
   );
-  assert.match(classifyProviderFailure(new Error("request timed out")), /timeout/);
+  assert.match(
+    classifyProviderFailure(new Error("request timed out")),
+    /timeout/,
+  );
   assert.match(
     classifyProviderFailure(new Error("fetch failed: ENOTFOUND")),
     /network error/,
@@ -217,4 +220,30 @@ test("probeProviderConnection reports success and classified failures without th
   );
   assert.match(failed, /LLM probe \(research\) FAILED: auth error/);
   assert.match(failed, /gemini/);
+
+  let notFound = "";
+  await withEnvironment(
+    { GEMINI_API_KEY: "diagnostic-test-secret" },
+    async () => {
+      notFound = await probeProviderConnection(
+        "research",
+        fakeProvider("gemini", "gemini-2.5-flash", async () => {
+          throw new Error(
+            "Gemini request failed with HTTP 404: models/gemini-2.5-flash is not found for API version v1beta; key=diagnostic-test-secret [NOT_FOUND]",
+          );
+        }),
+      );
+    },
+  );
+  assert.match(notFound, /HTTP 404/);
+  assert.match(
+    notFound,
+    /provider detail: models\/gemini-2.5-flash is not found/,
+  );
+  assert.match(notFound, /\[REDACTED\]/);
+  assert.match(notFound, /model: gemini-2.5-flash/);
+  assert.doesNotMatch(
+    notFound,
+    /diagnostic-test-secret|check the API key and quota/,
+  );
 });

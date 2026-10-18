@@ -41,7 +41,7 @@ function sseResponse(events: string[]): Response {
 const FULL_ANSWER =
   "Photon is an open-source framework connecting agents to messaging apps.";
 
-test("Gemini builds its generateContent request with system instruction and roles", async () =>
+test("Gemini builds its streamGenerateContent request with system instruction and roles", async () =>
   withEnvironment({ GEMINI_API_KEY: GEMINI_KEY, GEMINI_MODEL: "gemini-test-model" }, async () => {
     let url: string | URL | Request | undefined;
     let init: RequestInit | undefined;
@@ -75,6 +75,7 @@ test("Gemini builds its generateContent request with system instruction and role
     const headers = init?.headers as Record<string, string>;
     assert.equal(headers["x-goog-api-key"], GEMINI_KEY);
     assert.equal(headers["Content-Type"], "application/json");
+    assert.equal(headers["Accept"], "text/event-stream");
 
     const body = JSON.parse(String(init?.body));
     assert.deepEqual(body.contents, [
@@ -161,6 +162,40 @@ test("Gemini falls back to JSON parsing when a gateway ignores alt=sse", async (
       conversation: [{ role: "user", content: "What is Photon?" }],
     });
     assert.equal(text, FULL_ANSWER);
+  }));
+
+test("Gemini retries generateContent when streamGenerateContent is unsupported", async () =>
+  withEnvironment({ GEMINI_API_KEY: GEMINI_KEY }, async () => {
+    const urls: string[] = [];
+    const provider = new GeminiProvider({
+      fetchImplementation: async (url) => {
+        urls.push(String(url));
+        if (urls.length === 1) {
+          return jsonResponse(
+            JSON.stringify({
+              error: {
+                message: "streamGenerateContent is not supported for this model",
+                status: "NOT_FOUND",
+              },
+            }),
+            404,
+          );
+        }
+        return jsonResponse(
+          JSON.stringify({ candidates: [{ content: { parts: [{ text: FULL_ANSWER }] } }] }),
+        );
+      },
+    });
+
+    const text = await provider.generateText({
+      systemPrompt: "You are Muse.",
+      conversation: [{ role: "user", content: "What is Photon?" }],
+    });
+
+    assert.equal(text, FULL_ANSWER);
+    assert.equal(urls.length, 2);
+    assert.ok(urls[0].endsWith(":streamGenerateContent?alt=sse"));
+    assert.ok(urls[1].endsWith(":generateContent"));
   }));
 
 test("Gemini surfaces safety blocks as distinct errors, not empty output", async () =>
@@ -260,6 +295,32 @@ test("Gemini redacts its API key from error details", async () =>
         assert.match(message, /\[REDACTED\]/);
         assert.doesNotMatch(message, new RegExp(GEMINI_KEY));
         assert.match(message, /HTTP 400/);
+        return true;
+      },
+    );
+  }));
+
+test("Gemini keeps a short redacted proxy response body on HTTP errors", async () =>
+  withEnvironment({ GEMINI_API_KEY: GEMINI_KEY }, async () => {
+    const provider = new GeminiProvider({
+      fetchImplementation: async () =>
+        new Response(`Proxy route missing for ${GEMINI_KEY}`, {
+          status: 404,
+          headers: { "Content-Type": "text/plain" },
+        }),
+      stream: false,
+    });
+
+    await assert.rejects(
+      () =>
+        provider.generateText({
+          systemPrompt: "s",
+          conversation: [{ role: "user", content: "q" }],
+        }),
+      (error: unknown) => {
+        const message = error instanceof Error ? error.message : "";
+        assert.match(message, /HTTP 404: Proxy route missing for \[REDACTED\]/);
+        assert.doesNotMatch(message, new RegExp(GEMINI_KEY));
         return true;
       },
     );

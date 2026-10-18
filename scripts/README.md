@@ -233,11 +233,11 @@ Open `http://localhost:3000` locally. In **GitHub Codespaces**, forward port `30
 At startup, the server logs both resolved providers and model identifiers
 (`Muse chat LLM: …` / `Muse research LLM: …`, plus any fallback reason) and then
 probes each one with a minimal request (`Muse LLM probe (…): ok` or a classified
-failure such as `auth error`), so a bad key or quota problem is visible
-immediately instead of on the first research. Set `MUSE_LLM_STARTUP_PROBE=0` to
-skip the probe requests. Credentials are never logged. A `GROQ_MODEL` override
-is visible in the startup line, including an override that still points to a
-deprecated model.
+failure such as `auth error`). HTTP failures include a short, redacted provider
+message, so model/endpoint errors (such as HTTP 404) are distinguishable from
+key or quota issues. Set `MUSE_LLM_STARTUP_PROBE=0` to skip the probe requests.
+Credentials are never logged. A `GROQ_MODEL` override is visible in the startup
+line, including an override that still points to a deprecated model.
 
 Each browser session gets an independent `MuseAgent` and its own saved-memory file under `scripts/data/muse-http-sessions/`. Conversation history stays in that session's server memory and resets when the server restarts. The page sends messages only to this server; the server then sends them to the configured model provider.
 
