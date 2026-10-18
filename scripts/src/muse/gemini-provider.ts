@@ -39,11 +39,13 @@ interface GeminiContent {
  * shape rather than the OpenAI-compatibility shim, which keeps finish reasons,
  * prompt blocks, and citation/safety metadata legible instead of flattened.
  *
- * Requests go to `:generateContent?alt=sse` by default. Intermediary proxies
- * commonly buffer a long non-streaming JSON body and then drop the connection;
- * Server-Sent Events flush incrementally, so the same timeout yields a usable
- * response far more often. A gateway that ignores `alt=sse` and answers with
- * `application/json` is still parsed correctly.
+ * Requests go to `:streamGenerateContent?alt=sse` by default. Intermediary
+ * proxies commonly buffer a long non-streaming JSON body and then drop the
+ * connection; Server-Sent Events flush incrementally, so the same timeout
+ * yields a usable response far more often. A gateway that ignores `alt=sse`
+ * and answers with `application/json` is still parsed correctly. If the API
+ * explicitly rejects the streaming method (HTTP 404/405), the provider retries
+ * once with the standard `:generateContent` JSON endpoint.
  */
 export class GeminiProvider implements TextGenerationProvider {
   readonly providerName = "gemini";
@@ -57,7 +59,7 @@ export class GeminiProvider implements TextGenerationProvider {
     const apiKey = process.env.GEMINI_API_KEY?.trim();
     if (!apiKey) {
       throw new Error(
-        "Missing GEMINI_API_KEY. Set it, or switch MUSE_LLM_PROVIDER back to \"groq\".",
+        'Missing GEMINI_API_KEY. Set it, or switch MUSE_LLM_PROVIDER back to "groq".',
       );
     }
 
@@ -71,13 +73,12 @@ export class GeminiProvider implements TextGenerationProvider {
     this.stream = options.stream ?? true;
   }
 
-  private get endpoint(): string {
-    // Google's streaming method is `:streamGenerateContent` (`?alt=sse` for
-    // SSE framing). The non-streaming `:generateContent` does not accept
-    // `alt=sse`, so the two are distinct endpoints — not one plus a flag.
-    const method = this.stream ? "streamGenerateContent" : "generateContent";
+  private endpointFor(useSse: boolean): string {
+    // Google's streaming and non-streaming methods are distinct endpoints;
+    // `alt=sse` belongs only on `:streamGenerateContent`.
+    const method = useSse ? "streamGenerateContent" : "generateContent";
     const path = `${GEMINI_API_BASE}/models/${encodeURIComponent(this.model)}:${method}`;
-    return this.stream ? `${path}?alt=sse` : path;
+    return useSse ? `${path}?alt=sse` : path;
   }
 
   async generateText({
@@ -89,63 +90,77 @@ export class GeminiProvider implements TextGenerationProvider {
       throw new Error("Gemini requires at least one conversation message.");
     }
 
-    let response: Response;
-    try {
-      response = await this.fetchImplementation(this.endpoint, {
-        method: "POST",
-        headers: {
-          "x-goog-api-key": this.apiKey,
-          "Content-Type": "application/json",
-          ...(this.stream ? { Accept: "text/event-stream" } : {}),
-        },
-        body: JSON.stringify({
-          contents,
-          ...(systemPrompt.trim()
-            ? { systemInstruction: { parts: [{ text: systemPrompt }] } }
-            : {}),
-        }),
-        signal: AbortSignal.timeout(this.timeoutMs),
-      });
-    } catch (error) {
-      throw requestError("Gemini", error, this.timeoutMs, this.apiKey);
+    const requestBody = JSON.stringify({
+      contents,
+      ...(systemPrompt.trim()
+        ? { systemInstruction: { parts: [{ text: systemPrompt }] } }
+        : {}),
+    });
+    // A 404/405 from the streaming method can mean that this API gateway/model
+    // only exposes unary generation. Retry that one case with generateContent;
+    // other failures (auth, quota, malformed input) are not helped by a retry.
+    const attempts = this.stream ? [true, false] : [false];
+
+    for (const useSse of attempts) {
+      let response: Response;
+      try {
+        response = await this.fetchImplementation(this.endpointFor(useSse), {
+          method: "POST",
+          headers: {
+            "x-goog-api-key": this.apiKey,
+            "Content-Type": "application/json",
+            ...(useSse ? { Accept: "text/event-stream" } : {}),
+          },
+          body: requestBody,
+          signal: AbortSignal.timeout(this.timeoutMs),
+        });
+      } catch (error) {
+        throw requestError("Gemini", error, this.timeoutMs, this.apiKey);
+      }
+
+      const bodyText = await readBodyText(response, this.apiKey);
+
+      if (!response.ok) {
+        const failure = new Error(
+          `Gemini request failed with HTTP ${response.status}${describeErrorPayload(bodyText, this.apiKey)}`,
+        );
+        if (useSse && (response.status === 404 || response.status === 405)) {
+          continue;
+        }
+        throw failure;
+      }
+
+      const payload = useSse
+        ? parseSsePayload(bodyText)
+        : parseJsonPayload(bodyText);
+
+      if (!payload) {
+        throw new Error("Gemini returned a malformed JSON response.");
+      }
+
+      const blockReason = readBlockReason(payload);
+      if (blockReason) {
+        throw new Error(
+          `Gemini blocked the request before generation (${humanizeBlockReason(blockReason)}).`,
+        );
+      }
+
+      const parsed = parseGeminiText(payload);
+      if (parsed.kind === "empty") {
+        throw new Error(
+          `Gemini returned a successful response without text output${readFinishReasonDetail(payload)}.`,
+        );
+      }
+      if (parsed.kind === "unsupported") {
+        throw new Error(
+          "Gemini returned a successful response with an unsupported response structure.",
+        );
+      }
+
+      return parsed.text;
     }
 
-    const bodyText = await readBodyText(response, this.apiKey);
-
-    if (!response.ok) {
-      throw new Error(
-        `Gemini request failed with HTTP ${response.status}${describeErrorPayload(bodyText, this.apiKey)}`,
-      );
-    }
-
-    const payload = this.stream
-      ? parseSsePayload(bodyText)
-      : parseJsonPayload(bodyText);
-
-    if (!payload) {
-      throw new Error("Gemini returned a malformed JSON response.");
-    }
-
-    const blockReason = readBlockReason(payload);
-    if (blockReason) {
-      throw new Error(
-        `Gemini blocked the request before generation (${humanizeBlockReason(blockReason)}).`,
-      );
-    }
-
-    const parsed = parseGeminiText(payload);
-    if (parsed.kind === "empty") {
-      throw new Error(
-        `Gemini returned a successful response without text output${readFinishReasonDetail(payload)}.`,
-      );
-    }
-    if (parsed.kind === "unsupported") {
-      throw new Error(
-        "Gemini returned a successful response with an unsupported response structure.",
-      );
-    }
-
-    return parsed.text;
+    throw new Error("Gemini request failed on every supported endpoint.");
   }
 }
 
@@ -176,7 +191,10 @@ function toGeminiContents(
   return contents;
 }
 
-async function readBodyText(response: Response, secret: string): Promise<string> {
+async function readBodyText(
+  response: Response,
+  secret: string,
+): Promise<string> {
   try {
     if (!response.body) return "";
     const reader = response.body.getReader();
@@ -265,8 +283,11 @@ function parseSsePayload(body: string): Record<string, unknown> | null {
       if (!isRecord(candidate)) continue;
       const index = typeof candidate.index === "number" ? candidate.index : 0;
       const entry = perCandidate.get(index) ?? { texts: [] };
-      const content = isRecord(candidate.content) ? candidate.content : undefined;
-      const parts = content && Array.isArray(content.parts) ? content.parts : [];
+      const content = isRecord(candidate.content)
+        ? candidate.content
+        : undefined;
+      const parts =
+        content && Array.isArray(content.parts) ? content.parts : [];
       for (const part of parts) {
         if (!isRecord(part) || part.thought === true) continue;
         if (typeof part.text === "string" && part.text.length > 0) {
@@ -300,9 +321,7 @@ function parseSsePayload(body: string): Record<string, unknown> | null {
 }
 
 type ParsedGeminiText =
-  | { kind: "text"; text: string }
-  | { kind: "empty" }
-  | { kind: "unsupported" };
+  { kind: "text"; text: string } | { kind: "empty" } | { kind: "unsupported" };
 
 function parseGeminiText(payload: Record<string, unknown>): ParsedGeminiText {
   if (!Array.isArray(payload.candidates)) return { kind: "unsupported" };
@@ -331,25 +350,37 @@ function parseGeminiText(payload: Record<string, unknown>): ParsedGeminiText {
   return { kind: "empty" };
 }
 
-function readPromptFeedback(payload: Record<string, unknown>): Record<string, unknown> | undefined {
+function readPromptFeedback(
+  payload: Record<string, unknown>,
+): Record<string, unknown> | undefined {
   return isRecord(payload.promptFeedback) ? payload.promptFeedback : undefined;
 }
 
 function readBlockReason(payload: Record<string, unknown>): string | null {
   const feedback = readPromptFeedback(payload);
-  if (feedback && typeof feedback.blockReason === "string" && feedback.blockReason) {
+  if (
+    feedback &&
+    typeof feedback.blockReason === "string" &&
+    feedback.blockReason
+  ) {
     return feedback.blockReason;
   }
 
-  const candidate = Array.isArray(payload.candidates) ? payload.candidates[0] : undefined;
+  const candidate = Array.isArray(payload.candidates)
+    ? payload.candidates[0]
+    : undefined;
   if (!isRecord(candidate)) return null;
   const finishReason = candidate.finishReason;
   if (typeof finishReason !== "string") return null;
-  return BLOCKING_FINISH_REASONS.has(finishReason.toUpperCase()) ? finishReason : null;
+  return BLOCKING_FINISH_REASONS.has(finishReason.toUpperCase())
+    ? finishReason
+    : null;
 }
 
 function readFinishReasonDetail(payload: Record<string, unknown>): string {
-  const candidate = Array.isArray(payload.candidates) ? payload.candidates[0] : undefined;
+  const candidate = Array.isArray(payload.candidates)
+    ? payload.candidates[0]
+    : undefined;
   if (!isRecord(candidate)) return "";
   return typeof candidate.finishReason === "string"
     ? ` (finish reason: ${candidate.finishReason})`
@@ -395,7 +426,7 @@ function humanizeBlockReason(reason: string): string {
  */
 function describeErrorPayload(body: string, secret: string): string {
   const payload = parseJsonPayload(body);
-  if (!payload) return "";
+  if (!payload) return bodySnippet(body, secret);
 
   const error = payload.error;
   const message = isRecord(error)
@@ -409,8 +440,25 @@ function describeErrorPayload(body: string, secret: string): string {
   const status =
     isRecord(error) && typeof error.status === "string" ? error.status : "";
   const detail = redact(message, secret);
-  if (!detail) return status ? `: ${status}` : "";
-  return `: ${detail}${status ? ` [${status}]` : ""}`;
+  if (detail) return `: ${detail}${status ? ` [${status}]` : ""}`;
+  if (status) return `: ${status}`;
+  return bodySnippet(body, secret);
+}
+
+/**
+ * Keeps a short, redacted preview of non-Google error bodies (for example an
+ * HTML 404 from a proxy) so diagnostics can distinguish a provider response
+ * from a gateway response without logging an unbounded body.
+ */
+function bodySnippet(body: string, secret: string): string {
+  const snippet = redact(body, secret)
+    .replaceAll("\r", " ")
+    .replaceAll("\n", " ")
+    .replaceAll("\t", " ")
+    .split(" ")
+    .filter(Boolean)
+    .join(" ");
+  return snippet ? `: ${snippet.slice(0, 200)}` : "";
 }
 
 function redact(value: string, secret: string): string {

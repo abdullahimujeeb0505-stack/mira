@@ -89,6 +89,41 @@ function describeFailure(error: unknown): string {
 }
 
 /**
+ * Keep the provider's short HTTP error detail visible in diagnostics. The
+ * adapters redact their own credentials; this final pass also removes any
+ * configured provider key in case an upstream error echoed one back.
+ */
+function describeProviderFailureDetail(error: unknown): string | undefined {
+  const message = describeFailure(error);
+  const status = message.match(/HTTP \d{3}/i);
+  if (!status || status.index === undefined) return undefined;
+
+  let detail = message.slice(status.index + status[0].length).trim();
+  while (/^[:.)—-]/.test(detail)) detail = detail.slice(1).trimStart();
+  if (!detail || /^[.!?]+$/.test(detail)) return undefined;
+
+  for (const name of [
+    "GEMINI_API_KEY",
+    "GROQ_API_KEY",
+    "GROK_API_CODING_KEY",
+    "AGENTROUTER_API_KEY",
+    "OPENROUTER_API_KEY",
+  ]) {
+    const secret = process.env[name]?.trim();
+    if (secret) detail = detail.replaceAll(secret, "[REDACTED]");
+  }
+
+  detail = detail
+    .replaceAll(String.fromCharCode(13), " ")
+    .replaceAll(String.fromCharCode(10), " ")
+    .replaceAll(String.fromCharCode(9), " ")
+    .split(" ")
+    .filter(Boolean)
+    .join(" ");
+  return detail ? detail.slice(0, 220) : undefined;
+}
+
+/**
  * Classify a provider failure into a short, honest cause label that is safe to
  * surface in user-facing messages and logs.
  */
@@ -223,7 +258,7 @@ export function formatTaskProviderDiagnostics(
 /**
  * Send a minimal probe request so configuration problems (bad keys, quotas,
  * network) are reported at startup instead of on the user's first research.
- * Never throws; returns a short status line for logging.
+ * Never throws; returns a short status line with bounded, redacted HTTP details.
  */
 export async function probeProviderConnection(
   label: string,
@@ -231,12 +266,16 @@ export async function probeProviderConnection(
 ): Promise<string> {
   try {
     await provider.generateText({
-      systemPrompt:
-        "Reply with the single word ok. Do not add anything else.",
+      systemPrompt: "Reply with the single word ok. Do not add anything else.",
       conversation: [{ role: "user", content: "ok" }],
     });
     return `LLM probe (${label}): ok.`;
   } catch (error) {
-    return `LLM probe (${label}) FAILED: ${classifyProviderFailure(error)} — check the API key and quota for "${provider.providerName}".`;
+    const detail = describeProviderFailureDetail(error);
+    const detailSuffix = detail ? ` — provider detail: ${detail}` : "";
+    return (
+      `LLM probe (${label}) FAILED: ${classifyProviderFailure(error)}` +
+      `${detailSuffix} — provider "${provider.providerName}" (model: ${provider.model}).`
+    );
   }
 }
