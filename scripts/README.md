@@ -2,8 +2,10 @@
 
 Muse is a general-purpose research assistant with a Photon 2.0-connected
 iMessage entry point. It avoids web searches for greetings and lightweight chat; factual
-questions and explicit research requests use the existing DuckDuckGo search,
-page retrieval, citation validation, and local archive pipeline. Replies
+questions, explicit research requests, and any message that names a website or
+link use the existing DuckDuckGo search,
+page retrieval, citation validation, and local archive pipeline — with links the
+user supplies fetched directly first (see "Reading links in real time" below). Replies
 use retrieved evidence internally; citation markers and source lists are shown
 only when requested. Unavailable pages are not presented as retrieved sources.
 Muse honors the requested answer format, avoids tables, and offers relevant
@@ -33,8 +35,8 @@ project API key with `project:read` and `project:write`, then configure:
 
 - `PHOTON_PROJECT_ID` — Beta project ID (`pho_prj_...`).
 - `PHOTON_API_KEY` — project-scoped bearer key; keep it in a secret manager.
-- `MUSE_LLM_PROVIDER` — `groq` (default when unset or blank), `openrouter`, or
-  `agentrouter`; the value is trimmed and case-insensitive.
+- `MUSE_LLM_PROVIDER` — `groq` (default when unset or blank), `openrouter`,
+  `agentrouter`, or `gemini`; the value is trimmed and case-insensitive.
 
 For Groq, set `GROQ_API_KEY`; `GROK_API_CODING_KEY` remains supported for
 backward compatibility. `GROQ_MODEL` is optional and defaults to
@@ -53,6 +55,14 @@ provider is used as an automatic fallback for another.
 For AgentRouter, set `AGENTROUTER_API_KEY`; `AGENTROUTER_MODEL` is an optional
 override. Provider credentials are isolated: only the selected adapter receives
 its own key.
+
+For Gemini, set `GEMINI_API_KEY` and `MUSE_LLM_PROVIDER=gemini`.
+`GEMINI_MODEL` is optional and defaults to `gemini-2.5-flash`. The adapter
+speaks Gemini's native `generateContent` API (with `?alt=sse` streaming so long
+replies are not held up by buffering proxies) rather than an OpenAI
+compatibility shim, and it reports prompt blocks and safety finish reasons as
+distinct errors instead of "no text output". Monitor usage and set spend limits
+in Google AI Studio; no provider is used as an automatic fallback for another.
 
 Set `MUSE_PHOTON_TRANSPORT=spectrum` only to explicitly run the legacy
 Spectrum transport. That mode continues to require `SPECTRUM_PROJECT_ID` and
@@ -125,6 +135,26 @@ sources. No public webhook endpoint is required. Configure Photon credentials
 and an iMessage line, start the command above, and send a message from the
 configured sender to verify a live interaction.
 
+## Reading links in real time
+
+A URL in a message is read directly: Muse fetches the page itself before any
+search runs, so an explicit link is never lost because a search engine blocked
+the request. Pages are parsed as HTML, and also as JSON, XML/RSS/Atom,
+Markdown, or plain text when those are what the server serves. Thin pages fall
+back to their own `og:description`/`description` metadata before giving up.
+
+Links found on a supplied page are followed within the same registrable domain
+(for example `photon.codes` leads to `docs.photon.codes`) as extra research
+candidates, subject to the normal candidate budget. Binary assets, PDFs, and
+image files are skipped.
+
+When search itself is blocked — DuckDuckGo serves bot challenges to cloud IPs
+fairly often — Muse falls back to the DuckDuckGo Lite endpoint and, failing
+that, reports the block as a block rather than claiming no sources exist. The
+failure diagnostics distinguish "search was blocked", "the supplied link was
+not readable", and "the page carried no readable text", and a reply with no
+sources names the real cause and suggests sending a URL to read directly.
+
 Automated tests use deterministic model responses and fake Photon events; they
 do not call a live model, search service, or messaging API. A real Photon
 message/reply has not been verified.
@@ -193,15 +223,25 @@ Start the lightweight HTTP chat demo:
 pnpm --filter @workspace/scripts run muse-server
 ```
 
-Open `http://localhost:3000` locally, or use the **Muse Chat Preview** workflow in Replit at port `3000` and path `/`. The server uses the selected LLM provider: configure Groq with `GROQ_API_KEY` (or the legacy `GROK_API_CODING_KEY`), OpenRouter with `OPENROUTER_API_KEY` and `OPENROUTER_MODEL`, or AgentRouter with `MUSE_LLM_PROVIDER=agentrouter` and `AGENTROUTER_API_KEY`. `SESSION_SECRET` is required to sign the browser's HTTP-only session cookie.
+The server binds `0.0.0.0` by default so container previews (GitHub
+Codespaces port forwarding, the Replit workflow preview, e2b sandboxes) can
+reach it; set `MUSE_BIND_HOST=127.0.0.1` to restrict it to loopback when
+running on a shared machine.
 
-At startup, the server logs the selected provider and model identifier only; it
-does not log provider credentials. This also makes a `GROQ_MODEL` override
-visible, including an override that still points to a deprecated model.
+Open `http://localhost:3000` locally. In **GitHub Codespaces**, forward port `3000` and open the forwarded URL at path `/`. Or use the **Muse Chat Preview** workflow in Replit at port `3000` and path `/`. The server is **task-aware** and can use two providers: quick chat turns default to **Groq** (`MUSE_CHAT_LLM_PROVIDER`, credential `GROQ_API_KEY` or the legacy `GROK_API_CODING_KEY`), while research planning, answer synthesis, and long-form writing default to **Gemini** (`MUSE_RESEARCH_LLM_PROVIDER`, credential `GEMINI_API_KEY`, optional `GEMINI_MODEL` default `gemini-2.5-flash`). If the preferred provider's key is missing, that task falls back to the other provider and the startup log says why. `MUSE_LLM_PROVIDER` still pins both tasks to one provider, and `groq`/`openrouter` (`OPENROUTER_API_KEY` + `OPENROUTER_MODEL`)/`agentrouter` (`AGENTROUTER_API_KEY`)/`gemini` are all accepted values. `SESSION_SECRET` is required to sign the browser's HTTP-only session cookie.
+
+At startup, the server logs both resolved providers and model identifiers
+(`Muse chat LLM: …` / `Muse research LLM: …`, plus any fallback reason) and then
+probes each one with a minimal request (`Muse LLM probe (…): ok` or a classified
+failure such as `auth error`), so a bad key or quota problem is visible
+immediately instead of on the first research. Set `MUSE_LLM_STARTUP_PROBE=0` to
+skip the probe requests. Credentials are never logged. A `GROQ_MODEL` override
+is visible in the startup line, including an override that still points to a
+deprecated model.
 
 Each browser session gets an independent `MuseAgent` and its own saved-memory file under `scripts/data/muse-http-sessions/`. Conversation history stays in that session's server memory and resets when the server restarts. The page sends messages only to this server; the server then sends them to the configured model provider.
 
-Development URLs are public by default. Before starting the preview, set `MUSE_CHAT_ACCESS_TOKEN` in Replit Secrets to a random value of at least 32 bytes. The page requires this access code and sends it in an authorization header; it is held in the current browser tab and is not saved to a cookie or local storage. The server fails closed if this secret is missing or too short. Keep the Replit development URL private as an additional layer, and add user-level access control and rate limits before any public deployment.
+Development URLs are public by default. Before starting the preview, set `MUSE_CHAT_ACCESS_TOKEN` (Codespaces secrets, Replit Secrets, or your shell environment) to a random value of at least 32 bytes. The page requires this access code and sends it in an authorization header; it is held in the current browser tab and is not saved to a cookie or local storage. The server fails closed if this secret is missing or too short. Keep the development URL private as an additional layer, and add user-level access control and rate limits before any public deployment.
 
 The Muse preview uses a separate workflow on port `3000`; it does not replace the API Server (`/api`) or Canvas (`/__mockup`). It can start only after the existing scripts dependencies, including `tsx`, are available.
 

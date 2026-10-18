@@ -1,0 +1,42 @@
+{
+  "id": "2026-10-18T17-21-27-368Z-look-through-photon-codes-for-me",
+  "question": "look through photon.codes for me",
+  "plan": {
+    "objective": "Explain the subject of the user's message.",
+    "taskType": "general",
+    "deliverable": "A concise explanation.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "official documentation"
+    ],
+    "questions": [
+      "What does the linked page say?"
+    ],
+    "queries": [
+      "site:photon.codes look through photon.codes for me",
+      "photon codes imessage agent framework"
+    ],
+    "unresolvedQuestions": [
+      "What does the linked page say?"
+    ]
+  },
+  "answer": "I could not retrieve any readable web sources for this question, so I can't provide a source-grounded answer yet.\n\n- The supplied link https://photon.codes/ could not be read: The page could not be reached (network error).\n\nIf you have a specific page in mind, send its URL and I will read it directly.",
+  "followUpQuestions": [],
+  "sources": [],
+  "unresolvedQuestions": [
+    "What does the linked page say?"
+  ],
+  "contradictions": [],
+  "completeness": "insufficient",
+  "limitations": [
+    "Supplied link https://photon.codes/ was not readable: The page could not be reached (network error)."
+  ],
+  "retrieval": {
+    "candidateCount": 1,
+    "retrievedCount": 0,
+    "failedCount": 1,
+    "rounds": 1,
+    "searches": 2
+  },
+  "archivedAt": "2026-10-18T17:21:27.369Z"
+}

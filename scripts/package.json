@@ -15,7 +15,7 @@
     "muse-preflight-test": "node --test ./src/muse/preflight.test.mjs",
     "muse-sources": "tsx ./src/muse/ingestion/cli.ts",
     "muse-tracking": "tsx ./src/muse/opportunities/tracking/cli.ts",
-    "test": "tsx --test ./src/muse/agentrouter-provider.test.ts ./src/muse/http-server.test.ts ./src/muse/learning/learning-service.test.ts ./src/muse/decision/decision-service.test.ts ./src/muse/opportunities/opportunity-service.test.ts ./src/muse/watch/watch-service.test.ts ./src/muse/ingestion/ingestion-service.test.ts ./src/muse/ingestion/atom-rss-source-adapter.test.ts ./src/muse/opportunities/tracking/tracking-service.test.ts ./src/muse/qualification/opportunity-qualification.test.ts ./src/muse/qualification/qualification-review-repository.test.ts ./src/muse/discovery/opportunity-type-inference.test.ts ./src/muse/discovery/canonical-source-url.test.ts ./src/muse/discovery/evidence-assessment.test.ts ./src/muse/discovery/source-verification.test.ts ./src/muse/research-cli.test.ts ./src/muse/research-images.test.ts ./src/muse/writing-workflow.test.ts ./src/muse/response-formatting.test.ts ./src/muse/message-routing.test.ts ./src/muse/muse-agent.test.ts ./src/muse/photon-message-handler.test.ts ./src/muse/photon-beta.test.ts ./src/muse/provider-adapters.test.ts && node --test ./src/muse/preflight.test.mjs",
+    "test": "tsx --test \"src/muse/**/*.test.ts\" && node --test ./src/muse/preflight.test.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "muse-review": "tsx ./src/muse/qualification/review-cli.ts",
     "muse-search": "tsx ./src/muse/discovery/cli.ts",

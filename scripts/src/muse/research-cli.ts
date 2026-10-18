@@ -1,15 +1,63 @@
 import { createHash } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
-import { lookup } from "node:dns/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { createTextGenerationProvider } from "./provider-selection.js";
+import {
+  classifyProviderFailure,
+  createTaskAwareProviders,
+} from "./provider-selection.js";
 import type { TextGenerationProvider } from "./llm-provider.js";
 import {
   normalizeResponseFormatting,
   requestsEmoji,
   requestsImages,
 } from "./response-formatting.js";
+import {
+  canonicalizeUrl,
+  isSafeResearchUrl,
+  isTransientNetworkFailure,
+  safeHttpUrl,
+} from "./safe-fetch.js";
+import {
+  DEFAULT_SEARCH_BACKENDS,
+  parseDuckDuckGoSearchResults,
+  RetryableSearchError,
+  SearchBlockedError,
+  searchWithBackends,
+  type SearchBackend,
+} from "./search-backends.js";
+import {
+  extractResearchPage,
+  extractResearchPageContent,
+  MIN_CONTENT_CHARS,
+  PAGE_CHAR_LIMIT,
+  type EvidenceSource,
+  type ResearchCompleteness,
+  type SearchHit,
+} from "./page-extract.js";
+import {
+  collectSameSiteLinks,
+  readLink,
+  type LinkFailure,
+  type LinkReadResult,
+} from "./link-reader.js";
+
+/**
+ * Public surface re-exported so existing importers keep working.
+ *
+ * These implementations moved into `safe-fetch.ts`, `html-text.ts`,
+ * `search-backends.ts`, and `page-extract.ts` so link reading and research
+ * share one copy. The names stay exported from here because `muse-agent.ts`,
+ * `writing-workflow.ts`, and the test suite import them from this module.
+ */
+export {
+  extractResearchPage,
+  extractResearchPageContent,
+  isSafeResearchUrl,
+  parseDuckDuckGoSearchResults,
+  PAGE_CHAR_LIMIT,
+};
+export type { EvidenceSource, ResearchCompleteness, SearchHit };
 
 type ChatMessage = {
   role: "system" | "user";
@@ -33,29 +81,6 @@ export type ResearchPlan = {
   queries: string[];
   unresolvedQuestions: string[];
 };
-
-export type SearchHit = {
-  title: string;
-  url: string;
-  relevance?: number;
-};
-
-export type EvidenceSource = SearchHit & {
-  sourceId?: string;
-  retrievedAt: string;
-  content: string;
-  canonicalUrl?: string;
-  publisher?: string;
-  author?: string;
-  publishedAt?: string;
-  updatedAt?: string;
-  sourceType?: string;
-  retrievalStatus?: "retrieved";
-  extractionStatus?: "main-content" | "body-fallback";
-  evidenceSnippets?: string[];
-};
-
-export type ResearchCompleteness = "supported" | "partial" | "insufficient";
 
 export type ResearchResult = {
   question: string;
@@ -89,6 +114,14 @@ export interface ResearchServiceOptions {
   provider?: TextGenerationProvider;
   search?: (query: string) => Promise<SearchHit[]>;
   retrieve?: (hit: SearchHit) => Promise<EvidenceSource | null>;
+  /**
+   * Reads a URL the user supplied, directly and unconditionally.
+   *
+   * Defaults to `link-reader.ts`. When a caller injects `retrieve` instead —
+   * as the test suite does — this falls back to `retrieve` so a run never
+   * touches the network twice or reaches outside the injected fakes.
+   */
+  readUrl?: (url: string) => Promise<LinkReadResult>;
   archive?: (
     question: string,
     plan: ResearchPlan,
@@ -108,11 +141,6 @@ const DEFAULT_CONFIG: ResearchConfig = {
   maxSources: Number(process.env.MUSE_RESEARCH_SOURCES ?? 6),
   maxPageBytes: Number(process.env.MUSE_RESEARCH_MAX_PAGE_BYTES ?? 250_000),
 };
-const PAGE_CHAR_LIMIT = 3_000;
-const REQUEST_TIMEOUT_MS = 15_000;
-const MAX_REDIRECTS = 4;
-const TRANSIENT_HTTP_STATUSES = new Set([408]);
-const SEARCH_RESPONSE_LIMIT = 1_000_000;
 const SOURCE_RESPONSE_LIMIT = 250_000;
 const MUSE_EVIDENCE_CHAR_LIMIT = 1_800;
 const MUSE_EVIDENCE_TOTAL_LIMIT = 7_000;
@@ -126,18 +154,13 @@ const COMMON_TERMS: Set<string> = new Set([
 class RetryableResearchError extends Error {}
 
 function isTransientResearchFailure(error: unknown): boolean {
-  if (error instanceof RetryableResearchError || error instanceof TypeError) {
-    return true;
-  }
-  if (error instanceof DOMException) {
-    return error.name === "AbortError" || error.name === "TimeoutError";
-  }
-  if (typeof error === "object" && error !== null && "code" in error) {
-    return ["EAI_AGAIN", "ECONNRESET", "ETIMEDOUT", "EPIPE"].includes(
-      String(error.code),
-    );
-  }
-  return false;
+  // A bot challenge is a deliberate refusal, not a flaky network. Retrying it
+  // only doubles the requests the endpoint has already decided to block, so it
+  // is explicitly excluded here.
+  if (error instanceof SearchBlockedError) return false;
+  if (error instanceof RetryableSearchError) return true;
+  if (error instanceof RetryableResearchError) return true;
+  return isTransientNetworkFailure(error);
 }
 
 async function withTransientRetry<T>(operation: () => Promise<T>): Promise<T> {
@@ -176,107 +199,6 @@ export function createResearchConfig(
   }
 
   return config;
-}
-
-export function isSafeResearchUrl(raw: string): boolean {
-  return safeHttpUrl(raw) !== null;
-}
-
-function isPublicAddress(address: string): boolean {
-  const normalized = address.toLowerCase().replace(/^\[|\]$/g, "");
-  if (normalized.includes(":")) {
-    if (normalized === "::" || normalized === "::1") return false;
-    if (/^(?:fc|fd|fe[89ab]|ff)/.test(normalized)) return false;
-    const mappedIpv4 = normalized.match(/::ffff:(\d+\.\d+\.\d+\.\d+)$/)?.[1];
-    return mappedIpv4 ? isPublicAddress(mappedIpv4) : true;
-  }
-
-  const octets = normalized.split(".").map(Number);
-  if (octets.length !== 4 || octets.some((octet) => !Number.isInteger(octet) || octet < 0 || octet > 255)) {
-    return false;
-  }
-  const [first, second] = octets as [number, number, number, number];
-  return !(
-    first === 0 ||
-    first === 10 ||
-    first === 127 ||
-    (first === 100 && second >= 64 && second <= 127) ||
-    (first === 169 && second === 254) ||
-    (first === 172 && second >= 16 && second <= 31) ||
-    (first === 192 && second === 168) ||
-    (first === 198 && (second === 18 || second === 19)) ||
-    first >= 224
-  );
-}
-
-async function assertPublicHost(url: URL): Promise<void> {
-  const host = url.hostname.replace(/^\[|\]$/g, "");
-  if (host.includes(":") || /^\d+(?:\.\d+){3}$/.test(host)) {
-    if (!isPublicAddress(host)) throw new Error("Research URL resolves to a non-public address.");
-    return;
-  }
-  const addresses = await lookup(host, { all: true, verbatim: true });
-  if (!addresses.length || addresses.some(({ address }) => !isPublicAddress(address))) {
-    throw new Error("Research URL resolves to a non-public address.");
-  }
-}
-
-async function fetchPublicUrl(
-  initialUrl: string,
-  init: RequestInit,
-  maxRedirects: number,
-): Promise<Response> {
-  let currentUrl = safeHttpUrl(initialUrl);
-  if (!currentUrl) throw new Error("Research URL is not a safe HTTP URL.");
-
-  for (let redirectCount = 0; redirectCount <= maxRedirects; redirectCount += 1) {
-    const parsed = new URL(currentUrl);
-    await assertPublicHost(parsed);
-    const response = await fetch(currentUrl, { ...init, redirect: "manual" });
-    if (![301, 302, 303, 307, 308].includes(response.status)) return response;
-
-    const location = response.headers.get("location");
-    if (!location || redirectCount === maxRedirects) {
-      await response.body?.cancel();
-      throw new Error("Research page exceeded the redirect limit.");
-    }
-    const redirectedUrl = safeHttpUrl(new URL(location, currentUrl).toString());
-    await response.body?.cancel();
-    if (!redirectedUrl) throw new Error("Research page redirected to an unsafe URL.");
-    currentUrl = redirectedUrl;
-  }
-
-  throw new Error("Research page exceeded the redirect limit.");
-}
-
-async function readBoundedText(response: Response, maxBytes: number): Promise<string> {
-  if (!response.body) return "";
-  const reader = response.body.getReader();
-  const chunks: Uint8Array[] = [];
-  let totalBytes = 0;
-
-  try {
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      totalBytes += value.byteLength;
-      if (totalBytes > maxBytes) {
-        await reader.cancel();
-        throw new Error("Research response exceeded the configured size limit.");
-      }
-      chunks.push(value);
-    }
-  } finally {
-    reader.releaseLock();
-  }
-
-  const bytes = new Uint8Array(totalBytes);
-  let offset = 0;
-  for (const chunk of chunks) {
-    bytes.set(chunk, offset);
-    offset += chunk.byteLength;
-  }
-  return new TextDecoder().decode(bytes);
 }
 
 export function classifyResearchQuestion(question: string): ResearchPlan["taskType"] {
@@ -335,212 +257,6 @@ function defaultPlan(question: string): ResearchPlan {
       : [question, `${question} authoritative sources`, `${question} evidence and limitations`],
     unresolvedQuestions: [],
   };
-}
-
-function decodeHtml(value: string): string {
-  return value
-    .replace(/&#x([0-9a-f]+);/gi, (_, hex: string) =>
-      String.fromCodePoint(Number.parseInt(hex, 16)),
-    )
-    .replace(/&#(\d+);/g, (_, digits: string) =>
-      String.fromCodePoint(Number.parseInt(digits, 10)),
-    )
-    .replace(/&nbsp;/gi, " ")
-    .replace(/&amp;/gi, "&")
-    .replace(/&lt;/gi, "<")
-    .replace(/&gt;/gi, ">")
-    .replace(/&quot;/gi, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&apos;/gi, "'");
-}
-
-function htmlToText(html: string): string {
-  return decodeHtml(
-    html
-      .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ")
-      .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, " ")
-      .replace(/<noscript\b[^>]*>[\s\S]*?<\/noscript>/gi, " ")
-      .replace(/<!--[\s\S]*?-->/g, " ")
-      .replace(/<\/(?:p|div|article|section|h[1-6]|li|tr|br|table|ul|ol)>/gi, "\n")
-      .replace(/<\/t[dh]>/gi, " | ")
-      .replace(/<[^>]+>/g, " "),
-  )
-    .replace(/[ \t]+/g, " ")
-    .replace(/\n[ \t]+/g, "\n")
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
-}
-
-function removeBoilerplate(html: string): string {
-  let cleaned = html;
-  for (const tag of ["script", "style", "noscript", "svg", "nav", "footer", "header", "aside", "form"]) {
-    cleaned = cleaned.replace(
-      new RegExp(`<${tag}\\b[^>]*>[\\s\\S]*?<\\/${tag}\\s*>`, "gi"),
-      " ",
-    );
-  }
-  cleaned = cleaned.replace(
-    /<(div|section|ul|ol|aside|nav)\b[^>]*(?:id|class|role)\s*=\s*["'][^"']*(?:cookie|consent|sidebar|navigation|navbar|menu|related|recommend|promo|advert|subscribe|social|breadcrumb|share|feedback|helpful|rating|footer|header|banner|product(?:s|[-_ ]?(?:listing|grid|card|catalog|recommendations?|carousel))?|catalog(?:[-_ ]?(?:listing|grid|products?))?|shop(?:[-_ ]?(?:listing|grid|products?))?)[^"']*["'][^>]*>[\s\S]*?<\/\1\s*>/gi,
-    " ",
-  );
-  cleaned = cleaned.replace(
-    /<[^>]+\brole\s*=\s*["'](?:navigation|complementary|contentinfo)["'][^>]*>[\s\S]*?<\/[^>]+>/gi,
-    " ",
-  );
-  return cleaned;
-}
-
-function deduplicateExtractedText(value: string): string {
-  const seen = new Set<string>();
-  return value
-    .split(/\n+/)
-    .map((line) => line.replace(/\s+/g, " ").trim())
-    .filter((line) => {
-      if (!line) return false;
-      const key = line.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    })
-    .join("\n");
-}
-
-export function extractResearchPageContent(
-  html: string,
-  maxChars = PAGE_CHAR_LIMIT,
-): { content: string; extractionStatus: "main-content" | "body-fallback" } {
-  const cleaned = removeBoilerplate(html);
-  const semanticBlocks = [...cleaned.matchAll(/<(main|article)\b[^>]*>([\s\S]*?)<\/\1\s*>/gi)]
-    .map((match) => match[2] ?? "")
-    .filter(Boolean);
-  const candidates = semanticBlocks.length ? semanticBlocks : [cleaned];
-  const ranked = candidates
-    .map((candidate) => deduplicateExtractedText(htmlToText(candidate)))
-    .sort((left, right) => right.length - left.length);
-  const fullText = ranked[0] ?? "";
-  const paragraphs = fullText.split(/\n+/).filter(Boolean);
-  let content = fullText;
-  if (content.length > maxChars) {
-    const chosen: string[] = [];
-    let remaining = maxChars;
-    for (const paragraph of paragraphs) {
-      if (remaining <= 0) break;
-      const separator = chosen.length ? "\n" : "";
-      const available = remaining - separator.length;
-      if (available <= 0) break;
-      chosen.push(paragraph.slice(0, available));
-      remaining -= separator.length + Math.min(paragraph.length, available);
-    }
-    content = chosen.join("\n");
-  }
-  return {
-    content,
-    extractionStatus: semanticBlocks.length ? "main-content" : "body-fallback",
-  };
-}
-
-function extractEvidenceSnippets(content: string, limit = 4): string[] {
-  return content
-    .split(/\n+/)
-    .map((item) => item.trim())
-    .filter((item) => item.length >= 45)
-    .slice(0, limit)
-    .map((item) => item.slice(0, 360));
-}
-
-export function extractResearchPage(
-  html: string,
-  hit: SearchHit,
-  finalUrl: string,
-  contentType = "text/html",
-  retrievedAt = new Date().toISOString(),
-): EvidenceSource | null {
-  const safeFinalUrl = safeHttpUrl(finalUrl);
-  if (!safeFinalUrl) return null;
-  const { content, extractionStatus } = extractResearchPageContent(html, PAGE_CHAR_LIMIT);
-  if (content.length < 250) return null;
-
-  const parsedUrl = new URL(safeFinalUrl);
-  const canonicalTag = html.match(/<link\b[^>]*>/gi)
-    ?.map((tag) => ({
-      tag,
-      rel: readHtmlAttribute(tag, "rel")?.toLowerCase().split(/\s+/) ?? [],
-    }))
-    .find(({ rel }) => rel.includes("canonical"));
-  const canonicalHref = canonicalTag
-    ? readHtmlAttribute(canonicalTag.tag, "href")
-    : undefined;
-  const canonicalUrl = canonicalHref
-    ? safeHttpUrl(new URL(canonicalHref, safeFinalUrl).toString()) ?? undefined
-    : undefined;
-  const titleCandidate =
-    html.match(/<title\b[^>]*>([\s\S]*?)<\/title>/i)?.[1] ??
-    readMetaValue(html, "og:title") ??
-    readMetaValue(html, "title") ??
-    hit.title;
-  const title = decodeHtml(titleCandidate).replace(/\s+/g, " ").trim().slice(0, 250) ||
-    hit.title.trim() ||
-    parsedUrl.hostname;
-
-  return {
-    ...hit,
-    title,
-    url: safeFinalUrl,
-    canonicalUrl: canonicalUrl ?? safeFinalUrl,
-    publisher:
-      readMetaValue(html, "og:site_name") ??
-      readMetaValue(html, "publisher") ??
-      parsedUrl.hostname,
-    author: readMetaValue(html, "author"),
-    publishedAt: normalizeDate(
-      readMetaValue(html, "article:published_time") ??
-      readMetaValue(html, "datePublished") ??
-      readMetaValue(html, "date"),
-    ),
-    updatedAt: normalizeDate(
-      readMetaValue(html, "article:modified_time") ??
-      readMetaValue(html, "dateModified") ??
-      readMetaValue(html, "last-modified"),
-    ),
-    sourceType: classifySourceType(safeFinalUrl, contentType),
-    retrievalStatus: "retrieved",
-    extractionStatus,
-    evidenceSnippets: extractEvidenceSnippets(content),
-    retrievedAt,
-    content,
-  };
-}
-
-function safeHttpUrl(raw: string): string | null {
-  try {
-    if (raw.length > 2_048) return null;
-    const parsed = new URL(raw);
-
-    if (parsed.protocol !== "https:" && parsed.protocol !== "http:") {
-      return null;
-    }
-
-    const host = parsed.hostname.toLowerCase().replace(/^\[|\]$/g, "");
-
-    if (
-      parsed.username ||
-      parsed.password ||
-      host === "localhost" ||
-      host.endsWith(".localhost") ||
-      host.endsWith(".local") ||
-      host.endsWith(".internal") ||
-      host === "metadata.google.internal" ||
-      host === "169.254.169.254" ||
-      (host.includes(":") && !isPublicAddress(host)) ||
-      (/^\d+(?:\.\d+){3}$/.test(host) && !isPublicAddress(host))
-    ) {
-      return null;
-    }
-
-    return parsed.toString();
-  } catch {
-    return null;
-  }
 }
 
 async function askModel(
@@ -678,188 +394,81 @@ async function buildPlan(
   }
 }
 
-async function searchWeb(query: string): Promise<SearchHit[]> {
-  const url =
-    "https://html.duckduckgo.com/html/?q=" +
-    encodeURIComponent(query);
+/**
+ * Runs one query across the search backends in order.
+ *
+ * DuckDuckGo's HTML endpoint serves bot challenges to datacenter IPs often
+ * enough that it is the normal case rather than the exception. Before the Lite
+ * fallback existed, one challenge left Muse with zero sources, and it answered
+ * "I could not retrieve any readable web sources" — indistinguishable from a
+ * genuine dead end. Now each backend is tried in turn, and when every one of
+ * them is blocked the failure surfaces as a block, which `gatherEvidence`
+ * reports to the user as such.
+ */
+async function searchWeb(
+  query: string,
+  backends: readonly SearchBackend[] = DEFAULT_SEARCH_BACKENDS,
+): Promise<SearchHit[]> {
+  const outcome = await searchWithBackends(query, backends);
+  if (outcome.hits.length > 0) return outcome.hits;
 
-  const response = await fetchPublicUrl(url, {
-    headers: {
-      "User-Agent": "Mozilla/5.0 (compatible; MuseResearch/1.0)",
-      Accept: "text/html",
-    },
-    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-  }, MAX_REDIRECTS);
-
-  if (!response.ok) {
-    await response.body?.cancel();
-    if (
-      TRANSIENT_HTTP_STATUSES.has(response.status) ||
-      response.status >= 500
-    ) {
-      throw new RetryableResearchError(
-        `Web search returned transient HTTP ${response.status}.`,
-      );
-    }
-    throw new Error(`Web search returned HTTP ${response.status}`);
-  }
-
-  const html = await readBoundedText(response, SEARCH_RESPONSE_LIMIT);
-  return parseDuckDuckGoSearchResults(html, response.status);
-}
-
-export function parseDuckDuckGoSearchResults(
-  html: string,
-  status = 200,
-): SearchHit[] {
-  if (
-    status === 202 ||
-    /anomaly-modal|challenge to confirm this search|bots use DuckDuckGo too/i.test(html)
-  ) {
-    throw new Error(
-      `Web search endpoint returned a bot challenge (HTTP ${status}).`,
+  if (outcome.blocked) {
+    throw new SearchBlockedError(
+      "duckduckgo",
+      outcome.failures.join(" ") ||
+        "Every configured search backend served a bot challenge.",
     );
   }
 
-  const hits: SearchHit[] = [];
-
-  for (const match of html.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi)) {
-    const attributes = match[1] ?? "";
-
-    if (!/\bclass=["'][^"']*\bresult__a\b[^"']*["']/i.test(attributes)) {
-      continue;
-    }
-
-    const rawHref = attributes.match(/\bhref=["']([^"']+)["']/i)?.[1];
-    const rawTitle = match[2] ?? "";
-
-    if (!rawHref) continue;
-
-    let candidate = decodeHtml(rawHref);
-
-    try {
-      const redirect = new URL(candidate, "https://duckduckgo.com");
-      const redirected = redirect.searchParams.get("uddg");
-      if (redirected) candidate = redirected;
-    } catch {
-      continue;
-    }
-
-    const safeUrl = safeHttpUrl(candidate);
-    const title = htmlToText(rawTitle).slice(0, 250);
-
-    if (!safeUrl || !title) continue;
-
-    hits.push({ title, url: safeUrl });
-    if (hits.length >= 8) break;
-  }
-
-  return hits;
+  return [];
 }
 
-function readHtmlAttribute(tag: string, name: string): string | undefined {
-  return tag.match(new RegExp(`\\b${name}\\s*=\\s*(?:\"([^\"]*)\"|'([^']*)'|([^\\s>]+))`, "i"))
-    ?.slice(1)
-    .find((value): value is string => typeof value === "string");
-}
-
-function readMetaValue(html: string, key: string): string | undefined {
-  for (const match of html.matchAll(/<meta\b[^>]*>/gi)) {
-    const tag = match[0];
-    const name =
-      readHtmlAttribute(tag, "name") ??
-      readHtmlAttribute(tag, "property") ??
-      readHtmlAttribute(tag, "itemprop");
-    if (name?.toLowerCase() !== key.toLowerCase()) continue;
-    const content = readHtmlAttribute(tag, "content");
-    if (content) return decodeHtml(content).trim().slice(0, 300);
-  }
-  return undefined;
-}
-
-function normalizeDate(value: string | undefined): string | undefined {
-  if (!value) return undefined;
-  const timestamp = Date.parse(value);
-  return Number.isNaN(timestamp) ? undefined : new Date(timestamp).toISOString();
-}
-
-function classifySourceType(url: string, contentType: string): string {
-  const host = new URL(url).hostname.toLowerCase();
-  if (/\.(gov|gov\.[a-z]{2})$/.test(host) || host.includes(".gov.")) return "government";
-  if (host.includes("pubmed.") || host.includes("doi.org") || host.includes("arxiv.org")) return "research";
-  if (host.includes("github.com") || host.includes("gitlab.com")) return "source repository";
-  if (/\bdocs?\b|developer|api\./.test(host)) return "technical documentation";
-  if (contentType.includes("text/plain")) return "plain text";
-  return "web page";
-}
-
+/**
+ * Retrieves one search-result candidate as readable evidence.
+ *
+ * Delegates to the same reader the direct-link path uses, so a search result
+ * and an explicitly requested URL are parsed identically — including JSON, XML,
+ * RSS, and Markdown payloads that the old HTML/plain-text allowlist discarded
+ * unread. Two differences are deliberate:
+ *
+ * - the search floor is `MIN_CONTENT_CHARS` (250), not the direct-read floor,
+ *   because a thin *search result* is usually an interstitial and admitting it
+ *   wastes the evidence budget;
+ * - transient failures are rethrown so `withTransientRetry` still applies,
+ *   instead of being flattened into "unreadable".
+ */
 async function retrievePage(
   hit: SearchHit,
   maxBytes = SOURCE_RESPONSE_LIMIT,
   now: () => Date = () => new Date(),
 ): Promise<EvidenceSource | null> {
-  try {
-    const safeUrl = safeHttpUrl(hit.url);
-    if (!safeUrl) return null;
+  const result = await readLink(hit.url, {
+    maxBytes,
+    minContentChars: MIN_CONTENT_CHARS,
+    fallbackTitle: hit.title,
+    rethrowTransient: true,
+    now,
+  });
 
-    const response = await fetchPublicUrl(safeUrl, {
-      headers: {
-        "User-Agent": "Mozilla/5.0 (compatible; MuseResearch/1.0)",
-        Accept: "text/html,text/plain;q=0.9",
-      },
-      signal: AbortSignal.timeout(12_000),
-    }, MAX_REDIRECTS);
-
-    if (!response.ok) {
-      await response.body?.cancel();
-      if (
-        TRANSIENT_HTTP_STATUSES.has(response.status) ||
-        response.status >= 500
-      ) {
-        throw new RetryableResearchError(
-          `Research page returned transient HTTP ${response.status}.`,
-        );
-      }
-      return null;
+  if (!result.source) {
+    if (result.failure?.retryable) {
+      throw new RetryableResearchError(result.failure.reason);
     }
-
-    const finalUrl = safeHttpUrl(response.url || safeUrl);
-    if (!finalUrl) {
-      await response.body?.cancel();
-      return null;
-    }
-
-    const contentType = response.headers.get("content-type") ?? "";
-    if (
-      contentType &&
-      !contentType.includes("text/html") &&
-      !contentType.includes("text/plain") &&
-      !contentType.includes("application/xhtml+xml")
-    ) {
-      await response.body?.cancel();
-      return null;
-    }
-
-    const contentLength = Number(response.headers.get("content-length"));
-    if (Number.isFinite(contentLength) && contentLength > maxBytes) {
-      await response.body?.cancel();
-      return null;
-    }
-    const html = await readBoundedText(response, maxBytes);
-    return extractResearchPage(
-      html,
-      hit,
-      finalUrl,
-      contentType,
-      now().toISOString(),
-    );
-  } catch (error) {
-    if (isTransientResearchFailure(error)) throw error;
     return null;
   }
+
+  // Carry the ranking signal from the search result onto the retrieved source.
+  return hit.relevance === undefined
+    ? result.source
+    : { ...result.source, relevance: hit.relevance };
 }
 
-function extractWebsiteTargets(input: string): string[] {
+/**
+ * Extracts website targets from free text: bare domains and full URLs both
+ * count, so "look through photon.codes for me" and "read https://photon.codes"
+ * behave the same. Trailing sentence punctuation is stripped.
+ */
+export function extractWebsiteTargets(input: string): string[] {
   const pattern = /(?:https?:\/\/)?(?:www\.)?[a-z0-9-]+(?:\.[a-z0-9-]+)+(?:\/[^\s"'<>]*)?/gi;
   const targets: string[] = [];
 
@@ -872,9 +481,17 @@ function extractWebsiteTargets(input: string): string[] {
   return [...new Set(targets)];
 }
 
+/**
+ * Runs one round of search plus retrieval.
+ *
+ * `extraUrls` are links discovered on pages Muse already read — same-site crawl
+ * targets from the direct-read phase. They enter the candidate pool ahead of
+ * search results but still respect `maxCandidates`, so following a link can
+ * never crowd out the budget the caller configured.
+ */
 async function gatherEvidence(
   queries: string[],
-  seedUrls: string[],
+  extraUrls: string[],
   search: (query: string) => Promise<SearchHit[]>,
   retrieve: (hit: SearchHit) => Promise<EvidenceSource | null>,
   progress: (message: string) => void,
@@ -885,7 +502,13 @@ async function gatherEvidence(
   candidateCount: number;
   retrievedCount: number;
   failedCount: number;
+  /** Pages that were fetched but unreadable. Kept apart from search failures. */
+  failedPages: number;
+  /** Queries that errored or returned no usable results. */
+  failedSearches: number;
   searches: number;
+  blockedSearches: number;
+  searchFailures: string[];
 }> {
   progress("Discovering web sources...");
 
@@ -908,14 +531,13 @@ async function gatherEvidence(
     hits.push({ ...hit, url: safeUrl });
   };
 
-  for (const seedUrl of seedUrls) {
-    const safeUrl = safeHttpUrl(seedUrl);
+  // Crawl targets are added with no assumed title: the page's own title (or,
+  // failing that, its hostname) is authoritative, and inventing one here would
+  // leak into the evidence when a page declares none.
+  for (const extraUrl of extraUrls) {
+    const safeUrl = safeHttpUrl(extraUrl);
     if (!safeUrl) continue;
-    const parsed = new URL(safeUrl);
-    addCandidate({
-      title: "User-provided website: " + parsed.hostname,
-      url: safeUrl,
-    });
+    addCandidate({ title: "", url: safeUrl });
   }
 
   let malformedSearches = 0;
@@ -977,8 +599,28 @@ async function gatherEvidence(
   );
 
   const failedPages = retrieved.length - sources.length;
-  const failedSearches =
-    results.filter((result) => result.status === "rejected").length + malformedSearches;
+
+  // Separate "the search endpoint refused us" from "the search worked and found
+  // nothing". Both end in zero hits, but only one of them is something the user
+  // can act on, and reporting the wrong one sends them looking in the wrong
+  // place — the exact ambiguity that made the original failure so opaque.
+  const rejected = results.filter(
+    (result): result is PromiseRejectedResult => result.status === "rejected",
+  );
+  const blockedSearches = rejected.filter(
+    (result) => result.reason instanceof SearchBlockedError,
+  ).length;
+  const searchFailures = [
+    ...new Set(
+      rejected.map((result) =>
+        result.reason instanceof Error
+          ? result.reason.message
+          : "Web search failed with an unknown error.",
+      ),
+    ),
+  ];
+  const failedSearches = rejected.length + malformedSearches;
+
   progress(`Retrieved ${sources.length} of ${hits.length} candidate pages.`);
 
   if (failedPages > 0 || failedSearches > 0) {
@@ -986,14 +628,22 @@ async function gatherEvidence(
       `${failedPages} candidate pages were unavailable and ${failedSearches} search requests failed.`,
     );
   }
+  if (blockedSearches > 0) {
+    progress(
+      `${blockedSearches} of ${boundedQueries.length} searches were blocked by a bot challenge.`,
+    );
+  }
 
-  progress(`Retrieved ${sources.length} readable candidate pages.`);
   return {
     sources,
     candidateCount: hits.length,
     retrievedCount: sources.length,
     failedCount: failedPages + failedSearches,
+    failedPages,
+    failedSearches,
     searches: boundedQueries.length,
+    blockedSearches,
+    searchFailures,
   };
 }
 
@@ -1012,7 +662,14 @@ function selectDiverseSources(
       ),
   );
   const sourcePreferenceTerms = tokenizeResearch(plan.sourcePreferences.join(" "));
+
+  // A page the user handed over is evidence about the thing they asked about,
+  // whether or not its text happens to share tokens with the plan objective.
+  // Pinned sources skip both the term filter and the domain de-duplication, so
+  // "read this link" cannot be silently out-ranked by a search result.
+  const pinned = sources.filter((source) => source.isUserProvided === true);
   const rankedSources = sources
+    .filter((source) => source.isUserProvided !== true)
     .map((source) => ({
       source,
       matchedTerms: [...questionTerms].filter((term) =>
@@ -1030,23 +687,33 @@ function selectDiverseSources(
     .sort((a, b) => b.score - a.score || a.source.url.localeCompare(b.source.url));
 
   const seenDomains = new Set<string>();
+  const seenUrls = new Set<string>();
   const selected: EvidenceSource[] = [];
+
+  const claim = (source: EvidenceSource): boolean => {
+    const key = canonicalizeUrl(source.canonicalUrl ?? source.url);
+    if (seenUrls.has(key)) return false;
+    seenUrls.add(key);
+    seenDomains.add(
+      new URL(source.canonicalUrl ?? source.url).hostname.replace(/^www\./, ""),
+    );
+    return true;
+  };
+
+  for (const source of pinned) {
+    if (selected.length >= maxSources) break;
+    if (claim(source)) selected.push(source);
+  }
+
   for (const { source } of rankedSources) {
+    if (selected.length >= maxSources) break;
     const domain = new URL(source.canonicalUrl ?? source.url)
       .hostname.replace(/^www\./, "");
     if (seenDomains.has(domain)) continue;
-    seenDomains.add(domain);
-    selected.push(source);
-    if (selected.length >= maxSources) break;
+    if (claim(source)) selected.push(source);
   }
-  return selected;
-}
 
-function canonicalizeUrl(raw: string): string {
-  const url = new URL(raw);
-  url.hash = "";
-  url.search = "";
-  return url.toString().replace(/\/$/, "");
+  return selected;
 }
 
 function tokenizeResearch(value: string): Set<string> {
@@ -1259,6 +926,68 @@ async function findFollowUpQueries(
   }
 }
 
+/**
+ * Composes the "no sources" answer.
+ *
+ * The old wording said "Search may be blocked or relevant pages may be
+ * inaccessible" regardless of what actually happened, which sent the user
+ * looking in the wrong place every time. This names the real cause: a blocked
+ * search endpoint, links that could not be read, or pages that were reachable
+ * but carried no readable text.
+ */
+function insufficientAnswer(
+  plan: ResearchPlan,
+  diagnostics: {
+    blockedSearches: number;
+    searches: number;
+    readFailures: LinkFailure[];
+    unreadablePages: number;
+  },
+): string {
+  const reasons: string[] = [];
+
+  if (diagnostics.readFailures.length > 0) {
+    for (const failure of diagnostics.readFailures.slice(0, 3)) {
+      reasons.push(`The supplied link ${failure.url} could not be read: ${failure.reason}`);
+    }
+    if (diagnostics.readFailures.length > 3) {
+      reasons.push(
+        `And ${diagnostics.readFailures.length - 3} more supplied links could not be read.`,
+      );
+    }
+  }
+
+  if (diagnostics.blockedSearches > 0 && diagnostics.blockedSearches === diagnostics.searches) {
+    reasons.push(
+      "Web search was blocked by a bot challenge on every query, so no additional sources could be discovered. This commonly happens from cloud-hosted IP addresses.",
+    );
+  } else if (diagnostics.blockedSearches > 0) {
+    reasons.push(
+      `Web search was blocked by a bot challenge on ${diagnostics.blockedSearches} of ${diagnostics.searches} queries.`,
+    );
+  } else if (diagnostics.searches === 0) {
+    reasons.push("No web search was run.");
+  }
+
+  if (diagnostics.unreadablePages > 0) {
+    reasons.push(
+      `${diagnostics.unreadablePages} candidate pages were reachable but had no readable text, usually because they render through JavaScript in a browser.`,
+    );
+  }
+
+  if (reasons.length === 0) {
+    reasons.push(
+      "Search returned no results and no supplied links were readable for this question.",
+    );
+  }
+
+  return (
+    "I could not retrieve any readable web sources for this question, so I can't provide a source-grounded answer yet.\n\n" +
+    reasons.map((reason) => `- ${reason}`).join("\n") +
+    "\n\nIf you have a specific page in mind, send its URL and I will read it directly."
+  );
+}
+
 async function synthesize(
   question: string,
   plan: ResearchPlan,
@@ -1269,12 +998,16 @@ async function synthesize(
   limitations: string[],
   gaps: { unresolvedQuestions: string[]; contradictions: string[] },
   conversationContext: string,
+  retrievalDiagnostics: {
+    blockedSearches: number;
+    searches: number;
+    readFailures: LinkFailure[];
+    unreadablePages: number;
+  },
 ): Promise<SynthesisResult> {
   if (sources.length === 0) {
     return {
-      answer:
-        "I could not retrieve any readable web sources for this question, so I can't provide a source-grounded answer yet. " +
-        "Search may be blocked or relevant pages may be inaccessible. Please try a narrower query or provide a source URL.",
+      answer: insufficientAnswer(plan, retrievalDiagnostics),
       followUpQuestions: [],
       unresolvedQuestions: plan.questions,
       contradictions: [],
@@ -1355,13 +1088,16 @@ async function synthesize(
       provider,
     );
     return parseSynthesis(raw);
-  } catch {
-    progress("The synthesis model was unavailable; returning a concise status message.");
+  } catch (error) {
+    const cause = classifyProviderFailure(error);
+    progress(
+      `The synthesis model was unavailable (${cause}); returning a concise status message.`,
+    );
 
     return {
       answer:
         `I retrieved ${sources.length} readable source${sources.length === 1 ? "" : "s"}, ` +
-        "but couldn't synthesize a reliable answer. Please try again shortly.",
+        `but couldn't synthesize a reliable answer (${cause}). Please try again shortly.`,
       followUpQuestions: [],
       unresolvedQuestions: plan.questions,
       contradictions: gaps.contradictions,
@@ -1695,6 +1431,54 @@ async function archiveRun(
   return { markdownPath, jsonPath };
 }
 
+/**
+ * Resolves how a user-supplied URL gets read.
+ *
+ * Production reads through `link-reader.ts`. When a caller injects `retrieve`
+ * but not `readUrl` — the shape every existing test uses — the injected
+ * retriever is adapted instead, so a test run never reaches the network through
+ * a second, unfaked path.
+ */
+function createUrlReader(
+  options: ResearchServiceOptions,
+  config: ResearchConfig,
+  now: () => Date,
+): (url: string) => Promise<LinkReadResult> {
+  if (options.readUrl) return options.readUrl;
+
+  if (options.retrieve) {
+    const retrieve = options.retrieve;
+    return async (url) => {
+      const source = await retrieve({ title: "", url });
+      return source
+        ? {
+            source: { ...source, isUserProvided: true },
+            links: [],
+            sameSiteLinks: [],
+            contentType: "",
+            httpStatus: 200,
+            finalUrl: url,
+          }
+        : {
+            source: null,
+            links: [],
+            sameSiteLinks: [],
+            contentType: "",
+            httpStatus: null,
+            finalUrl: url,
+            failure: { url, reason: "The page could not be read." },
+          };
+    };
+  }
+
+  return (url) =>
+    readLink(url, {
+      maxBytes: config.maxPageBytes,
+      markUserProvided: true,
+      now,
+    });
+}
+
 export async function runResearch(
   question: string,
   seedUrls: string[] = [],
@@ -1702,7 +1486,7 @@ export async function runResearch(
 ): Promise<ResearchResult> {
   const progress = options.onProgress ?? ((message: string) => console.log(message));
   const config = createResearchConfig(options.config);
-  const provider = options.provider ?? createTextGenerationProvider();
+  const provider = options.provider ?? createTaskAwareProviders().research.provider;
   const now = options.now ?? (() => new Date());
   const conversationContext = options.conversationContext ?? "";
   const plan = await buildPlan(question, provider, progress, conversationContext);
@@ -1726,8 +1510,12 @@ export async function runResearch(
   let candidateCount = 0;
   let retrievedCount = 0;
   let failedCount = 0;
+  let failedPages = 0;
+  let failedSearches = 0;
   let searches = 0;
   let rounds = 0;
+  let blockedSearches = 0;
+  const searchFailures: string[] = [];
   let queries = plan.queries.slice(0, config.maxSearches);
   const executedQueries: string[] = [];
   let gaps: { unresolvedQuestions: string[]; contradictions: string[] } = {
@@ -1735,13 +1523,60 @@ export async function runResearch(
     contradictions: [],
   };
 
+  // ---- Phase 0: read the links the user actually gave us -------------------
+  //
+  // This runs before any search and does not depend on one succeeding. A URL in
+  // the message is a request to read that URL; previously it was only ever a
+  // `site:` hint to DuckDuckGo, so a bot challenge on the search endpoint meant
+  // the explicit link was never fetched either and Muse reported having no
+  // sources at all.
+  const readUrl = createUrlReader(options, config, now);
+  const readFailures: LinkFailure[] = [];
+  const crawlCandidates = new Set<string>();
+  let crawlUrls: string[] = [];
+
+  if (safeSeedUrls.length > 0) {
+    progress(
+      `Reading ${safeSeedUrls.length} supplied ${safeSeedUrls.length === 1 ? "link" : "links"} directly...`,
+    );
+    for (const seedUrl of safeSeedUrls) {
+      const result = await readUrl(seedUrl);
+      if (result.source) {
+        const key = canonicalizeUrl(result.source.canonicalUrl ?? result.source.url);
+        seenUrls.add(key);
+        allSources.set(key, result.source);
+      } else if (result.failure) {
+        readFailures.push(result.failure);
+      }
+      // Links found on the page become crawl candidates for round 1, so
+      // photon.codes can lead to docs.photon.codes within the same budget.
+      // Each entry is already filtered to the seed's own registrable domain by
+      // the reader, so accumulation here only has to de-duplicate.
+      for (const link of result.sameSiteLinks) crawlCandidates.add(link);
+    }
+    crawlUrls = [...crawlCandidates].slice(0, config.maxCandidates);
+
+    candidateCount += safeSeedUrls.length;
+    retrievedCount += allSources.size;
+    failedCount += readFailures.length;
+
+    if (allSources.size > 0) {
+      progress(
+        `Read ${allSources.size} of ${safeSeedUrls.length} supplied ${safeSeedUrls.length === 1 ? "link" : "links"}` +
+          (crawlUrls.length > 0 ? `; queued ${crawlUrls.length} linked pages.` : "."),
+      );
+    } else {
+      progress(`Could not read any of the ${safeSeedUrls.length} supplied links.`);
+    }
+  }
+
   for (let round = 0; round < config.maxRounds && queries.length > 0; round += 1) {
     const remainingSearches = config.maxSearches - searches;
     if (remainingSearches <= 0 || candidateCount >= config.maxCandidates) break;
     const roundQueries = queries.slice(0, remainingSearches);
     const result = await gatherEvidence(
       roundQueries,
-      round === 0 ? safeSeedUrls : [],
+      round === 0 ? crawlUrls : [],
       options.search ?? searchWeb,
       options.retrieve ?? ((hit) => retrievePage(hit, config.maxPageBytes, now)),
       progress,
@@ -1753,7 +1588,13 @@ export async function runResearch(
     candidateCount += result.candidateCount;
     retrievedCount += result.retrievedCount;
     failedCount += result.failedCount;
+    failedPages += result.failedPages;
+    failedSearches += result.failedSearches;
     searches += result.searches;
+    blockedSearches += result.blockedSearches;
+    for (const failure of result.searchFailures) {
+      if (!searchFailures.includes(failure)) searchFailures.push(failure);
+    }
     for (const source of result.sources) {
       allSources.set(canonicalizeUrl(source.canonicalUrl ?? source.url), source);
     }
@@ -1779,10 +1620,34 @@ export async function runResearch(
     }
   }
 
-  if (searches === 0) limitations.push("No web searches were completed.");
-  if (failedCount > 0) {
+  if (searches === 0 && safeSeedUrls.length === 0) {
+    limitations.push("No web searches were completed.");
+  }
+  if (blockedSearches > 0) {
     limitations.push(
-      `${failedCount} search requests or candidate pages failed or were unreadable.`,
+      `Web search was blocked by a bot challenge on ${blockedSearches} of ${searches} queries.`,
+    );
+  }
+  if (readFailures.length > 0) {
+    for (const failure of readFailures.slice(0, 3)) {
+      limitations.push(`Supplied link ${failure.url} was not readable: ${failure.reason}`);
+    }
+    if (readFailures.length > 3) {
+      limitations.push(
+        `${readFailures.length - 3} further supplied links were not readable.`,
+      );
+    }
+  }
+  const unreadablePages = failedPages - readFailures.length;
+  if (unreadablePages > 0) {
+    limitations.push(
+      `${unreadablePages} candidate pages failed or carried no readable text.`,
+    );
+  }
+  const otherFailedSearches = failedSearches - blockedSearches;
+  if (otherFailedSearches > 0) {
+    limitations.push(
+      `${otherFailedSearches} of ${searches} search requests failed or returned no usable results.`,
     );
   }
   if (candidateCount >= config.maxCandidates) {
@@ -1826,6 +1691,12 @@ export async function runResearch(
     limitations,
     gaps,
     conversationContext,
+    {
+      blockedSearches,
+      searches,
+      readFailures,
+      unreadablePages: Math.max(0, failedPages - readFailures.length),
+    },
   );
   const answer = sources.length && !synthesis.failure
     ? validateCitationReferences(

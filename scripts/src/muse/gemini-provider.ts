@@ -1,0 +1,374 @@
+import type {
+  ConversationMessage,
+  TextGenerationProvider,
+  TextGenerationRequest,
+} from "./llm-provider.js";
+import { requestError } from "./openai-compatible-chat.js";
+
+const GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta";
+const DEFAULT_MODEL = "gemini-2.5-flash";
+const DEFAULT_TIMEOUT_MS = 60_000;
+/**
+ * Generous body ceiling. Streaming responses are reassembled in memory, and a
+ * runaway gateway should not be able to exhaust the process.
+ */
+const RESPONSE_BYTE_LIMIT = 8_000_000;
+
+export interface GeminiProviderOptions {
+  model?: string;
+  fetchImplementation?: typeof fetch;
+  timeoutMs?: number;
+  /** Set false to use the non-streaming endpoint. */
+  stream?: boolean;
+}
+
+interface GeminiPart {
+  text?: string;
+}
+
+interface GeminiContent {
+  role: "user" | "model";
+  parts: GeminiPart[];
+}
+
+/**
+ * Google Gemini text-generation adapter.
+ *
+ * Opt-in: nothing uses this class unless `MUSE_LLM_PROVIDER=gemini`, so the
+ * default Groq path is untouched. It speaks Gemini's native `generateContent`
+ * shape rather than the OpenAI-compatibility shim, which keeps finish reasons,
+ * prompt blocks, and citation/safety metadata legible instead of flattened.
+ *
+ * Requests go to `:generateContent?alt=sse` by default. Intermediary proxies
+ * commonly buffer a long non-streaming JSON body and then drop the connection;
+ * Server-Sent Events flush incrementally, so the same timeout yields a usable
+ * response far more often. A gateway that ignores `alt=sse` and answers with
+ * `application/json` is still parsed correctly.
+ */
+export class GeminiProvider implements TextGenerationProvider {
+  readonly providerName = "gemini";
+  private readonly apiKey: string;
+  readonly model: string;
+  private readonly fetchImplementation: typeof fetch;
+  private readonly timeoutMs: number;
+  private readonly stream: boolean;
+
+  constructor(options: GeminiProviderOptions = {}) {
+    const apiKey = process.env.GEMINI_API_KEY?.trim();
+    if (!apiKey) {
+      throw new Error(
+        "Missing GEMINI_API_KEY. Set it, or switch MUSE_LLM_PROVIDER back to \"groq\".",
+      );
+    }
+
+    this.apiKey = apiKey;
+    this.model =
+      options.model?.trim() ||
+      process.env.GEMINI_MODEL?.trim() ||
+      DEFAULT_MODEL;
+    this.fetchImplementation = options.fetchImplementation ?? fetch;
+    this.timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+    this.stream = options.stream ?? true;
+  }
+
+  private get endpoint(): string {
+    const path = `${GEMINI_API_BASE}/models/${encodeURIComponent(this.model)}:generateContent`;
+    return this.stream ? `${path}?alt=sse` : path;
+  }
+
+  async generateText({
+    systemPrompt,
+    conversation,
+  }: TextGenerationRequest): Promise<string> {
+    const contents = toGeminiContents(conversation);
+    if (contents.length === 0) {
+      throw new Error("Gemini requires at least one conversation message.");
+    }
+
+    let response: Response;
+    try {
+      response = await this.fetchImplementation(this.endpoint, {
+        method: "POST",
+        headers: {
+          "x-goog-api-key": this.apiKey,
+          "Content-Type": "application/json",
+          ...(this.stream ? { Accept: "text/event-stream" } : {}),
+        },
+        body: JSON.stringify({
+          contents,
+          ...(systemPrompt.trim()
+            ? { systemInstruction: { parts: [{ text: systemPrompt }] } }
+            : {}),
+          generationConfig: {
+            // Muse needs reasoning traces, so the token budget stays open.
+            candidateCount: 1,
+          },
+        }),
+        signal: AbortSignal.timeout(this.timeoutMs),
+      });
+    } catch (error) {
+      throw requestError("Gemini", error, this.timeoutMs, this.apiKey);
+    }
+
+    const bodyText = await readBodyText(response, this.apiKey);
+
+    if (!response.ok) {
+      throw new Error(
+        `Gemini request failed with HTTP ${response.status}${describeErrorPayload(bodyText, this.apiKey)}`,
+      );
+    }
+
+    const payload = this.stream
+      ? parseSsePayload(bodyText)
+      : parseJsonPayload(bodyText);
+
+    if (!payload) {
+      throw new Error("Gemini returned a malformed JSON response.");
+    }
+
+    const blockReason = readBlockReason(payload);
+    if (blockReason) {
+      throw new Error(
+        `Gemini blocked the request before generation (${humanizeBlockReason(blockReason)}).`,
+      );
+    }
+
+    const parsed = parseGeminiText(payload);
+    if (parsed.kind === "empty") {
+      throw new Error(
+        `Gemini returned a successful response without text output${readFinishReasonDetail(payload)}.`,
+      );
+    }
+    if (parsed.kind === "unsupported") {
+      throw new Error(
+        "Gemini returned a successful response with an unsupported response structure.",
+      );
+    }
+
+    return parsed.text;
+  }
+}
+
+/**
+ * Maps Muse's conversation onto Gemini's `contents`, merging consecutive
+ * same-role turns into one entry. Gemini tolerates repeats, but merging keeps
+ * long research threads — where Muse pushes several assistant turns in a row —
+ * inside the model's turn structure instead of fragmenting it.
+ */
+function toGeminiContents(
+  conversation: readonly ConversationMessage[],
+): GeminiContent[] {
+  const contents: GeminiContent[] = [];
+
+  for (const message of conversation) {
+    const text = message.content?.trim();
+    if (!text) continue;
+
+    const role = message.role === "assistant" ? "model" : "user";
+    const last = contents[contents.length - 1];
+    if (last && last.role === role) {
+      last.parts.push({ text });
+      continue;
+    }
+    contents.push({ role, parts: [{ text }] });
+  }
+
+  return contents;
+}
+
+async function readBodyText(response: Response, secret: string): Promise<string> {
+  try {
+    if (!response.body) return "";
+    const reader = response.body.getReader();
+    const chunks: Uint8Array[] = [];
+    let totalBytes = 0;
+
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        totalBytes += value.byteLength;
+        if (totalBytes > RESPONSE_BYTE_LIMIT) {
+          await reader.cancel();
+          throw new Error(
+            `Gemini response exceeded the ${RESPONSE_BYTE_LIMIT}-byte limit.`,
+          );
+        }
+        chunks.push(value);
+      }
+    } finally {
+      reader.releaseLock();
+    }
+
+    const bytes = new Uint8Array(totalBytes);
+    let offset = 0;
+    for (const chunk of chunks) {
+      bytes.set(chunk, offset);
+      offset += chunk.byteLength;
+    }
+    return new TextDecoder().decode(bytes);
+  } catch (error) {
+    throw requestError("Gemini", error, RESPONSE_BYTE_LIMIT, secret);
+  }
+}
+
+function parseJsonPayload(body: string): Record<string, unknown> | null {
+  try {
+    const value: unknown = JSON.parse(body);
+    return isRecord(value) ? value : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Reassembles a `text/event-stream` body into one response object.
+ *
+ * Gemini sends the full candidate in each event as generation progresses, so
+ * the last well-formed event wins rather than concatenating chunks — that keeps
+ * partial duplicates out of the answer. Falls back to the first parsed object
+ * when no later event carries candidates.
+ */
+function parseSsePayload(body: string): Record<string, unknown> | null {
+  const events: Record<string, unknown>[] = [];
+
+  for (const line of body.split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (!trimmed.startsWith("data:")) continue;
+    const data = trimmed.slice(5).trim();
+    if (!data || data === "[DONE]") continue;
+    const parsed = parseJsonPayload(data);
+    if (parsed) events.push(parsed);
+  }
+
+  if (events.length === 0) {
+    // Some gateways answer an `alt=sse` request with plain JSON.
+    return parseJsonPayload(body.trim());
+  }
+
+  for (let index = events.length - 1; index >= 0; index -= 1) {
+    if (Array.isArray(events[index]?.candidates)) return events[index];
+  }
+  return events[events.length - 1] ?? null;
+}
+
+type ParsedGeminiText =
+  | { kind: "text"; text: string }
+  | { kind: "empty" }
+  | { kind: "unsupported" };
+
+function parseGeminiText(payload: Record<string, unknown>): ParsedGeminiText {
+  if (!Array.isArray(payload.candidates)) return { kind: "unsupported" };
+
+  const blocks: string[] = [];
+  for (const candidate of payload.candidates) {
+    if (!isRecord(candidate)) return { kind: "unsupported" };
+    const content = candidate.content;
+    if (!isRecord(content) || !Array.isArray(content.parts)) {
+      return { kind: "unsupported" };
+    }
+    for (const part of content.parts) {
+      if (!isRecord(part)) return { kind: "unsupported" };
+      if (typeof part.text === "string" && part.text.length > 0) {
+        blocks.push(part.text);
+      }
+    }
+  }
+
+  if (blocks.length > 0) {
+    const joined = blocks.join("");
+    return joined.trim() ? { kind: "text", text: joined } : { kind: "empty" };
+  }
+
+  return { kind: "empty" };
+}
+
+function readPromptFeedback(payload: Record<string, unknown>): Record<string, unknown> | undefined {
+  return isRecord(payload.promptFeedback) ? payload.promptFeedback : undefined;
+}
+
+function readBlockReason(payload: Record<string, unknown>): string | null {
+  const feedback = readPromptFeedback(payload);
+  if (feedback && typeof feedback.blockReason === "string" && feedback.blockReason) {
+    return feedback.blockReason;
+  }
+
+  const candidate = Array.isArray(payload.candidates) ? payload.candidates[0] : undefined;
+  if (!isRecord(candidate)) return null;
+  const finishReason = candidate.finishReason;
+  if (typeof finishReason !== "string") return null;
+  return BLOCKING_FINISH_REASONS.has(finishReason.toUpperCase()) ? finishReason : null;
+}
+
+function readFinishReasonDetail(payload: Record<string, unknown>): string {
+  const candidate = Array.isArray(payload.candidates) ? payload.candidates[0] : undefined;
+  if (!isRecord(candidate)) return "";
+  return typeof candidate.finishReason === "string"
+    ? ` (finish reason: ${candidate.finishReason})`
+    : "";
+}
+
+/**
+ * Finish reasons that mean "refused or withheld", not "finished normally".
+ *
+ * Reported distinctly so Muse does not surface a safety block as an opaque
+ * "no text output" failure.
+ */
+const BLOCKING_FINISH_REASONS = new Set([
+  "SAFETY",
+  "RECITATION",
+  "PROHIBITED_CONTENT",
+  "BLOCKLIST",
+  "LANGUAGE",
+  "OTHER",
+]);
+
+const BLOCK_REASON_LABELS: Record<string, string> = {
+  SAFETY: "the prompt was flagged by safety filters",
+  PROHIBITED_CONTENT: "the prompt contained prohibited content",
+  RECITATION: "the output was withheld as recited copyrighted text",
+  BLOCKLIST: "the prompt matched a blocked term",
+  LANGUAGE: "the prompt language is not supported",
+  OTHER: "Google reported another block reason",
+  SPII: "the prompt appeared to contain sensitive personal information",
+  MALFORMED_FUNCTION_CALL: "the model produced a malformed function call",
+  MAX_TOKENS: "the token budget was exhausted before any text",
+  UNEXPECTED_TOOL_CALL: "the model attempted an unexpected tool call",
+};
+
+function humanizeBlockReason(reason: string): string {
+  const normalized = reason.toUpperCase();
+  return BLOCK_REASON_LABELS[normalized] ?? reason;
+}
+
+/**
+ * Extracts Gemini's own error message from a failure body without echoing the
+ * API key back into logs or chat.
+ */
+function describeErrorPayload(body: string, secret: string): string {
+  const payload = parseJsonPayload(body);
+  if (!payload) return "";
+
+  const error = payload.error;
+  const message = isRecord(error)
+    ? typeof error.message === "string"
+      ? error.message
+      : ""
+    : typeof error === "string"
+      ? error
+      : "";
+
+  const status =
+    isRecord(error) && typeof error.status === "string" ? error.status : "";
+  const detail = redact(message, secret);
+  if (!detail) return status ? `: ${status}` : "";
+  return `: ${detail}${status ? ` [${status}]` : ""}`;
+}
+
+function redact(value: string, secret: string): string {
+  return secret ? value.replaceAll(secret, "[REDACTED]") : value;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}

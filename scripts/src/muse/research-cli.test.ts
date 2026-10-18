@@ -9,6 +9,7 @@ import {
   createResearchConfig,
   extractResearchPage,
   extractResearchPageContent,
+  extractWebsiteTargets,
   getCitedSources,
   isSafeResearchUrl,
   parseDuckDuckGoSearchResults,
@@ -16,6 +17,7 @@ import {
   validateCitationReferences,
   type EvidenceSource,
 } from "./research-cli.js";
+import { SearchBlockedError } from "./search-backends.js";
 
 const source: EvidenceSource = {
   title: "Official documentation",
@@ -704,7 +706,8 @@ test("retrieval and search failures are counted and produce an insufficiency res
   assert.equal(result.completeness, "insufficient");
   assert.match(result.answer, /could not retrieve any readable web sources/);
   assert.doesNotMatch(result.answer, /unverified: no matching retrieved evidence/);
-  assert.ok(result.limitations.some((item) => item.includes("2 search requests or candidate pages")));
+  assert.ok(result.limitations.some((item) => item.includes("candidate pages failed or carried no readable text")));
+  assert.ok(result.limitations.some((item) => item.includes("search requests failed")));
 });
 
 test("synthesis failures return an explicitly labeled evidence brief without model error details", async () => {
@@ -857,5 +860,262 @@ test("page metadata extraction records a canonical URL, snippets, and a title fa
   assert.equal(
     extractResearchPage("<html><body>Access denied</body></html>", { title: "", url: "https://example.org/" }, "https://example.org/"),
     null,
+  );
+});
+
+// ---------------------------------------------------------------------------
+// Direct link reading
+// ---------------------------------------------------------------------------
+
+test("a supplied URL is read directly and cited even when every search fails", async () => {
+  const provider: TextGenerationProvider = {
+    async generateText(request) {
+      const content = request.conversation.map((message) => message.content).join("\n");
+      if (content.includes("research plan")) {
+        return JSON.stringify({
+          objective: "Explain the supplied website.",
+          taskType: "general",
+          deliverable: "A concise explanation.",
+          requiresCurrentInformation: false,
+          sourcePreferences: [],
+          questions: ["What is on this site?"],
+          queries: ["photon codes"],
+        });
+      }
+      return JSON.stringify({
+        answer: `Photon is a framework connecting agents to messaging apps. [${firstCitationId(request)}]`,
+        followUpQuestions: ["how does delivery work"],
+        unresolvedQuestions: [],
+        contradictions: [],
+        completeness: "supported",
+      });
+    },
+  };
+
+  const supplied = {
+    title: "Photon | Bring your agents to iMessage",
+    url: "https://photon.codes/",
+    retrievedAt: "2026-10-18T12:00:00.000Z",
+    content:
+      "Photon is an open-source framework that connects your agents to iMessage, WhatsApp, Discord, and other interfaces people use every day.",
+  };
+
+  const result = await runResearch("Look through photon.codes for me", ["https://photon.codes/"], {
+    provider,
+    config: { maxRounds: 1, maxSearches: 2 },
+    search: async () => {
+      throw new Error("Web search endpoint returned a bot challenge (HTTP 202).");
+    },
+    retrieve: async () => ({ ...supplied, isUserProvided: true }),
+    archive: async () => ({ markdownPath: "report.md", jsonPath: "report.json" }),
+    onProgress: () => {},
+  });
+
+  assert.equal(result.sources.length, 1);
+  assert.equal(result.sources[0]?.url, "https://photon.codes/");
+  assert.equal(result.completeness, "supported");
+  assert.match(result.answer, /Photon is a framework/);
+  assert.ok(
+    result.sources[0]?.sourceId && result.answer.includes(`[${result.sources[0].sourceId}]`),
+    "the supplied link must be the cited source",
+  );
+});
+
+test("the insufficiency response names the real cause instead of guessing", async () => {
+  const provider: TextGenerationProvider = {
+    async generateText() {
+      return JSON.stringify({
+        objective: "Explain the subject.",
+        taskType: "general",
+        deliverable: "A concise explanation.",
+        requiresCurrentInformation: false,
+        sourcePreferences: [],
+        questions: ["What is known?"],
+        queries: ["subject search"],
+      });
+    },
+  };
+
+  const blocked = await runResearch("Explain the subject", [], {
+    provider,
+    config: { maxRounds: 1, maxSearches: 2 },
+    search: async () => {
+      throw new SearchBlockedError("duckduckgo-html", "bot challenge");
+    },
+    retrieve: async () => null,
+    archive: async () => ({ markdownPath: "report.md", jsonPath: "report.json" }),
+    onProgress: () => {},
+  });
+
+  assert.equal(blocked.completeness, "insufficient");
+  assert.match(blocked.answer, /could not retrieve any readable web sources/);
+  assert.match(blocked.answer, /bot challenge/i);
+  assert.doesNotMatch(blocked.answer, /Search may be blocked or relevant pages/);
+
+  const unreadable = await runResearch("Explain the subject", ["https://example.org/"], {
+    provider,
+    config: { maxRounds: 1, maxSearches: 2 },
+    search: async () => [],
+    retrieve: async () => null,
+    readUrl: async (url) => ({
+      source: null,
+      links: [],
+      sameSiteLinks: [],
+      contentType: "text/html",
+      httpStatus: 200,
+      finalUrl: url,
+      failure: {
+        url,
+        reason:
+          "The page returned almost no readable text, which usually means it renders through JavaScript in a browser.",
+      },
+    }),
+    archive: async () => ({ markdownPath: "report.md", jsonPath: "report.json" }),
+    onProgress: () => {},
+  });
+
+  assert.equal(unreadable.completeness, "insufficient");
+  assert.match(unreadable.answer, /supplied link/);
+  assert.match(unreadable.answer, /renders through JavaScript/);
+  assert.ok(unreadable.limitations.some((item) => item.includes("was not readable")));
+});
+
+test("same-site links found on a supplied page enter the candidate pool", async () => {
+  const crawled: string[] = [];
+  const provider: TextGenerationProvider = {
+    async generateText(request) {
+      const content = request.conversation.map((message) => message.content).join("\n");
+      if (content.includes("research plan")) {
+        return JSON.stringify({
+          objective: "Explain the Photon website and its documentation.",
+          taskType: "general",
+          deliverable: "A concise explanation.",
+          requiresCurrentInformation: false,
+          sourcePreferences: [],
+          questions: ["What does the Photon site cover?"],
+          queries: ["photon codes"],
+        });
+      }
+      return JSON.stringify({
+        answer: `The docs describe delivery. [${firstCitationId(request)}]`,
+        followUpQuestions: ["what protocols are supported"],
+        unresolvedQuestions: [],
+        contradictions: [],
+        completeness: "supported",
+      });
+    },
+  };
+
+  const result = await runResearch("Read photon.codes and its docs", ["https://photon.codes/"], {
+    provider,
+    config: { maxRounds: 1, maxSearches: 1 },
+    search: async () => [],
+    retrieve: async (hit) => {
+      crawled.push(hit.url);
+      return {
+        title: hit.title || `Photon docs at ${new URL(hit.url).hostname}`,
+        url: hit.url,
+        retrievedAt: "2026-10-18T12:00:00.000Z",
+        content:
+          "The Photon documentation covers message delivery, retry behaviour, and the event stream in detail with plenty of supporting text.",
+      };
+    },
+    readUrl: async (url) => ({
+      source: {
+        title: "Photon",
+        url,
+        retrievedAt: "2026-10-18T12:00:00.000Z",
+        content:
+          "Photon is an open-source framework that connects your agents to iMessage, WhatsApp, Discord, Slack, and Telegram.",
+        isUserProvided: true,
+      },
+      links: ["https://docs.photon.codes/", "https://github.com/photon-hq/spectrum-ts"],
+      sameSiteLinks: ["https://docs.photon.codes/"],
+      contentType: "text/html",
+      httpStatus: 200,
+      finalUrl: url,
+    }),
+    archive: async () => ({ markdownPath: "report.md", jsonPath: "report.json" }),
+    onProgress: () => {},
+  });
+
+  assert.ok(
+    crawled.includes("https://docs.photon.codes/"),
+    `expected the crawl target to be retrieved; retrieved: ${crawled.join(", ")}`,
+  );
+  assert.ok(!crawled.includes("https://github.com/photon-hq/spectrum-ts"));
+  assert.equal(result.sources.length, 2);
+});
+
+test("blocked search failures are recorded as limitations without breaking the run", async () => {
+  const provider: TextGenerationProvider = {
+    async generateText(request) {
+      const content = request.conversation.map((message) => message.content).join("\n");
+      if (content.includes("research plan")) {
+        return JSON.stringify({
+          objective: "Explain the subject.",
+          taskType: "general",
+          deliverable: "A concise explanation.",
+          requiresCurrentInformation: false,
+          sourcePreferences: [],
+          questions: ["What is known?"],
+          queries: ["subject one", "subject two"],
+        });
+      }
+      return JSON.stringify({
+        answer: `The page says the subject is documented. [${firstCitationId(request)}]`,
+        followUpQuestions: ["how does it work"],
+        unresolvedQuestions: [],
+        contradictions: [],
+        completeness: "supported",
+      });
+    },
+  };
+
+  const result = await runResearch("Explain the subject", ["https://example.org/"], {
+    provider,
+    config: { maxRounds: 1, maxSearches: 2 },
+    search: async () => {
+      throw new SearchBlockedError("duckduckgo-html", "bot challenge");
+    },
+    retrieve: async () => ({
+      title: "Subject documentation",
+      url: "https://example.org/subject",
+      retrievedAt: "2026-10-18T12:00:00.000Z",
+      content:
+        "The subject is documented across several pages with enough readable supporting detail to be cited as evidence here.",
+    }),
+    archive: async () => ({ markdownPath: "report.md", jsonPath: "report.json" }),
+    onProgress: () => {},
+  });
+
+  assert.equal(result.sources.length, 1, "the supplied page should still be read and cited");
+  assert.equal(result.completeness, "supported");
+  assert.ok(
+    result.limitations.some((item) => item.includes("bot challenge")),
+    `expected a bot-challenge limitation; got: ${result.limitations.join(" | ")}`,
+  );
+});
+
+test("website targets are extracted from bare domains and full URLs alike", () => {
+  assert.deepEqual(extractWebsiteTargets("look through photon.codes for me"), [
+    "https://photon.codes/",
+  ]);
+  assert.deepEqual(extractWebsiteTargets("please read https://photon.codes/pricing"), [
+    "https://photon.codes/pricing",
+  ]);
+  assert.deepEqual(
+    extractWebsiteTargets("Compare photon.codes, docs.photon.codes and https://example.org/guide."),
+    ["https://photon.codes/", "https://docs.photon.codes/", "https://example.org/guide"],
+  );
+  // Sentence punctuation and trailing punctuation do not become part of the URL.
+  assert.deepEqual(extractWebsiteTargets("Check photon.codes."), ["https://photon.codes/"]);
+  assert.deepEqual(extractWebsiteTargets("no links here"), []);
+  // Unsafe schemes and private hosts never qualify.
+  assert.deepEqual(extractWebsiteTargets("see javascript:alert(1) and http://127.0.0.1/admin"), []);
+  // Duplicates collapse.
+  assert.deepEqual(
+    extractWebsiteTargets("photon.codes and https://photon.codes and photon.codes"),
+    ["https://photon.codes/"],
   );
 });
