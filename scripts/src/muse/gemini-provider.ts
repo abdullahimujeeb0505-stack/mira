@@ -6,7 +6,7 @@ import type {
 import { requestError } from "./openai-compatible-chat.js";
 
 const GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta";
-const DEFAULT_MODEL = "gemini-2.5-flash";
+const DEFAULT_MODEL = "gemini-3.8-flash";
 const DEFAULT_TIMEOUT_MS = 60_000;
 /**
  * Generous body ceiling. Streaming responses are reassembled in memory, and a
@@ -34,10 +34,12 @@ interface GeminiContent {
 /**
  * Google Gemini text-generation adapter.
  *
- * Opt-in: nothing uses this class unless `MUSE_LLM_PROVIDER=gemini`, so the
- * default Groq path is untouched. It speaks Gemini's native `generateContent`
- * shape rather than the OpenAI-compatibility shim, which keeps finish reasons,
- * prompt blocks, and citation/safety metadata legible instead of flattened.
+ * Task-aware provider selection uses Gemini for research by default while
+ * keeping quick chat on Groq. `MUSE_RESEARCH_LLM_PROVIDER` can override the
+ * research route, or `MUSE_LLM_PROVIDER=gemini` can pin both tasks. This
+ * adapter speaks Gemini's native `generateContent` shape rather than the
+ * OpenAI-compatibility shim, which keeps finish reasons, prompt blocks, and
+ * citation/safety metadata legible instead of flattened.
  *
  * Requests go to `:streamGenerateContent?alt=sse` by default. Intermediary
  * proxies commonly buffer a long non-streaming JSON body and then drop the
@@ -64,10 +66,14 @@ export class GeminiProvider implements TextGenerationProvider {
     }
 
     this.apiKey = apiKey;
-    this.model =
-      options.model?.trim() ||
-      process.env.GEMINI_MODEL?.trim() ||
-      DEFAULT_MODEL;
+    const configuredModel =
+      options.model?.trim() || process.env.GEMINI_MODEL?.trim();
+    // Google's error guidance may show the full resource name. Keep the
+    // adapter's model property as the base ID before adding `/models/` below.
+    const model = configuredModel?.startsWith("models/")
+      ? configuredModel.slice("models/".length)
+      : configuredModel;
+    this.model = model || DEFAULT_MODEL;
     this.fetchImplementation = options.fetchImplementation ?? fetch;
     this.timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
     this.stream = options.stream ?? true;

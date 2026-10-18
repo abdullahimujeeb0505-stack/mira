@@ -371,8 +371,16 @@ test("Gemini requires its own key and refuses an empty conversation", async () =
       );
     }));
 
-test("Gemini defaults to gemini-2.5-flash and honors GEMINI_MODEL", async () =>
+test("Gemini defaults to gemini-3.8-flash and honors a model option", async () =>
   withEnvironment({ GEMINI_API_KEY: GEMINI_KEY, GEMINI_MODEL: undefined }, () => {
-    assert.equal(new GeminiProvider().model, "gemini-2.5-flash");
-    assert.equal(new GeminiProvider({ model: "gemini-2.5-pro" }).model, "gemini-2.5-pro");
+    assert.equal(new GeminiProvider().model, "gemini-3.8-flash");
+    assert.equal(new GeminiProvider({ model: "gemini-custom-model" }).model, "gemini-custom-model");
   }));
+
+test("Gemini normalizes a models/ prefix in GEMINI_MODEL", async () =>
+  withEnvironment(
+    { GEMINI_API_KEY: GEMINI_KEY, GEMINI_MODEL: "models/gemini-3.8-flash" },
+    () => {
+      assert.equal(new GeminiProvider().model, "gemini-3.8-flash");
+    },
+  ));

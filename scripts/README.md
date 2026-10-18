@@ -56,11 +56,14 @@ For AgentRouter, set `AGENTROUTER_API_KEY`; `AGENTROUTER_MODEL` is an optional
 override. Provider credentials are isolated: only the selected adapter receives
 its own key.
 
-For Gemini, set `GEMINI_API_KEY` and `MUSE_LLM_PROVIDER=gemini`.
-`GEMINI_MODEL` is optional and defaults to `gemini-2.5-flash`. The adapter
-speaks Gemini's native `generateContent` API (with `?alt=sse` streaming so long
-replies are not held up by buffering proxies) rather than an OpenAI
-compatibility shim, and it reports prompt blocks and safety finish reasons as
+For Gemini, set `GEMINI_API_KEY`. In the task-aware server, research defaults
+to Gemini; use `MUSE_RESEARCH_LLM_PROVIDER` to override that route or
+`MUSE_LLM_PROVIDER=gemini` to pin both tasks. `GEMINI_MODEL` is optional and
+defaults to `gemini-3.8-flash`. The adapter
+speaks Gemini's native `generateContent` API, using the separate
+`streamGenerateContent?alt=sse` endpoint for streaming so long replies are not
+held up by buffering proxies. It does not use an OpenAI compatibility shim,
+and it reports prompt blocks and safety finish reasons as
 distinct errors instead of "no text output". Monitor usage and set spend limits
 in Google AI Studio; no provider is used as an automatic fallback for another.
 
@@ -228,7 +231,7 @@ Codespaces port forwarding, the Replit workflow preview, e2b sandboxes) can
 reach it; set `MUSE_BIND_HOST=127.0.0.1` to restrict it to loopback when
 running on a shared machine.
 
-Open `http://localhost:3000` locally. In **GitHub Codespaces**, forward port `3000` and open the forwarded URL at path `/`. Or use the **Muse Chat Preview** workflow in Replit at port `3000` and path `/`. The server is **task-aware** and can use two providers: quick chat turns default to **Groq** (`MUSE_CHAT_LLM_PROVIDER`, credential `GROQ_API_KEY` or the legacy `GROK_API_CODING_KEY`), while research planning, answer synthesis, and long-form writing default to **Gemini** (`MUSE_RESEARCH_LLM_PROVIDER`, credential `GEMINI_API_KEY`, optional `GEMINI_MODEL` default `gemini-2.5-flash`). If the preferred provider's key is missing, that task falls back to the other provider and the startup log says why. `MUSE_LLM_PROVIDER` still pins both tasks to one provider, and `groq`/`openrouter` (`OPENROUTER_API_KEY` + `OPENROUTER_MODEL`)/`agentrouter` (`AGENTROUTER_API_KEY`)/`gemini` are all accepted values. `SESSION_SECRET` is required to sign the browser's HTTP-only session cookie.
+Open `http://localhost:3000` locally. In **GitHub Codespaces**, forward port `3000` and open the forwarded URL at path `/`. Or use the **Muse Chat Preview** workflow in Replit at port `3000` and path `/`. The server is **task-aware** and can use two providers: quick chat turns default to **Groq** (`MUSE_CHAT_LLM_PROVIDER`, credential `GROQ_API_KEY` or the legacy `GROK_API_CODING_KEY`), while research planning, answer synthesis, and long-form writing default to **Gemini** (`MUSE_RESEARCH_LLM_PROVIDER`, credential `GEMINI_API_KEY`, optional `GEMINI_MODEL` default `gemini-3.8-flash`). If the preferred provider's key is missing, that task falls back to the other provider and the startup log says why. `MUSE_LLM_PROVIDER` still pins both tasks to one provider, and `groq`/`openrouter` (`OPENROUTER_API_KEY` + `OPENROUTER_MODEL`)/`agentrouter` (`AGENTROUTER_API_KEY`)/`gemini` are all accepted values. `SESSION_SECRET` is required to sign the browser's HTTP-only session cookie.
 
 At startup, the server logs both resolved providers and model identifiers
 (`Muse chat LLM: …` / `Muse research LLM: …`, plus any fallback reason) and then
