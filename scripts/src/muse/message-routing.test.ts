@@ -8,12 +8,22 @@ test("greetings and lightweight chat do not trigger web research", () => {
     "How are you?",
     "How are you doing today 😊😘",
     "How are you right now?",
+    "Are you okay?",
+    "Are you okay today?",
+    "Are you doing okay?",
+    "Are you all right?",
     "What's your name?",
     "What can you do?",
     "Thanks!",
   ]) {
     assert.equal(shouldResearchMessage(message), false, message);
   }
+});
+
+test("casual well-being checks stay narrow and substantive Are questions still use research", () => {
+  assert.equal(shouldResearchMessage("Are you okay?"), false);
+  assert.equal(shouldResearchMessage("Are you okay with this medication?"), true);
+  assert.equal(shouldResearchMessage("Are you okay to confirm these claims?"), true);
 });
 
 test("identity and capability questions stay conversational across phrasing and order", () => {
