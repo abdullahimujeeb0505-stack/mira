@@ -1,9 +1,10 @@
 # Muse Conversational Assistant
 
 Muse is a general-purpose conversational assistant with a Photon 2.0-connected
-iMessage entry point and web research when it adds value. It can chat, brainstorm,
-plan, explain, help with writing, and answer everyday questions; explicit research,
-up-to-date facts, and named websites use the existing search, page-retrieval,
+iMessage entry point and web research when it adds value. Its chat persona is Mira.
+Mira can chat, brainstorm, plan, explain, help with writing, and answer everyday
+questions. Explicit research requests, up-to-date facts, and named websites use
+the existing search, page-retrieval,
 citation-validation, and local-archive pipeline. Links the user supplies are
 fetched directly first (see "Reading links in real time" below). Replies use
 retrieved evidence internally; citation markers and source lists are shown only
