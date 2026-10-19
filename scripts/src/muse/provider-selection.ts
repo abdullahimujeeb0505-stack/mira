@@ -8,6 +8,13 @@ export type MuseProviderName = "groq" | "agentrouter" | "openrouter" | "gemini";
 
 export type MuseTaskName = "chat" | "research";
 
+const SUPPORTED_PROVIDERS = new Set<MuseProviderName>([
+  "groq",
+  "agentrouter",
+  "openrouter",
+  "gemini",
+]);
+
 export interface TextGenerationProviderFactories {
   groq?: () => TextGenerationProvider;
   agentrouter?: () => TextGenerationProvider;
@@ -23,17 +30,24 @@ export interface ProviderSelectionOptions {
 export interface TaskProviderSelectionOptions {
   /** Preferred provider for quick conversational turns. Default "groq". */
   chatProvider?: string;
-  /** Preferred provider for research planning, synthesis, and long-form writing. Default "gemini". */
+  /** Preferred provider for research, synthesis, and writing. Default "groq". */
   researchProvider?: string;
   factories?: TextGenerationProviderFactories;
 }
 
 export interface TaskProviderResolution {
+  /** Request path: primary provider with runtime failover when configured. */
   provider: TextGenerationProvider;
+  /** Actual provider selected as primary (or startup fallback if unavailable). */
+  primaryProvider: TextGenerationProvider;
   /** Provider name the configuration asked for. */
   requested: string;
-  /** Provider name actually in use (differs from `requested` after a fallback). */
+  /** Provider name actually in use (differs from `requested` after a startup fallback). */
   used: string;
+  /** Optional runtime failover provider when the primary request fails. */
+  fallbackProvider?: TextGenerationProvider;
+  /** Classified reason when the runtime fallback could not be constructed. */
+  fallbackUnavailableReason?: string;
   /** Set when the requested provider was unavailable and `used` replaced it. */
   fallbackReason?: string;
 }
@@ -76,6 +90,45 @@ function instantiateProvider(
   );
 }
 
+class ProviderWithFallback implements TextGenerationProvider {
+  readonly providerName?: string;
+  readonly model?: string;
+
+  constructor(
+    private readonly primary: TextGenerationProvider,
+    private readonly fallback: TextGenerationProvider,
+  ) {
+    this.providerName = primary.providerName;
+    this.model = primary.model;
+  }
+
+  async generateText(
+    request: Parameters<TextGenerationProvider["generateText"]>[0],
+  ): Promise<string> {
+    try {
+      return await this.primary.generateText(request);
+    } catch (primaryError) {
+      const primaryCause = classifyProviderFailure(primaryError);
+      // Do not route provider safety refusals to another model.
+      if (primaryCause === "blocked by provider safety filters")
+        throw primaryError;
+
+      console.warn(
+        `Muse ${this.primary.providerName ?? "primary provider"} request failed (${primaryCause}); retrying with ${this.fallback.providerName ?? "fallback provider"}.`,
+      );
+      try {
+        return await this.fallback.generateText(request);
+      } catch (fallbackError) {
+        const fallbackCause = classifyProviderFailure(fallbackError);
+        throw new Error(
+          `Primary ${this.primary.providerName ?? "provider"} failed (${primaryCause}); ` +
+            `${this.fallback.providerName ?? "fallback provider"} fallback failed (${fallbackCause}).`,
+        );
+      }
+    }
+  }
+}
+
 export function createTextGenerationProvider(
   options: ProviderSelectionOptions = {},
 ): TextGenerationProvider {
@@ -86,6 +139,19 @@ export function createTextGenerationProvider(
 
 function describeFailure(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
+}
+
+function noUsableProviderError(
+  task: MuseTaskName,
+  requested: string,
+  failure: unknown,
+): Error {
+  return new Error(
+    `No usable LLM provider for ${task} tasks. ` +
+      `"${requested}" failed: ${describeFailure(failure)} ` +
+      `Set MUSE_${task.toUpperCase()}_LLM_PROVIDER to a provider whose API key ` +
+      `is configured, or fix the missing credentials.`,
+  );
 }
 
 /**
@@ -165,14 +231,15 @@ export function classifyProviderFailure(error: unknown): string {
 }
 
 /**
- * Resolve the two task-aware providers: quick chat turns default to Groq
- * (speed) while research planning, synthesis, and long-form writing default to
- * Gemini (long context and citation discipline). Override with
- * `MUSE_CHAT_LLM_PROVIDER` / `MUSE_RESEARCH_LLM_PROVIDER`.
+ * Resolve both chat and research with Groq as the default primary. Gemini is
+ * the optional runtime fallback when configured. Task-specific provider
+ * overrides remain available through `MUSE_CHAT_LLM_PROVIDER` and
+ * `MUSE_RESEARCH_LLM_PROVIDER`; `MUSE_LLM_PROVIDER` pins both tasks.
  *
- * When the preferred provider's credentials are missing, resolution falls back
- * to the other provider and records the reason so startup diagnostics can
- * surface the configuration problem instead of failing every request silently.
+ * If the primary cannot be constructed because its configuration is
+ * incomplete, resolve directly to the fallback provider. When both are
+ * available, wrap the primary so operational request failures retry once
+ * through the fallback.
  */
 export function createTaskAwareProviders(
   options: TaskProviderSelectionOptions = {},
@@ -191,10 +258,25 @@ export function createTaskAwareProviders(
       options.researchProvider ??
       process.env.MUSE_RESEARCH_LLM_PROVIDER ??
       process.env.MUSE_LLM_PROVIDER ??
-      "gemini"
+      "groq"
     )
       .trim()
-      .toLowerCase() || "gemini";
+      .toLowerCase() || "groq";
+
+  const chooseAlternate = (
+    requested: string,
+    otherTaskProvider: string,
+  ): string => {
+    if (requested === "groq") return "gemini";
+    if (requested === "gemini") return "groq";
+    if (
+      otherTaskProvider !== requested &&
+      SUPPORTED_PROVIDERS.has(otherTaskProvider as MuseProviderName)
+    ) {
+      return otherTaskProvider;
+    }
+    return "groq";
+  };
 
   const resolve = (
     task: MuseTaskName,
@@ -202,16 +284,40 @@ export function createTaskAwareProviders(
     alternate: string,
   ): TaskProviderResolution => {
     try {
-      return {
-        provider: instantiateProvider(requested, options.factories),
-        requested,
-        used: requested,
-      };
-    } catch (firstError) {
+      const primary = instantiateProvider(requested, options.factories);
+      let fallbackProvider: TextGenerationProvider | undefined;
+      let fallbackUnavailableReason: string | undefined;
       if (alternate !== requested) {
         try {
+          fallbackProvider = instantiateProvider(alternate, options.factories);
+        } catch (fallbackError) {
+          // The fallback is optional; keep the configured primary usable.
+          fallbackUnavailableReason = classifyProviderFailure(fallbackError);
+        }
+      }
+      return {
+        provider: fallbackProvider
+          ? new ProviderWithFallback(primary, fallbackProvider)
+          : primary,
+        primaryProvider: primary,
+        requested,
+        used: requested,
+        ...(fallbackProvider ? { fallbackProvider } : {}),
+        ...(fallbackUnavailableReason ? { fallbackUnavailableReason } : {}),
+      };
+    } catch (firstError) {
+      if (!SUPPORTED_PROVIDERS.has(requested as MuseProviderName)) {
+        throw noUsableProviderError(task, requested, firstError);
+      }
+      if (alternate !== requested) {
+        try {
+          const fallbackProvider = instantiateProvider(
+            alternate,
+            options.factories,
+          );
           return {
-            provider: instantiateProvider(alternate, options.factories),
+            provider: fallbackProvider,
+            primaryProvider: fallbackProvider,
             requested,
             used: alternate,
             fallbackReason: describeFailure(firstError),
@@ -220,18 +326,21 @@ export function createTaskAwareProviders(
           // Both providers failed; report the original failure below.
         }
       }
-      throw new Error(
-        `No usable LLM provider for ${task} tasks. ` +
-          `"${requested}" failed: ${describeFailure(firstError)} ` +
-          `Set MUSE_${task.toUpperCase()}_LLM_PROVIDER to a provider whose API key ` +
-          `is configured, or fix the missing credentials.`,
-      );
+      throw noUsableProviderError(task, requested, firstError);
     }
   };
 
   return {
-    chat: resolve("chat", chatRequested, researchRequested),
-    research: resolve("research", researchRequested, chatRequested),
+    chat: resolve(
+      "chat",
+      chatRequested,
+      chooseAlternate(chatRequested, researchRequested),
+    ),
+    research: resolve(
+      "research",
+      researchRequested,
+      chooseAlternate(researchRequested, chatRequested),
+    ),
   };
 }
 
@@ -239,9 +348,29 @@ export function formatTaskProviderDiagnostics(
   providers: TaskAwareProviders,
 ): string[] {
   const lines = [
-    `Muse chat LLM: ${providers.chat.provider.providerName} (model: ${providers.chat.provider.model}).`,
-    `Muse research LLM: ${providers.research.provider.providerName} (model: ${providers.research.provider.model}).`,
+    `Muse chat LLM: ${providers.chat.primaryProvider.providerName} (model: ${providers.chat.primaryProvider.model}).`,
+    `Muse research LLM: ${providers.research.primaryProvider.providerName} (model: ${providers.research.primaryProvider.model}).`,
   ];
+  if (providers.chat.fallbackProvider) {
+    lines.push(
+      `Muse chat LLM fallback: ${providers.chat.fallbackProvider.providerName} (model: ${providers.chat.fallbackProvider.model}).`,
+    );
+  }
+  if (providers.research.fallbackProvider) {
+    lines.push(
+      `Muse research LLM fallback: ${providers.research.fallbackProvider.providerName} (model: ${providers.research.fallbackProvider.model}).`,
+    );
+  }
+  if (providers.chat.fallbackUnavailableReason) {
+    lines.push(
+      `Muse chat LLM fallback unavailable: ${providers.chat.fallbackUnavailableReason}.`,
+    );
+  }
+  if (providers.research.fallbackUnavailableReason) {
+    lines.push(
+      `Muse research LLM fallback unavailable: ${providers.research.fallbackUnavailableReason}.`,
+    );
+  }
   if (providers.chat.fallbackReason) {
     lines.push(
       `Muse chat LLM fell back from "${providers.chat.requested}" to "${providers.chat.used}": ${providers.chat.fallbackReason}`,

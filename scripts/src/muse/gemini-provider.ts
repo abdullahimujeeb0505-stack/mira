@@ -34,10 +34,11 @@ interface GeminiContent {
 /**
  * Google Gemini text-generation adapter.
  *
- * Task-aware provider selection uses Gemini for research by default while
- * keeping quick chat on Groq. `MUSE_RESEARCH_LLM_PROVIDER` can override the
- * research route, or `MUSE_LLM_PROVIDER=gemini` can pin both tasks. This
- * adapter speaks Gemini's native `generateContent` shape rather than the
+ * Task-aware provider selection uses Groq by default and can retry failed
+ * requests through Gemini. `MUSE_CHAT_LLM_PROVIDER` and
+ * `MUSE_RESEARCH_LLM_PROVIDER` override the primary routes, while
+ * `MUSE_LLM_PROVIDER=gemini` can pin both tasks to Gemini. This adapter speaks
+ * Gemini's native `generateContent` shape rather than the
  * OpenAI-compatibility shim, which keeps finish reasons, prompt blocks, and
  * citation/safety metadata legible instead of flattened.
  *
@@ -61,7 +62,7 @@ export class GeminiProvider implements TextGenerationProvider {
     const apiKey = process.env.GEMINI_API_KEY?.trim();
     if (!apiKey) {
       throw new Error(
-        'Missing GEMINI_API_KEY. Set it, or switch MUSE_LLM_PROVIDER back to "groq".',
+        "Missing GEMINI_API_KEY. Set it to enable Gemini fallback, or select another configured provider.",
       );
     }
 

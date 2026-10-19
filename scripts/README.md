@@ -50,23 +50,27 @@ required so deployment explicitly selects an available model; check its current
 availability, rate limits, and price in the [model catalog](https://openrouter.ai/models).
 Set a per-key spending limit in the OpenRouter dashboard under **Settings →
 Keys** when creating or editing the key, and inspect usage in **Activity**.
-Groq usage is available in the Groq console under **Settings → Usage**. Neither
-provider is used as an automatic fallback for another.
+Groq usage is available in the Groq console under **Settings → Usage**. The
+single-provider Photon listener does not switch providers automatically; the
+browser chat server's Groq-to-Gemini failover is documented below.
 
 For AgentRouter, set `AGENTROUTER_API_KEY`; `AGENTROUTER_MODEL` is an optional
 override. Provider credentials are isolated: only the selected adapter receives
 its own key.
 
-For Gemini, set `GEMINI_API_KEY`. In the task-aware server, research defaults
-to Gemini; use `MUSE_RESEARCH_LLM_PROVIDER` to override that route or
-`MUSE_LLM_PROVIDER=gemini` to pin both tasks. `GEMINI_MODEL` is optional and
-defaults to `gemini-3.5-flash`. The adapter
-speaks Gemini's native `generateContent` API, using the separate
+For Gemini, set `GEMINI_API_KEY`. The task-aware browser server defaults both
+chat and research to Groq, then retries eligible Groq request failures once
+through Gemini when this key is configured. `MUSE_CHAT_LLM_PROVIDER` and
+`MUSE_RESEARCH_LLM_PROVIDER` override each task's primary route;
+`MUSE_LLM_PROVIDER=gemini` pins both tasks to Gemini. `GEMINI_MODEL` is optional
+and defaults to `gemini-3.5-flash`. Safety refusals are not retried through a
+different provider. The adapter speaks Gemini's native `generateContent` API,
+using the separate
 `streamGenerateContent?alt=sse` endpoint for streaming so long replies are not
 held up by buffering proxies. It does not use an OpenAI compatibility shim,
 and it reports prompt blocks and safety finish reasons as
 distinct errors instead of "no text output". Monitor usage and set spend limits
-in Google AI Studio; no provider is used as an automatic fallback for another.
+in Google AI Studio; the browser server's default failover is Groq to Gemini.
 
 Set `MUSE_PHOTON_TRANSPORT=spectrum` only to explicitly run the legacy
 Spectrum transport. That mode continues to require `SPECTRUM_PROJECT_ID` and
@@ -219,7 +223,7 @@ Check the demo prerequisites without starting the server or contacting a model p
 pnpm --filter @workspace/scripts run muse-preflight
 ```
 
-The preflight prints only prerequisite names and readiness states; it never prints secret values. It checks that `SESSION_SECRET` is non-empty, the resolved chat and research providers have usable credentials, and the local `tsx` command is installed. Chat defaults to Groq and research defaults to Gemini; `MUSE_CHAT_LLM_PROVIDER` and `MUSE_RESEARCH_LLM_PROVIDER` override them, `MUSE_LLM_PROVIDER` pins both, and preflight reports when runtime fallback will be used. Set provider credentials in GitHub Codespaces Secrets or the runtime's secret manager, not in tracked files. Muse no longer requires a chat access code. **Security note:** the former `.replit` user-environment block contained committed credential-like values. Removing the block does not erase Git history; revoke or rotate those values, and remove any obsolete `MUSE_CHAT_ACCESS_TOKEN` from your secret manager. Its standalone tests can run with Node.js alone:
+The preflight prints only prerequisite names and readiness states; it never prints secret values. It checks that `SESSION_SECRET` is non-empty, the selected chat and research primaries have usable credentials, any configured fallback credentials are usable, and the local `tsx` command is installed. Both tasks default to Groq; Gemini is the default request-failure fallback. `MUSE_CHAT_LLM_PROVIDER` and `MUSE_RESEARCH_LLM_PROVIDER` override each task's primary, while `MUSE_LLM_PROVIDER` pins both. A missing fallback produces a warning but does not block a configured primary; if the primary configuration is unavailable and the alternate is configured, preflight reports the startup fallback. Set provider credentials in GitHub Codespaces Secrets or the runtime's secret manager, not in tracked files. Muse no longer requires a chat access code. **Security note:** the former `.replit` user-environment block contained committed credential-like values. Removing the block does not erase Git history; revoke or rotate those values, and remove any obsolete `MUSE_CHAT_ACCESS_TOKEN` from your secret manager. Its standalone tests can run with Node.js alone:
 
 ```sh
 pnpm --filter @workspace/scripts run muse-preflight-test
@@ -236,14 +240,16 @@ Codespaces port forwarding, the Replit workflow preview, e2b sandboxes) can
 reach it; set `MUSE_BIND_HOST=127.0.0.1` to restrict it to loopback when
 running on a shared machine.
 
-Open `http://localhost:3000` locally. In **GitHub Codespaces**, forward port `3000` and open the forwarded URL at path `/`. Or use the **Muse Chat Preview** workflow in Replit at port `3000` and path `/`. The server is **task-aware** and can use two providers: quick chat turns default to **Groq** (`MUSE_CHAT_LLM_PROVIDER`, credential `GROQ_API_KEY` or the legacy `GROK_API_CODING_KEY`), while research planning, answer synthesis, and long-form writing default to **Gemini** (`MUSE_RESEARCH_LLM_PROVIDER`, credential `GEMINI_API_KEY`, optional `GEMINI_MODEL` default `gemini-3.5-flash`). If the preferred provider's key is missing, that task falls back to the other provider and the startup log says why. `MUSE_LLM_PROVIDER` still pins both tasks to one provider, and `groq`/`openrouter` (`OPENROUTER_API_KEY` + `OPENROUTER_MODEL`)/`agentrouter` (`AGENTROUTER_API_KEY`)/`gemini` are all accepted values. `SESSION_SECRET` is required to sign the browser's HTTP-only session cookie. No `MUSE_CHAT_ACCESS_TOKEN` or access-code entry is required to use the chat page.
+Open `http://localhost:3000` locally. In **GitHub Codespaces**, forward port `3000` and open the forwarded URL at path `/`. Or use the **Muse Chat Preview** workflow in Replit at port `3000` and path `/`. The server is task-aware: chat and research both default to **Groq** (`GROQ_API_KEY` or legacy `GROK_API_CODING_KEY`, model `openai/gpt-oss-120b`), with **Gemini** (`GEMINI_API_KEY`, optional `GEMINI_MODEL` default `gemini-3.5-flash`) as the default fallback. Eligible request failures retry once through the fallback; safety refusals do not. If the primary provider cannot be constructed because its credentials are missing, the alternate provider is selected at startup and the log records the reason. A missing fallback key leaves the primary usable but disables failover. `MUSE_CHAT_LLM_PROVIDER` and `MUSE_RESEARCH_LLM_PROVIDER` override each task's primary; `MUSE_LLM_PROVIDER` pins both tasks to one of `groq`, `openrouter` (`OPENROUTER_API_KEY` + `OPENROUTER_MODEL`), `agentrouter` (`AGENTROUTER_API_KEY`), or `gemini`. `SESSION_SECRET` is required to sign the browser's HTTP-only session cookie. No `MUSE_CHAT_ACCESS_TOKEN` or access-code entry is required to use the chat page.
 
-At startup, the server logs both resolved providers and model identifiers
-(`Muse chat LLM: …` / `Muse research LLM: …`, plus any fallback reason) and then
-probes each one with a minimal request (`Muse LLM probe (…): ok` or a classified
-failure such as `auth error`). HTTP failures include a short, redacted provider
-message, so model/endpoint errors (such as HTTP 404) are distinguishable from
-key or quota issues. Set `MUSE_LLM_STARTUP_PROBE=0` to skip the probe requests.
+At startup, the server logs both primary providers and model identifiers
+(`Muse chat LLM: …` / `Muse research LLM: …`), any configured fallback models,
+and any startup fallback reason. It probes each distinct configured primary
+and runtime fallback directly with a minimal request (`Muse LLM probe (…): ok`
+or a classified failure such as `auth error`). HTTP failures include a short,
+redacted provider message, so model/endpoint errors (such as HTTP 404) are
+distinguishable from key or quota issues. Set `MUSE_LLM_STARTUP_PROBE=0` to skip
+the probe requests.
 Credentials are never logged. A `GROQ_MODEL` override is visible in the startup
 line, including an override that still points to a deprecated model. A separate
 `Muse web search:` line reports whether Gemini Google Search grounding is enabled,
