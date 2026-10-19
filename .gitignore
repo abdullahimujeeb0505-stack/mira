@@ -15,6 +15,10 @@ out-tsc
 /scripts/data/muse-tracked-opportunities.json
 /scripts/data/muse-watch-rules.json
 /scripts/data/muse-sources.json
+/data/muse-*.json
+/data/muse-*/
+/scripts/data/muse-*.json
+/scripts/data/muse-*/
 
 # dependencies
 node_modules

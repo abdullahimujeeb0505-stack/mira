@@ -1,11 +1,14 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  createDefaultSearchBackends,
   DEFAULT_SEARCH_BACKENDS,
   DuckDuckGoHtmlBackend,
   DuckDuckGoLiteBackend,
+  GeminiGoogleSearchBackend,
   parseDuckDuckGoLiteResults,
   parseDuckDuckGoSearchResults,
+  RetryableSearchError,
   SearchBlockedError,
   searchWithBackends,
   type SearchBackend,
@@ -107,6 +110,98 @@ test("DuckDuckGo Lite detects challenges too", () => {
   );
 });
 
+test("Gemini Google Search returns only safe grounded URLs and sends the key in a header", async () => {
+  let requestUrl = "";
+  let requestOptions: RequestInit | undefined;
+  const backend = new GeminiGoogleSearchBackend({
+    apiKey: "test-gemini-key",
+    model: "gemini-3.8-flash",
+    fetchImplementation: async (input, init) => {
+      requestUrl = String(input);
+      requestOptions = init;
+      return new Response(JSON.stringify({
+        candidates: [{
+          groundingMetadata: {
+            groundingChunks: [
+              { web: { uri: "https://developers.example.org/ts", title: "Official docs" } },
+              { web: { uri: "https://developers.example.org/ts", title: "Duplicate" } },
+              { web: { uri: "javascript:alert(1)", title: "Unsafe scheme" } },
+              { web: { uri: "http://127.0.0.1/admin", title: "Private host" } },
+              { web: { uri: "https://news.example.net/version", title: "Release news" } },
+            ],
+          },
+        }],
+      }), { status: 200, headers: { "Content-Type": "application/json" } });
+    },
+  });
+
+  const hits = await backend.search("current TypeScript version");
+  assert.match(requestUrl, /models\/gemini-3\.8-flash:generateContent$/);
+  assert.equal(new Headers(requestOptions?.headers).get("x-goog-api-key"), "test-gemini-key");
+  assert.doesNotMatch(requestUrl, /test-gemini-key/);
+  const body = JSON.parse(String(requestOptions?.body)) as {
+    tools: unknown[];
+    contents: Array<{ parts: Array<{ text: string }> }>;
+  };
+  assert.deepEqual(body.tools, [{ google_search: {} }]);
+  assert.match(body.contents[0]?.parts[0]?.text ?? "", /current TypeScript version/);
+  assert.deepEqual(hits, [
+    { title: "Official docs", url: "https://developers.example.org/ts" },
+    { title: "Release news", url: "https://news.example.net/version" },
+  ]);
+});
+
+test("Gemini grounding is an optional final fallback and can be disabled", () => {
+  const enabled = createDefaultSearchBackends({ GEMINI_API_KEY: "test-gemini-key" });
+  assert.equal(enabled.length, 3);
+  assert.ok(enabled[2] instanceof GeminiGoogleSearchBackend);
+
+  const disabled = createDefaultSearchBackends({
+    GEMINI_API_KEY: "test-gemini-key",
+    MUSE_GEMINI_SEARCH: "0",
+  });
+  assert.equal(disabled.length, 2);
+  assert.equal(createDefaultSearchBackends({}).length, 2);
+});
+
+test("Gemini Google Search includes bounded provider error details and redacts the key", async () => {
+  const secret = "test-gemini-secret-key";
+  const backend = new GeminiGoogleSearchBackend({
+    apiKey: secret,
+    fetchImplementation: async () => new Response(
+      JSON.stringify({ error: { message: `Permission denied for ${secret}.` } }),
+      { status: 401 },
+    ),
+  });
+
+  await assert.rejects(backend.search("query"), (error: unknown) => {
+    assert.ok(error instanceof Error);
+    assert.match(error.message, /HTTP 401/);
+    assert.match(error.message, /Permission denied/);
+    assert.match(error.message, /\[REDACTED\]/);
+    assert.doesNotMatch(error.message, /test-gemini-secret-key/);
+    return true;
+  });
+});
+
+test("Gemini Google Search marks transient provider statuses for retry", async () => {
+  const backend = new GeminiGoogleSearchBackend({
+    apiKey: "test-gemini-key",
+    fetchImplementation: async () => new Response(
+      JSON.stringify({ error: { message: "The service is temporarily unavailable." } }),
+      { status: 503 },
+    ),
+  });
+
+  await assert.rejects(
+    backend.search("query"),
+    (error: unknown) =>
+      error instanceof RetryableSearchError &&
+      /HTTP 503/.test(error.message) &&
+      /temporarily unavailable/.test(error.message),
+  );
+});
+
 test("a backend chain returns hits from the first working backend", async () => {
   const calls: string[] = [];
   const working: SearchBackend = {
@@ -145,7 +240,50 @@ test("a blocked backend falls through to the next one", async () => {
   assert.equal(outcome.hits.length, 1);
   assert.equal(outcome.blocked, true);
   assert.equal(outcome.failures.length, 1);
-  assert.match(outcome.failures[0] ?? "", /blocked the request/);
+  assert.match(outcome.failures[0] ?? "", /blocked access/);
+});
+
+test("a transient search failure retries once before accepting results", async () => {
+  let attempts = 0;
+  const transientThenWorking: SearchBackend = {
+    id: "transient-then-working",
+    label: "Transient then working",
+    async search(): Promise<SearchHit[]> {
+      attempts += 1;
+      if (attempts === 1) throw new RetryableSearchError("HTTP 503");
+      return [{ title: "Recovered result", url: "https://example.org/recovered" }];
+    },
+  };
+
+  const outcome = await searchWithBackends("query", [transientThenWorking]);
+  assert.equal(attempts, 2);
+  assert.equal(outcome.backendId, "transient-then-working");
+  assert.equal(outcome.hits[0]?.title, "Recovered result");
+});
+
+test("a persistent transient error falls through to the next search backend", async () => {
+  let failedAttempts = 0;
+  const unreliable: SearchBackend = {
+    id: "unreliable",
+    label: "Unreliable",
+    async search(): Promise<SearchHit[]> {
+      failedAttempts += 1;
+      throw new RetryableSearchError("HTTP 503");
+    },
+  };
+  const fallback: SearchBackend = {
+    id: "fallback",
+    label: "Fallback",
+    async search(): Promise<SearchHit[]> {
+      return [{ title: "Fallback result", url: "https://example.org/fallback" }];
+    },
+  };
+
+  const outcome = await searchWithBackends("query", [unreliable, fallback]);
+  assert.equal(failedAttempts, 2);
+  assert.equal(outcome.backendId, "fallback");
+  assert.equal(outcome.hits[0]?.title, "Fallback result");
+  assert.match(outcome.failures[0] ?? "", /HTTP 503/);
 });
 
 test("an all-blocked chain reports block, not empty success", async () => {

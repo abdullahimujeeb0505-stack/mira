@@ -20,6 +20,64 @@ test("reports readiness for Groq without exposing configured values", () => {
   assert.doesNotMatch(output, /configured-session-secret|configured-provider-key/);
 });
 
+test("task-aware defaults validate separate Groq chat and Gemini research providers", () => {
+  const report = inspectMuseReadiness(
+    {
+      ...validEnv,
+      GEMINI_API_KEY: "configured-gemini-key",
+    },
+    true,
+  );
+
+  assert.equal(report.ready, true);
+  assert.ok(report.checks.some(({ name, ready }) => name === "chat LLM provider (groq)" && ready));
+  assert.ok(report.checks.some(({ name, ready }) => name === "research LLM provider (gemini)" && ready));
+  assert.deepEqual(report.warnings, []);
+});
+
+test("task-aware preflight reports a usable runtime fallback instead of a false block", () => {
+  const report = inspectMuseReadiness(validEnv, true);
+  const output = formatMuseReadiness(report);
+
+  assert.equal(report.ready, true);
+  assert.match(output, /WARNING: The research task will fall back from gemini to groq/);
+  assert.match(output, /Gemini Google Search grounding is unavailable without GEMINI_API_KEY/);
+});
+
+test("task-specific provider overrides are checked independently", () => {
+  const report = inspectMuseReadiness(
+    {
+      ...validEnv,
+      MUSE_CHAT_LLM_PROVIDER: "agentrouter",
+      MUSE_RESEARCH_LLM_PROVIDER: "gemini",
+      AGENTROUTER_API_KEY: "configured-agentrouter-key",
+      GEMINI_API_KEY: "configured-gemini-key",
+    },
+    true,
+  );
+
+  assert.equal(report.ready, true);
+  assert.ok(report.checks.some(({ name, ready }) => name === "AGENTROUTER_API_KEY" && ready));
+  assert.ok(report.checks.some(({ name, ready }) => name === "GEMINI_API_KEY" && ready));
+  assert.ok(!report.checks.some(({ name }) => name.includes("GROQ")));
+});
+
+test("preflight blocks when neither task provider nor its configured fallback is usable", () => {
+  const report = inspectMuseReadiness(
+    {
+      ...validEnv,
+      GROQ_API_KEY: "",
+      GROK_API_CODING_KEY: "",
+      GEMINI_API_KEY: "",
+    },
+    true,
+  );
+
+  assert.equal(report.ready, false);
+  assert.ok(report.checks.some(({ name, ready }) => name === "chat LLM provider (groq)" && !ready));
+  assert.ok(report.checks.some(({ name, ready }) => name === "research LLM provider (gemini)" && !ready));
+});
+
 test("prefers the canonical Groq credential when both variables are available", () => {
   const report = inspectMuseReadiness(
     {

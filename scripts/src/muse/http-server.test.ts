@@ -17,13 +17,13 @@ const testAccessToken =
 async function withServer(
   providerFactory: () => TextGenerationProvider,
   run: (baseUrl: string, memoryDirectory: string) => Promise<void>,
-  accessToken: string | null = testAccessToken,
+  accessToken: string = testAccessToken,
   sharedMemoryPath?: string,
 ): Promise<void> {
   const memoryDirectory = await mkdtemp(join(tmpdir(), "muse-http-test-"));
   const server = createMuseHttpServer({
     sessionSecret: testSessionSecret,
-    accessToken: accessToken ?? "",
+    accessToken,
     memoryDirectory,
     ...(sharedMemoryPath ? { sharedMemoryPath } : {}),
     providerFactory,
@@ -141,7 +141,9 @@ test("Muse serves the chat page with same-origin security headers", async () =>
       assert.equal(response.headers.get("cache-control"), "no-store");
       assert.equal(response.headers.get("x-content-type-options"), "nosniff");
       assert.equal(response.headers.get("content-security-policy")?.includes("connect-src 'self'"), true);
-      assert.match(html, /access-code/);
+      assert.match(html, /id="access-code"[^>]*type="password"/);
+      assert.match(html, /"Authorization": "Bearer " \+ token/);
+      assert.doesNotMatch(html, /localStorage|sessionStorage/);
     },
   ));
 
@@ -232,6 +234,7 @@ test("a duplicate browser submit while a follow-up is pending sends and renders 
       const elements = new Map<string, FakeElement>([
         ["#chat-form", fakeElement("form")],
         ["#message", fakeElement("textarea")],
+        ["#access-code", fakeElement("input")],
         ["#send", fakeElement("button")],
         ["#messages", fakeElement("section")],
         ["#status", fakeElement("p")],
@@ -250,11 +253,13 @@ test("a duplicate browser submit while a follow-up is pending sends and renders 
         json(): Promise<{ reply: string }>;
       }) => void) | undefined;
       let fetchCalls = 0;
+      let authorizationHeader: string | undefined;
       const sandbox = {
         document,
         URL,
-        fetch: () => {
+        fetch: (_url: string, options?: { headers?: Record<string, string> }) => {
           fetchCalls += 1;
+          authorizationHeader = options?.headers?.Authorization;
           return new Promise<{
             ok: boolean;
             json(): Promise<{ reply: string }>;
@@ -267,14 +272,22 @@ test("a duplicate browser submit while a follow-up is pending sends and renders 
 
       const form = elements.get("#chat-form");
       const input = elements.get("#message");
+      const accessCode = elements.get("#access-code");
       const messages = elements.get("#messages");
+      const status = elements.get("#status");
       const submit = form?.listeners.submit;
-      assert.ok(input && messages && submit);
+      assert.ok(input && accessCode && messages && status && submit);
       input.value = "Why?";
+      await submit({ preventDefault() {} });
+      assert.equal(fetchCalls, 0);
+      assert.match(status.textContent, /enter the chat access code/i);
+      assert.equal(messages.children.length, 0);
 
+      accessCode.value = testAccessToken;
       const firstSubmit = submit({ preventDefault() {} });
       await submit({ preventDefault() {} });
       assert.equal(fetchCalls, 1);
+      assert.equal(authorizationHeader, `Bearer ${testAccessToken}`);
       assert.equal(messages.children.length, 1);
 
       resolveFetch?.({
@@ -288,25 +301,47 @@ test("a duplicate browser submit while a follow-up is pending sends and renders 
     },
   ));
 
-test("Muse chat works locally without an access code", async () => {
+test("chat rejects missing and invalid access codes before creating a session", async () => {
   let providerCreations = 0;
   const providerFactory = () => {
     providerCreations += 1;
     return { generateText: async () => "authorized reply" };
   };
 
-  await withServer(
-    providerFactory,
-    async (baseUrl) => {
-      const response = await sendMessage(baseUrl, "Hello Muse", undefined, null);
-      assert.equal(response.status, 200);
-      const body = (await response.json()) as { reply: string };
-      assert.equal(body.reply, "authorized reply");
-    },
-    null,
-  );
+  await withServer(providerFactory, async (baseUrl) => {
+    const missingToken = await sendMessage(baseUrl, "Hello Muse", undefined, null);
+    assert.equal(missingToken.status, 401);
+    assert.equal(missingToken.headers.get("www-authenticate"), "Bearer");
 
-  assert.equal(providerCreations, 1);
+    const malformedWithoutToken = await fetch(`${baseUrl}/api/chat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: "not-json",
+    });
+    assert.equal(malformedWithoutToken.status, 401);
+
+    const invalidToken = await sendMessage(baseUrl, "Hello Muse", undefined, "wrong-token");
+    assert.equal(invalidToken.status, 401);
+    assert.equal(providerCreations, 0);
+
+    const authorized = await sendMessage(baseUrl, "Hello Muse");
+    assert.equal(authorized.status, 200);
+    assert.deepEqual(await authorized.json(), { reply: "authorized reply" });
+    assert.equal(providerCreations, 1);
+  });
+});
+
+test("server fails closed when the chat access token is missing or too short", () => {
+  for (const accessToken of ["", "short"]) {
+    assert.throws(
+      () => createMuseHttpServer({
+        sessionSecret: testSessionSecret,
+        accessToken,
+        providerFactory: () => ({ generateText: async () => "unused" }),
+      }),
+      /MUSE_CHAT_ACCESS_TOKEN must be at least 32 UTF-8 bytes/,
+    );
+  }
 });
 
 test("Muse keeps conversation histories isolated by signed browser session", async () => {

@@ -85,6 +85,9 @@ test("Muse identifies itself as a research agent without delegating identity to 
       assert.match(answer, /My purpose is to help you understand topics/);
       assert.doesNotMatch(answer, /ChatGPT|OpenAI/);
     }
+    const creatorAnswer = await agent.respond("Who created you, my guy?");
+    assert.match(creatorAnswer, /I don't have a verified creator credit/);
+    assert.doesNotMatch(creatorAnswer, /ChatGPT|OpenAI/);
     assert.equal(modelCalls, modelCallsAfterGreeting);
     assert.equal(researchCalls, 0);
   } finally {
