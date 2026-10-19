@@ -5,7 +5,6 @@ import {
   DEFAULT_SEARCH_BACKENDS,
   DuckDuckGoHtmlBackend,
   DuckDuckGoLiteBackend,
-  GeminiGoogleSearchBackend,
   parseDuckDuckGoLiteResults,
   parseDuckDuckGoSearchResults,
   RetryableSearchError,
@@ -110,96 +109,13 @@ test("DuckDuckGo Lite detects challenges too", () => {
   );
 });
 
-test("Gemini Google Search returns only safe grounded URLs and sends the key in a header", async () => {
-  let requestUrl = "";
-  let requestOptions: RequestInit | undefined;
-  const backend = new GeminiGoogleSearchBackend({
-    apiKey: "test-gemini-key",
-    model: "gemini-3.5-flash",
-    fetchImplementation: async (input, init) => {
-      requestUrl = String(input);
-      requestOptions = init;
-      return new Response(JSON.stringify({
-        candidates: [{
-          groundingMetadata: {
-            groundingChunks: [
-              { web: { uri: "https://developers.example.org/ts", title: "Official docs" } },
-              { web: { uri: "https://developers.example.org/ts", title: "Duplicate" } },
-              { web: { uri: "javascript:alert(1)", title: "Unsafe scheme" } },
-              { web: { uri: "http://127.0.0.1/admin", title: "Private host" } },
-              { web: { uri: "https://news.example.net/version", title: "Release news" } },
-            ],
-          },
-        }],
-      }), { status: 200, headers: { "Content-Type": "application/json" } });
-    },
-  });
-
-  const hits = await backend.search("current TypeScript version");
-  assert.match(requestUrl, /models\/gemini-3\.5-flash:generateContent$/);
-  assert.equal(new Headers(requestOptions?.headers).get("x-goog-api-key"), "test-gemini-key");
-  assert.doesNotMatch(requestUrl, /test-gemini-key/);
-  const body = JSON.parse(String(requestOptions?.body)) as {
-    tools: unknown[];
-    contents: Array<{ parts: Array<{ text: string }> }>;
-  };
-  assert.deepEqual(body.tools, [{ google_search: {} }]);
-  assert.match(body.contents[0]?.parts[0]?.text ?? "", /current TypeScript version/);
-  assert.deepEqual(hits, [
-    { title: "Official docs", url: "https://developers.example.org/ts" },
-    { title: "Release news", url: "https://news.example.net/version" },
-  ]);
-});
-
-test("Gemini grounding is an optional final fallback and can be disabled", () => {
-  const enabled = createDefaultSearchBackends({ GEMINI_API_KEY: "test-gemini-key" });
-  assert.equal(enabled.length, 3);
-  assert.ok(enabled[2] instanceof GeminiGoogleSearchBackend);
-
-  const disabled = createDefaultSearchBackends({
-    GEMINI_API_KEY: "test-gemini-key",
-    MUSE_GEMINI_SEARCH: "0",
-  });
-  assert.equal(disabled.length, 2);
-  assert.equal(createDefaultSearchBackends({}).length, 2);
-});
-
-test("Gemini Google Search includes bounded provider error details and redacts the key", async () => {
-  const secret = "test-gemini-secret-key";
-  const backend = new GeminiGoogleSearchBackend({
-    apiKey: secret,
-    fetchImplementation: async () => new Response(
-      JSON.stringify({ error: { message: `Permission denied for ${secret}.` } }),
-      { status: 401 },
-    ),
-  });
-
-  await assert.rejects(backend.search("query"), (error: unknown) => {
-    assert.ok(error instanceof Error);
-    assert.match(error.message, /HTTP 401/);
-    assert.match(error.message, /Permission denied/);
-    assert.match(error.message, /\[REDACTED\]/);
-    assert.doesNotMatch(error.message, /test-gemini-secret-key/);
-    return true;
-  });
-});
-
-test("Gemini Google Search marks transient provider statuses for retry", async () => {
-  const backend = new GeminiGoogleSearchBackend({
-    apiKey: "test-gemini-key",
-    fetchImplementation: async () => new Response(
-      JSON.stringify({ error: { message: "The service is temporarily unavailable." } }),
-      { status: 503 },
-    ),
-  });
-
-  await assert.rejects(
-    backend.search("query"),
-    (error: unknown) =>
-      error instanceof RetryableSearchError &&
-      /HTTP 503/.test(error.message) &&
-      /temporarily unavailable/.test(error.message),
+test("default search uses only DuckDuckGo HTML and Lite", () => {
+  const defaults = createDefaultSearchBackends();
+  assert.deepEqual(
+    defaults.map(({ id }) => id),
+    ["duckduckgo-html", "duckduckgo-lite"],
   );
+  assert.equal(defaults, DEFAULT_SEARCH_BACKENDS);
 });
 
 test("a backend chain returns hits from the first working backend", async () => {

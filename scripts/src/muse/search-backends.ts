@@ -55,30 +55,10 @@ export type SearchHit = {
 
 const REQUEST_TIMEOUT_MS = 15_000;
 const SEARCH_RESPONSE_LIMIT = 1_000_000;
-const GEMINI_SEARCH_RESPONSE_LIMIT = 2_000_000;
-const GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta";
-const DEFAULT_GEMINI_SEARCH_MODEL = "gemini-3.5-flash";
-const DEFAULT_GEMINI_SEARCH_TIMEOUT_MS = 30_000;
 const MAX_HITS_PER_QUERY = 8;
 const USER_AGENT = "Mozilla/5.0 (compatible; MuseResearch/1.0)";
 
 const TRANSIENT_HTTP_STATUSES = new Set([408, 425, 429, 500, 502, 503, 504]);
-
-async function readProviderErrorDetail(
-  response: Response,
-  secret: string,
-): Promise<string> {
-  try {
-    const body = await readBoundedText(response, 4_096);
-    return body
-      .replaceAll(secret, "[REDACTED]")
-      .replace(/\s+/g, " ")
-      .trim()
-      .slice(0, 280);
-  } catch {
-    return "";
-  }
-}
 
 /**
  * Challenge markers seen across DuckDuckGo's endpoints. Matched against the
@@ -322,140 +302,14 @@ export class DuckDuckGoLiteBackend implements SearchBackend {
   }
 }
 
-export interface GeminiGoogleSearchBackendOptions {
-  apiKey?: string;
-  model?: string;
-  fetchImplementation?: typeof fetch;
-  timeoutMs?: number;
-}
-
-/**
- * Uses Gemini's Google Search grounding tool to return real web URLs. This is a
- * fallback after the unauthenticated DuckDuckGo endpoints; the research pipeline
- * still fetches and validates every returned page itself before citing it.
- */
-export class GeminiGoogleSearchBackend implements SearchBackend {
-  readonly id = "gemini-google-search";
-  readonly label = "Gemini Google Search";
-  private readonly apiKey: string;
-  private readonly model: string;
-  private readonly fetchImplementation: typeof fetch;
-  private readonly timeoutMs: number;
-
-  constructor(options: GeminiGoogleSearchBackendOptions = {}) {
-    const apiKey = options.apiKey?.trim() ?? process.env.GEMINI_API_KEY?.trim() ?? "";
-    if (!apiKey) throw new Error("Missing GEMINI_API_KEY for Google Search grounding.");
-    this.apiKey = apiKey;
-    this.model =
-      options.model?.trim() ||
-      process.env.GEMINI_MODEL?.trim() ||
-      DEFAULT_GEMINI_SEARCH_MODEL;
-    this.fetchImplementation = options.fetchImplementation ?? fetch;
-    this.timeoutMs = options.timeoutMs ?? DEFAULT_GEMINI_SEARCH_TIMEOUT_MS;
-  }
-
-  async search(query: string): Promise<SearchHit[]> {
-    const endpoint =
-      `${GEMINI_API_BASE}/models/${encodeURIComponent(this.model)}:generateContent`;
-    let response: Response;
-    try {
-      response = await this.fetchImplementation(endpoint, {
-        method: "POST",
-        headers: {
-          "x-goog-api-key": this.apiKey,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          contents: [{
-            role: "user",
-            parts: [{
-              text:
-                "Use Google Search to find public web pages relevant to this research query. " +
-                "Return search-grounded results; do not invent URLs. Query: " +
-                query.trim(),
-            }],
-          }],
-          tools: [{ google_search: {} }],
-        }),
-        signal: AbortSignal.timeout(this.timeoutMs),
-      });
-    } catch (error) {
-      if (error instanceof Error && (error.name === "TimeoutError" || error.name === "AbortError")) {
-        throw new RetryableSearchError(
-          `Gemini Google Search timed out after ${this.timeoutMs} ms.`,
-        );
-      }
-      const detail = error instanceof Error
-        ? error.message.replaceAll(this.apiKey, "[REDACTED]")
-        : "unknown network error";
-      throw new Error(`Gemini Google Search request failed: ${detail}`);
-    }
-
-    if (!response.ok) {
-      const detail = await readProviderErrorDetail(response, this.apiKey);
-      const suffix = detail ? ` Provider detail: ${detail}` : "";
-      if (TRANSIENT_HTTP_STATUSES.has(response.status)) {
-        throw new RetryableSearchError(
-          `Gemini Google Search returned transient HTTP ${response.status}.${suffix}`,
-        );
-      }
-      throw new Error(
-        `Gemini Google Search returned HTTP ${response.status}.${suffix}`,
-      );
-    }
-
-    let payload: unknown;
-    try {
-      payload = JSON.parse(
-        await readBoundedText(response, GEMINI_SEARCH_RESPONSE_LIMIT),
-      ) as unknown;
-    } catch {
-      throw new Error("Gemini Google Search returned malformed or oversized JSON.");
-    }
-
-    if (!isRecord(payload) || !Array.isArray(payload.candidates)) return [];
-    const hits: SearchHit[] = [];
-    for (const candidate of payload.candidates) {
-      if (!isRecord(candidate) || !isRecord(candidate.groundingMetadata)) continue;
-      const chunks = candidate.groundingMetadata.groundingChunks;
-      if (!Array.isArray(chunks)) continue;
-      for (const chunk of chunks) {
-        if (!isRecord(chunk) || !isRecord(chunk.web)) continue;
-        const rawUrl = typeof chunk.web.uri === "string" ? chunk.web.uri : "";
-        const url = safeHttpUrl(rawUrl);
-        if (!url) continue;
-        let hostname = "";
-        try {
-          hostname = new URL(url).hostname;
-        } catch {
-          continue;
-        }
-        const title = typeof chunk.web.title === "string" && chunk.web.title.trim()
-          ? chunk.web.title.trim()
-          : hostname;
-        pushHit(hits, title, url);
-        if (hits.length >= MAX_HITS_PER_QUERY) return hits;
-      }
-    }
-    return hits;
-  }
-}
-
 export const DEFAULT_SEARCH_BACKENDS: readonly SearchBackend[] = [
   new DuckDuckGoHtmlBackend(),
   new DuckDuckGoLiteBackend(),
 ];
 
-/** Add the existing Gemini key as a final search fallback without requiring a
- *  second search credential. It can be disabled with MUSE_GEMINI_SEARCH=0. */
-export function createDefaultSearchBackends(
-  env: Record<string, string | undefined> = process.env,
-): readonly SearchBackend[] {
-  const groundedSearchEnabled = (env.MUSE_GEMINI_SEARCH ?? "1").trim() !== "0";
-  const geminiKey = env.GEMINI_API_KEY?.trim();
-  return groundedSearchEnabled && geminiKey
-    ? [...DEFAULT_SEARCH_BACKENDS, new GeminiGoogleSearchBackend({ apiKey: geminiKey })]
-    : DEFAULT_SEARCH_BACKENDS;
+/** Returns the public DuckDuckGo backends used for default research. */
+export function createDefaultSearchBackends(): readonly SearchBackend[] {
+  return DEFAULT_SEARCH_BACKENDS;
 }
 
 export interface SearchBackendOutcome {
@@ -520,8 +374,4 @@ export async function searchWithBackends(
   }
 
   return { hits: [], backendId: null, failures, blocked };
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null;
 }

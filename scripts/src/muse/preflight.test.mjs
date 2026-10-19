@@ -7,7 +7,7 @@ const validEnv = {
   GROK_API_CODING_KEY: "configured-provider-key",
 };
 
-test("reports readiness for Groq without exposing configured values", () => {
+test("reports Groq readiness without exposing configured values", () => {
   const report = inspectMuseReadiness(validEnv, true);
   const output = formatMuseReadiness(report);
 
@@ -20,14 +20,15 @@ test("reports readiness for Groq without exposing configured values", () => {
   );
 });
 
-test("defaults both tasks to Groq and checks a configured Gemini runtime fallback", () => {
+test("defaults chat and research to Groq with no secondary provider", () => {
   const report = inspectMuseReadiness(
     {
       ...validEnv,
-      GEMINI_API_KEY: "configured-gemini-key",
+      GEMINI_API_KEY: "obsolete-gemini-key",
     },
     true,
   );
+  const output = formatMuseReadiness(report);
 
   assert.equal(report.ready, true);
   assert.ok(
@@ -40,93 +41,67 @@ test("defaults both tasks to Groq and checks a configured Gemini runtime fallbac
       ({ name, ready }) => name === "research LLM provider (groq)" && ready,
     ),
   );
-  assert.ok(
-    report.checks.some(
-      ({ name, ready }) => name === "chat LLM fallback (gemini)" && ready,
-    ),
-  );
-  assert.ok(
-    report.checks.some(
-      ({ name, ready }) => name === "research LLM fallback (gemini)" && ready,
-    ),
-  );
-  assert.deepEqual(report.warnings, []);
+  assert.ok(!report.checks.some(({ name }) => name === "GEMINI_API_KEY"));
+  assert.match(output, /chat task has no secondary provider configured/);
+  assert.match(output, /research task has no secondary provider configured/);
 });
 
-test("Groq remains ready without Gemini but preflight reports missing runtime fallback", () => {
-  const report = inspectMuseReadiness(validEnv, true);
-  const output = formatMuseReadiness(report);
-
-  assert.equal(report.ready, true);
-  assert.match(
-    output,
-    /WARNING: The chat task has no configured gemini runtime fallback/,
-  );
-  assert.match(
-    output,
-    /WARNING: The research task has no configured gemini runtime fallback/,
-  );
-  assert.match(
-    output,
-    /Gemini Google Search grounding is unavailable without GEMINI_API_KEY/,
-  );
-});
-
-test("task-specific provider overrides remain primary and keep independent fallbacks", () => {
+test("distinct task providers are available as each other's fallback", () => {
   const report = inspectMuseReadiness(
     {
       ...validEnv,
       MUSE_CHAT_LLM_PROVIDER: "agentrouter",
-      MUSE_RESEARCH_LLM_PROVIDER: "gemini",
+      MUSE_RESEARCH_LLM_PROVIDER: "openrouter",
       AGENTROUTER_API_KEY: "configured-agentrouter-key",
-      GEMINI_API_KEY: "configured-gemini-key",
+      OPENROUTER_API_KEY: "configured-openrouter-key",
+      OPENROUTER_MODEL: "test/model",
     },
     true,
   );
 
   assert.equal(report.ready, true);
-  assert.ok(
-    report.checks.some(
-      ({ name, ready }) => name === "chat LLM provider (agentrouter)" && ready,
-    ),
+  for (const name of [
+    "chat LLM provider (agentrouter)",
+    "chat LLM fallback (openrouter)",
+    "research LLM provider (openrouter)",
+    "research LLM fallback (agentrouter)",
+  ]) {
+    assert.ok(report.checks.some((check) => check.name === name && check.ready), name);
+  }
+  assert.deepEqual(report.warnings, []);
+});
+
+test("uses Groq at startup when an OpenRouter primary cannot be constructed", () => {
+  const report = inspectMuseReadiness(
+    {
+      ...validEnv,
+      MUSE_LLM_PROVIDER: "openrouter",
+      OPENROUTER_API_KEY: "configured-openrouter-key",
+      OPENROUTER_MODEL: "",
+    },
+    true,
+  );
+  const output = formatMuseReadiness(report);
+
+  assert.equal(report.ready, true);
+  assert.match(
+    output,
+    /chat task will use groq because the configured primary openrouter is unavailable/,
   );
   assert.ok(
     report.checks.some(
-      ({ name, ready }) => name === "research LLM provider (gemini)" && ready,
-    ),
-  );
-  assert.ok(
-    report.checks.some(
-      ({ name, ready }) => name === "chat LLM fallback (gemini)" && ready,
-    ),
-  );
-  assert.ok(
-    report.checks.some(
-      ({ name, ready }) => name === "research LLM fallback (groq)" && ready,
-    ),
-  );
-  assert.ok(
-    report.checks.some(
-      ({ name, ready }) => name === "AGENTROUTER_API_KEY" && ready,
-    ),
-  );
-  assert.ok(
-    report.checks.some(({ name, ready }) => name === "GEMINI_API_KEY" && ready),
-  );
-  assert.ok(
-    report.checks.some(
-      ({ name, ready }) => name === "GROK_API_CODING_KEY" && ready,
+      ({ name, ready }) => name === "chat LLM provider (groq)" && ready,
     ),
   );
 });
 
-test("preflight blocks when neither Groq primary nor Gemini fallback is configured", () => {
+test("a leftover Gemini key cannot substitute for missing Groq credentials", () => {
   const report = inspectMuseReadiness(
     {
       ...validEnv,
       GROQ_API_KEY: "",
       GROK_API_CODING_KEY: "",
-      GEMINI_API_KEY: "",
+      GEMINI_API_KEY: "obsolete-gemini-key",
     },
     true,
   );
@@ -142,11 +117,7 @@ test("preflight blocks when neither Groq primary nor Gemini fallback is configur
       ({ name, ready }) => name === "research LLM provider (groq)" && !ready,
     ),
   );
-  assert.ok(
-    report.checks.some(
-      ({ name, ready }) => name === "GEMINI_API_KEY" && !ready,
-    ),
-  );
+  assert.ok(!report.checks.some(({ name }) => name === "GEMINI_API_KEY"));
 });
 
 test("prefers the canonical Groq credential when both variables are available", () => {
@@ -164,7 +135,7 @@ test("prefers the canonical Groq credential when both variables are available", 
   );
 });
 
-test("selects AgentRouter's key without requiring the Groq key", () => {
+test("selects AgentRouter without requiring Groq credentials", () => {
   const report = inspectMuseReadiness(
     {
       ...validEnv,
@@ -184,64 +155,7 @@ test("selects AgentRouter's key without requiring the Groq key", () => {
   assert.ok(!report.checks.some(({ name }) => name === "GROK_API_CODING_KEY"));
 });
 
-test("selects Gemini's key without requiring Groq credentials", () => {
-  const report = inspectMuseReadiness(
-    {
-      ...validEnv,
-      MUSE_LLM_PROVIDER: "gemini",
-      GEMINI_API_KEY: "configured-gemini-key",
-      GROQ_API_KEY: "",
-      GROK_API_CODING_KEY: "",
-    },
-    true,
-  );
-
-  assert.equal(report.ready, true);
-  assert.ok(
-    report.checks.some(({ name, ready }) => name === "GEMINI_API_KEY" && ready),
-  );
-  assert.ok(!report.checks.some(({ name }) => name === "GROK_API_CODING_KEY"));
-});
-
-test("uses the Groq fallback when the explicit Gemini primary is not configured", () => {
-  const report = inspectMuseReadiness(
-    {
-      ...validEnv,
-      MUSE_LLM_PROVIDER: "gemini",
-      GEMINI_API_KEY: "",
-    },
-    true,
-  );
-  const output = formatMuseReadiness(report);
-
-  assert.equal(report.ready, true);
-  assert.match(
-    output,
-    /WARNING: The chat task will use groq because the configured primary gemini is unavailable/,
-  );
-  assert.ok(
-    report.checks.some(
-      ({ name, ready }) => name === "chat LLM provider (groq)" && ready,
-    ),
-  );
-});
-
-test("uses Groq when the provider setting is blank, matching server selection", () => {
-  const report = inspectMuseReadiness(
-    { ...validEnv, MUSE_LLM_PROVIDER: "  " },
-    true,
-  );
-
-  assert.equal(report.ready, true);
-  assert.ok(
-    report.checks.some(
-      ({ name, ready }) => name === "GROK_API_CODING_KEY" && ready,
-    ),
-  );
-  assert.ok(!report.checks.some(({ name }) => name === "MUSE_LLM_PROVIDER"));
-});
-
-test("blocks an unconfigured OpenRouter primary when its Groq fallback is unavailable", () => {
+test("blocks an OpenRouter provider without its required model or usable Groq alternate", () => {
   const report = inspectMuseReadiness(
     {
       ...validEnv,
@@ -273,7 +187,22 @@ test("blocks an unconfigured OpenRouter primary when its Groq fallback is unavai
   );
 });
 
-test("reports missing secrets and unavailable tsx by name without printing values", () => {
+test("uses Groq when the provider setting is blank", () => {
+  const report = inspectMuseReadiness(
+    { ...validEnv, MUSE_LLM_PROVIDER: "  " },
+    true,
+  );
+
+  assert.equal(report.ready, true);
+  assert.ok(
+    report.checks.some(
+      ({ name, ready }) => name === "GROK_API_CODING_KEY" && ready,
+    ),
+  );
+  assert.ok(!report.checks.some(({ name }) => name === "MUSE_LLM_PROVIDER"));
+});
+
+test("reports missing secrets and unavailable tsx without printing values", () => {
   const report = inspectMuseReadiness(
     {
       SESSION_SECRET: "",
@@ -289,8 +218,12 @@ test("reports missing secrets and unavailable tsx by name without printing value
   assert.match(output, /BLOCKED: tsx/);
 });
 
-test("rejects unsupported provider names without echoing the configured value", () => {
-  const report = inspectMuseReadiness(
+test("rejects removed Gemini and other unsupported provider names", () => {
+  const removedProviderReport = inspectMuseReadiness(
+    { ...validEnv, MUSE_LLM_PROVIDER: "gemini" },
+    true,
+  );
+  const arbitraryProviderReport = inspectMuseReadiness(
     { ...validEnv, MUSE_LLM_PROVIDER: "private-provider-value" },
     true,
   );
@@ -303,10 +236,14 @@ test("rejects unsupported provider names without echoing the configured value", 
     },
     true,
   );
-  const output = `${formatMuseReadiness(report)}\n${formatMuseReadiness(taskOverrideReport)}`;
+  const output = [removedProviderReport, arbitraryProviderReport, taskOverrideReport]
+    .map(formatMuseReadiness)
+    .join("\n");
 
-  assert.equal(report.ready, false);
+  assert.equal(removedProviderReport.ready, false);
+  assert.equal(arbitraryProviderReport.ready, false);
   assert.equal(taskOverrideReport.ready, false);
   assert.match(output, /BLOCKED: MUSE_LLM_PROVIDER/);
+  assert.match(output, /BLOCKED: MUSE_RESEARCH_LLM_PROVIDER/);
   assert.doesNotMatch(output, /private-provider-value/);
 });
