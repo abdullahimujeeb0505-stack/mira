@@ -109,6 +109,7 @@ test("research service returns synthesized evidence, retrieval counts, and archi
   });
   assert.equal(requests.length, 2);
   assert.deepEqual(searchQueries, ["example subject"]);
+  assert.match(requests[1]?.systemPrompt ?? "", /You are Mira, Muse's rigorous research analyst/);
   assert.match(requests[1]?.systemPrompt ?? "", /Never use Markdown tables/);
   assert.match(requests[1]?.systemPrompt ?? "", /followUpQuestions/);
   assert.match(requests[1]?.systemPrompt ?? "", /Honor the user's requested format exactly/);

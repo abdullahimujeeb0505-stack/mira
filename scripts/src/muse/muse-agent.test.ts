@@ -47,7 +47,7 @@ const researchResult: ResearchResult = {
   },
 };
 
-test("Muse identifies itself as a conversational assistant without delegating identity to the model", async () => {
+test("Mira identifies as Muse's assistant without delegating identity to the model", async () => {
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-identity-"));
   let modelCalls = 0;
   let researchCalls = 0;
@@ -81,8 +81,9 @@ test("Muse identifies itself as a conversational assistant without delegating id
       "How can you help me?",
     ]) {
       const answer = await agent.respond(question);
-      assert.match(answer, /I'm Muse, a general-purpose conversational assistant/);
+      assert.match(answer, /I'm Mira, Muse's general-purpose conversational assistant/);
       assert.match(answer, /chat, brainstorm, explain things/);
+      assert.doesNotMatch(answer, /I'm Muse/);
       assert.doesNotMatch(answer, /ChatGPT|OpenAI/);
     }
     const creatorAnswer = await agent.respond("Who created you, my guy?");
@@ -145,7 +146,10 @@ test("Muse handles opinions and brainstorming through natural chat, not web rese
     {
       async generateText(request) {
         modelCalls += 1;
-        assert.match(request.systemPrompt, /general-purpose conversational assistant/);
+        assert.match(
+          request.systemPrompt,
+          /You are Mira, Muse's helpful general-purpose conversational assistant/,
+        );
         return modelCalls === 1
           ? "I think a simple, welcoming design is the strongest option."
           : "Let's start by listing the audience, then generate a few name styles.";
@@ -555,7 +559,10 @@ test("multi-turn chat keeps roles and routes simple follow-ups separately from e
       requests[1]?.conversation.map(({ role }) => role),
       ["user", "assistant", "user"],
     );
-    assert.match(requests[1]?.systemPrompt ?? "", /general-purpose conversational assistant/);
+    assert.match(
+      requests[1]?.systemPrompt ?? "",
+      /You are Mira, Muse's helpful general-purpose conversational assistant/,
+    );
     assert.match(requests[1]?.systemPrompt ?? "", /answer follow-ups directly/);
     assert.match(requests[1]?.systemPrompt ?? "", /never use tables/i);
     assert.match(requests[1]?.systemPrompt ?? "", /Question: What is TypeScript\?/);

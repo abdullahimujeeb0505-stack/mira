@@ -115,6 +115,10 @@ test("Muse serves the chat page with same-origin security headers", async () =>
       const script = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
       assert.ok(script);
       assert.doesNotThrow(() => new Script(script));
+      assert.match(html, /Mira — conversational assistant by Muse/);
+      assert.match(html, /Mira · by Muse/);
+      assert.match(html, /Hi, I’m Mira, Muse’s assistant/);
+      assert.match(html, /Message to Mira/);
       assert.match(html, /What would you like to talk about\?/);
       assert.match(html, /chat, brainstorm, ask a question, or request web research/i);
       assert.doesNotMatch(html, /Connect X|Web3 intern|authorizationUrl/i);

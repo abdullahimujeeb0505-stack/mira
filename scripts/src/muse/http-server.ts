@@ -33,7 +33,7 @@ const CHAT_PAGE = `<!doctype html>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#10131b">
-    <title>Muse — conversational assistant</title>
+    <title>Mira — conversational assistant by Muse</title>
     <style>
       :root { color-scheme: dark; font-family: Inter, ui-sans-serif, system-ui, sans-serif; background: #10131b; color: #f4f5f7; }
       * { box-sizing: border-box; }
@@ -68,14 +68,14 @@ const CHAT_PAGE = `<!doctype html>
   </head>
   <body>
     <main>
-      <div class="eyebrow">Muse · assistant</div>
+      <div class="eyebrow">Mira · by Muse</div>
       <h1>What would you like to talk about?</h1>
       <p class="intro">Chat, brainstorm, ask a question, or request web research with sources.</p>
       <section id="messages" aria-live="polite" aria-label="Conversation">
-        <div class="message muse">Hi, I’m Muse. What would you like to work through?</div>
+        <div class="message muse">Hi, I’m Mira, Muse’s assistant. What would you like to work through?</div>
       </section>
       <form id="chat-form">
-        <label for="message" class="visually-hidden">Message to Muse</label>
+        <label for="message" class="visually-hidden">Message to Mira</label>
         <textarea id="message" name="message" maxlength="4000" placeholder="Write a message…" required></textarea>
         <button id="send" type="submit">Send</button>
       </form>
@@ -295,7 +295,7 @@ const CHAT_PAGE = `<!doctype html>
         addMessage("you", message);
         input.value = "";
         button.disabled = true;
-        status.textContent = "Muse is thinking…";
+        status.textContent = "Mira is thinking…";
         try {
           const response = await fetch("/api/chat", {
             method: "POST",
@@ -305,11 +305,11 @@ const CHAT_PAGE = `<!doctype html>
             body: JSON.stringify({ message })
           });
           const result = await response.json();
-          if (!response.ok) throw new Error(result.error || "Muse could not reply.");
+          if (!response.ok) throw new Error(result.error || "Mira could not reply.");
           addMessage("muse", result.reply);
           status.textContent = "";
         } catch (error) {
-          status.textContent = error instanceof Error ? error.message : "Muse could not reply.";
+          status.textContent = error instanceof Error ? error.message : "Mira could not reply.";
         } finally {
           button.disabled = false;
           input.focus();
@@ -472,7 +472,7 @@ export function createMuseHttpServer(
     } catch (error) {
       console.error("Muse generation failed:", error);
       sendJson(response, 502, {
-        error: "Muse could not generate a reply. Check the server terminal.",
+        error: "Mira could not generate a reply. Check the server terminal.",
       });
     }
   }
