@@ -75,13 +75,6 @@ export function inspectMuseReadiness(
     "Add a non-empty SESSION_SECRET to GitHub Codespaces Secrets or the runtime environment.",
   );
 
-  addCheck(
-    "MUSE_CHAT_ACCESS_TOKEN",
-    typeof env.MUSE_CHAT_ACCESS_TOKEN === "string" &&
-      Buffer.byteLength(env.MUSE_CHAT_ACCESS_TOKEN.trim(), "utf8") >= 32,
-    "Set a random MUSE_CHAT_ACCESS_TOKEN of at least 32 UTF-8 bytes in GitHub Codespaces Secrets or the runtime environment.",
-  );
-
   const requested = {
     chat: selectedProvider(env, "chat"),
     research: selectedProvider(env, "research"),
