@@ -49,6 +49,7 @@ function citationIdForTitle(request: TextGenerationRequest, title: string): stri
 test("research service returns synthesized evidence, retrieval counts, and archive paths", async () => {
   const requests: TextGenerationRequest[] = [];
   const progress: string[] = [];
+  const searchQueries: string[] = [];
   const provider: TextGenerationProvider = {
     async generateText(request) {
       requests.push(request);
@@ -74,7 +75,14 @@ test("research service returns synthesized evidence, retrieval counts, and archi
 
   const result = await runResearch("What is the example subject?", [], {
     provider,
-    search: async () => [{ title: source.title, url: source.url }],
+    searchBackends: [{
+      id: "unit-test",
+      label: "Unit test search",
+      async search(query) {
+        searchQueries.push(query);
+        return [{ title: source.title, url: source.url }];
+      },
+    }],
     retrieve: async () => source,
     archive: async (_question, _plan, result) => {
       assert.equal(result.sources.length, 1);
@@ -100,6 +108,7 @@ test("research service returns synthesized evidence, retrieval counts, and archi
     jsonPath: "/archive/result.json",
   });
   assert.equal(requests.length, 2);
+  assert.deepEqual(searchQueries, ["example subject"]);
   assert.match(requests[1]?.systemPrompt ?? "", /Never use Markdown tables/);
   assert.match(requests[1]?.systemPrompt ?? "", /followUpQuestions/);
   assert.match(requests[1]?.systemPrompt ?? "", /Honor the user's requested format exactly/);
@@ -1073,6 +1082,42 @@ test("a supplied URL is read directly and cited even when every search fails", a
   );
 });
 
+test("search backend diagnostics survive the chain and appear in the insufficiency answer", async () => {
+  let modelCalls = 0;
+  const result = await runResearch("Explain the current topic", [], {
+    provider: {
+      async generateText() {
+        modelCalls += 1;
+        return JSON.stringify({
+          objective: "Explain the topic.",
+          taskType: "general",
+          deliverable: "A concise explanation.",
+          requiresCurrentInformation: true,
+          sourcePreferences: [],
+          questions: ["What is known?"],
+          queries: ["current topic"],
+        });
+      },
+    },
+    config: { maxRounds: 1, maxSearches: 1 },
+    searchBackends: [{
+      id: "test-search",
+      label: "Test search provider",
+      async search() {
+        throw new Error("Gemini Google Search returned HTTP 401.");
+      },
+    }],
+    retrieve: async () => null,
+    archive: async () => ({ markdownPath: "report.md", jsonPath: "report.json" }),
+    onProgress: () => {},
+  });
+
+  assert.equal(modelCalls, 1);
+  assert.equal(result.completeness, "insufficient");
+  assert.match(result.answer, /could not retrieve any readable web sources/);
+  assert.match(result.answer, /Test search provider failed: Gemini Google Search returned HTTP 401/);
+});
+
 test("the insufficiency response names the real cause instead of guessing", async () => {
   const provider: TextGenerationProvider = {
     async generateText() {
@@ -1101,7 +1146,7 @@ test("the insufficiency response names the real cause instead of guessing", asyn
 
   assert.equal(blocked.completeness, "insufficient");
   assert.match(blocked.answer, /could not retrieve any readable web sources/);
-  assert.match(blocked.answer, /bot challenge/i);
+  assert.match(blocked.answer, /blocked or challenged/i);
   assert.doesNotMatch(blocked.answer, /Search may be blocked or relevant pages/);
 
   const unreadable = await runResearch("Explain the subject", ["https://example.org/"], {
@@ -1244,8 +1289,8 @@ test("blocked search failures are recorded as limitations without breaking the r
   assert.equal(result.sources.length, 1, "the supplied page should still be read and cited");
   assert.equal(result.completeness, "supported");
   assert.ok(
-    result.limitations.some((item) => item.includes("bot challenge")),
-    `expected a bot-challenge limitation; got: ${result.limitations.join(" | ")}`,
+    result.limitations.some((item) => item.includes("blocked or challenged")),
+    `expected a search-block limitation; got: ${result.limitations.join(" | ")}`,
   );
 });
 

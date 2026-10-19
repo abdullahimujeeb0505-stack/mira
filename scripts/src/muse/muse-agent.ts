@@ -10,7 +10,8 @@ import {
   runResearch,
   type ResearchResult,
 } from "./research-cli.js";
-import { isContextualConfirmation, isIdentityQuestion, shouldResearchMessage } from "./message-routing.js";
+import { createDefaultSearchBackends } from "./search-backends.js";
+import { isContextualConfirmation, isCreatorQuestion, isIdentityQuestion, shouldResearchMessage } from "./message-routing.js";
 import {
   extractWritingConstraints,
   generateWrittenDeliverable,
@@ -50,6 +51,8 @@ const MUSE_SYSTEM_PROMPT =
 
 const IDENTITY_REPLY =
   "I'm Muse, a conversational research agent. My purpose is to help you understand topics, investigate questions with web research when useful, and turn information into clear writing such as notes, essays, and articles. What would you like to explore?";
+const CREATOR_REPLY =
+  "I'm Muse, the research assistant in this app. I don't have a verified creator credit in my available configuration, so I shouldn't guess who built me.";
 
 const PRIOR_RESEARCH_REFERENCE =
   /\b(?:those|these|the previous|the earlier|above|prior) (?:findings|results|research|sources|answer)\b|\b(?:your|my) (?:previous )?(?:answer|response|report)\b|\bwhat you (?:just )?(?:found|researched|said)\b|\bwhat about\b|\bthat topic\b|\b(?:why|how so|and then|then what|explain that|make that simpler|what does (?:this|that|it) mean|can you clarify that)\b/i;
@@ -143,11 +146,13 @@ export class MuseAgent {
   ) {
     this.qualityProvider = taskProviders?.research ?? provider;
     const researchProvider = this.qualityProvider;
+    const researchSearchBackends = createDefaultSearchBackends();
     this.researcher =
       researcher ??
       ((question, archivedContext, conversationContext) =>
         runResearch(question, extractWebsiteTargets(question), {
           provider: researchProvider,
+          searchBackends: researchSearchBackends,
           archivedContext,
           ...(conversationContext ? { conversationContext } : {}),
         }));
@@ -161,6 +166,13 @@ export class MuseAgent {
     const content = userMessage.trim();
     if (!content) {
       throw new Error("Please enter a message.");
+    }
+    if (isCreatorQuestion(content)) {
+      this.conversation.push(
+        { role: "user", content },
+        { role: "assistant", content: CREATOR_REPLY },
+      );
+      return CREATOR_REPLY;
     }
     if (isIdentityQuestion(content)) {
       this.conversation.push(

@@ -19,6 +19,7 @@ import {
   safeHttpUrl,
 } from "./safe-fetch.js";
 import {
+  createDefaultSearchBackends,
   DEFAULT_SEARCH_BACKENDS,
   parseDuckDuckGoSearchResults,
   RetryableSearchError,
@@ -113,6 +114,7 @@ export type ResearchConfig = {
 export interface ResearchServiceOptions {
   provider?: TextGenerationProvider;
   search?: (query: string) => Promise<SearchHit[]>;
+  searchBackends?: readonly SearchBackend[];
   retrieve?: (hit: SearchHit) => Promise<EvidenceSource | null>;
   /**
    * Reads a URL the user supplied, directly and unconditionally.
@@ -419,15 +421,18 @@ async function searchWeb(
   const outcome = await searchWithBackends(query, backends);
   if (outcome.hits.length > 0) return outcome.hits;
 
+  const failureSummary = outcome.failures.slice(0, 4).join(" ");
   if (outcome.blocked) {
     throw new SearchBlockedError(
-      "duckduckgo",
-      outcome.failures.join(" ") ||
-        "Every configured search backend served a bot challenge.",
+      "search-backends",
+      failureSummary ||
+        "Every configured search backend blocked or challenged access.",
     );
   }
 
-  return [];
+  throw new Error(
+    failureSummary || "Every configured search backend returned no usable results.",
+  );
 }
 
 /**
@@ -637,7 +642,7 @@ async function gatherEvidence(
   }
   if (blockedSearches > 0) {
     progress(
-      `${blockedSearches} of ${boundedQueries.length} searches were blocked by a bot challenge.`,
+      `${blockedSearches} of ${boundedQueries.length} searches were blocked or challenged by a search provider.`,
     );
   }
 
@@ -947,6 +952,7 @@ function insufficientAnswer(
   diagnostics: {
     blockedSearches: number;
     searches: number;
+    searchFailures: string[];
     readFailures: LinkFailure[];
     unreadablePages: number;
   },
@@ -966,14 +972,24 @@ function insufficientAnswer(
 
   if (diagnostics.blockedSearches > 0 && diagnostics.blockedSearches === diagnostics.searches) {
     reasons.push(
-      "Web search was blocked by a bot challenge on every query, so no additional sources could be discovered. This commonly happens from cloud-hosted IP addresses.",
+      "Web search access was blocked or challenged on every query, so no additional sources could be discovered. This can happen when a search provider refuses traffic from a cloud-hosted environment.",
     );
   } else if (diagnostics.blockedSearches > 0) {
     reasons.push(
-      `Web search was blocked by a bot challenge on ${diagnostics.blockedSearches} of ${diagnostics.searches} queries.`,
+      `Web search access was blocked or challenged on ${diagnostics.blockedSearches} of ${diagnostics.searches} queries.`,
     );
   } else if (diagnostics.searches === 0) {
     reasons.push("No web search was run.");
+  }
+
+  if (diagnostics.searchFailures.length > 0) {
+    const details = diagnostics.searchFailures
+      .slice(0, 3)
+      .map((failure) => failure.replace(/\s+/g, " ").trim().slice(0, 260));
+    reasons.push(`Search backend diagnostics: ${details.join(" | ")}`);
+    if (diagnostics.searchFailures.length > 3) {
+      reasons.push(`${diagnostics.searchFailures.length - 3} additional search backend failures occurred.`);
+    }
   }
 
   if (diagnostics.unreadablePages > 0) {
@@ -1008,6 +1024,7 @@ async function synthesize(
   retrievalDiagnostics: {
     blockedSearches: number;
     searches: number;
+    searchFailures: string[];
     readFailures: LinkFailure[];
     unreadablePages: number;
   },
@@ -1494,6 +1511,8 @@ export async function runResearch(
   const progress = options.onProgress ?? ((message: string) => console.log(message));
   const config = createResearchConfig(options.config);
   const provider = options.provider ?? createTaskAwareProviders().research.provider;
+  const search = options.search ?? ((query: string) =>
+    searchWeb(query, options.searchBackends ?? DEFAULT_SEARCH_BACKENDS));
   const now = options.now ?? (() => new Date());
   const conversationContext = options.conversationContext ?? "";
   const plan = await buildPlan(question, provider, progress, conversationContext);
@@ -1584,7 +1603,7 @@ export async function runResearch(
     const result = await gatherEvidence(
       roundQueries,
       round === 0 ? crawlUrls : [],
-      options.search ?? searchWeb,
+      search,
       options.retrieve ?? ((hit) => retrievePage(hit, config.maxPageBytes, now)),
       progress,
       { ...config, maxCandidates: config.maxCandidates - candidateCount },
@@ -1632,7 +1651,7 @@ export async function runResearch(
   }
   if (blockedSearches > 0) {
     limitations.push(
-      `Web search was blocked by a bot challenge on ${blockedSearches} of ${searches} queries.`,
+      `Web search access was blocked or challenged on ${blockedSearches} of ${searches} queries.`,
     );
   }
   if (readFailures.length > 0) {
@@ -1701,6 +1720,7 @@ export async function runResearch(
     {
       blockedSearches,
       searches,
+      searchFailures,
       readFailures,
       unreadablePages: Math.max(0, failedPages - readFailures.length),
     },
@@ -1773,7 +1793,9 @@ async function main(): Promise<void> {
     : input;
 
   try {
-    const result = await runResearch(question, seedUrls);
+    const result = await runResearch(question, seedUrls, {
+      searchBackends: createDefaultSearchBackends(),
+    });
     console.log("\n========== MUSE RESEARCH ANSWER ==========\n");
     console.log(result.answer);
 

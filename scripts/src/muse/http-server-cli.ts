@@ -20,6 +20,14 @@ const providers = createTaskAwareProviders();
 for (const line of formatTaskProviderDiagnostics(providers)) {
   console.info(line);
 }
+const geminiSearchDisabled = (process.env.MUSE_GEMINI_SEARCH ?? "1").trim() === "0";
+console.info(
+  geminiSearchDisabled
+    ? "Muse web search: DuckDuckGo HTML/Lite (Gemini grounding disabled)."
+    : process.env.GEMINI_API_KEY?.trim()
+    ? "Muse web search: DuckDuckGo HTML/Lite, then Gemini Google Search grounding."
+    : "Muse web search: DuckDuckGo HTML/Lite (Gemini grounding unavailable: GEMINI_API_KEY is missing).",
+);
 const server = createMuseHttpServer({
   providerFactory: () => providers.chat.provider,
   researchProviderFactory: () => providers.research.provider,

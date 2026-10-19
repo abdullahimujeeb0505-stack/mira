@@ -1,8 +1,46 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { extractLinks } from "./source-verification.js";
+import { extractLinks, fetchSameHostRedirects } from "./source-verification.js";
 
 const base = new URL("https://example.org/story");
+
+test("source verification rejects DNS answers in private ranges before fetching", async () => {
+  let fetchCalls = 0;
+  await assert.rejects(
+    fetchSameHostRedirects(new URL("https://example.org/"), {
+      resolveHost: async () => [{ address: "10.0.0.7" }],
+      fetchImplementation: async () => {
+        fetchCalls += 1;
+        return new Response("should not be fetched");
+      },
+    }),
+    /non-public address/,
+  );
+  assert.equal(fetchCalls, 0);
+});
+
+test("source verification re-checks DNS for each same-host redirect", async () => {
+  let hostChecks = 0;
+  let fetchCalls = 0;
+  const fetched = await fetchSameHostRedirects(new URL("https://example.org/start"), {
+    resolveHost: async (hostname) => {
+      hostChecks += 1;
+      assert.equal(hostname, "example.org");
+      return [{ address: "93.184.216.34" }];
+    },
+    fetchImplementation: async () => {
+      fetchCalls += 1;
+      return fetchCalls === 1
+        ? new Response(null, { status: 302, headers: { Location: "/final" } })
+        : new Response("readable", { status: 200 });
+    },
+  });
+
+  assert.equal(hostChecks, 2);
+  assert.equal(fetchCalls, 2);
+  assert.equal(fetched.finalUrl.href, "https://example.org/final");
+  assert.equal(fetched.response.status, 200);
+});
 
 test("keeps a clearly labelled external application form", () => {
   const links = extractLinks(

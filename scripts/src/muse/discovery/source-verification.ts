@@ -2,6 +2,11 @@ import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { assessVerificationEvidence } from "./evidence-assessment.js";
 import { dirname } from "node:path";
 import { isIP } from "node:net";
+import {
+  assertPublicHost,
+  isTransientNetworkFailure,
+  type ResolveHost,
+} from "../safe-fetch.js";
 import type { DiscoveryItem } from "./tavily-discovery.js";
 
 export type VerificationStatus =
@@ -36,6 +41,11 @@ const VERIFICATION_HISTORY_PATH =
 const MAX_BYTES = 1_000_000;
 const TIMEOUT_MS = 15_000;
 
+export interface SourceVerificationFetchOptions {
+  fetchImplementation?: typeof fetch;
+  resolveHost?: ResolveHost;
+}
+
 function safePublicWebUrl(value: string): URL | null {
   try {
     const url = new URL(value);
@@ -63,20 +73,15 @@ function safePublicWebUrl(value: string): URL | null {
 
 async function fetchWithTransientRetry(
   url: URL,
+  options: SourceVerificationFetchOptions = {},
 ): Promise<{ response: Response; finalUrl: URL; blocked: boolean }> {
   const maxAttempts = 3;
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
-      return await fetchSameHostRedirects(url);
+      return await fetchSameHostRedirects(url, options);
     } catch (error) {
-      const name = error instanceof Error ? error.name : "";
-      const transient =
-        error instanceof TypeError ||
-        name === "AbortError" ||
-        name === "TimeoutError";
-
-      if (!transient || attempt === maxAttempts) throw error;
+      if (!isTransientNetworkFailure(error) || attempt === maxAttempts) throw error;
 
       const delayMs = 400 * attempt;
       console.warn(
@@ -89,13 +94,16 @@ async function fetchWithTransientRetry(
   throw new Error("Fetch retry attempts exhausted.");
 }
 
-async function fetchSameHostRedirects(
+export async function fetchSameHostRedirects(
   initialUrl: URL,
+  options: SourceVerificationFetchOptions = {},
 ): Promise<{ response: Response; finalUrl: URL; blocked: boolean }> {
+  const fetchImplementation = options.fetchImplementation ?? fetch;
   let current = initialUrl;
 
   for (let hop = 0; hop <= 5; hop++) {
-    const response = await fetch(current, {
+    await assertPublicHost(current, options.resolveHost);
+    const response = await fetchImplementation(current, {
       redirect: "manual",
       signal: AbortSignal.timeout(TIMEOUT_MS),
       headers: {
@@ -381,6 +389,7 @@ async function verify(item: DiscoveryItem): Promise<SourceVerification> {
     base.httpStatus = response.status;
 
     if (fetched.blocked || (response.status >= 300 && response.status < 400)) {
+      await response.body?.cancel();
       return {
         ...base,
         status: "REDIRECT_NOT_FOLLOWED",
@@ -389,11 +398,13 @@ async function verify(item: DiscoveryItem): Promise<SourceVerification> {
     }
 
     if (!response.ok) {
+      await response.body?.cancel();
       return { ...base, status: "HTTP_ERROR", warnings: [...base.warnings, `Source returned HTTP ${response.status}.`] };
     }
 
     const contentType = response.headers.get("content-type") ?? "";
     if (!/text\/html|text\/plain|application\/xhtml\+xml/i.test(contentType)) {
+      await response.body?.cancel();
       return { ...base, status: "HTTP_ERROR", warnings: [...base.warnings, `Unsupported content type: ${contentType || "unknown"}.`] };
     }
 
@@ -440,12 +451,16 @@ async function verify(item: DiscoveryItem): Promise<SourceVerification> {
       warnings,
     };
   } catch (error) {
+    const resolvedToPrivateAddress =
+      error instanceof Error && /resolves to a non-public address/i.test(error.message);
     return {
       ...base,
-      status: "INACCESSIBLE",
+      status: resolvedToPrivateAddress ? "UNSAFE_URL" : "INACCESSIBLE",
       warnings: [
         ...base.warnings,
-        error instanceof Error ? error.message.slice(0, 240) : "Request failed.",
+        resolvedToPrivateAddress
+          ? "Hostname resolved to a private or reserved network address; the request was blocked."
+          : error instanceof Error ? error.message.slice(0, 240) : "Request failed.",
       ],
     };
   }

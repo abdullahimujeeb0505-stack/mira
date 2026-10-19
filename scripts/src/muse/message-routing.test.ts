@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { containsWebTarget, isIdentityQuestion, shouldResearchMessage } from "./message-routing.js";
+import { containsWebTarget, isCreatorQuestion, isIdentityQuestion, shouldResearchMessage } from "./message-routing.js";
 
 test("greetings and lightweight chat do not trigger web research", () => {
   for (const message of [
@@ -12,6 +12,9 @@ test("greetings and lightweight chat do not trigger web research", () => {
     "Are you okay today?",
     "Are you doing okay?",
     "Are you all right?",
+    "Are you free today?",
+    "Are you available right now?",
+    "Can we talk today?",
     "What's your name?",
     "What can you do?",
     "Thanks!",
@@ -26,9 +29,35 @@ test("casual well-being checks stay narrow and substantive Are questions still u
   assert.equal(shouldResearchMessage("Are you okay to confirm these claims?"), true);
 });
 
+test("time-sensitive lookups research while casual mentions of today or current do not", () => {
+  for (const message of [
+    "I had a long day today.",
+    "I'm working on the current draft.",
+    "I want to talk about recent events.",
+  ]) {
+    assert.equal(shouldResearchMessage(message), false, message);
+  }
+  for (const message of [
+    "What is the current exchange rate?",
+    "Current Bitcoin price today",
+    "The latest Node.js version",
+  ]) {
+    assert.equal(shouldResearchMessage(message), true, message);
+  }
+});
+
 test("identity and capability questions stay conversational across phrasing and order", () => {
   for (const message of [
     "What are you man?",
+    "Who created you?",
+    "Who created you, my guy?",
+    "Who made Muse?",
+    "Who is your developer?",
+    "Who are you today?",
+    "Who are you right now?",
+    "What is your current role?",
+    "What are your current capabilities?",
+    "How can you help me today?",
     "Who are you, and what's your purpose?",
     "What's your purpose and who are you?",
     "What is your role?",
@@ -48,6 +77,9 @@ test("identity and capability questions stay conversational across phrasing and 
     assert.equal(shouldResearchMessage(message), false, message);
   }
   assert.equal(isIdentityQuestion("What are your capabilities"), true);
+  assert.equal(isCreatorQuestion("Who created you?"), true);
+  assert.equal(isCreatorQuestion("Who created you, my guy?"), true);
+  assert.equal(isIdentityQuestion("Who made Muse?"), true);
   assert.equal(
     isIdentityQuestion("No, I'm asking you that: are you sure you are a research agent?"),
     true,
@@ -57,6 +89,7 @@ test("identity and capability questions stay conversational across phrasing and 
 test("substantive factual questions and explicit research requests use live research", () => {
   for (const message of [
     "Who invented the telephone?",
+    "Who created the telephone?",
     "How does TypeScript type narrowing work?",
     "Tell me about the history of the printing press.",
     "Search the web for current Node.js LTS versions.",

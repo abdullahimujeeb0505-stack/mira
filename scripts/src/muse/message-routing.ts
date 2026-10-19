@@ -2,14 +2,17 @@ const LIGHTWEIGHT_MESSAGES = [
   /^(?:hi|hello|hey|good morning|good afternoon|good evening)\b/i,
   /^(?:how are you(?: doing)?(?: today| right now)?|how's it going|what's up)[\s.!?…\p{Extended_Pictographic}\uFE0F]*$/iu,
   /^are you (?:doing )?(?:ok(?:ay)?|alright|all right|well)(?: today| right now)?[\s.!?…\p{Extended_Pictographic}\uFE0F]*$/iu,
+  /^(?:are you (?:free|available|busy|around)(?: today| right now)?|can we talk(?: today| right now)?)[\s.!?…\p{Extended_Pictographic}\uFE0F]*$/iu,
   /^(?:what(?:'s| is) your name|who are you|what can you do|can you help me(?: study)?)\??$/i,
   /^(?:thanks|thank you|thx|bye|goodbye)\b/i,
 ];
 
+const CREATOR_PROMPT =
+  String.raw`(?:who (?:made|created|built|developed|programmed|trained) (?:you|muse)|who is your (?:creator|maker|developer|author))`;
 const IDENTITY_PROMPT =
   String.raw`(?:who are you|what are you|what (?:kind|type) of (?:agent|assistant|bot|AI|model) are you|tell me (?:who|what) you are|tell me about yourself|describe yourself|introduce yourself)`;
 const PURPOSE_PROMPT =
-  String.raw`(?:what(?:'s|s| is) your (?:purpose|role|job|function)|what are your capabilities|why do you exist|what do you do|what can you do|what can you help (?:me )?with|how can you help(?: me)?|what are you for)`;
+  String.raw`(?:what(?:'s|s| is) your (?:current\s+)?(?:purpose|role|job|function)|what are your (?:current\s+)?capabilities|why do you exist|what do you do|what can you do|what can you help (?:me )?with|how can you help(?: me)?|what are you for)`;
 const IDENTITY_CHALLENGE_PROMPT = String.raw`(?:(?:no[,! ]+)?i(?:'m| am) asking(?: you)?(?: that)?[,;:]?\s+)?(?:are you (?:sure|certain) (?:that )?you are (?:a|an) (?:research\s+)?(?:agent|assistant|bot|ai|model)|are you (?:really|actually) (?:a|an) (?:research\s+)?(?:agent|assistant|bot|ai|model))`;
 /** "What AI model is this", "Which agent is this", "Is this a real person" —
  *  questions about the assistant itself, not research topics. */
@@ -17,13 +20,27 @@ const SELF_MODEL_PROMPT =
   String.raw`(?:(?:what|which)(?:\s+(?:kind|type)\s+of)?\s+(?:ai\s+|llm\s+|language\s+model\s+)?(?:model|agent|assistant|bot|ai|llm)(?:\s+model)?\s+(?:is|are)\s+(?:this|that|it|you)(?:\s+(?:one|right now|here))?|what\s+(?:model|ai|llm)(?:\s+model)?\s+(?:powers?|drives?|runs?)\s+(?:you|this|that)|(?:is|are)\s+(?:this|that|you)\s+(?:an?\s+)?(?:ai|bot|agent|model|human|person|real(?:\s+(?:person|human|agent|ai))?))`;
 const INTENT_CONNECTOR =
   String.raw`(?:\s*(?:[,;.!?]\s*(?:(?:and|also|plus)\s+)?|\s+(?:and|also|plus)\s+))`;
+const IDENTITY_SUFFIX =
+  String.raw`(?:[\s,]+(?:man|dude|bro|my\s+guy|buddy|mate|please|exactly|today|currently|right\s+now|at\s+the\s+moment))*[?.!]*$`;
 const IDENTITY_REQUEST = new RegExp(
-  String.raw`^(?:(?:hey|hi|yo)[,! ]+)?(?:${IDENTITY_PROMPT}(?:${INTENT_CONNECTOR}${PURPOSE_PROMPT})?|${PURPOSE_PROMPT}(?:${INTENT_CONNECTOR}${IDENTITY_PROMPT})?|${SELF_MODEL_PROMPT}|${IDENTITY_CHALLENGE_PROMPT})(?:\s+(?:man|dude|bro|please|exactly))*[?.!]*$`,
+  String.raw`^(?:(?:hey|hi|yo)[,! ]+)?(?:${CREATOR_PROMPT}|${IDENTITY_PROMPT}(?:${INTENT_CONNECTOR}${PURPOSE_PROMPT})?|${PURPOSE_PROMPT}(?:${INTENT_CONNECTOR}${IDENTITY_PROMPT})?|${SELF_MODEL_PROMPT}|${IDENTITY_CHALLENGE_PROMPT})${IDENTITY_SUFFIX}`,
+  "i",
+);
+const CREATOR_REQUEST = new RegExp(
+  String.raw`^(?:(?:hey|hi|yo)[,! ]+)?${CREATOR_PROMPT}${IDENTITY_SUFFIX}`,
   "i",
 );
 
 const EXPLICIT_RESEARCH_REQUEST =
-  /(?:^\s*(?:please\s+)?(?:research|search)\b|\b(?:please|can you|could you|would you|will you|should|must|need to|want to|want you to|let's|do(?: some)?|help me)\s+(?:also\s+)?research\b|\b(?:search the web|search online|look up|find sources|cite sources)\b|\b(?:latest|current|today|recently|as of now)\b)/i;
+  /(?:^\s*(?:please\s+)?(?:research|search)\b|\b(?:please|can you|could you|would you|will you|should|must|need to|want to|want you to|let's|do(?: some)?|help me)\s+(?:also\s+)?research\b|\b(?:search the web|search online|look up|find sources|cite sources)\b)/i;
+const CURRENT_INFORMATION_MARKER =
+  /\b(?:latest|newest|current(?:ly)?|today|recent(?:ly)?|as of now|right now)\b/i;
+const DYNAMIC_LOOKUP_FRAGMENT =
+  /^(?:the\s+)?(?:latest|newest|current|recent|today(?:['’]s)?|as of now)\b.{0,160}\b(?:price|net[\s-]*worth|version|release|news|weather|forecast|exchange rate|market(?: cap)?|stock|status|population|inflation|score|results|schedule|deadline|valuation|update|research|developments|guidance|guidelines|laws|regulations)\b/i;
+const DYNAMIC_LOOKUP_ACTION =
+  /\b(?:find|show|get|check|look up|tell me|give me|need|want|update|rewrite|revise|refresh)\b/i;
+const DYNAMIC_LOOKUP_SUBJECT =
+  /\b(?:price|net[\s-]*worth|version|release|news|weather|forecast|exchange rate|market(?: cap)?|stock|status|population|inflation|score|results|schedule|deadline|valuation|research|developments|guidance|guidelines|laws|regulations)\b/i;
 const INSPECTION_REQUEST =
   /\b(?:look (?:through|over|at)|check (?:out|through)|go through|take a look|browse through|read through|dig through)\b/i;
 const INFORMATION_REQUEST =
@@ -93,6 +110,12 @@ export function isIdentityQuestion(message: string): boolean {
   );
 }
 
+export function isCreatorQuestion(message: string): boolean {
+  return CREATOR_REQUEST.test(
+    message.normalize("NFKC").replace(/[’‘]/g, "'").trim(),
+  );
+}
+
 export function isContextualConfirmation(message: string): boolean {
   return CONTEXTUAL_CONFIRMATION.test(message.trim());
 }
@@ -113,6 +136,16 @@ export function shouldResearchMessage(
 
   if (ASSISTANT_CAPABILITY_QUESTION.test(normalizedContent)) return false;
   if (EXPLICIT_RESEARCH_REQUEST.test(content)) return true;
+  if (
+    CURRENT_INFORMATION_MARKER.test(content) &&
+    (INFORMATION_REQUEST.test(content) ||
+      EXPLANATION_REQUEST.test(content) ||
+      content.endsWith("?") ||
+      DYNAMIC_LOOKUP_FRAGMENT.test(content) ||
+      (DYNAMIC_LOOKUP_ACTION.test(content) && DYNAMIC_LOOKUP_SUBJECT.test(content)))
+  ) {
+    return true;
+  }
   if (containsWebTarget(content)) return true;
   if (INSPECTION_REQUEST.test(content)) return true;
   if (hasConversationHistory && CONTEXTUAL_RELATION_FOLLOW_UP.test(content)) return false;

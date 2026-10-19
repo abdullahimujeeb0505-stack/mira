@@ -22,6 +22,7 @@ import type { ResearchRunner } from "./muse-agent.js";
 const SESSION_COOKIE_NAME = "muse_session";
 const SESSION_TTL_MS = 8 * 60 * 60 * 1_000;
 const MAX_ACTIVE_SESSIONS = 500;
+const MIN_ACCESS_TOKEN_BYTES = 32;
 const MAX_REQUEST_BYTES = 16 * 1_024;
 const MAX_MESSAGE_LENGTH = 4_000;
 const DEFAULT_MEMORY_DIRECTORY = fileURLToPath(
@@ -74,6 +75,9 @@ const CHAT_PAGE = `<!doctype html>
       <div class="eyebrow">Muse · research assistant</div>
       <h1>What would you like to learn?</h1>
       <p class="intro">Ask about any subject. Muse can search the web and share sources.</p>
+      <label class="access-code" for="access-code">Chat access code
+        <input id="access-code" name="access-code" type="password" autocomplete="off" spellcheck="false" aria-describedby="status">
+      </label>
       <section id="messages" aria-live="polite" aria-label="Conversation">
         <div class="message muse">Hi, I’m Muse. What would you like to work through?</div>
       </section>
@@ -87,6 +91,7 @@ const CHAT_PAGE = `<!doctype html>
     <script>
       const form = document.querySelector("#chat-form");
       const input = document.querySelector("#message");
+      const accessCode = document.querySelector("#access-code");
       const button = document.querySelector("#send");
       const messages = document.querySelector("#messages");
       const status = document.querySelector("#status");
@@ -294,7 +299,13 @@ const CHAT_PAGE = `<!doctype html>
       form.addEventListener("submit", async (event) => {
         event.preventDefault();
         const message = input.value.trim();
+        const token = accessCode.value.trim();
         if (!message || button.disabled) return;
+        if (!token) {
+          status.textContent = "Enter the chat access code to continue.";
+          accessCode.focus();
+          return;
+        }
         addMessage("you", message);
         input.value = "";
         button.disabled = true;
@@ -304,6 +315,7 @@ const CHAT_PAGE = `<!doctype html>
             method: "POST",
             headers: {
               "Content-Type": "application/json",
+              "Authorization": "Bearer " + token,
             },
             body: JSON.stringify({ message })
           });
@@ -350,6 +362,14 @@ export function createMuseHttpServer(
     options.sessionSecret ?? process.env.SESSION_SECRET ?? "";
   if (!sessionSecret.trim()) {
     throw new Error("SESSION_SECRET is required to start the Muse HTTP server.");
+  }
+  const accessToken = (
+    options.accessToken ?? process.env.MUSE_CHAT_ACCESS_TOKEN ?? ""
+  ).trim();
+  if (Buffer.byteLength(accessToken, "utf8") < MIN_ACCESS_TOKEN_BYTES) {
+    throw new Error(
+      `MUSE_CHAT_ACCESS_TOKEN must be at least ${MIN_ACCESS_TOKEN_BYTES} UTF-8 bytes to start the Muse HTTP server.`,
+    );
   }
 
   const memoryDirectory =
@@ -414,6 +434,11 @@ export function createMuseHttpServer(
     if (request.method !== "POST") {
       response.setHeader("Allow", "POST");
       sendJson(response, 405, { error: "Use POST to send a chat message." });
+      return;
+    }
+    if (!hasValidAccessToken(request, accessToken)) {
+      response.setHeader("WWW-Authenticate", "Bearer");
+      sendJson(response, 401, { error: "A valid Muse chat access code is required." });
       return;
     }
 
