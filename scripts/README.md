@@ -1,15 +1,14 @@
-# Muse Research Agent
+# Muse Conversational Assistant
 
-Muse is a general-purpose research assistant with a Photon 2.0-connected
-iMessage entry point. It avoids web searches for greetings and lightweight chat; factual
-questions, explicit research requests, and any message that names a website or
-link use the existing DuckDuckGo search,
-page retrieval, citation validation, and local archive pipeline — with links the
-user supplies fetched directly first (see "Reading links in real time" below). Replies
-use retrieved evidence internally; citation markers and source lists are shown
-only when requested. Unavailable pages are not presented as retrieved sources.
-Muse honors the requested answer format, avoids tables, and offers relevant
-follow-up topics to continue the conversation.
+Muse is a general-purpose conversational assistant with a Photon 2.0-connected
+iMessage entry point and web research when it adds value. It can chat, brainstorm,
+plan, explain, help with writing, and answer everyday questions; explicit research,
+up-to-date facts, and named websites use the existing search, page-retrieval,
+citation-validation, and local-archive pipeline. Links the user supplies are
+fetched directly first (see "Reading links in real time" below). Replies use
+retrieved evidence internally; citation markers and source lists are shown only
+when requested. Unavailable pages are not presented as retrieved sources. Muse
+honors the requested format, avoids tables, and offers a follow-up only when useful.
 When explicitly requested, Muse can find relevant images in Wikimedia Commons
 and include the image, its source page, creator attribution, and license when
 available. The browser preview renders these sourced images; other clients may

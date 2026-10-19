@@ -33,7 +33,7 @@ const CHAT_PAGE = `<!doctype html>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#10131b">
-    <title>Muse — Research assistant</title>
+    <title>Muse — conversational assistant</title>
     <style>
       :root { color-scheme: dark; font-family: Inter, ui-sans-serif, system-ui, sans-serif; background: #10131b; color: #f4f5f7; }
       * { box-sizing: border-box; }
@@ -68,9 +68,9 @@ const CHAT_PAGE = `<!doctype html>
   </head>
   <body>
     <main>
-      <div class="eyebrow">Muse · research assistant</div>
-      <h1>What would you like to learn?</h1>
-      <p class="intro">Ask about any subject. Muse can search the web and share sources.</p>
+      <div class="eyebrow">Muse · assistant</div>
+      <h1>What would you like to talk about?</h1>
+      <p class="intro">Chat, brainstorm, ask a question, or request web research with sources.</p>
       <section id="messages" aria-live="polite" aria-label="Conversation">
         <div class="message muse">Hi, I’m Muse. What would you like to work through?</div>
       </section>
