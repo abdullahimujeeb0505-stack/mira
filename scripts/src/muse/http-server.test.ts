@@ -9,7 +9,6 @@ import type {
   TextGenerationRequest,
 } from "./llm-provider.js";
 import { createMuseHttpServer } from "./http-server.js";
-import { createTaskAwareProviders } from "./provider-selection.js";
 
 const testSessionSecret = "muse-http-session-test-secret";
 
@@ -533,46 +532,32 @@ test("Muse returns a generic configuration error without exposing provider detai
   ));
 
 test(
-  "Muse returns a chat reply when Groq is unavailable and Gemini fallback succeeds",
+  "Muse returns a safe 502 when Groq fails without another provider configured",
   async () => {
     const providerCalls: string[] = [];
-    const providers = createTaskAwareProviders({
-      chatProvider: "groq",
-      researchProvider: "groq",
-      factories: {
-        groq: () => ({
-          providerName: "groq",
-          model: "test-groq",
-          async generateText() {
-            providerCalls.push("groq");
-            throw new Error("Groq request failed with HTTP 503.");
-          },
-        }),
-        gemini: () => ({
-          providerName: "gemini",
-          model: "test-gemini",
-          async generateText() {
-            providerCalls.push("gemini");
-            return "I'm here. What would you like to talk about?";
-          },
-        }),
+    const groqProvider: TextGenerationProvider = {
+      providerName: "groq",
+      model: "test-groq",
+      async generateText() {
+        providerCalls.push("groq");
+        throw new Error("Groq request failed with HTTP 503.");
       },
-    });
+    };
 
     await withServer(
-      () => providers.chat.provider,
+      () => groqProvider,
       async (baseUrl) => {
-        const originalWarn = console.warn;
-        console.warn = () => undefined;
+        const originalError = console.error;
+        console.error = () => undefined;
         try {
           const response = await sendMessage(baseUrl, "Hi, can we just talk?");
-          assert.equal(response.status, 200);
+          assert.equal(response.status, 502);
           assert.deepEqual(await response.json(), {
-            reply: "I'm here. What would you like to talk about?",
+            error: "Mira could not generate a reply. Check the server terminal.",
           });
-          assert.deepEqual(providerCalls, ["groq", "gemini"]);
+          assert.deepEqual(providerCalls, ["groq"]);
         } finally {
-          console.warn = originalWarn;
+          console.error = originalError;
         }
       },
     );

@@ -8,7 +8,6 @@ const PROVIDER_KEYS = {
   groq: ["GROQ_API_KEY", "GROK_API_CODING_KEY"],
   openrouter: ["OPENROUTER_API_KEY"],
   agentrouter: ["AGENTROUTER_API_KEY"],
-  gemini: ["GEMINI_API_KEY"],
 };
 const VALID_PROVIDERS = new Set(Object.keys(PROVIDER_KEYS));
 
@@ -26,12 +25,10 @@ function alternateProvider(env, task) {
   const requested = selectedProvider(env, task);
   const otherTask = task === "chat" ? "research" : "chat";
   const otherRequested = selectedProvider(env, otherTask);
-  if (requested === "groq") return "gemini";
-  if (requested === "gemini") return "groq";
   if (otherRequested !== requested && VALID_PROVIDERS.has(otherRequested)) {
     return otherRequested;
   }
-  return "groq";
+  return requested === "groq" ? "" : "groq";
 }
 
 function providerConfiguration(env, provider) {
@@ -53,24 +50,26 @@ function resolveTaskProvider(env, task, requested, alternate) {
       ready: false,
       requested,
       used: null,
-      fallbackProvider: alternate,
+      fallbackProvider: alternate || undefined,
       fallbackConfigured: false,
     };
   }
 
   const primary = providerConfiguration(env, requested);
   if (primary.configured) {
-    const fallback = providerConfiguration(env, alternate);
+    const fallback = alternate
+      ? providerConfiguration(env, alternate)
+      : { configured: false };
     return {
       ready: true,
       requested,
       used: requested,
-      fallbackProvider: alternate,
+      fallbackProvider: alternate || undefined,
       fallbackConfigured: fallback.configured,
     };
   }
 
-  if (alternate !== requested) {
+  if (alternate && alternate !== requested) {
     const fallback = providerConfiguration(env, alternate);
     if (fallback.configured) {
       return {
@@ -86,7 +85,7 @@ function resolveTaskProvider(env, task, requested, alternate) {
     ready: false,
     requested,
     used: null,
-    fallbackProvider: alternate,
+    fallbackProvider: alternate || undefined,
     fallbackConfigured: false,
   };
 }
@@ -133,16 +132,8 @@ export function inspectMuseReadiness(
       alternates.research,
     ),
   };
-  if (
-    (env.MUSE_GEMINI_SEARCH ?? "1").trim() !== "0" &&
-    !(env.GEMINI_API_KEY ?? "").trim()
-  ) {
-    warnings.push(
-      "Gemini Google Search grounding is unavailable without GEMINI_API_KEY; research will rely on DuckDuckGo HTML/Lite search.",
-    );
-  }
-
   const providersToCheck = new Set();
+  const providerSettingByName = new Map();
   for (const task of ["chat", "research"]) {
     const result = resolved[task];
     if (result.ready) {
@@ -163,12 +154,23 @@ export function inspectMuseReadiness(
         warnings.push(
           `The ${task} task has no configured ${result.fallbackProvider} runtime fallback; ${result.used} remains the primary provider without failover.`,
         );
+      } else {
+        warnings.push(
+          `The ${task} task has no secondary provider configured; ${result.used} remains the only runtime provider.`,
+        );
       }
       if (result.warning) warnings.push(result.warning);
       continue;
     }
 
     providersToCheck.add(result.requested);
+    if (!VALID_PROVIDERS.has(result.requested)) {
+      const taskSetting = `MUSE_${task.toUpperCase()}_LLM_PROVIDER`;
+      providerSettingByName.set(
+        result.requested,
+        env[taskSetting]?.trim() ? taskSetting : "MUSE_LLM_PROVIDER",
+      );
+    }
     if (result.fallbackProvider) providersToCheck.add(result.fallbackProvider);
     addCheck(
       VALID_PROVIDERS.has(result.requested)
@@ -181,15 +183,17 @@ export function inspectMuseReadiness(
 
   for (const provider of providersToCheck) {
     if (!VALID_PROVIDERS.has(provider)) {
-      const setting = env.MUSE_CHAT_LLM_PROVIDER?.trim()
-        ? "MUSE_CHAT_LLM_PROVIDER"
-        : env.MUSE_RESEARCH_LLM_PROVIDER?.trim()
-          ? "MUSE_RESEARCH_LLM_PROVIDER"
-          : "MUSE_LLM_PROVIDER";
+      const setting =
+        providerSettingByName.get(provider) ??
+        (env.MUSE_CHAT_LLM_PROVIDER?.trim()
+          ? "MUSE_CHAT_LLM_PROVIDER"
+          : env.MUSE_RESEARCH_LLM_PROVIDER?.trim()
+            ? "MUSE_RESEARCH_LLM_PROVIDER"
+            : "MUSE_LLM_PROVIDER");
       addCheck(
         setting,
         false,
-        "Use groq, openrouter, agentrouter, or gemini for provider selection.",
+        "Use groq, openrouter, or agentrouter for provider selection.",
       );
       continue;
     }

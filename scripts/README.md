@@ -36,8 +36,8 @@ project API key with `project:read` and `project:write`, then configure:
 
 - `PHOTON_PROJECT_ID` — Beta project ID (`pho_prj_...`).
 - `PHOTON_API_KEY` — project-scoped bearer key; keep it in a secret manager.
-- `MUSE_LLM_PROVIDER` — `groq` (default when unset or blank), `openrouter`,
-  `agentrouter`, or `gemini`; the value is trimmed and case-insensitive.
+- `MUSE_LLM_PROVIDER` — `groq` (default when unset or blank), `openrouter`, or
+  `agentrouter`; the value is trimmed and case-insensitive.
 
 For Groq, set `GROQ_API_KEY`; `GROK_API_CODING_KEY` remains supported for
 backward compatibility. `GROQ_MODEL` is optional and defaults to
@@ -52,25 +52,21 @@ Set a per-key spending limit in the OpenRouter dashboard under **Settings →
 Keys** when creating or editing the key, and inspect usage in **Activity**.
 Groq usage is available in the Groq console under **Settings → Usage**. The
 single-provider Photon listener does not switch providers automatically; the
-browser chat server's Groq-to-Gemini failover is documented below.
+browser chat server's alternate-provider behavior is documented below.
 
 For AgentRouter, set `AGENTROUTER_API_KEY`; `AGENTROUTER_MODEL` is an optional
 override. Provider credentials are isolated: only the selected adapter receives
 its own key.
 
-For Gemini, set `GEMINI_API_KEY`. The task-aware browser server defaults both
-chat and research to Groq, then retries eligible Groq request failures once
-through Gemini when this key is configured. `MUSE_CHAT_LLM_PROVIDER` and
-`MUSE_RESEARCH_LLM_PROVIDER` override each task's primary route;
-`MUSE_LLM_PROVIDER=gemini` pins both tasks to Gemini. `GEMINI_MODEL` is optional
-and defaults to `gemini-3.5-flash`. Safety refusals are not retried through a
-different provider. The adapter speaks Gemini's native `generateContent` API,
-using the separate
-`streamGenerateContent?alt=sse` endpoint for streaming so long replies are not
-held up by buffering proxies. It does not use an OpenAI compatibility shim,
-and it reports prompt blocks and safety finish reasons as
-distinct errors instead of "no text output". Monitor usage and set spend limits
-in Google AI Studio; the browser server's default failover is Groq to Gemini.
+Gemini has been removed from Muse's model and search integrations. The
+`GEMINI_API_KEY`, `GEMINI_MODEL`, and `MUSE_GEMINI_SEARCH` settings are no longer
+used and can be removed from the runtime's secrets. Change any provider
+selection still set to `gemini` to `groq`, `openrouter`, or `agentrouter`, or
+clear it to use the Groq default. Chat and research default to Groq. When the two
+tasks are explicitly configured with different providers,
+the other task's provider can serve as the request-failure fallback; non-Groq
+primaries otherwise use Groq. A Groq-only setup has no automatic provider
+fallback.
 
 Set `MUSE_PHOTON_TRANSPORT=spectrum` only to explicitly run the legacy
 Spectrum transport. That mode continues to require `SPECTRUM_PROJECT_ID` and
@@ -125,10 +121,9 @@ default. The agent handles incoming plain-text iMessage events and sends
 asynchronous replies through the Photon Beta Messages API, linked to the
 incoming message. If Photon marks a WebSocket delivery as expecting a
 synchronous webhook response, Muse also submits the documented WebSocket
-`reply` acknowledgement after accepting its outbound message. Research starts
-with public DuckDuckGo HTML/Lite search and can fall back to Gemini Google Search
-grounding when `GEMINI_API_KEY` is configured. Muse retrieves candidate pages
-itself and supports HTML, JSON, XML/RSS, Markdown, and plain text; search blocks,
+`reply` acknowledgement after accepting its outbound message. Research uses
+public DuckDuckGo HTML/Lite search. Muse retrieves candidate pages itself and
+supports HTML, JSON, XML/RSS, Markdown, and plain text; search blocks,
 paywalls, dynamic pages, and conflicting evidence can still limit results.
 Prior matching archive entries are identified as historical and are not treated
 as freshly verified. Conversations are not restored after a process restart.
@@ -157,15 +152,14 @@ Links found on a supplied page are followed within the same registrable domain
 candidates, subject to the normal candidate budget. Binary assets, PDFs, and
 image files are skipped.
 
-Text-generation APIs do not automatically browse the web. Muse uses two
-unauthenticated DuckDuckGo search endpoints first; if both fail or are blocked,
-it can use Gemini's Google Search grounding tool when `GEMINI_API_KEY` is set
-(`MUSE_GEMINI_SEARCH=0` disables that fallback). Grounding returns candidate
-URLs only: Muse still fetches and validates each page itself, cites retrieved
-evidence rather than snippets, and follows page links only within the same
-registrable domain. Transient backend failures are retried once before trying
-the next backend. Diagnostics distinguish search-provider blocks, unreadable
-supplied links, and pages that returned no readable text.
+Text-generation APIs do not automatically browse the web. Muse searches with
+unauthenticated DuckDuckGo HTML and Lite endpoints. Both can block requests or
+return no results, so retrieval failures are reported rather than replaced with
+model-generated URLs. Muse fetches and validates each candidate page itself,
+uses retrieved evidence rather than search snippets, and follows page links only
+within the same registrable domain. Transient backend failures are retried once
+before the next endpoint is tried. Diagnostics distinguish search-provider
+blocks, unreadable supplied links, and pages that returned no readable text.
 
 Automated tests use deterministic model responses and fake Photon events; they
 do not call a live model, search service, or messaging API. A real Photon
@@ -223,7 +217,7 @@ Check the demo prerequisites without starting the server or contacting a model p
 pnpm --filter @workspace/scripts run muse-preflight
 ```
 
-The preflight prints only prerequisite names and readiness states; it never prints secret values. It checks that `SESSION_SECRET` is non-empty, the selected chat and research primaries have usable credentials, any configured fallback credentials are usable, and the local `tsx` command is installed. Both tasks default to Groq; Gemini is the default request-failure fallback. `MUSE_CHAT_LLM_PROVIDER` and `MUSE_RESEARCH_LLM_PROVIDER` override each task's primary, while `MUSE_LLM_PROVIDER` pins both. A missing fallback produces a warning but does not block a configured primary; if the primary configuration is unavailable and the alternate is configured, preflight reports the startup fallback. Set provider credentials in GitHub Codespaces Secrets or the runtime's secret manager, not in tracked files. Muse no longer requires a chat access code. **Security note:** the former `.replit` user-environment block contained committed credential-like values. Removing the block does not erase Git history; revoke or rotate those values, and remove any obsolete `MUSE_CHAT_ACCESS_TOKEN` from your secret manager. Its standalone tests can run with Node.js alone:
+The preflight prints only prerequisite names and readiness states; it never prints secret values. It checks that `SESSION_SECRET` is non-empty, the selected chat and research providers have usable credentials, any configured alternate providers are usable, and the local `tsx` command is installed. Both tasks default to Groq. `MUSE_CHAT_LLM_PROVIDER` and `MUSE_RESEARCH_LLM_PROVIDER` override each task's provider, while `MUSE_LLM_PROVIDER` pins both. A distinct configured provider may serve as an alternate; a Groq-only setup has no automatic fallback. Gemini has been removed, so `GEMINI_API_KEY`, `GEMINI_MODEL`, and `MUSE_GEMINI_SEARCH` are no longer used and can be removed from runtime secrets. Set active provider credentials in GitHub Codespaces Secrets or the runtime's secret manager, not in tracked files. Muse no longer requires a chat access code. **Security note:** the former `.replit` user-environment block contained committed credential-like values. Removing the block does not erase Git history; revoke or rotate those values, and remove any obsolete `MUSE_CHAT_ACCESS_TOKEN` from your secret manager. Its standalone tests can run with Node.js alone:
 
 ```sh
 pnpm --filter @workspace/scripts run muse-preflight-test
@@ -240,7 +234,7 @@ Codespaces port forwarding, the Replit workflow preview, e2b sandboxes) can
 reach it; set `MUSE_BIND_HOST=127.0.0.1` to restrict it to loopback when
 running on a shared machine.
 
-Open `http://localhost:3000` locally. In **GitHub Codespaces**, forward port `3000` and open the forwarded URL at path `/`. Or use the **Muse Chat Preview** workflow in Replit at port `3000` and path `/`. The server is task-aware: chat and research both default to **Groq** (`GROQ_API_KEY` or legacy `GROK_API_CODING_KEY`, model `openai/gpt-oss-120b`), with **Gemini** (`GEMINI_API_KEY`, optional `GEMINI_MODEL` default `gemini-3.5-flash`) as the default fallback. Eligible request failures retry once through the fallback; safety refusals do not. If the primary provider cannot be constructed because its credentials are missing, the alternate provider is selected at startup and the log records the reason. A missing fallback key leaves the primary usable but disables failover. `MUSE_CHAT_LLM_PROVIDER` and `MUSE_RESEARCH_LLM_PROVIDER` override each task's primary; `MUSE_LLM_PROVIDER` pins both tasks to one of `groq`, `openrouter` (`OPENROUTER_API_KEY` + `OPENROUTER_MODEL`), `agentrouter` (`AGENTROUTER_API_KEY`), or `gemini`. `SESSION_SECRET` is required to sign the browser's HTTP-only session cookie. No `MUSE_CHAT_ACCESS_TOKEN` or access-code entry is required to use the chat page.
+Open `http://localhost:3000` locally. In **GitHub Codespaces**, forward port `3000` and open the forwarded URL at path `/`. Or use the **Muse Chat Preview** workflow in Replit at port `3000` and path `/`. The server is task-aware: chat and research both default to **Groq** (`GROQ_API_KEY` or legacy `GROK_API_CODING_KEY`, model `openai/gpt-oss-120b`). `MUSE_CHAT_LLM_PROVIDER` and `MUSE_RESEARCH_LLM_PROVIDER` override each task's provider; `MUSE_LLM_PROVIDER` pins both tasks to `groq`, `openrouter` (`OPENROUTER_API_KEY` + `OPENROUTER_MODEL`), or `agentrouter` (`AGENTROUTER_API_KEY`). Eligible failures retry once only when an alternate provider is configured; with the default Groq-only setup, there is no automatic model fallback. Gemini has been removed, so `GEMINI_API_KEY`, `GEMINI_MODEL`, and `MUSE_GEMINI_SEARCH` are no longer used and may be removed from runtime secrets. Change any provider selection still set to `gemini` to `groq`, `openrouter`, or `agentrouter`, or clear it to use Groq. `SESSION_SECRET` is required to sign the browser's HTTP-only session cookie. No `MUSE_CHAT_ACCESS_TOKEN` or access-code entry is required to use the chat page.
 
 At startup, the server logs both primary providers and model identifiers
 (`Muse chat LLM: …` / `Muse research LLM: …`), any configured fallback models,
@@ -251,10 +245,9 @@ redacted provider message, so model/endpoint errors (such as HTTP 404) are
 distinguishable from key or quota issues. Set `MUSE_LLM_STARTUP_PROBE=0` to skip
 the probe requests.
 Credentials are never logged. A `GROQ_MODEL` override is visible in the startup
-line, including an override that still points to a deprecated model. A separate
-`Muse web search:` line reports whether Gemini Google Search grounding is enabled,
-disabled, or unavailable; Muse calls the explicit Google Search grounding tool,
-not an assumed browsing feature of ordinary text generation.
+line, including an override that still points to a deprecated model. The
+`Muse web search:` line reports the DuckDuckGo HTML/Lite backends. Research does
+not use Gemini or assumed browsing built into ordinary text-generation models.
 
 Each browser session gets an independent `MuseAgent` and its own saved-memory file under `scripts/data/muse-http-sessions/`. Conversation history stays in that session's server memory and resets when the server restarts. The page sends messages only to this server; the server then sends them to the configured model provider.
 

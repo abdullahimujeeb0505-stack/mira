@@ -1105,7 +1105,7 @@ test("search backend diagnostics survive the chain and appear in the insufficien
       id: "test-search",
       label: "Test search provider",
       async search() {
-        throw new Error("Gemini Google Search returned HTTP 401.");
+        throw new Error("Search endpoint returned HTTP 401.");
       },
     }],
     retrieve: async () => null,
@@ -1116,7 +1116,7 @@ test("search backend diagnostics survive the chain and appear in the insufficien
   assert.equal(modelCalls, 1);
   assert.equal(result.completeness, "insufficient");
   assert.match(result.answer, /could not retrieve any readable web sources/);
-  assert.match(result.answer, /Test search provider failed: Gemini Google Search returned HTTP 401/);
+  assert.match(result.answer, /Test search provider failed: Search endpoint returned HTTP 401/);
 });
 
 test("the insufficiency response names the real cause instead of guessing", async () => {
