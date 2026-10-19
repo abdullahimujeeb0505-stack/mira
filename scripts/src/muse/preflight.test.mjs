@@ -7,7 +7,6 @@ import {
 
 const validEnv = {
   SESSION_SECRET: "configured-session-secret",
-  MUSE_CHAT_ACCESS_TOKEN: "a".repeat(32),
   GROK_API_CODING_KEY: "configured-provider-key",
 };
 
@@ -17,6 +16,7 @@ test("reports readiness for Groq without exposing configured values", () => {
 
   assert.equal(report.ready, true);
   assert.match(output, /PASS: GROK_API_CODING_KEY/);
+  assert.doesNotMatch(output, /MUSE_CHAT_ACCESS_TOKEN/);
   assert.doesNotMatch(output, /configured-session-secret|configured-provider-key/);
 });
 
@@ -178,7 +178,6 @@ test("reports missing secrets and unavailable tsx by name without printing value
   const report = inspectMuseReadiness(
     {
       SESSION_SECRET: "",
-      MUSE_CHAT_ACCESS_TOKEN: "short",
       GROK_API_CODING_KEY: "",
     },
     false,
@@ -187,10 +186,8 @@ test("reports missing secrets and unavailable tsx by name without printing value
 
   assert.equal(report.ready, false);
   assert.match(output, /BLOCKED: SESSION_SECRET/);
-  assert.match(output, /BLOCKED: MUSE_CHAT_ACCESS_TOKEN/);
   assert.match(output, /BLOCKED: GROQ_API_KEY or GROK_API_CODING_KEY/);
   assert.match(output, /BLOCKED: tsx/);
-  assert.doesNotMatch(output, /short/);
 });
 
 test("rejects unsupported provider names without echoing the configured value", () => {
@@ -203,19 +200,4 @@ test("rejects unsupported provider names without echoing the configured value", 
   assert.equal(report.ready, false);
   assert.match(output, /BLOCKED: MUSE_LLM_PROVIDER/);
   assert.doesNotMatch(output, /private-provider-value/);
-});
-
-test("counts access-token strength in UTF-8 bytes", () => {
-  const report = inspectMuseReadiness(
-    {
-      ...validEnv,
-      MUSE_CHAT_ACCESS_TOKEN: "🔒".repeat(8),
-    },
-    true,
-  );
-
-  assert.equal(
-    report.checks.find(({ name }) => name === "MUSE_CHAT_ACCESS_TOKEN").ready,
-    true,
-  );
 });

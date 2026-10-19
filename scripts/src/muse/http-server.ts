@@ -1,5 +1,4 @@
 import {
-  createHash,
   createHmac,
   randomBytes,
   timingSafeEqual,
@@ -22,7 +21,6 @@ import type { ResearchRunner } from "./muse-agent.js";
 const SESSION_COOKIE_NAME = "muse_session";
 const SESSION_TTL_MS = 8 * 60 * 60 * 1_000;
 const MAX_ACTIVE_SESSIONS = 500;
-const MIN_ACCESS_TOKEN_BYTES = 32;
 const MAX_REQUEST_BYTES = 16 * 1_024;
 const MAX_MESSAGE_LENGTH = 4_000;
 const DEFAULT_MEMORY_DIRECTORY = fileURLToPath(
@@ -46,8 +44,6 @@ const CHAT_PAGE = `<!doctype html>
       .intro, .notice { color: #a8afbe; line-height: 1.6; }
       .notice { margin: 0; font-size: 12px; }
       .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-      .access-code { display: grid; gap: 8px; margin: 10px 0 0; color: #cbd1df; font-size: 13px; }
-      .access-code input { width: 100%; border: 1px solid #3b4354; border-radius: 12px; padding: 12px; color: inherit; background: #10131b; font: inherit; }
       #messages { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; padding: 22px 0; }
       .message { max-width: 88%; min-width: 0; padding: 12px 15px; border-radius: 16px; line-height: 1.55; overflow-wrap: break-word; word-break: normal; white-space: pre-wrap; }
       .message.muse { align-self: flex-start; background: #252c3a; }
@@ -75,9 +71,6 @@ const CHAT_PAGE = `<!doctype html>
       <div class="eyebrow">Muse · research assistant</div>
       <h1>What would you like to learn?</h1>
       <p class="intro">Ask about any subject. Muse can search the web and share sources.</p>
-      <label class="access-code" for="access-code">Chat access code
-        <input id="access-code" name="access-code" type="password" autocomplete="off" spellcheck="false" aria-describedby="status">
-      </label>
       <section id="messages" aria-live="polite" aria-label="Conversation">
         <div class="message muse">Hi, I’m Muse. What would you like to work through?</div>
       </section>
@@ -91,7 +84,6 @@ const CHAT_PAGE = `<!doctype html>
     <script>
       const form = document.querySelector("#chat-form");
       const input = document.querySelector("#message");
-      const accessCode = document.querySelector("#access-code");
       const button = document.querySelector("#send");
       const messages = document.querySelector("#messages");
       const status = document.querySelector("#status");
@@ -299,13 +291,7 @@ const CHAT_PAGE = `<!doctype html>
       form.addEventListener("submit", async (event) => {
         event.preventDefault();
         const message = input.value.trim();
-        const token = accessCode.value.trim();
         if (!message || button.disabled) return;
-        if (!token) {
-          status.textContent = "Enter the chat access code to continue.";
-          accessCode.focus();
-          return;
-        }
         addMessage("you", message);
         input.value = "";
         button.disabled = true;
@@ -315,7 +301,6 @@ const CHAT_PAGE = `<!doctype html>
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": "Bearer " + token,
             },
             body: JSON.stringify({ message })
           });
@@ -342,7 +327,6 @@ interface MuseSession {
 
 export interface MuseHttpServerOptions {
   sessionSecret?: string;
-  accessToken?: string;
   memoryDirectory?: string;
   sharedMemoryPath?: string;
   providerFactory?: () => TextGenerationProvider;
@@ -363,15 +347,6 @@ export function createMuseHttpServer(
   if (!sessionSecret.trim()) {
     throw new Error("SESSION_SECRET is required to start the Muse HTTP server.");
   }
-  const accessToken = (
-    options.accessToken ?? process.env.MUSE_CHAT_ACCESS_TOKEN ?? ""
-  ).trim();
-  if (Buffer.byteLength(accessToken, "utf8") < MIN_ACCESS_TOKEN_BYTES) {
-    throw new Error(
-      `MUSE_CHAT_ACCESS_TOKEN must be at least ${MIN_ACCESS_TOKEN_BYTES} UTF-8 bytes to start the Muse HTTP server.`,
-    );
-  }
-
   const memoryDirectory =
     options.memoryDirectory ??
     process.env.MUSE_HTTP_MEMORY_DIR ??
@@ -436,12 +411,6 @@ export function createMuseHttpServer(
       sendJson(response, 405, { error: "Use POST to send a chat message." });
       return;
     }
-    if (!hasValidAccessToken(request, accessToken)) {
-      response.setHeader("WWW-Authenticate", "Bearer");
-      sendJson(response, 401, { error: "A valid Muse chat access code is required." });
-      return;
-    }
-
     if (request.headers["content-type"]?.split(";")[0]?.trim() !== "application/json") {
       sendJson(response, 415, { error: "Send the message as JSON." });
       return;
@@ -561,28 +530,6 @@ function enqueueResponse(session: MuseSession, message: string): Promise<string>
     () => undefined,
   );
   return response;
-}
-
-function hasValidAccessToken(
-  request: IncomingMessage,
-  expectedToken: string,
-): boolean {
-  const authorization = request.headers.authorization;
-  if (typeof authorization !== "string" || !authorization.startsWith("Bearer ")) {
-    return false;
-  }
-
-  const providedToken = authorization.slice("Bearer ".length);
-  if (
-    !providedToken ||
-    Buffer.byteLength(providedToken, "utf8") > 1_024
-  ) {
-    return false;
-  }
-
-  const expectedDigest = createHash("sha256").update(expectedToken).digest();
-  const providedDigest = createHash("sha256").update(providedToken).digest();
-  return timingSafeEqual(expectedDigest, providedDigest);
 }
 
 function readSessionId(
