@@ -115,7 +115,7 @@ test("Gemini Google Search returns only safe grounded URLs and sends the key in 
   let requestOptions: RequestInit | undefined;
   const backend = new GeminiGoogleSearchBackend({
     apiKey: "test-gemini-key",
-    model: "gemini-3.8-flash",
+    model: "gemini-3.5-flash",
     fetchImplementation: async (input, init) => {
       requestUrl = String(input);
       requestOptions = init;
@@ -136,7 +136,7 @@ test("Gemini Google Search returns only safe grounded URLs and sends the key in 
   });
 
   const hits = await backend.search("current TypeScript version");
-  assert.match(requestUrl, /models\/gemini-3\.8-flash:generateContent$/);
+  assert.match(requestUrl, /models\/gemini-3\.5-flash:generateContent$/);
   assert.equal(new Headers(requestOptions?.headers).get("x-goog-api-key"), "test-gemini-key");
   assert.doesNotMatch(requestUrl, /test-gemini-key/);
   const body = JSON.parse(String(requestOptions?.body)) as {

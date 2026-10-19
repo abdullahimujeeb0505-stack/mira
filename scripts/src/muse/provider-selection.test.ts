@@ -214,7 +214,7 @@ test("probeProviderConnection reports success and classified failures without th
 
   const failed = await probeProviderConnection(
     "research",
-    fakeProvider("gemini", "gemini-3.8-flash", async () => {
+    fakeProvider("gemini", "gemini-3.5-flash", async () => {
       throw new Error("Missing GEMINI_API_KEY.");
     }),
   );
