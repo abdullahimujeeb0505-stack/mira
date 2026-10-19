@@ -6,7 +6,7 @@ import type {
 import { requestError } from "./openai-compatible-chat.js";
 
 const GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta";
-const DEFAULT_MODEL = "gemini-3.8-flash";
+const DEFAULT_MODEL = "gemini-3.5-flash";
 const DEFAULT_TIMEOUT_MS = 60_000;
 /**
  * Generous body ceiling. Streaming responses are reassembled in memory, and a
