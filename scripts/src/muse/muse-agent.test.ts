@@ -47,7 +47,7 @@ const researchResult: ResearchResult = {
   },
 };
 
-test("Muse identifies itself as a research agent without delegating identity to the model", async () => {
+test("Muse identifies itself as a conversational assistant without delegating identity to the model", async () => {
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-identity-"));
   let modelCalls = 0;
   let researchCalls = 0;
@@ -81,8 +81,8 @@ test("Muse identifies itself as a research agent without delegating identity to 
       "How can you help me?",
     ]) {
       const answer = await agent.respond(question);
-      assert.match(answer, /I'm Muse, a conversational research agent/);
-      assert.match(answer, /My purpose is to help you understand topics/);
+      assert.match(answer, /I'm Muse, a general-purpose conversational assistant/);
+      assert.match(answer, /chat, brainstorm, explain things/);
       assert.doesNotMatch(answer, /ChatGPT|OpenAI/);
     }
     const creatorAnswer = await agent.respond("Who created you, my guy?");
@@ -132,6 +132,68 @@ test("Muse handles casual messages without web research and researches factual q
     assert.doesNotMatch(answer, /candidate pages|Research completeness|Limitations:/);
     assert.equal(researchQuestions[0], "How does this work?");
     assert.equal(modelCalls, 2);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("Muse handles opinions and brainstorming through natural chat, not web research", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "muse-agent-conversation-first-"));
+  let modelCalls = 0;
+  const researchQuestions: string[] = [];
+  const agent = new MuseAgent(
+    {
+      async generateText(request) {
+        modelCalls += 1;
+        assert.match(request.systemPrompt, /general-purpose conversational assistant/);
+        return modelCalls === 1
+          ? "I think a simple, welcoming design is the strongest option."
+          : "Let's start by listing the audience, then generate a few name styles.";
+      },
+    },
+    new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
+    undefined,
+    async (question) => {
+      researchQuestions.push(question);
+      return researchResult;
+    },
+  );
+
+  try {
+    assert.match(
+      await agent.respond("What do you think about making Muse more conversational?"),
+      /welcoming design/,
+    );
+    assert.match(
+      await agent.respond("Can you brainstorm names for the new project?"),
+      /listing the audience/,
+    );
+    assert.equal(modelCalls, 2);
+    assert.deepEqual(researchQuestions, []);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("a confirmation with no conversation context asks what to verify instead of calling a model", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "muse-agent-empty-confirmation-"));
+  let modelCalls = 0;
+  const agent = new MuseAgent(
+    {
+      async generateText() {
+        modelCalls += 1;
+        throw new Error("Groq request failed with HTTP 503.");
+      },
+    },
+    new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
+  );
+
+  try {
+    assert.equal(
+      await agent.respond("Are you sure?"),
+      "What would you like me to double-check?",
+    );
+    assert.equal(modelCalls, 0);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
@@ -242,21 +304,30 @@ test("Are you sure and Confirm follow-ups reuse prior research instead of resear
     undefined,
     async (question) => {
       questions.push(question);
-      return { ...researchResult, question };
+      return {
+        ...researchResult,
+        question,
+        answer: "Photosynthesis converts light energy into chemical energy. [1]",
+        sources: [
+          {
+            ...researchResult.sources[0]!,
+            title: "Photosynthesis overview",
+            content: "Photosynthesis converts light energy into chemical energy.",
+          },
+        ],
+      };
     },
   );
 
   try {
     await agent.respond("What is photosynthesis?");
-    assert.match(await agent.respond("Are you sure ?"), /earlier source supports/);
-    assert.match(await agent.respond("Confirm?"), /earlier source supports/);
+    const sureReply = await agent.respond("Are you sure ?");
+    const confirmReply = await agent.respond("Confirm?");
 
+    assert.match(sureReply, /sources I found support the main point/);
+    assert.match(confirmReply, /sources I found support the main point/);
     assert.deepEqual(questions, ["What is photosynthesis?"]);
-    assert.equal(requests.length, 2);
-    assert.match(requests[0]?.systemPrompt ?? "", /Question: What is photosynthesis\?/);
-    assert.match(requests[0]?.systemPrompt ?? "", /Relevant previously retrieved evidence/);
-    assert.equal(requests[0]?.conversation.at(-1)?.content, "Are you sure ?");
-    assert.equal(requests[1]?.conversation.at(-1)?.content, "Confirm?");
+    assert.equal(requests.length, 0);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
@@ -484,7 +555,7 @@ test("multi-turn chat keeps roles and routes simple follow-ups separately from e
       requests[1]?.conversation.map(({ role }) => role),
       ["user", "assistant", "user"],
     );
-    assert.match(requests[1]?.systemPrompt ?? "", /conversational research agent/);
+    assert.match(requests[1]?.systemPrompt ?? "", /general-purpose conversational assistant/);
     assert.match(requests[1]?.systemPrompt ?? "", /answer follow-ups directly/);
     assert.match(requests[1]?.systemPrompt ?? "", /never use tables/i);
     assert.match(requests[1]?.systemPrompt ?? "", /Question: What is TypeScript\?/);

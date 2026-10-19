@@ -99,6 +99,29 @@ test("substantive factual questions and explicit research requests use live rese
   }
 });
 
+test("opinions, brainstorming, and ordinary conversation stay chat-first", () => {
+  for (const message of [
+    "What do you think about this idea?",
+    "What's your take on this?",
+    "Do you agree with my plan?",
+    "Can you brainstorm names for my project?",
+    "Let's brainstorm some ways to start.",
+    "Can we talk for a minute?",
+    "Tell me a joke.",
+  ]) {
+    assert.equal(shouldResearchMessage(message), false, message);
+  }
+
+  assert.equal(
+    shouldResearchMessage("Research what experts think about pollination."),
+    true,
+  );
+  assert.equal(
+    shouldResearchMessage("What do you think about the latest pollination research?"),
+    true,
+  );
+});
+
 test("contextual follow-ups use conversation context instead of repeating research", () => {
   for (const message of [
     "Why?",

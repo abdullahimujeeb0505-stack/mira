@@ -43,6 +43,8 @@ const DYNAMIC_LOOKUP_SUBJECT =
   /\b(?:price|net[\s-]*worth|version|release|news|weather|forecast|exchange rate|market(?: cap)?|stock|status|population|inflation|score|results|schedule|deadline|valuation|research|developments|guidance|guidelines|laws|regulations)\b/i;
 const INSPECTION_REQUEST =
   /\b(?:look (?:through|over|at)|check (?:out|through)|go through|take a look|browse through|read through|dig through)\b/i;
+const SUBJECTIVE_CONVERSATION_REQUEST =
+  /^(?:what do you think(?: about)?|what(?:'s| is) your (?:take|opinion)(?: on)?|in your opinion|do you (?:agree|think)|can you brainstorm|let['’]s brainstorm|help me brainstorm|brainstorm\b|what would you do|can we talk|i need to talk|i want to talk|tell me a joke|make me laugh|help me (?:think through|come up with))\b/i;
 const INFORMATION_REQUEST =
   /^(?:who|what|when|where|why|how|which|whose|whom|is|are|was|were|do|does|did|can|could|would|should|will)\b/i;
 const EXPLANATION_REQUEST =
@@ -148,6 +150,12 @@ export function shouldResearchMessage(
   }
   if (containsWebTarget(content)) return true;
   if (INSPECTION_REQUEST.test(content)) return true;
+  if (
+    SUBJECTIVE_CONVERSATION_REQUEST.test(normalizedContent) &&
+    !CURRENT_INFORMATION_MARKER.test(content)
+  ) {
+    return false;
+  }
   if (hasConversationHistory && CONTEXTUAL_RELATION_FOLLOW_UP.test(content)) return false;
   if (isContextualConfirmation(content)) return false;
   if (CONTEXTUAL_EDIT_FOLLOW_UP.test(content)) return false;

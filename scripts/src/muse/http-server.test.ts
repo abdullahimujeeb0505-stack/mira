@@ -9,6 +9,7 @@ import type {
   TextGenerationRequest,
 } from "./llm-provider.js";
 import { createMuseHttpServer } from "./http-server.js";
+import { createTaskAwareProviders } from "./provider-selection.js";
 
 const testSessionSecret = "muse-http-session-test-secret";
 
@@ -114,8 +115,8 @@ test("Muse serves the chat page with same-origin security headers", async () =>
       const script = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
       assert.ok(script);
       assert.doesNotThrow(() => new Script(script));
-      assert.match(html, /What would you like to learn\?/);
-      assert.match(html, /research assistant/i);
+      assert.match(html, /What would you like to talk about\?/);
+      assert.match(html, /chat, brainstorm, ask a question, or request web research/i);
       assert.doesNotMatch(html, /Connect X|Web3 intern|authorizationUrl/i);
       assert.match(html, /function renderMarkdown/);
       assert.match(html, /document\.createElement\("table"\)/);
@@ -526,6 +527,53 @@ test("Muse returns a generic configuration error without exposing provider detai
       assert.equal(body.includes("sensitive details"), false);
     },
   ));
+
+test(
+  "Muse returns a chat reply when Groq is unavailable and Gemini fallback succeeds",
+  async () => {
+    const providerCalls: string[] = [];
+    const providers = createTaskAwareProviders({
+      chatProvider: "groq",
+      researchProvider: "groq",
+      factories: {
+        groq: () => ({
+          providerName: "groq",
+          model: "test-groq",
+          async generateText() {
+            providerCalls.push("groq");
+            throw new Error("Groq request failed with HTTP 503.");
+          },
+        }),
+        gemini: () => ({
+          providerName: "gemini",
+          model: "test-gemini",
+          async generateText() {
+            providerCalls.push("gemini");
+            return "I'm here. What would you like to talk about?";
+          },
+        }),
+      },
+    });
+
+    await withServer(
+      () => providers.chat.provider,
+      async (baseUrl) => {
+        const originalWarn = console.warn;
+        console.warn = () => undefined;
+        try {
+          const response = await sendMessage(baseUrl, "Hi, can we just talk?");
+          assert.equal(response.status, 200);
+          assert.deepEqual(await response.json(), {
+            reply: "I'm here. What would you like to talk about?",
+          });
+          assert.deepEqual(providerCalls, ["groq", "gemini"]);
+        } finally {
+          console.warn = originalWarn;
+        }
+      },
+    );
+  },
+);
 
 test("Muse hides model-generation failures from the HTTP response", async () =>
   withServer(
