@@ -15,8 +15,23 @@ const VALID_PROVIDERS = new Set(Object.keys(PROVIDER_KEYS));
 function selectedProvider(env, task) {
   const taskOverride = env[`MUSE_${task.toUpperCase()}_LLM_PROVIDER`];
   const globalOverride = env.MUSE_LLM_PROVIDER;
-  const fallback = task === "chat" ? "groq" : "gemini";
-  return (taskOverride ?? globalOverride ?? fallback).trim().toLowerCase() || fallback;
+  const fallback = "groq";
+  return (
+    (taskOverride ?? globalOverride ?? fallback).trim().toLowerCase() ||
+    fallback
+  );
+}
+
+function alternateProvider(env, task) {
+  const requested = selectedProvider(env, task);
+  const otherTask = task === "chat" ? "research" : "chat";
+  const otherRequested = selectedProvider(env, otherTask);
+  if (requested === "groq") return "gemini";
+  if (requested === "gemini") return "groq";
+  if (otherRequested !== requested && VALID_PROVIDERS.has(otherRequested)) {
+    return otherRequested;
+  }
+  return "groq";
 }
 
 function providerConfiguration(env, provider) {
@@ -33,8 +48,27 @@ function providerConfiguration(env, provider) {
 }
 
 function resolveTaskProvider(env, task, requested, alternate) {
+  if (!VALID_PROVIDERS.has(requested)) {
+    return {
+      ready: false,
+      requested,
+      used: null,
+      fallbackProvider: alternate,
+      fallbackConfigured: false,
+    };
+  }
+
   const primary = providerConfiguration(env, requested);
-  if (primary.configured) return { ready: true, requested, used: requested };
+  if (primary.configured) {
+    const fallback = providerConfiguration(env, alternate);
+    return {
+      ready: true,
+      requested,
+      used: requested,
+      fallbackProvider: alternate,
+      fallbackConfigured: fallback.configured,
+    };
+  }
 
   if (alternate !== requested) {
     const fallback = providerConfiguration(env, alternate);
@@ -43,12 +77,18 @@ function resolveTaskProvider(env, task, requested, alternate) {
         ready: true,
         requested,
         used: alternate,
-        warning: `The ${task} task will fall back from ${VALID_PROVIDERS.has(requested) ? requested : "an unsupported configured provider"} to ${alternate}; configure the preferred provider to remove this fallback.`,
+        warning: `The ${task} task will use ${alternate} because the configured primary ${VALID_PROVIDERS.has(requested) ? requested : "provider"} is unavailable; configure the preferred provider to restore the primary route.`,
       };
     }
   }
 
-  return { ready: false, requested, used: null };
+  return {
+    ready: false,
+    requested,
+    used: null,
+    fallbackProvider: alternate,
+    fallbackConfigured: false,
+  };
 }
 
 export function inspectMuseReadiness(
@@ -71,7 +111,8 @@ export function inspectMuseReadiness(
 
   addCheck(
     "SESSION_SECRET",
-    typeof env.SESSION_SECRET === "string" && env.SESSION_SECRET.trim().length > 0,
+    typeof env.SESSION_SECRET === "string" &&
+      env.SESSION_SECRET.trim().length > 0,
     "Add a non-empty SESSION_SECRET to GitHub Codespaces Secrets or the runtime environment.",
   );
 
@@ -79,9 +120,18 @@ export function inspectMuseReadiness(
     chat: selectedProvider(env, "chat"),
     research: selectedProvider(env, "research"),
   };
+  const alternates = {
+    chat: alternateProvider(env, "chat"),
+    research: alternateProvider(env, "research"),
+  };
   const resolved = {
-    chat: resolveTaskProvider(env, "chat", requested.chat, requested.research),
-    research: resolveTaskProvider(env, "research", requested.research, requested.chat),
+    chat: resolveTaskProvider(env, "chat", requested.chat, alternates.chat),
+    research: resolveTaskProvider(
+      env,
+      "research",
+      requested.research,
+      alternates.research,
+    ),
   };
   if (
     (env.MUSE_GEMINI_SEARCH ?? "1").trim() !== "0" &&
@@ -102,14 +152,24 @@ export function inspectMuseReadiness(
         true,
         `Configure a usable provider for the ${task} task.`,
       );
+      if (result.fallbackProvider && result.fallbackConfigured) {
+        providersToCheck.add(result.fallbackProvider);
+        addCheck(
+          `${task} LLM fallback (${result.fallbackProvider})`,
+          true,
+          `Configure a usable fallback for the ${task} task.`,
+        );
+      } else if (result.fallbackProvider) {
+        warnings.push(
+          `The ${task} task has no configured ${result.fallbackProvider} runtime fallback; ${result.used} remains the primary provider without failover.`,
+        );
+      }
       if (result.warning) warnings.push(result.warning);
       continue;
     }
 
     providersToCheck.add(result.requested);
-    if (requested.chat !== requested.research) {
-      providersToCheck.add(task === "chat" ? requested.research : requested.chat);
-    }
+    if (result.fallbackProvider) providersToCheck.add(result.fallbackProvider);
     addCheck(
       VALID_PROVIDERS.has(result.requested)
         ? `${task} LLM provider (${result.requested})`
@@ -124,8 +184,8 @@ export function inspectMuseReadiness(
       const setting = env.MUSE_CHAT_LLM_PROVIDER?.trim()
         ? "MUSE_CHAT_LLM_PROVIDER"
         : env.MUSE_RESEARCH_LLM_PROVIDER?.trim()
-        ? "MUSE_RESEARCH_LLM_PROVIDER"
-        : "MUSE_LLM_PROVIDER";
+          ? "MUSE_RESEARCH_LLM_PROVIDER"
+          : "MUSE_LLM_PROVIDER";
       addCheck(
         setting,
         false,
@@ -141,7 +201,7 @@ export function inspectMuseReadiness(
     const keyLabel =
       provider === "groq" && !configuredKey
         ? "GROQ_API_KEY or GROK_API_CODING_KEY"
-        : configuredKey ?? keyNames[0];
+        : (configuredKey ?? keyNames[0]);
     addCheck(
       keyLabel,
       Boolean(configuredKey),
@@ -194,7 +254,10 @@ function isTsxAvailable() {
   ].some(existsSync);
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (
+  process.argv[1] &&
+  resolve(process.argv[1]) === fileURLToPath(import.meta.url)
+) {
   const report = inspectMuseReadiness();
   process.stdout.write(`${formatMuseReadiness(report)}\n`);
   if (!report.ready) process.exitCode = 1;

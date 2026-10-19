@@ -51,26 +51,69 @@ async function withEnvironment(
   }
 }
 
-test("task-aware selection defaults to Groq for chat and Gemini for research", async () =>
+test("task-aware selection defaults both tasks to Groq with Gemini runtime fallback", async () =>
   await withEnvironment(
     {
       MUSE_CHAT_LLM_PROVIDER: undefined,
       MUSE_RESEARCH_LLM_PROVIDER: undefined,
+      MUSE_LLM_PROVIDER: undefined,
     },
     () => {
-      const chat = fakeProvider("groq");
-      const research = fakeProvider("gemini");
+      const groq = fakeProvider("groq", "openai/gpt-oss-120b");
+      const gemini = fakeProvider("gemini", "gemini-3.5-flash");
       const providers = createTaskAwareProviders({
         factories: {
-          groq: () => chat,
-          gemini: () => research,
+          groq: () => groq,
+          gemini: () => gemini,
         },
       });
 
-      assert.equal(providers.chat.provider, chat);
+      assert.equal(providers.chat.primaryProvider, groq);
+      assert.equal(providers.chat.provider.providerName, "groq");
       assert.equal(providers.chat.requested, "groq");
-      assert.equal(providers.research.provider, research);
-      assert.equal(providers.research.requested, "gemini");
+      assert.equal(providers.chat.fallbackProvider, gemini);
+      assert.equal(providers.research.primaryProvider, groq);
+      assert.equal(providers.research.provider.providerName, "groq");
+      assert.equal(providers.research.requested, "groq");
+      assert.equal(providers.research.fallbackProvider, gemini);
+      assert.ok(
+        formatTaskProviderDiagnostics(providers).some((line) =>
+          line.includes(
+            "Muse research LLM fallback: gemini (model: gemini-3.5-flash)",
+          ),
+        ),
+      );
+    },
+  ));
+
+test("keeps Groq primary when Gemini fallback credentials are missing", async () =>
+  await withEnvironment(
+    {
+      MUSE_CHAT_LLM_PROVIDER: undefined,
+      MUSE_RESEARCH_LLM_PROVIDER: undefined,
+      MUSE_LLM_PROVIDER: undefined,
+    },
+    () => {
+      const groq = fakeProvider("groq");
+      const providers = createTaskAwareProviders({
+        factories: {
+          groq: () => groq,
+          gemini: () => {
+            throw new Error("Missing GEMINI_API_KEY.");
+          },
+        },
+      });
+
+      assert.equal(providers.chat.provider, groq);
+      assert.match(
+        providers.chat.fallbackUnavailableReason ?? "",
+        /auth error/,
+      );
+      assert.ok(
+        formatTaskProviderDiagnostics(providers).some((line) =>
+          line.includes("Muse chat LLM fallback unavailable: auth error"),
+        ),
+      );
     },
   ));
 
@@ -90,8 +133,12 @@ test("MUSE_CHAT_LLM_PROVIDER and MUSE_RESEARCH_LLM_PROVIDER override the default
         },
       });
 
-      assert.equal(providers.chat.provider, chat);
-      assert.equal(providers.research.provider, research);
+      assert.equal(providers.chat.primaryProvider, chat);
+      assert.equal(providers.chat.provider.providerName, "gemini");
+      assert.equal(providers.chat.fallbackProvider, research);
+      assert.equal(providers.research.primaryProvider, research);
+      assert.equal(providers.research.provider.providerName, "groq");
+      assert.equal(providers.research.fallbackProvider, chat);
     },
   ));
 
@@ -104,16 +151,24 @@ test("MUSE_LLM_PROVIDER pins both tasks to one provider", async () =>
     },
     () => {
       const gemini = fakeProvider("gemini");
+      const groq = fakeProvider("groq");
       const providers = createTaskAwareProviders({
-        factories: { gemini: () => gemini },
+        factories: {
+          gemini: () => gemini,
+          groq: () => groq,
+        },
       });
 
-      assert.equal(providers.chat.provider, gemini);
-      assert.equal(providers.research.provider, gemini);
+      assert.equal(providers.chat.primaryProvider, gemini);
+      assert.equal(providers.chat.provider.providerName, "gemini");
+      assert.equal(providers.chat.fallbackProvider, groq);
+      assert.equal(providers.research.primaryProvider, gemini);
+      assert.equal(providers.research.provider.providerName, "gemini");
+      assert.equal(providers.research.fallbackProvider, groq);
     },
   ));
 
-test("research falls back to the chat provider with a recorded reason", async () =>
+test("uses Groq at startup when an explicit Gemini primary has no credentials", async () =>
   await withEnvironment(
     {
       MUSE_CHAT_LLM_PROVIDER: "groq",
@@ -131,6 +186,7 @@ test("research falls back to the chat provider with a recorded reason", async ()
       });
 
       assert.equal(providers.research.provider, groq);
+      assert.equal(providers.research.primaryProvider, groq);
       assert.equal(providers.research.requested, "gemini");
       assert.equal(providers.research.used, "groq");
       assert.match(providers.research.fallbackReason ?? "", /GEMINI_API_KEY/);
@@ -143,6 +199,66 @@ test("research falls back to the chat provider with a recorded reason", async ()
       );
     },
   ));
+
+test("retries a failed Groq request once through the Gemini fallback", async () => {
+  const calls: string[] = [];
+  const groq = fakeProvider("groq", "openai/gpt-oss-120b", async () => {
+    calls.push("groq");
+    throw new Error("Groq request failed with HTTP 503.");
+  });
+  const gemini = fakeProvider("gemini", "gemini-3.5-flash", async () => {
+    calls.push("gemini");
+    return "recovered through Gemini";
+  });
+  const providers = createTaskAwareProviders({
+    chatProvider: "groq",
+    researchProvider: "groq",
+    factories: {
+      groq: () => groq,
+      gemini: () => gemini,
+    },
+  });
+  const originalWarn = console.warn;
+  console.warn = () => undefined;
+  try {
+    const reply = await providers.chat.provider.generateText({
+      systemPrompt: "Be concise.",
+      conversation: [{ role: "user", content: "Hello." }],
+    });
+    assert.equal(reply, "recovered through Gemini");
+    assert.deepEqual(calls, ["groq", "gemini"]);
+  } finally {
+    console.warn = originalWarn;
+  }
+});
+
+test("does not send provider safety refusals to the fallback", async () => {
+  let fallbackCalls = 0;
+  const groq = fakeProvider("groq", "openai/gpt-oss-120b", async () => {
+    throw new Error("Provider safety block: request blocked.");
+  });
+  const gemini = fakeProvider("gemini", "gemini-3.5-flash", async () => {
+    fallbackCalls += 1;
+    return "should not run";
+  });
+  const providers = createTaskAwareProviders({
+    chatProvider: "groq",
+    researchProvider: "groq",
+    factories: {
+      groq: () => groq,
+      gemini: () => gemini,
+    },
+  });
+
+  await assert.rejects(
+    providers.chat.provider.generateText({
+      systemPrompt: "Be concise.",
+      conversation: [{ role: "user", content: "Hello." }],
+    }),
+    /safety block/i,
+  );
+  assert.equal(fallbackCalls, 0);
+});
 
 test("selection fails loudly when neither provider is usable", async () =>
   await withEnvironment(
@@ -162,6 +278,24 @@ test("selection fails loudly when neither provider is usable", async () =>
                 throw new Error("Missing GEMINI_API_KEY.");
               },
             },
+          }),
+        /No usable LLM provider for chat tasks/,
+      );
+    },
+  ));
+
+test("does not silently replace an unsupported task provider with Groq", async () =>
+  await withEnvironment(
+    {
+      MUSE_CHAT_LLM_PROVIDER: "unsupported-provider",
+      MUSE_RESEARCH_LLM_PROVIDER: undefined,
+      MUSE_LLM_PROVIDER: undefined,
+    },
+    () => {
+      assert.throws(
+        () =>
+          createTaskAwareProviders({
+            factories: { groq: () => fakeProvider("groq") },
           }),
         /No usable LLM provider for chat tasks/,
       );
