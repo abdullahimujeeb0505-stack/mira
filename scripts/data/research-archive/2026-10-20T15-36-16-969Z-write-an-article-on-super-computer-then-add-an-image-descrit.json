@@ -1,0 +1,142 @@
+{
+  "id": "2026-10-20T15-36-16-969Z-write-an-article-on-super-computer-then-add-an-image-descrit",
+  "question": "Write an article on super computer, then add an image descrition at the end of the article3",
+  "plan": {
+    "objective": "Gather comprehensive, up‑to‑date information to write a well‑structured article about supercomputers, including definitions, key technologies, leading systems, applications, and future trends, and provide a concise description for an illustrative image to be placed at the end of the article.",
+    "taskType": "technical",
+    "deliverable": "Research plan with focused search queries and a list of guiding questions to support article composition and image description.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "Official TOP500 list and reports",
+      "Government or agency publications (e.g., DOE, NSF, EU Horizon)",
+      "Peer‑reviewed journal articles on high‑performance computing",
+      "Technical whitepapers from leading HPC vendors (IBM, Cray, NVIDIA, Intel)",
+      "Authoritative textbooks or encyclopedic entries (e.g., ACM Computing Surveys)"
+    ],
+    "questions": [
+      "What is the definition of a supercomputer and how does it differ from conventional computers?",
+      "What are the core architectural components and technologies that enable supercomputer performance (e.g., processors, interconnects, accelerators, storage)?",
+      "Which systems currently rank at the top of the TOP500 list and what are their key specifications (peak FLOPS, architecture, energy efficiency)?",
+      "What major scientific, industrial, and societal applications rely on supercomputers today?",
+      "What are the current challenges and emerging trends in supercomputing (e.g., exascale initiatives, quantum‑accelerated HPC, sustainability)?",
+      "What essential visual elements should be highlighted in an image that represents a modern supercomputer, and how can these be described succinctly?"
+    ],
+    "queries": [
+      "definition and architecture of supercomputers site:ieee.org",
+      "TOP500 list 2024 leading supercomputers specifications",
+      "high‑performance computing applications in climate modeling and AI peer‑reviewed",
+      "exascale supercomputing challenges and roadmap DOE 2023",
+      "visual description of modern supercomputer hardware layout"
+    ],
+    "unresolvedQuestions": [
+      "Exact FLOPS performance range that qualifies a system as a supercomputer today.",
+      "Detailed CPU, GPU, interconnect, and storage specifications of the leading TOP500 machines.",
+      "Comprehensive list of scientific, industrial, and societal applications in 2024.",
+      "Specific challenges such as cost models and programming ecosystem maturity."
+    ]
+  },
+  "answer": "Supercomputers are the most powerful computing systems available at a given time, built to perform vastly more floating‑point operations per second than ordinary servers or workstations. [SRC-3e6b1c9ef2e7]\nTheir defining trait is not a fixed FLOPS threshold but their position at the frontier of sustained computational capability, which shifts as technology advances [SRC-3e6b1c9ef2e7].\n\n**Core Architectural Components**\n- **Processors and Accelerators**: Modern systems combine many CPU cores with GPUs or other accelerators, which deliver far higher FLOPS per watt for dense matrix workloads [SRC-3e6b1c9ef2e7].\n- **Interconnects**: High‑bandwidth, low‑latency networks such as InfiniBand or custom fabrics link thousands of nodes, enabling the massive parallelism required for scientific codes [SRC-3e6b1c9ef2e7].\n- **Storage Hierarchy**: Tiered storage ranging from fast NVMe SSDs to large parallel file systems supports the massive data movement typical of HPC workloads (unverified: no matching retrieved evidence).\n\n**Leading Systems**\nThe U.S.\nDepartment of Energy highlights the *Frontier* system at Oak Ridge National Laboratory as the nation’s first exascale supercomputer, aiming for performance beyond 1 exa‑FLOPS (10¹⁸ FLOPS) [SRC-3a439df5ee95].\nWhile the TOP500 site provides the official rankings, the retrieved page did not contain current specifications for the top‑5 machines, limiting detailed comparison (unverified: no matching retrieved evidence).\n\n**Key Applications**\nSupercomputers enable breakthroughs in climate modeling, materials science, genomics, and AI research (unverified: no matching retrieved evidence).\nExascale machines such as Frontier are expected to tackle grand challenges like climate change mitigation, cancer understanding, and advanced material design [SRC-3a439df5ee95].\n\n**Current Challenges and Emerging Trends** (unverified: no matching retrieved evidence).\n- **Energy Consumption**: Scaling to exascale raises power‑efficiency concerns; GPUs help improve FLOPS per watt, but overall system power remains a major design constraint (unverified: no matching retrieved evidence).\n- **Programming Models**: Efficiently exploiting heterogeneous architectures requires sophisticated parallel programming frameworks (unverified: no matching retrieved evidence).\n- **Sustainability**: Efforts focus on reducing cooling demands and using renewable energy sources (unverified: no matching retrieved evidence).\n- **Future Directions**: Beyond exascale, research explores quantum‑accelerated HPC and AI‑focused accelerators to sustain performance growth (unverified: no matching retrieved evidence).\n\n**Image Description**\nA concise visual summary should depict a densely packed rack of compute nodes, each showing a CPU socket paired with a GPU accelerator (unverified: no matching retrieved evidence).\nOverhead, a high‑speed interconnect fabric (e.g., a mesh of light‑blue cables) links the racks, while a liquid‑cooling loop circulates around the modules (unverified: no matching retrieved evidence).\nThe foreground can include a stylized power‑efficiency meter to hint at sustainability concerns (unverified: no matching retrieved evidence).\nThis illustration conveys the core elements—processors, accelerators, interconnect, and cooling—that define a modern supercomputer. [SRC-3e6b1c9ef2e7]",
+  "followUpQuestions": [
+    "What are the current top‑5 systems on the November 2024 TOP500 list?",
+    "How are AI and machine learning workloads reshaping supercomputer architecture?"
+  ],
+  "sources": [
+    {
+      "title": "Supercomputers | IEEE Technology Navigator",
+      "url": "https://technav.ieee.org/topic/supercomputers/",
+      "canonicalUrl": "https://technav.ieee.org/topic/supercomputers/",
+      "publisher": "IEEE Technology Navigator",
+      "author": "IEEE",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "Supercomputers are the most powerful computing systems available at a given time, designed to execute vastly more floating-point operations per second than general-purpose servers or workstations. They are built from thousands to millions of processing cores interconnected by high-bandwidth, low-latency networks, enabling programs that require quantities of ",
+        "Supercomputers draw on computer architecture , parallel programming models, numerical analysis, and high-speed interconnect design. Their development has historically been driven by national laboratories, research universities, and government agencies with needs in physics simulation, engineering modeling, and cryptographic analysis.",
+        "Modern supercomputers are massively parallel systems in which thousands of nodes, each containing multiple processors and accelerators, are coordinated to solve a single problem. The dominant architecture shifted from vector processors in the 1970s and 1980s toward distributed-memory clusters of commodity processors in the 1990s, and then toward heterogeneou",
+        "Supercomputer performance is measured in floating-point operations per second (FLOPS), with contemporary leadership systems operating at the exascale: one exaFLOP equals 10¹⁸ double-precision operations per second. The standard benchmark is the High Performance LINPACK (HPL) test, which solves a dense system of linear equations; rankings compiled by the TOP5"
+      ],
+      "retrievedAt": "2026-10-20T15:36:11.156Z",
+      "content": "Supercomputers | IEEE Technology Navigator\nIEEE.org\nMore IEEE Sites\nSupercomputers\nWhat Are Supercomputers?\nSupercomputers are the most powerful computing systems available at a given time, designed to execute vastly more floating-point operations per second than general-purpose servers or workstations. They are built from thousands to millions of processing cores interconnected by high-bandwidth, low-latency networks, enabling programs that require quantities of computation impractical on any single machine. The defining characteristic of a supercomputer is not a fixed performance threshold but rather its position at the frontier of sustained computational capability, a boundary that shifts as technology advances.\nSupercomputers draw on computer architecture , parallel programming models, numerical analysis, and high-speed interconnect design. Their development has historically been driven by national laboratories, research universities, and government agencies with needs in physics simulation, engineering modeling, and cryptographic analysis.\nArchitecture and Parallel Processing\nModern supercomputers are massively parallel systems in which thousands of nodes, each containing multiple processors and accelerators, are coordinated to solve a single problem. The dominant architecture shifted from vector processors in the 1970s and 1980s toward distributed-memory clusters of commodity processors in the 1990s, and then toward heterogeneous nodes combining central processing units (CPUs) with graphics processing units (GPUs) in the 2010s. GPUs provide far more floating-point throughput per watt than CPUs for the dense matrix operations that dominate scientific workloads. Interconnects such as InfiniBand and custom proprietary fabrics sustain the communication bandwidth required to keep thousands of nodes working on a coupled problem without being throttled by data movement. Analysis of architectural trends based on the TOP500 list documents the shift toward GPU-accelerated heterogeneous designs and the growing divergence between peak and sustained performance as memory bandwidth becomes the binding constraint.\nPerformance Measurement and the TOP500\nSupercomputer performance is measured in floating-point operations per second (FLOPS), with contemporary leadership systems operating at the exascale: one exaFLOP equals 10¹⁸ double-precision operations per second. The standard benchmark is the High Performance LINPACK (HPL) test, which solves a dense system of linear equations; rankings compiled by the TOP500 project publish the world's fastest systems twice per year, providing a longitudinal record of progress since 1993. The petascale era began in 2008 when Roadrunner at Los Alamos National Laboratory became the first system to exceed one petaFLOP. Frontier at Oak Ridge National Laboratory crossed the exascale threshold in 2022, and El Capitan at Lawrence Livermore National Laboratory followed, reaching 1.809 exaFLOP/s. Jack Dongarra's survey of progress",
+      "isUserProvided": true,
+      "sourceId": "SRC-3e6b1c9ef2e7"
+    },
+    {
+      "title": "Home - | TOP500",
+      "url": "https://www.top500.org/",
+      "canonicalUrl": "https://www.top500.org/",
+      "publisher": "www.top500.org",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "A look back to supercomputing at the turn of the century",
+        "When I first attended the Supercomputing (SC) conferences back in the early 2000s as an IBMer working in High Performance Computing (HPC), it was obvious this conference was intended for serious computer science researchers and industries singularly focused on pushing the boundaries of computing. Linux was still in its infancy. I vividly remember having to r"
+      ],
+      "retrievedAt": "2026-10-20T15:36:10.744Z",
+      "content": "A look back to supercomputing at the turn of the century\nWhen I first attended the Supercomputing (SC) conferences back in the early 2000s as an IBMer working in High Performance Computing (HPC), it was obvious this conference was intended for serious computer science researchers and industries singularly focused on pushing the boundaries of computing. Linux was still in its infancy. I vividly remember having to re-compile kernels with newly released drivers every time there was a new server that came to market just so I could get the system to PXE boot over the network. But there was one …",
+      "isUserProvided": true,
+      "sourceId": "SRC-f7e7519ee95a"
+    },
+    {
+      "title": "DOE Explains...Exascale Computing | Department of Energy",
+      "url": "https://www.energy.gov/science/doe-explainsexascale-computing",
+      "canonicalUrl": "https://www.energy.gov/science/doe-explainsexascale-computing",
+      "publisher": "Energy.gov",
+      "publishedAt": "2021-11-09T18:58:26.000Z",
+      "updatedAt": "2026-03-11T20:44:34.000Z",
+      "sourceType": "government",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "The Frontier supercomputer at Oak Ridge National Laboratory (ORNL) is expected to be the first exascale computer in the United States.",
+        "Image courtesy of Oak Ridge National Laboratory",
+        "Exascale computing is the next milestone in the development of supercomputers. Able to process information much faster than today’s most powerful supercomputers, exascale computers will give scientists a new tool for addressing some of the biggest challenges facing our world, from climate change to understanding cancer to designing new kinds of materials.",
+        "Exascale computers are digital computers, roughly similar to today’s computers and supercomputers but with much more powerful hardware. This makes them different from quantum computers , which represent a completely new approach to building a computer suited to specific types of questions."
+      ],
+      "retrievedAt": "2026-10-20T15:36:10.505Z",
+      "content": "DOE Explains...Exascale Computing\nThe Frontier supercomputer at Oak Ridge National Laboratory (ORNL) is expected to be the first exascale computer in the United States.\nImage courtesy of Oak Ridge National Laboratory\nExascale computing is the next milestone in the development of supercomputers. Able to process information much faster than today’s most powerful supercomputers, exascale computers will give scientists a new tool for addressing some of the biggest challenges facing our world, from climate change to understanding cancer to designing new kinds of materials.\nExascale computers are digital computers, roughly similar to today’s computers and supercomputers but with much more powerful hardware. This makes them different from quantum computers , which represent a completely new approach to building a computer suited to specific types of questions.\nHow does exascale computing compare to other computers? One way scientists measure computer performance is in floating point operations per second (FLOPS). These involve simple arithmetic like addition and multiplication problems. In general, a person can solve addition problems with pen and paper at a speed of 1 FLOP. That means it takes us one second to do one simple addition problem. Computers are much faster than people. Their performance in FLOPS has so many zeros researchers instead use prefixes. For example, the “giga” prefix means a number with nine zeros. A modern personal computer processor can operate in the gigaflop range, at about 150,000,000,000 FLOPS, or 150 gigaFLOPS. “Tera” means 12 zeros. Computers hit the terascale milestone in 1996 with the Department of Energy’s (DOE) Intel ASCI Red supercomputer. ASCI Red’s peak performance was 1,340,000,000,000 FLOPS, or 1.34 teraFLOPS.\nExascale computing is unimaginably faster than that. “Exa” means 18 zeros. That means an exascale computer can perform more than 1,000,000,000,000,000,000 FLOPS, or 1 exaFLOP. That is more than one million times faster than ASCI Red’s peak performance in 1996.\nBuilding a computer this powerful isn’t easy. When scientists started thinking seriously about exascale computers, they predicted these computers might need as much energy as up to 50 homes would use. That figure has been slashed, thanks to ongoing research with computer vendors. Scientists also need ways to ensure exascale computers are reliable, despite the huge number of components they contain. In addition, they must find ways to move data between processors and storage fast enough to prevent slowdowns.\nWhy do we need exascale computers? The challenges facing our world and the most complex scientific research questions need more and more computer power to solve. Exascale supercomputers will allow scientists to create more realistic Earth system and climate models . They will help researchers understand the nanoscience behind new materials. Exascale computers will help us build future fusion power plants . They will power new studies of the universe ",
+      "isUserProvided": true,
+      "sourceId": "SRC-3a439df5ee95"
+    },
+    {
+      "title": "Tutorial: Supercomputer architecture | IEEE Journals & Magazine | IEEE Xplore",
+      "url": "https://ieeexplore.ieee.org/abstract/document/6540219",
+      "canonicalUrl": "https://ieeexplore.ieee.org/abstract/document/6540219",
+      "publisher": "ieeexplore.ieee.org",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "Tutorial: Supercomputer architecture | IEEE Journals & Magazine | IEEE Xplore",
+        "A not-for-profit organization, IEEE is the world's largest technical professional organization dedicated to advancing technology for the benefit of humanity. &copy; Copyright 2026 IEEE - All rights reserved. Use of this web site signifies your agreement to the terms and conditions."
+      ],
+      "retrievedAt": "2026-10-20T15:36:11.004Z",
+      "content": "Tutorial: Supercomputer architecture | IEEE Journals & Magazine | IEEE Xplore \n\nIEEE Account\n\nChange Username/Password \n\nUpdate Address \n\nPurchase Details\n\nPayment Options \n\nOrder History \n\nView Purchased Documents \n\nProfile Information\n\nCommunications Preferences \n\nProfession and Education \n\nTechnical Interests \n\nNeed Help?\n\nUS & Canada: +1 800 678 4333\n\nWorldwide: +1 732 981 0060 \n\nContact & Support \n\nAbout IEEE Xplore \n\nContact Us \n\nHelp \n\nAccessibility \n\nTerms of Use \n\nNondiscrimination Policy \n\nSitemap \n\nPrivacy & Opting Out of Cookies \n\nA not-for-profit organization, IEEE is the world's largest technical professional organization dedicated to advancing technology for the benefit of humanity. &copy; Copyright 2026 IEEE - All rights reserved. Use of this web site signifies your agreement to the terms and conditions.",
+      "isUserProvided": true,
+      "sourceId": "SRC-bcb09a970671"
+    }
+  ],
+  "unresolvedQuestions": [
+    "Exact FLOPS performance range that qualifies a system as a supercomputer today.",
+    "Detailed CPU, GPU, interconnect, and storage specifications of the leading TOP500 machines.",
+    "Comprehensive list of scientific, industrial, and societal applications in 2024.",
+    "Specific challenges such as cost models and programming ecosystem maturity."
+  ],
+  "contradictions": [],
+  "completeness": "partial",
+  "limitations": [
+    "9 candidate pages failed or carried no readable text.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 4 of 6 selected sources fit in the synthesis evidence budget.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 7,
+    "failedCount": 9,
+    "rounds": 1,
+    "searches": 5
+  },
+  "archivedAt": "2026-10-20T15:36:16.970Z"
+}
