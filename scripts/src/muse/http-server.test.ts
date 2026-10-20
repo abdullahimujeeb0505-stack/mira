@@ -196,23 +196,34 @@ test("Muse serves the chat page with same-origin security headers", async () =>
       assert.ok(script);
       assert.doesNotThrow(() => new Script(script));
       assert.match(html, /Mira — conversational assistant by Muse/);
-      assert.match(html, /Muse assistant/);
-      assert.match(html, /Hi, I’m Mira, Muse’s assistant/);
+      assert.match(html, /MUSE AI/);
+      assert.match(html, /Hi, I’m Mira\. How can I help\?/);
       assert.match(html, /Message to Mira/);
       assert.match(html, /<h1>Mira<\/h1>/);
-      assert.match(html, /chat, brainstorm, ask a question, or request web research/i);
+      assert.doesNotMatch(
+        html,
+        /class="intro"|chat, brainstorm, ask a question, or request web research/i,
+      );
+      assert.doesNotMatch(html, /composer-help|aria-describedby="composer-help"/);
+      assert.doesNotMatch(html, /4 MB max|512 KB max/i);
+      assert.doesNotMatch(html, /automatic research images have no source caption/i);
+      assert.doesNotMatch(html, /Generate an image only for new AI artwork/i);
+      assert.doesNotMatch(html, /generate image: &lt;description&gt;/i);
+      assert.doesNotMatch(
+        html,
+        /quota-limited Cloudflare Workers AI|browser may use its own remote speech service/i,
+      );
       assert.match(html, /id="attachment-menu-toggle"[^>]*aria-haspopup="menu"/);
       assert.match(html, /id="attachment-menu" role="menu"[^>]*hidden/);
       assert.match(html, /Attach photos or files/);
       assert.match(html, /Generate an image/);
-      assert.match(html, /automatic research images have no source caption/);
-      assert.match(html, /Generate an image only for new AI artwork/);
-      assert.match(html, /generate image: &lt;description&gt;/i);
       assert.match(html, /id="attachment-files"/);
       assert.match(html, /id="voice-input" class="composer-icon"[^>]*aria-label="Dictate a message"/);
       assert.match(html, /aria-label="Send message"/);
       assert.match(html, /#attachment-menu\[hidden\]/);
-      assert.match(html, /\.message\.you \{ align-self: flex-end/);
+      assert.match(html, /#status:empty \{ display: none; \}/);
+      assert.match(html, /\.message\.muse\s*\{[^}]*background: transparent/s);
+      assert.match(html, /\.message\.you\s*\{[^}]*align-self: flex-end/s);
       assert.doesNotMatch(html, />Use microphone</);
       assert.doesNotMatch(html, />Create image</);
       assert.match(html, /SpeechRecognition/);
@@ -222,8 +233,6 @@ test("Muse serves the chat page with same-origin security headers", async () =>
       assert.match(html, /api\/images\/generate/);
       assert.match(html, /URL\.createObjectURL/);
       assert.match(html, /Download image/);
-      assert.match(html, /quota-limited Cloudflare Workers AI/);
-      assert.match(html, /browser may use its own remote speech service/);
       assert.doesNotMatch(html, /Connect X|Web3 intern|authorizationUrl/i);
       assert.match(html, /function renderMarkdown/);
       assert.match(html, /document\.createElement\("table"\)/);
