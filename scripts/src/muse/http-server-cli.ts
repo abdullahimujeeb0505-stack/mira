@@ -21,6 +21,22 @@ for (const line of formatTaskProviderDiagnostics(providers)) {
   console.info(line);
 }
 console.info("Muse web search: DuckDuckGo HTML/Lite.");
+const cloudflareAccountId =
+  process.env.MUSE_CLOUDFLARE_ACCOUNT_ID?.trim() ?? "";
+const cloudflareAiToken = process.env.MUSE_CLOUDFLARE_AI_TOKEN?.trim() ?? "";
+if (!cloudflareAccountId || !cloudflareAiToken) {
+  console.warn(
+    "Muse image tools: disabled (set MUSE_CLOUDFLARE_ACCOUNT_ID and MUSE_CLOUDFLARE_AI_TOKEN).",
+  );
+} else if (!/^[a-f0-9]{32}$/i.test(cloudflareAccountId)) {
+  console.warn(
+    "Muse image tools: disabled (MUSE_CLOUDFLARE_ACCOUNT_ID must be a 32-character account ID).",
+  );
+} else {
+  console.info(
+    "Muse image tools: Cloudflare Workers AI credentials found; live API access is not probed at startup.",
+  );
+}
 const server = createMuseHttpServer({
   providerFactory: () => providers.chat.provider,
   researchProviderFactory: () => providers.research.provider,
