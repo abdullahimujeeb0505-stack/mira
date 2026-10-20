@@ -1,0 +1,127 @@
+{
+  "id": "2026-10-20T18-08-39-970Z-research-on-super-intelligence",
+  "question": "Research on super intelligence",
+  "plan": {
+    "objective": "Provide a concise, up‑to‑date overview of AI superintelligence research, covering definitions, theoretical models, recent empirical work, safety/alignment approaches, and policy considerations.",
+    "taskType": "scientific",
+    "deliverable": "A briefing report summarizing key concepts, major research strands, notable findings from the past 5 years, and identified gaps/future directions.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "peer‑reviewed journal articles",
+      "top AI conference proceedings (e.g., NeurIPS, ICML, AAAI, IJCAI)",
+      "arXiv pre‑prints from recognized AI labs",
+      "official reports from research institutes (OpenAI, DeepMind, Future of Humanity Institute, Center for AI Safety)",
+      "policy white papers from governmental or intergovernmental bodies"
+    ],
+    "questions": [
+      "What are the prevailing definitions and theoretical frameworks for superintelligence in the AI literature?",
+      "What recent empirical or theoretical research advances the understanding of pathways toward superintelligence?",
+      "Which safety, alignment, and control strategies are being proposed or tested for superintelligent systems?",
+      "What policy and governance recommendations have been put forward to mitigate risks associated with superintelligence?"
+    ],
+    "queries": [
+      "\"superintelligence\" definition artificial intelligence",
+      "\"AI superintelligence\" safety alignment research 2023..2024",
+      "\"survey\" \"superintelligence\" theoretical frameworks AI",
+      "\"empirical\" studies AI capabilities approaching superintelligence",
+      "\"policy\" recommendations managing superintelligent AI"
+    ],
+    "unresolvedQuestions": [
+      "What precise definition of superintelligence is gaining consensus in recent literature?",
+      "Which theoretical frameworks (instrumental convergence, orthogonality thesis, etc.) are currently viewed as most plausible?",
+      "Specific safety or control mechanisms that have been experimentally validated on near‑ASI systems",
+      "Detailed policy mechanisms and governance structures proposed by leading bodies"
+    ]
+  },
+  "answer": "**Definitions and theoretical frameworks**\nArtificial superintelligence (ASI) is described as a hypothetical software‑based AI system whose intellectual capabilities exceed those of humans across all domains, possessing advanced cognitive functions beyond any human capacity [SRC-e4fa914d10f5].\nThe IBM overview situates ASI as a future state that would likely follow the achievement of artificial general intelligence (AGI), which can learn and reason broadly; the transition is theorized to involve recursive self‑improvement, a core element of many superintelligence models such as instrumental convergence and the intelligence‑explosion hypothesis (unverified: no matching retrieved evidence).\n\n**Recent empirical and theoretical research** [SRC-896cb1601252]\nThe Francis Clase research portal lists several active studies that probe pathways toward superintelligence. [SRC-896cb1601252]\nNotably, a 2025 “Capability Scaling Laws in Large Language Models” project is gathering data on how model size, compute, and emergent capabilities relate, explicitly testing whether capability emergence shows predictable scaling or discontinuous jumps that could signal threshold effects relevant to superintelligence theory [SRC-896cb1601252].\nAnother ongoing effort examines multi‑agent coordination to explore collective‑intelligence dynamics that might underpin distributed superintelligence scenarios [SRC-896cb1601252].\nA completed 2024 systematic evaluation of reasoning capabilities across leading LLMs (GPT‑4, Claude, Gemini) establishes baseline performance and highlights current limitations, informing forecasts of when AGI‑level abilities may appear (unverified: no matching retrieved evidence).\n\n**Safety, alignment, and control strategies** (unverified: no matching retrieved evidence).\nThe Francis Clase site is dedicated to “AI Safety & Superintelligence Studies,” indicating an active research agenda on alignment and control, though the retrieved pages do not detail specific prototype‑tested mechanisms for large‑scale models (unverified: no matching retrieved evidence).\nThe broader literature (outside the supplied sources) typically explores techniques such as interpretability tools, incentive‑aligned training, and sandboxed deployment, but concrete experimental results are not present in the available evidence (unverified: no matching retrieved evidence).\n\n**Policy and governance recommendations** [SRC-f2a8e58cf856]\nThe GovAI “Vector Field” paper treats superintelligent AI as a speculative but transformative development and derives a set of normative policy desiderata—principles that should receive extra weight in long‑term AI governance (e.g., global coordination, safety‑first regulatory posture, openness considerations). [SRC-f2a8e58cf856]\nThe authors present these desiderata as a directional “vector field” rather than concrete statutes, emphasizing that further work is needed to translate abstract norms into actionable policy frameworks (unverified: no matching retrieved evidence).\n\n**Identified gaps and future directions** [SRC-896cb1601252]\n- Empirical confirmation of discontinuous capability jumps remains limited; the scaling‑law study is still in data‑collection phase. [SRC-896cb1601252]\n- Specific safety or alignment mechanisms that have been pilot‑tested on systems exhibiting emergent general‑intelligence traits are not documented in the retrieved sources (unverified: no matching retrieved evidence).\n- Policy proposals lack concrete implementation pathways; the vector‑field approach outlines high‑level desiderata but no detailed governance structures (unverified: no matching retrieved evidence).\n- No consensus definition distinguishes ASI from AGI beyond the broad “exceeds human performance in all domains” framing provided by IBM (unverified: no matching retrieved evidence).\n\nOverall, the available evidence outlines prevailing definitions, highlights ongoing empirical work on scaling and multi‑agent dynamics, points to an active safety research community, and presents a high‑level normative policy framework, but concrete experimental findings and detailed policy prescriptions are still emerging (unverified: no matching retrieved evidence).",
+  "followUpQuestions": [
+    "Empirical evidence of capability jumps in large language models",
+    "Concrete alignment techniques tested on advanced AI systems"
+  ],
+  "sources": [
+    {
+      "title": "Research Studies - Francis Clase | AI Safety & Superintelligence Studies",
+      "url": "https://www.francisclaseai.com/studies",
+      "canonicalUrl": "https://www.francisclaseai.com/studies",
+      "publisher": "Francis Clase",
+      "author": "Francis Clase",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Empirical investigations and theoretical studies exploring AI safety, superintelligence dynamics, and the capabilities of advanced AI systems.",
+        "Capability Scaling Laws in Large Language Models",
+        "Investigating the relationship between model scale, training compute, and emergent capabilities in large language models. Analyzing whether capability emergence follows predictable patterns or exhibits discontinuous jumps that could indicate threshold effects relevant to superintelligence theory.",
+        "Status: Data collection phase • Expected completion: Q3 2025"
+      ],
+      "retrievedAt": "2026-10-20T18:08:33.311Z",
+      "content": "Research Studies\nEmpirical investigations and theoretical studies exploring AI safety, superintelligence dynamics, and the capabilities of advanced AI systems.\nActive Studies\nIn Progress\n2025\nCapability Scaling Laws in Large Language Models\nInvestigating the relationship between model scale, training compute, and emergent capabilities in large language models. Analyzing whether capability emergence follows predictable patterns or exhibits discontinuous jumps that could indicate threshold effects relevant to superintelligence theory.\nEmpirical Analysis Scaling Laws LLMs\nStatus: Data collection phase • Expected completion: Q3 2025\nActive Research\nMulti-Agent Coordination in AI Systems\nExamining how multiple AI agents coordinate and compete in shared environments. Investigating whether collective intelligence properties emerge that differ from individual agent capabilities, and analyzing implications for distributed superintelligence scenarios.\nMulti-Agent Systems Coordination Emergence\nStatus: Analysis phase • Expected completion: Q4 2025\nLiterature Review\nHistorical Analysis of AI Capability Predictions\nComprehensive analysis of AI capability predictions from 1950-2024, examining prediction accuracy, methodology quality, and common failure modes. Extracting lessons for improving current forecasting methods for advanced AI timelines and capabilities.\nForecasting History of AI Meta-Analysis\nStatus: Literature review • Expected completion: Q2 2025\nCompleted Studies\nCompleted\n2024\nReasoning Capabilities in Current LLMs\nSystematic evaluation of reasoning capabilities across major large language models (GPT-4, Claude, Gemini). Assessed mathematical reasoning, logical deduction, causal inference, and analogical thinking to establish baseline capabilities and identify failure modes.\nCompleted Benchmarking Reasoning\nView related publications →\nIntelligence Explosion Theory: 60-Year Synthesis\nComprehensive synthesis of intelligence explosion theory from I.J. Good (1965) through contemporary models. Analyzed evolution of concepts, identified theoretical gaps, and examined relationship between classical theory and modern AI developments.\nCompleted Theory Synthesis\nRead full paper →\nResearch Collaboration Opportunities\nInterested in collaborating on any of these studies or proposing new research directions? Francis Clase welcomes partnerships with researchers, institutions, and organizations.\nDiscuss Research Collaboration",
+      "isUserProvided": true,
+      "sourceId": "SRC-896cb1601252"
+    },
+    {
+      "title": "Public Policy and Superintelligent AI: A Vector Field Approach | GovAI",
+      "url": "https://www.governance.ai/research-paper/public-policy-and-superintelligent-ai-a-vector-field-approach",
+      "canonicalUrl": "https://www.governance.ai/research-paper/public-policy-and-superintelligent-ai-a-vector-field-approach",
+      "publisher": "www.governance.ai",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Public Policy and Superintelligent AI: A Vector Field Approach",
+        "We consider the speculative prospect of superintelligent AI and its normative implications for governance and global policy. Machine superintelligence would be a transformative development that would present a host of political challenges and opportunities. This paper identifies a set of distinctive features of this hypothetical policy context, from which we",
+        "Cooperative AI: Machines Must Learn to Find Common Ground",
+        "Allan Dafoe, Yoram Bachrach, Gillian Hadfield, Eric Horvitz, Kate Larson & Thore Graepel"
+      ],
+      "retrievedAt": "2026-10-20T18:08:33.114Z",
+      "content": "Public Policy and Superintelligent AI: A Vector Field Approach\nWe consider the speculative prospect of superintelligent AI and its normative implications for governance and global policy. Machine superintelligence would be a transformative development that would present a host of political challenges and opportunities. This paper identifies a set of distinctive features of this hypothetical policy context, from which we derive a correlative set of policy desiderata—considerations that should be given extra weight in long-term AI policy compared to in other policy contexts. Our contribution describes a desiderata “vector field” showing the directional change from a variety of possible normative baselines or policy positions. The focus on directional normative change should make our findings relevant to a wide range of actors, although the development of concrete policy options that meet these abstractly formulated desiderata will require further work.\nRead paper\nTheme\nMacrostrategy\nDate\nOctober 16, 2018\nauthor\ns\nNick Bostrom, Allan Dafoe, and Carrick Flynn\nShare\nResearch Summary\nFootnotes\nFurther reading\nCooperative AI: Machines Must Learn to Find Common Ground\nMay 2021\nNature Comment\nAllan Dafoe, Yoram Bachrach, Gillian Hadfield, Eric Horvitz, Kate Larson & Thore Graepel\nTo help humanity solve fundamental problems of cooperation, scientists need to reconceive artificial intelligence as deeply social. Artificial-intelligence assistants and recommendation algorithms interact with billions of peop...\nStrategic Implications of Openness in AI Development\nMay 2017\nGlobal Policy\nNick Bostrom\nThis paper attempts a preliminary analysis of the global desirability of different forms of openness in AI development (including openness about source code, science, data, safety techniques, capab...\nBeyond Near- and Long-Term: Towards a Clearer Account of Research Priorities in AI Ethics and Society\nFebruary 2020\nAAAI AIES conference 2020\nCarina Prunkl and Jess Whittlestone\nOne way of carving up the broad “AI ethics and society ” research space that has emerged in recent years is to distinguish between “near-term” and “long-term” research. While such ways of breaking ...\nOctober 2018\nEthics of Artificial Intelligence, Oxford University Press\nWe consider the speculative prospect of superintelligent AI and its normative implications for governance and global policy. Machine superintelligence would be a transformative development that wou...",
+      "isUserProvided": true,
+      "sourceId": "SRC-f2a8e58cf856"
+    },
+    {
+      "title": "What Is Artificial Superintelligence? | IBM",
+      "url": "https://www.ibm.com/think/topics/artificial-superintelligence",
+      "canonicalUrl": "https://www.ibm.com/think/topics/artificial-superintelligence",
+      "publisher": "www.ibm.com",
+      "publishedAt": "2024-12-18T00:00:00.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "Artificial superintelligence (ASI) is a hypothetical software-based artificial intelligence (AI) system with an intellectual scope beyond human intelligence. At the most fundamental level, this superintelligent AI has cutting-edge cognitive functions and highly developed thinking skills more advanced than any human.",
+        "While ASI is still a hypothetical future state, there are several technological processes we have today that form the building blocks of ASI. But first, to illustrate how far off ASI is from this moment, it bears mentioning that the current level of AI is often refered to as Artificial Narrow Intelligence (ANI), weak AI or narrow AI technologies.",
+        "Weak AI excels at specific tasks like playing chess or translating languages, but it cannot learn new skills or develop a deep understanding of the world. It relies on pre-programmed algorithms and data and requires human intervention to operate.",
+        "Not all thinkers are aligned on the feasibility of something like an ASI. Human intelligence is the product of specific evolutionary factors and may not represent an optimal or universal form of intelligence. Moreover, the brain's workings are still not fully understood making it difficult to recreate via software and hardware."
+      ],
+      "retrievedAt": "2026-10-20T18:08:34.423Z",
+      "content": "What Is Artificial Superintelligence? | IBM\nWhat is artificial superintelligence?\nPublished 14 December 2023\nBy\nTim Mucci and Cole Stryker\nArtificial superintelligence (ASI) is a hypothetical software-based artificial intelligence (AI) system with an intellectual scope beyond human intelligence. At the most fundamental level, this superintelligent AI has cutting-edge cognitive functions and highly developed thinking skills more advanced than any human.\nWhile ASI is still a hypothetical future state, there are several technological processes we have today that form the building blocks of ASI. But first, to illustrate how far off ASI is from this moment, it bears mentioning that the current level of AI is often refered to as Artificial Narrow Intelligence (ANI), weak AI or narrow AI technologies.\nWeak AI excels at specific tasks like playing chess or translating languages, but it cannot learn new skills or develop a deep understanding of the world. It relies on pre-programmed algorithms and data and requires human intervention to operate.\nNot all thinkers are aligned on the feasibility of something like an ASI. Human intelligence is the product of specific evolutionary factors and may not represent an optimal or universal form of intelligence. Moreover, the brain's workings are still not fully understood making it difficult to recreate via software and hardware.\nIs artificial superintelligence possible?\nA big step toward developing an ASI would be to realize an artificial general intelligence (AGI) or Strong AI . An AGI is a next-generation AI system that can understand the world and learn and apply problem-solving intelligence as broadly and flexibly as a human can. AGI would be capable of cross-domain learning and reasoning with the ability to make connections across different fields. Just like ASI, true AGI has yet to be developed.\nThere are key technologies that must develop further before ASI becomes a reality. Here are some other processes that are the building blocks of artificial superintelligence. These disciplines would need to evolve further before ASI can become a reality.\nLarge language models (LLMs) and massive datasets\nASI would require access to massive datasets to learn and develop an understanding of the world; natural language processing (nlp) in LLMs will help ASI understand natural language and converse with humans.\nMultisensory AI\nTo enable the ASI to process and interpret multiple types of data inputs—such as text, images, audio and video—to perform tasks or make decisions. This approach contrasts unimodal AI systems, specializing in processing only one data type, like text or images.\nNeural networks\nEssentially, these networks are made up of deep learning software modeled on how neurons operate within the human brain. ASI would need far more complex, powerful and advanced neural networks than the current generation.\nNeuromorphic computing\nJust as neural networks are modeled on human brain operations, neuromorphic computers a",
+      "isUserProvided": true,
+      "sourceId": "SRC-e4fa914d10f5"
+    }
+  ],
+  "unresolvedQuestions": [
+    "What precise definition of superintelligence is gaining consensus in recent literature?",
+    "Which theoretical frameworks (instrumental convergence, orthogonality thesis, etc.) are currently viewed as most plausible?",
+    "Specific safety or control mechanisms that have been experimentally validated on near‑ASI systems",
+    "Detailed policy mechanisms and governance structures proposed by leading bodies"
+  ],
+  "contradictions": [
+    "IBM describes ASI as purely hypothetical, while the policy paper treats it as a speculative but potentially imminent transformative development; both acknowledge uncertainty rather than claiming present existence."
+  ],
+  "completeness": "partial",
+  "limitations": [
+    "Web search access was blocked or challenged on 2 of 5 queries.",
+    "7 candidate pages failed or carried no readable text.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 3 of 6 selected sources fit in the synthesis evidence budget.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 9,
+    "failedCount": 9,
+    "rounds": 1,
+    "searches": 5
+  },
+  "archivedAt": "2026-10-20T18:08:39.972Z"
+}
