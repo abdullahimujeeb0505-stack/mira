@@ -51,79 +51,110 @@ const CHAT_PAGE = `<!doctype html>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#10131b">
+    <meta name="theme-color" content="#0c0e12">
     <title>Mira — conversational assistant by Muse</title>
     <style>
-      :root { color-scheme: dark; font-family: Inter, ui-sans-serif, system-ui, sans-serif; background: #0d1017; color: #f4f5f7; }
+      :root {
+        color-scheme: dark;
+        font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+        color: #f2f4f8;
+        background: #0c0e12;
+        --page: #0c0e12;
+        --surface: #171b23;
+        --surface-raised: #1b2029;
+        --line: #292f3a;
+        --muted: #929bab;
+        --accent: #b9c5ff;
+        --accent-strong: #8599ff;
+      }
       * { box-sizing: border-box; }
-      body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 16px; background: radial-gradient(ellipse at top, #20283a 0, #0d1017 58%); }
-      main { width: min(100%, 920px); height: min(920px, calc(100vh - 32px)); min-height: min(600px, calc(100vh - 32px)); display: flex; flex-direction: column; overflow: hidden; padding: 0 clamp(16px, 4vw, 32px) 14px; border: 1px solid #303849; border-radius: 24px; background: #171b24; box-shadow: 0 24px 80px #0007; }
-      .chat-header { display: flex; align-items: center; gap: 13px; flex: 0 0 auto; padding: 18px 0 15px; border-bottom: 1px solid #2b3140; }
-      .assistant-avatar { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 50%; color: #fff; background: linear-gradient(145deg, #8798ff, #526de2); font-size: 17px; font-weight: 800; }
-      .eyebrow { color: #a4b2ff; font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
-      h1 { margin: 2px 0 0; font-size: 17px; letter-spacing: -.01em; }
-      .intro { margin: 3px 0 0; color: #9ba4b5; font-size: 12px; line-height: 1.4; }
-      .notice { color: #8f99aa; line-height: 1.55; }
+      body { width: 100%; min-width: 320px; min-height: 100vh; min-height: 100dvh; margin: 0; background: var(--page); }
+      main { width: 100%; height: 100vh; height: 100dvh; min-height: 0; display: flex; flex-direction: column; overflow: hidden; background: radial-gradient(ellipse at 50% -24%, #1b2030 0, #101219 44%, #0c0e12 100%); }
+      .chat-header { display: flex; align-items: center; gap: 12px; flex: 0 0 auto; min-height: 70px; padding: 11px clamp(18px, 4vw, 40px); border-bottom: 1px solid var(--line); background: #0d0f14cc; }
+      .assistant-avatar { width: 38px; height: 38px; display: grid; place-items: center; border: 1px solid #b9c4ff44; border-radius: 13px; color: #fff; background: linear-gradient(145deg, #8d9eff, #5269dc); box-shadow: 0 5px 18px #5269dc44; font-size: 15px; font-weight: 750; }
+      .brand-copy { display: grid; gap: 2px; }
+      .eyebrow { color: #929db1; font-size: 10px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; }
+      h1 { margin: 0; font-size: 15px; font-weight: 650; letter-spacing: .01em; line-height: 1.2; }
       .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-      #messages { flex: 1; min-height: 0; min-width: 0; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; overscroll-behavior: contain; padding: 22px 3px; scroll-behavior: smooth; }
-      .message { max-width: min(84%, 690px); min-width: 0; padding: 11px 15px; border-radius: 19px; line-height: 1.55; overflow-wrap: break-word; word-break: normal; white-space: pre-wrap; }
-      .message.muse { align-self: flex-start; border-bottom-left-radius: 6px; background: #282e3b; }
-      .message.muse h1, .message.muse h2, .message.muse h3, .message.muse h4, .message.muse h5, .message.muse h6 { margin: .4em 0; line-height: 1.25; }
-      .message.muse p { margin: .35em 0; }
-      .message.muse ul, .message.muse ol { margin: .35em 0; padding-left: 1.5em; }
-      .message.muse a { color: #b4c2ff; text-decoration: underline; text-underline-offset: 2px; }
-      .message.muse img { display: block; max-width: min(100%, 680px); height: auto; margin: 10px 0; border-radius: 10px; }
-      .message.muse table { border-collapse: collapse; table-layout: fixed; display: block; width: 100%; max-width: 100%; overflow-x: auto; white-space: normal; }
-      .message.muse th, .message.muse td { border: 1px solid #4a5365; padding: 6px 9px; text-align: left; vertical-align: top; overflow-wrap: anywhere; word-break: normal; }
-      .message.muse pre { max-width: 100%; overflow-x: auto; white-space: pre; }
-      .message.muse code { overflow-wrap: anywhere; white-space: break-spaces; }
-      .message.you { align-self: flex-end; border-bottom-right-radius: 6px; background: #4262dd; }
-      form { flex: 0 0 auto; display: flex; flex-direction: column; gap: 8px; margin-top: 2px; }
-      .composer-shell { display: grid; grid-template-columns: 44px minmax(0, 1fr); align-items: end; gap: 8px; }
+      #messages { flex: 1 1 auto; min-height: 0; min-width: 0; width: 100%; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; overscroll-behavior: contain; padding: 36px clamp(18px, 4vw, 40px) 30px; scroll-behavior: smooth; scrollbar-color: #3a414e transparent; scrollbar-width: thin; }
+      .message { width: min(100%, 860px); max-width: 100%; min-width: 0; align-self: center; padding: 10px 14px; border-radius: 18px; line-height: 1.7; overflow-wrap: break-word; word-break: normal; white-space: pre-wrap; }
+      .message.muse { align-self: center; padding: 6px 4px; border: 0; border-radius: 0; background: transparent; color: #eef0f5; }
+      .message.muse h1, .message.muse h2, .message.muse h3, .message.muse h4, .message.muse h5, .message.muse h6 { margin: .75em 0 .4em; font-weight: 650; letter-spacing: -.015em; line-height: 1.28; }
+      .message.muse p { margin: .65em 0; }
+      .message.muse ul, .message.muse ol { margin: .65em 0; padding-left: 1.5em; }
+      .message.muse a { color: var(--accent); text-decoration: underline; text-decoration-color: #8798ff88; text-underline-offset: 3px; }
+      .message.muse img { display: block; max-width: min(100%, 680px); height: auto; margin: 14px 0; border-radius: 12px; box-shadow: 0 12px 36px #0005; }
+      .message.muse table { border-collapse: collapse; table-layout: fixed; display: block; width: 100%; max-width: 100%; overflow-x: auto; border-radius: 10px; white-space: normal; }
+      .message.muse th, .message.muse td { border: 1px solid #343b48; padding: 8px 10px; text-align: left; vertical-align: top; overflow-wrap: anywhere; word-break: normal; }
+      .message.muse th { background: #191e27; }
+      .message.muse pre { max-width: 100%; overflow-x: auto; border: 1px solid #2c3340; border-radius: 14px; padding: 14px 16px; background: #11141a; white-space: pre; }
+      .message.muse code { border-radius: 5px; padding: .12em .35em; background: #252b36; overflow-wrap: anywhere; white-space: break-spaces; }
+      .message.muse pre code { padding: 0; background: transparent; }
+      .message.you { width: auto; max-width: min(78%, 760px); align-self: flex-end; margin-left: auto; border: 1px solid #2c3441; border-radius: 22px 22px 6px 22px; padding: 12px 17px; background: #1b2029; box-shadow: 0 5px 16px #0002; color: #f1f3f7; }
+      form { width: min(100%, 960px); flex: 0 0 auto; display: flex; flex-direction: column; gap: 10px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 36px) 14px; }
+      .composer-shell { display: grid; grid-template-columns: 46px minmax(0, 1fr); align-items: end; gap: 10px; }
       .action-area { position: relative; }
-      button { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; border: 0; border-radius: 999px; padding: 0 14px; color: white; background: #526de2; font: inherit; font-weight: 700; cursor: pointer; touch-action: manipulation; }
+      button { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; border: 0; border-radius: 999px; padding: 0 14px; color: #f5f6fa; background: #4e67d0; font: inherit; font-weight: 700; cursor: pointer; touch-action: manipulation; transition: background-color .16s ease, border-color .16s ease, transform .16s ease; }
       button:focus-visible { outline: 2px solid #b8c3ff; outline-offset: 3px; }
-      .icon-button { width: 44px; height: 44px; padding: 0; color: #e3e7f3; background: #303747; font-size: 27px; font-weight: 400; }
-      .icon-button svg, .composer-icon svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-      #attachment-menu { position: absolute; z-index: 3; left: 0; bottom: calc(100% + 10px); width: max-content; min-width: 210px; display: flex; flex-direction: column; gap: 4px; padding: 7px; border: 1px solid #40485a; border-radius: 15px; background: #222835; box-shadow: 0 12px 35px #0008; }
+      button:disabled { cursor: wait; opacity: .58; }
+      .icon-button { width: 46px; height: 46px; padding: 0; border: 1px solid #2e3541; color: #e3e7f0; background: #191e27; font-size: 26px; font-weight: 400; }
+      .icon-button:hover { border-color: #414a5a; background: #222833; }
+      .icon-button svg, .composer-icon svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+      #attachment-menu { position: absolute; z-index: 3; left: 0; bottom: calc(100% + 12px); width: max-content; min-width: 210px; display: flex; flex-direction: column; gap: 4px; padding: 7px; border: 1px solid #343b48; border-radius: 15px; background: var(--surface-raised); box-shadow: 0 16px 44px #0008; }
       #attachment-menu[hidden] { display: none; }
       .menu-item { justify-content: flex-start; width: 100%; min-height: 44px; border-radius: 10px; padding: 0 12px; color: #edf0f7; background: transparent; font-size: 14px; text-align: left; }
-      .menu-item:hover, .menu-item:focus-visible { background: #343c4e; }
-      .composer-box { min-width: 0; display: flex; align-items: flex-end; gap: 2px; padding: 4px 5px 4px 14px; border: 1px solid #3b4353; border-radius: 24px; background: #10131b; }
-      .composer-box:focus-within { border-color: #8397ff; box-shadow: 0 0 0 1px #8397ff55; }
-      textarea { flex: 1; width: 100%; min-width: 0; min-height: 40px; max-height: 144px; overflow-y: auto; resize: none; border: 0; outline: 0; padding: 10px 2px; color: inherit; background: transparent; font: inherit; line-height: 1.45; }
-      textarea::placeholder { color: #858e9e; }
-      .composer-icon { flex: 0 0 auto; width: 40px; height: 40px; min-width: 40px; min-height: 40px; padding: 0; color: #b8c1d2; background: transparent; }
-      .composer-icon:hover { color: #fff; background: #252c39; }
+      .menu-item:hover, .menu-item:focus-visible { background: #2a303b; }
+      .composer-box { min-width: 0; display: flex; align-items: flex-end; gap: 5px; padding: 6px 7px 6px 16px; border: 1px solid #313846; border-radius: 28px; background: var(--surface); box-shadow: 0 12px 36px #0004; transition: border-color .16s ease, box-shadow .16s ease; }
+      .composer-box:focus-within { border-color: #7185ee; box-shadow: 0 0 0 3px #7185ee24, 0 12px 36px #0004; }
+      textarea { flex: 1; width: 100%; min-width: 0; min-height: 44px; max-height: 160px; overflow-y: auto; resize: none; border: 0; outline: 0; padding: 10px 2px; color: inherit; background: transparent; font: inherit; font-size: 15px; line-height: 1.5; }
+      textarea::placeholder { color: #8992a1; }
+      .composer-icon { flex: 0 0 auto; width: 40px; height: 40px; min-width: 40px; min-height: 40px; padding: 0; border-radius: 50%; color: #aeb7c6; background: transparent; }
+      .composer-icon:hover { color: #fff; background: #252c37; }
       .composer-icon.listening { color: #fff; background: #a54155; }
-      #send { flex: 0 0 auto; width: 40px; height: 40px; min-width: 40px; min-height: 40px; padding: 0; color: #fff; background: #526de2; }
+      #send { flex: 0 0 auto; width: 40px; height: 40px; min-width: 40px; min-height: 40px; padding: 0; border-radius: 50%; color: #0f1218; background: var(--accent-strong); }
+      #send:hover { background: #adbbff; transform: translateY(-1px); }
       #send svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-      .attachment-list { display: flex; flex-wrap: wrap; gap: 8px; }
-      .attachment-chip { display: inline-flex; gap: 8px; align-items: center; max-width: 100%; padding: 5px 7px 5px 11px; border: 1px solid #3b4354; border-radius: 999px; color: #dce2ee; font-size: 12px; }
+      .attachment-list { width: min(100%, 960px); display: flex; flex-wrap: wrap; gap: 8px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 36px); }
+      .attachment-chip { display: inline-flex; gap: 8px; align-items: center; max-width: 100%; padding: 5px 7px 5px 11px; border: 1px solid #343b48; border-radius: 999px; color: #dce2ee; background: var(--surface); font-size: 12px; }
       .attachment-chip > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       .attachment-remove { min-height: 30px; padding: 0 9px; color: #d9e1ff; background: #30394c; font-size: 12px; }
-      .message-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-      .speak-button { width: 36px; min-width: 36px; min-height: 36px; height: 36px; padding: 0; color: #d9e1ff; background: #3a4355; font-size: 18px; }
-      .download-link { display: inline-block; padding: 8px 12px; border-radius: 8px; color: #d9e1ff; background: #30394c; font-size: 13px; text-decoration: none; }
-      .generated-image { display: block; max-width: min(100%, 680px); height: auto; border-radius: 10px; }
-      button:disabled { cursor: wait; opacity: .62; }
-      #status { min-height: 18px; margin: 8px 0 0; color: #b3bdcc; font-size: 12px; line-height: 1.4; }
-      @media (max-width: 600px) { body { display: block; padding: 0; background: #171b24; } main { width: 100%; height: 100vh; height: 100dvh; min-height: 0; border: 0; border-radius: 0; padding: max(10px, env(safe-area-inset-top)) 12px max(10px, env(safe-area-inset-bottom)); box-shadow: none; } .chat-header { padding-top: 8px; } #messages { padding-top: 18px; } .message { max-width: 91%; } .notice { font-size: 11px; } }
-      @media (prefers-reduced-motion: reduce) { #messages { scroll-behavior: auto; } }
+      .message-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+      .speak-button { width: 36px; min-width: 36px; min-height: 36px; height: 36px; padding: 0; border: 1px solid #394254; color: #d9e1ff; background: #252c39; font-size: 18px; }
+      .download-link { display: inline-block; padding: 8px 12px; border: 1px solid #394254; border-radius: 10px; color: #d9e1ff; background: #202633; font-size: 13px; text-decoration: none; }
+      .download-link:hover { background: #2a3343; }
+      .generated-image { display: block; max-width: min(100%, 680px); height: auto; border-radius: 12px; box-shadow: 0 12px 36px #0005; }
+      #status { width: min(100%, 960px); align-self: center; flex: 0 0 auto; margin: 0 auto; padding: 0 clamp(16px, 4vw, 36px) 10px; color: var(--muted); font-size: 12px; line-height: 1.5; text-align: center; overflow-wrap: anywhere; }
+      #status:empty { display: none; }
+      @media (max-width: 600px) {
+        .chat-header { min-height: 62px; padding: 9px max(16px, env(safe-area-inset-left)); }
+        #messages { gap: 16px; padding: 24px 16px 20px; }
+        .message.you { max-width: 90%; }
+        form { padding: 0 12px max(10px, env(safe-area-inset-bottom)); }
+        .composer-shell { grid-template-columns: 42px minmax(0, 1fr); gap: 8px; }
+        .icon-button { width: 42px; height: 42px; min-width: 42px; min-height: 42px; }
+        .composer-box { gap: 2px; padding-left: 12px; }
+        .composer-icon { width: 36px; height: 36px; min-width: 36px; min-height: 36px; }
+        #send { width: 38px; height: 38px; min-width: 38px; min-height: 38px; }
+        .attachment-list { padding-right: 12px; padding-left: 12px; }
+        #status { padding-right: 12px; padding-left: 12px; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #messages { scroll-behavior: auto; }
+        button, .composer-box { transition: none; }
+      }
     </style>
   </head>
   <body>
     <main>
       <header class="chat-header">
         <div class="assistant-avatar" aria-hidden="true">M</div>
-        <div>
-          <div class="eyebrow">Muse assistant</div>
+        <div class="brand-copy">
+          <div class="eyebrow">MUSE AI</div>
           <h1>Mira</h1>
-          <p class="intro">Chat, brainstorm, ask a question, or request web research with sources.</p>
         </div>
       </header>
       <section id="messages" aria-live="polite" aria-label="Conversation" aria-relevant="additions">
-        <div class="message muse">Hi, I’m Mira, Muse’s assistant. What would you like to work through?</div>
+        <div class="message muse">Hi, I’m Mira. How can I help?</div>
       </section>
       <div id="attachment-list" class="attachment-list" aria-label="Pending attachments"></div>
       <form id="chat-form">
@@ -140,7 +171,7 @@ const CHAT_PAGE = `<!doctype html>
           </div>
           <div class="composer-box">
             <label for="message" class="visually-hidden">Message to Mira</label>
-            <textarea id="message" name="message" rows="1" maxlength="4000" placeholder="Message Mira…" aria-describedby="composer-help" required></textarea>
+            <textarea id="message" name="message" rows="1" maxlength="4000" placeholder="Message Mira…" required></textarea>
             <button id="voice-input" class="composer-icon" type="button" aria-label="Dictate a message" title="Dictate a message">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3Z"/><path d="M19 11a7 7 0 0 1-14 0M12 18v4m-4 0h8"/></svg>
             </button>
@@ -150,7 +181,6 @@ const CHAT_PAGE = `<!doctype html>
           </div>
         </div>
       </form>
-      <p id="composer-help" class="notice">Attach JPEG/PNG/WebP images (4 MB max) or TXT/Markdown/CSV files (512 KB max); up to three files per turn. PDFs and DOCX are not supported. Mira may place a relevant CC0, Public Domain Mark, or public-domain image before research answers and research-backed articles when one is available; automatic research images have no source caption. Explicit image requests outside research include attribution. Image lookup uses Openverse and Wikimedia Commons; choose + > Generate an image only for new AI artwork; you can also type “generate image: &lt;description&gt;”. Image generation and attachment understanding use quota-limited Cloudflare Workers AI. Image attachments are sent to Cloudflare for understanding; your message and text-file contents are sent to the configured chat model. Files stay in memory and are discarded after the next chat turn. Dictation support and privacy vary by browser; audio is not uploaded to Muse, but the browser may use its own remote speech service. Speech playback uses your device’s voices.</p>
       <p id="status" role="status" aria-live="polite"></p>
     </main>
     <script>
