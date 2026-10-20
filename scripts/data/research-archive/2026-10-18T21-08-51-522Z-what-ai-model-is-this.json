@@ -1,0 +1,107 @@
+{
+  "id": "2026-10-18T21-08-51-522Z-what-ai-model-is-this",
+  "question": "What Ai model is this",
+  "plan": {
+    "objective": "Determine the specific AI model (e.g., GPT‑4, GPT‑4 Turbo, GPT‑4o, etc.) that currently powers the ChatGPT interface presented to the user.",
+    "taskType": "current",
+    "deliverable": "A concise statement identifying the model, supported by up‑to‑date primary or official OpenAI sources (e.g., OpenAI blog, documentation, status page).",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "Official OpenAI documentation (developer docs, model spec, product pages)",
+      "OpenAI blog announcements",
+      "OpenAI status or release notes page",
+      "Peer‑reviewed analyses only if they directly cite the official source"
+    ],
+    "questions": [
+      "Which AI model currently underlies the ChatGPT interface that users interact with on the OpenAI website?"
+    ],
+    "queries": [
+      "OpenAI official documentation ChatGPT model version 2024",
+      "OpenAI blog post \"ChatGPT\" model update October 2024",
+      "OpenAI status page current model name for ChatGPT",
+      "OpenAI developer API model list latest release",
+      "OpenAI help center \"Which model powers ChatGPT?\""
+    ],
+    "unresolvedQuestions": [
+      "Which AI model currently underlies the ChatGPT interface that users interact with on the OpenAI website?"
+    ]
+  },
+  "answer": "I retrieved 3 readable sources, but couldn't synthesize a reliable answer. Please try again shortly.",
+  "followUpQuestions": [],
+  "sources": [
+    {
+      "title": "Model Spec (2024/05/08)",
+      "url": "https://cdn.openai.com/spec/model-spec-2024-05-08.html",
+      "canonicalUrl": "https://cdn.openai.com/spec/model-spec-2024-05-08.html",
+      "publisher": "cdn.openai.com",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "This version is provided for historical reference and may not reflect current policy.",
+        "This is the first draft of the Model Spec, a document that specifies desired behavior for our models in the OpenAI API and ChatGPT. It includes a set of core objectives, as well as guidance on how to deal with conflicting objectives or instructions.",
+        "Our intention is to use the Model Spec as guidelines for researchers and data labelers to create data as part of a technique called reinforcement learning from human feedback ( RLHF ). We have not yet used the Model Spec in its current form, though parts of it are based on documentation that we have used for RLHF at OpenAI. We are also working on techniques ",
+        "The Spec is only part of our story for how to build and deploy AI responsibly. It's complemented by our usage policies , how we expect people to use the API and ChatGPT."
+      ],
+      "retrievedAt": "2026-10-18T21:08:49.192Z",
+      "content": "Model Spec (2024/05/08)\nThis version is provided for historical reference and may not reflect current policy.\nMay 08, 2024\nOverview\nThis is the first draft of the Model Spec, a document that specifies desired behavior for our models in the OpenAI API and ChatGPT. It includes a set of core objectives, as well as guidance on how to deal with conflicting objectives or instructions.\nOur intention is to use the Model Spec as guidelines for researchers and data labelers to create data as part of a technique called reinforcement learning from human feedback ( RLHF ). We have not yet used the Model Spec in its current form, though parts of it are based on documentation that we have used for RLHF at OpenAI. We are also working on techniques that enable our models to directly learn from the Model Spec.\nThe Spec is only part of our story for how to build and deploy AI responsibly. It's complemented by our usage policies , how we expect people to use the API and ChatGPT.\nWe're publishing the Model Spec to provide more transparency on our approach to shaping model behavior and to start a public conversation about how it could be changed and improved. The Spec, like our models themselves, will be continuously updated based on what we learn by sharing it and listening to feedback from stakeholders.\nObjectives, rules, and defaults\nThere are three different types of principles that we will use to specify behavior in this document: objectives, rules, and defaults. This framework is designed to maximize steerability and control for users and developers, enabling them to adjust the model's behavior to their needs while staying within clear boundaries.\nThe most general are objectives , such as \"assist the developer and end user\" and \"benefit humanity\". They provide a directional sense of what behavior is desirable. However, these objectives are often too broad to dictate specific actions in complex scenarios where the objectives are not all in alignment. For example, if the user asks the assistant to do something that might cause harm to another human, we have to sacrifice at least one of the two objectives above. Technically, objectives only provide a partial order on preferences: They tell us when to prefer assistant action A over B, but only in some clear-cut cases. A key goal of this document is not just to specify the objectives, but also to provide concrete guidance about how to navigate common or important conflicts between them.\nOne way to resolve conflicts between objectives is to make rules , like \"never do X\", or \"if X then do Y\". Rules play an important role in ensuring safety and legality. They are used to address high-stakes situations where the potential for significant negative consequences is unacceptable and thus cannot be overridden by developers or users. However, rules simply aren't the right tool for addressing many potential conflicts (e.g., how the assistant should approach questions about controversial topics).\nFor other trade-offs, our appro",
+      "sourceId": "SRC-cc5506e8bb64"
+    },
+    {
+      "title": "OpenAI Status — GPT Models Live Check | MultiChats",
+      "url": "https://www.multichats.ai/status/openai-status",
+      "canonicalUrl": "https://www.multichats.ai/status/openai-status",
+      "publisher": "www.multichats.ai",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "OpenAI Status — GPT Models Live Check | MultiChats",
+        "According to OpenAI's official status page, all systems are functioning normally.",
+        "Limited availability on gpt-image-2.5-flare and gpt-image-2.5-sunburst",
+        "Degraded performance in Codex and ChatGPT Work"
+      ],
+      "retrievedAt": "2026-10-18T21:08:49.365Z",
+      "content": "OpenAI Status — GPT Models Live Check | MultiChats\nBack to MultiChats Operational\nChatGPT Status\nAccording to OpenAI's official status page, all systems are functioning normally.\nstatus.openai.com · Oct 18, 2026, 9:00 PM\nRecent Incidents\nDelayed Costs data in the Compliance API\nResolved · Oct 16, 2026\nWidespread feature degradation\nResolved · Oct 15, 2026\nLimited availability on gpt-image-2.5-flare and gpt-image-2.5-sunburst\nResolved · Oct 14, 2026\nDegraded performance in Codex and ChatGPT Work\nDegraded performance in GPT-6.1 Sol Codex and Work mode\nResolved · Oct 13, 2026\nResolved · Oct 12, 2026\nSome ChatGPT content may be unavailable on Android\nResolved · Oct 10, 2026\nWorkspace admins may be unable to manage plugins\nResolved · Oct 9, 2026\nSome APAC users are seeing errors in ChatGPT Work, conversations, and GPTs.\nResolved · Oct 8, 2026\nElevated errors with GPT-5.6 Instant in FedRAMP workspaces\nFrequently Asked Questions\nIs ChatGPT down right now? This page checks OpenAI's official status feed in real time. If ChatGPT is experiencing issues, the status above will show 'Degraded' or 'Outage' along with the latest incident details.\nWhy is ChatGPT not working? ChatGPT may be down due to server overload, scheduled maintenance, or an unexpected outage. Check the recent incidents section above for details from OpenAI.\nHow do I check ChatGPT status? You can check ChatGPT's status on this page, which pulls data directly from OpenAI's official status page at status.openai.com.\nWhat should I do when ChatGPT is down? When ChatGPT is down, you can switch to another AI model instantly. MultiChats gives you access to Claude, Gemini, Grok, and more — all in one interface.\nWhen ChatGPT is down, don't wait.\nSwitch to Claude, Gemini, Grok instantly with MultiChats.\nTry MultiChats Free\nRelated ChatGPT pages: Is ChatGPT Down? — Live Status · ChatGPT Down? Check Live Status · ChatGPT Status — Real-Time Updates · Is OpenAI Down? — Live GPT Status · Is GPT Down? — Live OpenAI Status\nCheck other AI services: Claude Status · Gemini Status · Grok Status · Mistral Status · Perplexity Status · MultiChats Status · Deepgram Status",
+      "sourceId": "SRC-589915a993e3"
+    },
+    {
+      "title": "OpenAI & ChatGPT Status: Live Service Updates",
+      "url": "https://chat-got.ai/status/",
+      "canonicalUrl": "https://chat-got.ai/status/",
+      "publisher": "Chat Got",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Check the current official status of OpenAI, the OpenAI API, and ChatGPT. The live panel below reads service information from OpenAI’s official status service . It does not test or report the availability of Chat Got.",
+        "Independent service notice: Chat Got is not affiliated with, endorsed by, sponsored by, or operated by OpenAI. This page republishes official status information for convenience and always links to the original source.",
+        "Statuses come from OpenAI's public status service and are reported at an aggregate level across plans, models, and error types. Your individual experience can differ. This panel does not test or report the availability of Chat Got.",
+        "This panel checks OpenAI's official status source automatically. Next refresh in about 60 seconds."
+      ],
+      "retrievedAt": "2026-10-18T21:08:50.176Z",
+      "content": "OpenAI and ChatGPT Status\nCheck the current official status of OpenAI, the OpenAI API, and ChatGPT. The live panel below reads service information from OpenAI’s official status service . It does not test or report the availability of Chat Got.\nIndependent service notice: Chat Got is not affiliated with, endorsed by, sponsored by, or operated by OpenAI. This page republishes official status information for convenience and always links to the original source.\nOpenAI overall\nOperational\nOverall indicator published by OpenAI.\nOpenAI APIs\n11 official API components checked.\nChatGPT\n14 official ChatGPT components checked.\nSource: OpenAI Status\nLast checked: Oct 18, 2026 21:08:49 UTC\nActive OpenAI incidents\nNo active incidents reported by OpenAI.\nService components\nOpenAI API components (11)\nChat Completions\nResponses\nFine-tuning\nEmbeddings\nImages\nBatch\nAudio\nModerations\nRealtime\nFiles\nLogin\nChatGPT components (14)\nConversations\nChatGPT Work\nCodex in ChatGPT Desktop\nCompliance API\nSearch\nFile uploads\nVoice mode\nGPTs\nImage Generation\nDeep Research\nAgent\nSites\nConnectors/Apps\nStatuses come from OpenAI's public status service and are reported at an aggregate level across plans, models, and error types. Your individual experience can differ. This panel does not test or report the availability of Chat Got.\nThis panel checks OpenAI's official status source automatically. Next refresh in about 60 seconds.\nWhat This Status Page Monitors\nOpenAI overall: the general indicator published by OpenAI for its systems.\nOpenAI APIs: official components such as Responses, Chat Completions, Moderations, Realtime, Files, Images, Audio, Embeddings, Batch, and Fine-tuning.\nChatGPT: official components such as conversations, login, search, file uploads, voice, image generation, deep research, GPTs, and related ChatGPT tools.\nActive incidents: unresolved incidents and their latest public update from OpenAI.\nWhat the Status Labels Mean\nStatus | Meaning |\nOperational | The official components checked for that service are reporting normal operation. |\nUnder maintenance | OpenAI reports maintenance affecting one or more monitored components. |\nDegraded performance | The service is available, but users may experience slow responses, errors, or reduced performance. |\nPartial outage | One or more important components are unavailable while other parts may continue working. |\nMajor outage | OpenAI reports a serious disruption affecting the service. |\nUnable to verify | The official feed could not be checked and no recent cached result was available. |\nOpenAI API Status vs. ChatGPT Status\nChatGPT and the OpenAI API are related but separate service surfaces. A ChatGPT login or conversation incident may affect the official ChatGPT website and apps without affecting every API request. An API component incident may affect developers and API-powered services while ChatGPT remains available. Check the matching card and component list before deciding which service is affected.\nIf OpenAI Shows O",
+      "sourceId": "SRC-74e1a74ce77c"
+    }
+  ],
+  "unresolvedQuestions": [
+    "Which AI model currently underlies the ChatGPT interface that users interact with on the OpenAI website?"
+  ],
+  "contradictions": [
+    "The Model Spec document (May 08 2024) is explicitly noted as a historical reference and may not reflect the current model, yet it could be interpreted as indicating older model usage.",
+    "Status pages list models like \"GPT‑6.1\" in incident reports, but they do not clarify whether that model is the one serving the ChatGPT UI, leading to potential confusion."
+  ],
+  "completeness": "partial",
+  "limitations": [
+    "15 search requests or candidate pages failed or were unreadable.",
+    "The configured candidate-page budget of 16 was exhausted."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 3,
+    "failedCount": 15,
+    "rounds": 1,
+    "searches": 5
+  },
+  "archivedAt": "2026-10-18T21:08:51.523Z"
+}

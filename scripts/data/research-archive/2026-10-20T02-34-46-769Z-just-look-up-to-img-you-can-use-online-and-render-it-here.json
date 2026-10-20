@@ -1,0 +1,110 @@
+{
+  "id": "2026-10-20T02-34-46-769Z-just-look-up-to-img-you-can-use-online-and-render-it-here",
+  "question": "Just look up to Img you can use online and render it here",
+  "plan": {
+    "objective": "Locate a royalty‑free image available online that can be displayed in the response and provide the appropriate embed link.",
+    "taskType": "general",
+    "deliverable": "A direct URL to a suitable image from an authoritative free‑image source (e.g., Unsplash, Pixabay, Wikimedia Commons) and, if platform permits, an embedded preview.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "Official or well‑established free‑image repositories (Unsplash, Pixabay, Pexels, Wikimedia Commons)",
+      "Creative Commons‑licensed content with clear usage rights"
+    ],
+    "questions": [
+      "Find an online image that can be used freely and embed it here."
+    ],
+    "queries": [
+      "site:unsplash.com \"royalty free\" image landscape",
+      "site:pixabay.com \"public domain\" image nature",
+      "site:wikimedia.org \"Creative Commons\" high resolution photograph",
+      "site:pexels.com \"free stock photo\" \"download\"",
+      "\"CC0\" image \"high resolution\" site:unsplash.com"
+    ],
+    "unresolvedQuestions": [
+      "Which exact image should be embedded?"
+    ]
+  },
+  "answer": "The retrieved sources list several well‑established free‑image repositories (e.g., Wikimedia Commons, Openverse, Flickr, PxHere, Snappygoat, Pixnio) but they do not provide a direct image URL that can be embedded here. [SRC-35f91572a80e]\nAs a result, a specific royalty‑free image could not be identified from the available evidence (unverified: no matching retrieved evidence).\n\n**Available repositories**\n- Wikimedia Commons photography resources [SRC-35f91572a80e]\n- Meta‑Wiki list of free image resources [ SRC-19715f1f1372 ]\n\nThese pages can be used to search for a suitable image, but the exact image URL is not present in the retrieved content (unverified: no matching retrieved evidence).",
+  "followUpQuestions": [
+    "search Openverse for a specific royalty‑free photograph",
+    "browse Wikimedia Commons for a suitable image"
+  ],
+  "sources": [
+    {
+      "title": "Commons:Free media resources/Photography - Wikimedia Commons",
+      "url": "https://commons.wikimedia.org/wiki/Commons:Free_media_resources/Photography/en",
+      "canonicalUrl": "https://commons.wikimedia.org/wiki/Commons:Free_media_resources/Photography/en",
+      "publisher": "commons.wikimedia.org",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "From Wikimedia Commons, the free media repository",
+        "There are a number of sources of freely licensed and public domain images on the Web.",
+        "The presence of a resource on this list does not guarantee that all or any of the images in it are freely licensed and/or in the public domain: you are still responsible for checking the copyright status of images before you submit them to Wikipedia.",
+        "Openverse (formerly CC Search) allows you to search across many sources of freely licensed images and animations, including many, but not yet all, of the ones listed here. You can filter by licenses and types, including image type \"photographs\"."
+      ],
+      "retrievedAt": "2026-10-20T02:34:45.227Z",
+      "content": "From Wikimedia Commons, the free media repository\n< Commons:Free media resources\nReturn to Main page\nDeutsch\nEnglish\nespañol\nfrançais\npolski\nportuguês\nрусский\n中文\nSee also: Category:Images by source .\nThere are a number of sources of freely licensed and public domain images on the Web.\nThe presence of a resource on this list does not guarantee that all or any of the images in it are freely licensed and/or in the public domain: you are still responsible for checking the copyright status of images before you submit them to Wikipedia.\nSee also\nWikipedia:Public domain image resources\nSearch engines\nOpenverse (formerly CC Search) allows you to search across many sources of freely licensed images and animations, including many, but not yet all, of the ones listed here. You can filter by licenses and types, including image type \"photographs\".\nGeneral collections\nFlickr ( free search ) – Flickr is a big photo sharing website. It has many pictures licenced with Creative Commons Attribution License and Creative Commons Attribution-ShareAlike License . ( Search both )\nBeware that Flickr is a problematic source – many images are acceptable, but many are not. See details on Flickr below .\nCrowdsource – 400,000 CC-BY pictures mostly from underrepresented countries.\nLookAndLearn.com – 1,000,000+ Free Historical Public Domain Images curated from Public Collections.\nSnappygoat.com – 13,990,108 Free Public Domain/CC0 Images from multiple sources. Single search for images from Wikipedia Commons, Pixabay, Flickr, British Library, NYPL and others. Full image downloads without login or restrictions. Includes a meme maker.\nPixnio – A large collection of high resolution public domain images. Free for personal and commercial use, no attribution required.\nDreamstime CC0 Stock Photos – A large selection of over 2 million public domain (CC0) and free stock photos. Curated, model & non model-released photos.\nLibreShot.com – photos in high resolution for free use even commercialy (Creative Commons CC0 1.0 Universal (CC0 1.0) Public Domain License).\nWPclipart – Public domain clip art and photographs, student-safe but expansive.\nSkitterphoto – Authentic public domain photos. Updated daily, all images creative commons CC0. No registration.\nAgência Brasil – official agency of the Brasilian government, has pictures of Brasilian officials, including on official trips and meeting foreign dignitaries (use {{Agência Brasil| photo number }} template). Does not apply to content produced after 23 February 2017.\nArchive.org compendium of Illustrations in the Public Domain - 300-page book.\nDigital documents from the Bibliothèque Nationale de France (BNF). (website is in French).\nBurningWell.org – PD according to terms .\nGnu art – Media by GNU GPL licence.\nProject Gutenberg – 12,000+ books, only a few illustrated, but the number of illustrated books increases from week to week. There are thousands upon thousands of PD images to be had, with a wee bit of legwork and a modicum of serendipity.",
+      "isUserProvided": true,
+      "sourceId": "SRC-35f91572a80e"
+    },
+    {
+      "title": "Commons:Free media resources/Photography - Wikimedia Commons",
+      "url": "https://commons.wikimedia.org/wiki/Commons:Free_media_resources/Photography",
+      "canonicalUrl": "https://commons.wikimedia.org/wiki/Commons:Free_media_resources/Photography",
+      "publisher": "commons.wikimedia.org",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "From Wikimedia Commons, the free media repository",
+        "There are a number of sources of freely licensed and public domain images on the Web.",
+        "The presence of a resource on this list does not guarantee that all or any of the images in it are freely licensed and/or in the public domain: you are still responsible for checking the copyright status of images before you submit them to Wikipedia.",
+        "Openverse (formerly CC Search) allows you to search across many sources of freely licensed images and animations, including many, but not yet all, of the ones listed here. You can filter by licenses and types, including image type \"photographs\"."
+      ],
+      "retrievedAt": "2026-10-20T02:34:44.884Z",
+      "content": "From Wikimedia Commons, the free media repository\n< Commons:Free media resources\nReturn to Main page\nDeutsch\nEnglish\nespañol\nfrançais\npolski\nportuguês\nрусский\n中文\nSee also: Category:Images by source .\nThere are a number of sources of freely licensed and public domain images on the Web.\nThe presence of a resource on this list does not guarantee that all or any of the images in it are freely licensed and/or in the public domain: you are still responsible for checking the copyright status of images before you submit them to Wikipedia.\nSearch engines\n[ edit ]\nOpenverse (formerly CC Search) allows you to search across many sources of freely licensed images and animations, including many, but not yet all, of the ones listed here. You can filter by licenses and types, including image type \"photographs\".\nGeneral collections\nFlickr ( free search ) – Flickr is a big photo sharing website. It has many pictures licenced with Creative Commons Attribution License and Creative Commons Attribution-ShareAlike License . ( Search both )\nBeware that Flickr is a problematic source – many images are acceptable, but many are not. See details on Flickr below .\nPxHere - over 1,000,000 pictures, all released under Creative Commons CC0 . Please add Category:Images from Pxhere to new uploads.\nCrowdsource – 400,000 CC-BY pictures mostly from underrepresented countries.\nLookAndLearn.com – 1,000,000+ Free Historical Public Domain Images curated from Public Collections.\nSnappygoat.com – 13,990,108 Free Public Domain/CC0 Images from multiple sources. Single search for images from Wikipedia Commons, Pixabay, Flickr, British Library, NYPL and others. Full image downloads without login or restrictions. Includes a meme maker.\nPixnio – A large collection of high resolution public domain images. Free for personal and commercial use, no attribution required.\nDreamstime CC0 Stock Photos – A large selection of over 2 million public domain (CC0) and free stock photos. Curated, model & non model-released photos.\nLibreShot.com – photos in high resolution for free use even commercialy (Creative Commons CC0 1.0 Universal (CC0 1.0) Public Domain License).\nSkitterphoto – Authentic public domain photos. Updated daily, all images creative commons CC0. No registration.\nAgência Brasil – official agency of the Brasilian government, has pictures of Brasilian officials, including on official trips and meeting foreign dignitaries (use {{Agência Brasil| photo number }} template). Does not apply to content produced after 23 February 2017.\nArchive.org compendium of Illustrations in the Public Domain - 300-page book.\nDigital documents from the Bibliothèque Nationale de France (BNF). (website is in French).\nBurningWell.org – PD according to terms .\nCCNULL.de – Kostenlose fotos (though not all with CC0). (Website is in German.) Please add Category:Images from CCNULL.de\nGnu art – Media by GNU GPL licence.\nProject Gutenberg – 12,000+ books, only a few illustrated, but the number of illustrated books increases f",
+      "isUserProvided": true,
+      "sourceId": "SRC-2bac879f6e21"
+    },
+    {
+      "title": "Free image resources - Meta-Wiki",
+      "url": "https://meta.wikimedia.org/wiki/Free_image_resources",
+      "canonicalUrl": "https://meta.wikimedia.org/wiki/Free_image_resources",
+      "publisher": "meta.wikimedia.org",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "From Meta, a Wikimedia project coordination wiki",
+        "| This page is outdated ! A better, more up-to-date page listing resources for finding free images is on Wikimedia Commons, Commons:Free media resources .",
+        "There are many Web sources of images under free licenses .",
+        "The presence of a resource on this list does not guarantee that all or any of the images in it are under a free license. You are still responsible for checking the copyright status of each image before you submit it to Wikipedia."
+      ],
+      "retrievedAt": "2026-10-20T02:34:44.877Z",
+      "content": "From Meta, a Wikimedia project coordination wiki\n| This page is outdated ! A better, more up-to-date page listing resources for finding free images is on Wikimedia Commons, Commons:Free media resources .\n| Shortcuts : WP:PDI, WP:PDIR, WP:PDIMG\n|\nShortcuts : WP:FIR, WP:FREEIMAGE\nThere are many Web sources of images under free licenses .\nThe presence of a resource on this list does not guarantee that all or any of the images in it are under a free license. You are still responsible for checking the copyright status of each image before you submit it to Wikipedia.\nPlease read the policy on image use and etiquette at: Wikipedia:Image use policy .\nAs well as these listed sites, you can search for pages licensed under a free Creative Commons license on Google through the advanced search, or by following this example search .\nSee also:\nWikipedia:Copyright\nImage upload page for registered users\nCategory:Commons resources\nBanknotes and coins\nhttp://www.currencymuseum.net - Lots of images of banknotes from all over the world, all scanned at a standard 150 dpi. Use {{PD-banknote}} and an appropriate tag for the country from en:Category:Currency copyright tags .\nhttp://aes.iupui.edu/rwise - A huge number of banknote images from all over the world. Use {{PD-banknote}} and an appropriate tag for the country from en:Category:Currency copyright tags\nhttp://worldcoingallery.com/ - Permission given by mail to Wikipedia (OTRS ticket number 2006080810014758). Contains all sorts of coins images all over the world, licensed under the GFDL. Use {{WorldCoinGallery}} and an appropriate tag for the country from en:Category:Currency copyright tags .\nGeography\nhttp://www.geograph.org.uk/ - Photographs from all over the UK, Isle of Man, and Ireland, all are licensed under CC-BY-SA-2.0.\nGeneral collections\n1010CliptArt - Over 100,000 free SVG clipart Graphics.\nPikWizard.com - Over 1,000,000 stock of free images and videos, all of which are royalty-free and safe for commercial use, with no attribution required.\nArchives of the Law Society of Ontario - Collection of many old public domain photos.\nLibrestock - An index of the best stock photos from top stock websites.\nMotosha - Free and premium stock photos.\nStockSnap - Library of free high-resolution images released under CC0.\nNegative Space - Free stock photos released under CC0.\nBURST - Free stock photos released under CC0 and more restrictive licenses.\n123rf - Free and paid stock assets.\nFreepik - Free and paid graphic resources.\nFoca Stock - Free photos videos and templates lisensed under CC0.\nJay Mantri - CC0 photos.\nStockUnlimited - Free and paid graphics.\nSplitShire - Free photos and videos released under a very permissive license.\nFoodiesFeed - Free images of food released under CC0.\nPikWizard - Huge library of CC0 and freely licensed images and videos.\nGratisography - Library of freely licensed photos.\nPicjumbo - Numerous free and paid stock photos.\nPicography - CC0 photos.\nCupcake - CC0 photos from one man.\nFree Natur",
+      "isUserProvided": true,
+      "sourceId": "SRC-19715f1f1372"
+    }
+  ],
+  "unresolvedQuestions": [
+    "Which exact image should be embedded?"
+  ],
+  "contradictions": [],
+  "completeness": "insufficient",
+  "limitations": [
+    "Web search access was blocked or challenged on 1 of 5 queries.",
+    "7 candidate pages failed or carried no readable text.",
+    "Only 3 of 5 selected sources fit in the synthesis evidence budget.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 12,
+    "retrievedCount": 5,
+    "failedCount": 8,
+    "rounds": 1,
+    "searches": 5
+  },
+  "archivedAt": "2026-10-20T02:34:46.770Z"
+}

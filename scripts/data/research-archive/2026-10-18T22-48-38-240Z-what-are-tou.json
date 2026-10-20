@@ -1,0 +1,115 @@
+{
+  "id": "2026-10-18T22-48-38-240Z-what-are-tou",
+  "question": "What are tou",
+  "plan": {
+    "objective": "Clarify and define 'TOU' across its primary usages (most notably as an acronym for Terms of Use and Time-of-Use rates) and provide context for potential truncated terms such as toucans.",
+    "taskType": "definition",
+    "deliverable": "A concise definitional guide outlining the common meanings of the acronym 'TOU' alongside key context for likely completed terms.",
+    "requiresCurrentInformation": false,
+    "sourcePreferences": [
+      "Legal and commercial contract glossaries",
+      "Energy regulatory agencies and utility guidelines",
+      "Authoritative dictionaries and encyclopedias"
+    ],
+    "questions": [
+      "What are the primary definitions of the acronym 'TOU'?",
+      "What are Terms of Use (TOU) in legal and digital contexts?",
+      "What are Time-of-Use (TOU) tariffs in energy and utility billing?"
+    ],
+    "queries": [
+      "what does TOU stand for meaning definition",
+      "terms of use TOU contract agreement definition",
+      "time of use TOU rate electricity explanation",
+      "what are toucans basic facts biology"
+    ],
+    "unresolvedQuestions": [
+      "What other specific definitions or acronym expansions exist for 'TOU' outside of Time-of-Use energy rates (such as Terms of Use)?",
+      "Did the query intend to reference a truncated term, such as toucans or a specific proper noun?"
+    ]
+  },
+  "answer": "Based on the provided sources, **TOU** primarily refers to **Time-of-Use** in the context of energy and utility pricing, (unverified: no matching retrieved evidence).\n\n### Time-of-Use (TOU) Rates and Tariffs\n* **Definition:** A TOU rate or tariff is an electricity pricing structure that varies the cost of electricity depending on the time of day it is used, in contrast to traditional flat-rate pricing [SRC-cc2d0a49e9fe], [SRC-0424700fe80b].\n* **Pricing Structure:** Rates are divided into specific time periods. [SRC-cc2d0a49e9fe]\nPeak demand periods (such as late afternoons and early evenings) carry higher rates, whereas off-peak periods (such as late at night or early morning) offer lower rates [SRC-cc2d0a49e9fe].\n* **Purpose:** TOU pricing incentivizes consumers to shift power consumption to low-demand periods, helping reduce electricity bills, lower strain on the electric grid, and support environmental sustainability and renewable energy integration [SRC-cc2d0a49e9fe].\n\n### Other Usages\nWhile TOU is indexed as an acronym, abbreviation, or slang term with multiple definitions across different fields, specific definitions outside of energy tariffs were not detailed in the retrieved source text [SRC-4ac5f4e6b3fe].",
+  "followUpQuestions": [
+    "Time-of-use electricity rate structures",
+    "Legal terms of use agreements"
+  ],
+  "sources": [
+    {
+      "title": "What Are Time of Use Rates? - ElectricityRates.com",
+      "url": "https://electricityrates.com/how-to-compare/time-of-use-rates/",
+      "canonicalUrl": "https://electricityrates.com/how-to-compare/time-of-use-rates/",
+      "publisher": "ElectricityRates.com",
+      "updatedAt": "2026-02-07T12:29:21.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Time-of-Use (TOU) Rates can help you save money on your electricity bill by shifting electricity usage to off-peak times when rates are lower.",
+        "The cheapest time to use electricity is during the night - after most people go to bed, and before they wake up.",
+        "TOU rates support grid stability and environmental sustainability by reducing peak demand and integrating renewable energy.",
+        "In an era where energy efficiency and cost savings are increasingly important, time-of-use rates (TOU) have emerged as a pivotal concept in managing electricity costs and supporting broader energy management goals."
+      ],
+      "retrievedAt": "2026-10-18T22:48:19.456Z",
+      "content": "Start of main content.\nWhat Are Time of Use Rates?\nUpdated: February 7, 2026\nKey Takeaways\nTime-of-Use (TOU) Rates can help you save money on your electricity bill by shifting electricity usage to off-peak times when rates are lower.\nThe cheapest time to use electricity is during the night - after most people go to bed, and before they wake up.\nTOU rates support grid stability and environmental sustainability by reducing peak demand and integrating renewable energy.\nIn an era where energy efficiency and cost savings are increasingly important, time-of-use rates (TOU) have emerged as a pivotal concept in managing electricity costs and supporting broader energy management goals.\nBut what exactly are time-of-use rates, and why should you care about them?\nBelow, we’ll dive into what TOU rates are, how they align with the Federal Energy Management Program’s (FEMP) demand response and time-variable pricing initiatives, and how you can learn about TOU programs specific to your state.\nTable of Contents\nUnderstanding Time of Use Rates\nTime-of-use rates (TOU) are a type of electricity pricing plan that varies the cost of electricity based on the time of day it is consumed. Unlike traditional flat-rate pricing, where electricity costs the same regardless of when it’s used, TOU rates reflect the fluctuating demand for electricity throughout the day. Typically, during peak demand periods – such as late afternoons and early evenings – electricity is more expensive. Conversely, during off-peak times – like late at night or early morning – electricity is cheaper.\nThe rationale behind TOU rates is simple: encourage consumers to shift their energy usage to times when demand is lower, thereby reducing strain on the electrical grid. This helps consumers save money on their energy bills and supports broader energy efficiency goals by smoothing out peaks in electricity demand.\nHow TOU Rates Relate to Peak and Off-Peak Hours\nTime-of-Use (TOU) rates in electricity plans are directly related to peak and off-peak hours. These rates are designed to encourage consumers to use electricity during off-peak hours when demand is lower and to reduce usage during peak hours when demand is higher. Here’s how they relate:\n1. Peak Hours\nThese are times of the day when electricity demand is at its highest, often in the late afternoon and early evening when people return home from work and start using more electrical appliances. During these hours, TOU rates are higher to reflect the increased cost of generating and distributing electricity.\n2. Off-Peak Hours\nThese hours typically occur late at night or early in the morning when electricity demand is low. During off-peak hours, TOU rates are lower, providing an incentive for consumers to shift their energy usage to these times, which helps utilities balance the load on the grid and reduce the need for expensive, peak-time energy generation.\n3. Shoulder Hours\nSome TOU plans also include shoulder hours, which are transitional periods bet",
+      "isUserProvided": true,
+      "sourceId": "SRC-cc2d0a49e9fe"
+    },
+    {
+      "title": "What does TOU mean?",
+      "url": "https://abbreviationfinder.org/acronyms/tou.html",
+      "canonicalUrl": "https://abbreviationfinder.org/acronyms/tou.html",
+      "publisher": "abbreviationfinder.org",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "Are you looking for the meanings of TOU? On the following image, you can see major definitions of TOU. If you want, you can also download image file to print, or you can share it with your friend via Facebook, Twitter, Pinterest, Google, etc. To see all meanings of TOU, please scroll down. The full list of definitions is shown in the table below in alphabeti",
+        "The following image presents the most commonly used meanings of TOU. You can down the image file in PNG format for offline use or send it to your friends by email. If you are a webmaster of non-commercial website, please feel free to publish the image of TOU definitions on your website.",
+        "As previously mentioned, the image associated with the acronym TOU is formatted in PNG, which stands for Portable Network Graphics. This image has specific dimensions, with a length of 669 pixels and a width of 350 pixels. The file size of the image is approximately 60 kilobytes. This format and size are chosen to ensure that the image maintains high quality",
+        "What does TOU mean? This page is about the various possible meanings of the acronym, abbreviation or slang term. If you find this information useful or interesting, please feel free to share it on your favorite social media platforms."
+      ],
+      "retrievedAt": "2026-10-18T22:48:19.959Z",
+      "content": "What does TOU mean?\n&darr; Skip to Main Content\nAre you looking for the meanings of TOU? On the following image, you can see major definitions of TOU. If you want, you can also download image file to print, or you can share it with your friend via Facebook, Twitter, Pinterest, Google, etc. To see all meanings of TOU, please scroll down. The full list of definitions is shown in the table below in alphabetical order.\nMajor Meanings of TOU\nThe following image presents the most commonly used meanings of TOU. You can down the image file in PNG format for offline use or send it to your friends by email. If you are a webmaster of non-commercial website, please feel free to publish the image of TOU definitions on your website.\nAs previously mentioned, the image associated with the acronym TOU is formatted in PNG, which stands for Portable Network Graphics. This image has specific dimensions, with a length of 669 pixels and a width of 350 pixels. The file size of the image is approximately 60 kilobytes. This format and size are chosen to ensure that the image maintains high quality while remaining efficient in terms of storage and loading times.\nCitation as a Visitor\nWhat does TOU mean? This page is about the various possible meanings of the acronym, abbreviation or slang term. If you find this information useful or interesting, please feel free to share it on your favorite social media platforms.\nCitation as a Webmaster\nIf you wish for your visitors to access a comprehensive list of all possible meanings of the acronym TOU, it is recommended that you incorporate the acronym into your bibliography using proper citation formats.\nAll Definitions of TOU\nAs mentioned above, you will see all meanings of TOU in the following table. Please know that all definitions are listed in alphabetical order. You can click links on the right to see detailed information of each definition, including definitions in English and your local language.\nAcronym | Definition |\nTOU | Tactical Operations Unit |\nTOU | Temple of Understanding |\nTOU | Temple of the Universe |\nTOU | Terms of Usage |\nTOU | Thinking of You |\nTOU | Time of Use |\nTOU | Top of Utah |\nTOU | Tour of Utah |\nTOU | Transmission Operating Unit |\nThis page illustrates how TOU is used in messaging and chat forums, in addition to social networking software like VK, Instagram, Whatsapp, and Snapchat. From the table above, you can view all meanings of TOU: some are educational terms, the other are medical terms, and even computer terms. If you know of another definition of TOU, please contact us. We will include it during next update of our database.\nTPW ›\nTOU as an Acronym\nIn summary, TOU is an abbreviation that can stand for various terms depending on the context, and its interpretation can vary across different fields such as technology, business, education, geography, government, law and other specialized areas. If you have more interpretations or meanings for this acronym, we encourage you to contact us and share t",
+      "isUserProvided": true,
+      "sourceId": "SRC-4ac5f4e6b3fe"
+    },
+    {
+      "title": "Time-of-Use Tariffs Explained: A Complete UK Guide for 2026",
+      "url": "https://www.wattitcosts.com/guides/time-of-use-tariffs",
+      "canonicalUrl": "https://www.wattitcosts.com/guides/time-of-use-tariffs",
+      "publisher": "www.wattitcosts.com",
+      "sourceType": "Markdown document",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "converted",
+      "evidenceSnippets": [
+        "title: \"Time-of-Use Tariffs Explained: Complete UK Guide 2026 | WattItCosts\"",
+        "description: \"Learn how TOU tariffs work, compare Octopus Go, Flux, Cosy and Agile tariffs, and find out if shifting usage could save you hundreds.\"",
+        "keywords: \"time of use tariffs UK, TOU tariff explained, Octopus Go, Agile tariff, MHHS, half-hourly settlement\"",
+        "\"og:description\": \"Learn how TOU tariffs work, compare Octopus Go, Flux, Cosy and Agile tariffs, and find out if shifting usage could save you hundreds.\""
+      ],
+      "retrievedAt": "2026-10-18T22:48:21.380Z",
+      "content": "title: \"Time-of-Use Tariffs Explained: Complete UK Guide 2026 | WattItCosts\"\nmeta:\n author: \"WattItCosts Team\"\n description: \"Learn how TOU tariffs work, compare Octopus Go, Flux, Cosy and Agile tariffs, and find out if shifting usage could save you hundreds.\"\n keywords: \"time of use tariffs UK, TOU tariff explained, Octopus Go, Agile tariff, MHHS, half-hourly settlement\"\n \"og:description\": \"Learn how TOU tariffs work, compare Octopus Go, Flux, Cosy and Agile tariffs, and find out if shifting usage could save you hundreds.\"\n \"og:title\": \"Time-of-Use Tariffs Explained: Complete UK Guide 2026 | WattItCosts\"\n \"twitter:description\": \"Learn how TOU tariffs work, compare Octopus Go, Flux, Cosy and Agile tariffs, and find out if shifting usage could save you hundreds.\"\n \"twitter:title\": \"Time-of-Use Tariffs Explained: Complete UK Guide 2026 | WattItCosts\"\n \n We value your privacy \n\nWe use cookies to enhance your browsing experience, serve personalized ads or content, and analyze our traffic. By clicking \"Accept All\", you consent to our use of cookies. Cookie Policy\n\nCookie Settings\n\nReject AllAccept All\n\nWattItCosts.com\n\nCompare Energy\n\nCalculators\n\nTools\n\nGuides Business Blog About Contact\n\n- Home\n- Energy Guides\n- Time-of-Use Tariffs\nTime-of-Use Tariffs Explained: A Complete UK Guide for 2026\n\nUpdated March 2026 · 8 min read\nIn this guide\n\n- What are Time-of-Use tariffs?\n- How MHHS is changing energy billing\n- Popular TOU tariffs compared\n- Who benefits most?\n- How to check if TOU is right for you\nWhat are Time-of-Use tariffs?\n\nTime-of-Use (TOU) tariffs charge different prices for electricity depending on when you use it. Unlike traditional flat-rate tariffs where you pay the same unit rate regardless of the hour, TOU tariffs split the day into pricing periods — typically peak, off-peak, and sometimes a shoulder or mid-rate period.\n\nThe idea behind TOU pricing is straightforward: electricity is cheaper to generate and distribute during periods of low demand (typically overnight) and more expensive during peak hours (usually between 4pm and 7pm). By passing these cost differences on to consumers, energy suppliers incentivise usage shifting — running your washing machine, charging your EV, or heating your water during cheaper off-peak hours.\n\nTOU tariffs have existed in the UK for decades in the form of Economy 7 and Economy 10, which offered cheaper overnight electricity for storage heater users. However, the new generation of smart meter-enabled TOU tariffs is far more sophisticated. Tariffs like Octopus Go, Agile, and Cosy offer granular time-based pricing that can deliver significant savings for households willing to shift their energy usage patterns.\n\nFor households with electric vehicles, heat pumps, or home batteries, TOU tariffs can transform energy economics — turning what might be an expensive electricity bill into a manageable cost by taking advantage of overnight rates that can be as low as 7p per kWh compared to daytime peak rates above 35p",
+      "isUserProvided": true,
+      "sourceId": "SRC-0424700fe80b"
+    }
+  ],
+  "unresolvedQuestions": [
+    "What other specific definitions or acronym expansions exist for 'TOU' outside of Time-of-Use energy rates (such as Terms of Use)?",
+    "Did the query intend to reference a truncated term, such as toucans or a specific proper noun?"
+  ],
+  "contradictions": [],
+  "completeness": "partial",
+  "limitations": [
+    "10 candidate pages failed or carried no readable text.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 3 of 6 selected sources fit in the synthesis evidence budget.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 6,
+    "failedCount": 10,
+    "rounds": 1,
+    "searches": 4
+  },
+  "archivedAt": "2026-10-18T22:48:38.241Z"
+}

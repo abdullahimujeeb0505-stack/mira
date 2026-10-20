@@ -1,0 +1,123 @@
+{
+  "id": "2026-10-18T22-40-27-792Z-what-the-fuck",
+  "question": "What the fuck",
+  "plan": {
+    "objective": "What the fuck",
+    "taskType": "general",
+    "deliverable": "A direct answer with supporting evidence and limitations.",
+    "requiresCurrentInformation": false,
+    "sourcePreferences": [
+      "primary sources",
+      "authoritative references",
+      "independent corroboration"
+    ],
+    "questions": [
+      "What the fuck"
+    ],
+    "queries": [
+      "What the fuck",
+      "What the fuck authoritative sources",
+      "What the fuck evidence and limitations"
+    ],
+    "unresolvedQuestions": [
+      "What the fuck"
+    ]
+  },
+  "answer": "I retrieved 4 readable sources, but couldn't synthesize a reliable answer (the provider rejected the request (HTTP 404)). Please try again shortly.",
+  "followUpQuestions": [],
+  "sources": [
+    {
+      "title": "what the fuck - Wiktionary, the free dictionary",
+      "url": "https://en.wiktionary.org/wiki/what_the_fuck",
+      "canonicalUrl": "https://en.wiktionary.org/wiki/what_the_fuck",
+      "publisher": "Wiktionary",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "( interrogative , slang , vulgar ) An intensive form of what .",
+        "Synonyms: what in God's name , what in tarnation , what in the world , what on Earth , what the dickens , what the Devil , what the deuce , what the heck , what the hell , what the hey , what the flying fuck , what the fish , what the scallop , what the sigma",
+        "What the fuck were you thinking? What the fuck was I thinking? What the fuck are you doing?",
+        "What the fuck is going on? What the fuck just happened? What the fuck is wrong with you?"
+      ],
+      "retrievedAt": "2026-10-18T22:40:27.058Z",
+      "content": "From Wiktionary, the free dictionary\nEnglish\nAlternative forms\nwhatthefuck\nPronunciation\nAudio ( Australia ) : | | ( file ) |\nPhrase\nwhat the fuck\n( interrogative , slang , vulgar ) An intensive form of what .\nSynonyms: what in God's name , what in tarnation , what in the world , what on Earth , what the dickens , what the Devil , what the deuce , what the heck , what the hell , what the hey , what the flying fuck , what the fish , what the scallop , what the sigma\nWhat the fuck were you thinking? What the fuck was I thinking? What the fuck are you doing?\nWhat the fuck is going on? What the fuck just happened? What the fuck is wrong with you?\nDerived terms\nwhat the fuck ever\nRelated terms\ndafuq\nhow the fuck\nthe fuck\nwhere the fuck\nwho the fuck\nwhy the fuck\nTranslations\nintensive form of what\nArabic: ما نكح\nArmenian: please add this translation if you can\nAzerbaijani: please add this translation if you can\nBulgarian: какво да еба ( kakvo da eba )\nCatalan: què putes , què collons\nChinese:\nMandarin: 什麼鳥？ / 什么鸟？ ( shénme niǎo? ) , 什麼鬼 / 什么鬼 ( shénme guǐ )\nCzech: co to kurva ? , co do prdele ? , co do hajzlu ? , co do píči ?\nDanish: hvad helvede , hvad fanden , hvad fuck\nDutch: wat de kanker , wat de fok\nEstonian: mida vittu?\nFinnish: mitä vittua\nFrench: c'est quoi ce bordel ? , qu'est-ce que c'est que cette merde ? , qu’est-ce que putain de quoi\nGalician: que carallo\nGerman: was zum Teufel? , was zur Scheiße?\nGreek: τι στο διάολο (el) ( ti sto diáolo ) , τι στον πούτσο ( ti ston poútso ) ( vulgar )\nWhat the fuck are you doing? — Τι στο διάολο κάνεις; ,\nor \"Τι μαλακία κάνεις;\" (stronger than the previous)\nAncient Greek: τί που ( tí pou )\nHebrew: מה לעזאזל ( ma la`azazél )\nHindi: क्या छुतिय्यापा है? ( kyā chutiyyāpā hai? )\nHungarian: mi a fasz (hu) , mi a geci , mi a szar , mi a lószar\nIcelandic: hvað í fjandanum ?, hver fjandinn ?\nIndonesian: apa-apaan (id)\nIsan: อิหยังวะ ( ì-yǎng-wa )\nItalian: che cazzo\nJapanese: 一体なんだ？ ( いったいなんだ？, ittai nan da? ) , 一体全体なんだ？ ( いったいぜんたいなんだ？, ittai-zentai nan da? )\nKorean: 니미럴 ( nimireol )\nMalay: apa jadah\nNorwegian: hva faen , hva i helvete\nPolish: co do kurwy? , co jest kurwa? , ki chuj? (pl) , co do chuja?\nPortuguese: que caralho / porra / diabos / merda\nRomanian: ce pula mea , ce sloboz , ce pizda mă-sii , ce morții mă-sii , ce căcat , ce dracu’ , ce naiba , ce futere , ce mama dracului , ce mama naibii\nRussian: како́го ху́я (ru) ( kakóvo xúja ) , ху́ли (ru) ( xúli ) , что за хуйня́ ( što za xujnjá ) , что за на́хуй ( što za náxuj )\nSerbo-Croatian: који курац? ( koji kurac? )\nSlovak: čo to kurva\nSpanish: qué putas , qué puñetas , qué diablos (es) , qué carajo , qué mierda , qué coño , qué cojones , qué leches , qué mamadas\nSwedish: vad fittan , vad i hela kuken , vad fan , vad i helvete\nThai: อะไรวะ ( arai wa )\nTurkish: ne sikim , ne bok\nUkrainian: що за хуй ( ščo za xuj )\nUzbek: please add this translation if you can\nVietnamese: quái gì vậy , cái lồn gì thế\nWelsh: beth gythraul\n|\nInterjection\n( vulgar ) Used to ex",
+      "isUserProvided": true,
+      "sourceId": "SRC-23337c902fdf"
+    },
+    {
+      "title": "What is an Authoritative Source? - How to Search for Sources and Manage Them - LibGuides at Graduate Institute of International and Development Studies",
+      "url": "https://libguides.graduateinstitute.ch/how_to_search/authority",
+      "canonicalUrl": "https://libguides.graduateinstitute.ch/how_to_search/authority",
+      "publisher": "libguides.graduateinstitute.ch",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "What is an Authoritative Source? - How to Search for Sources and Manage Them - LibGuides at Graduate Institute of International and Development Studies",
+        "&ldquo;A source that is official. Also, a work known to be reliable because its authenticity or integrity is widely recognized by experts in the field.&rdquo;",
+        "(Reitz, Joan. ODLIS: Online Dictionary for Library and Information Science )",
+        "&ldquo; Authority is constructed and contextual . Information resources reflect their creators&rsquo; expertise and credibility, and are evaluated based on the information need and the context in which the information will be used. Authority is constructed in that various communities may recognize different types of authority. It is contextual in that the in"
+      ],
+      "retrievedAt": "2026-10-18T22:40:26.691Z",
+      "content": "What is an Authoritative Source? - How to Search for Sources and Manage Them - LibGuides at Graduate Institute of International and Development Studies\nSkip to Main Content\nWhat is an Authoritative Source?\nPhoto CC BY-SA Mark Fischer\n&ldquo;A source that is official. Also, a work known to be reliable because its authenticity or integrity is widely recognized by experts in the field.&rdquo;\n(Reitz, Joan. ODLIS: Online Dictionary for Library and Information Science )\n&ldquo; Authority is constructed and contextual . Information resources reflect their creators&rsquo; expertise and credibility, and are evaluated based on the information need and the context in which the information will be used. Authority is constructed in that various communities may recognize different types of authority. It is contextual in that the information need may help to determine the level of authority required.&rdquo;\n( ACRL Framework for Information Literacy for Higher Education , adopted 2016)\nIn the general context of academic writing, authority partly derives from current academic research activity and employment in the designated field . The following are necessary to consider a work as a valid scholarly publication:\nClaims are referenced and a bibliography is included\nThe work is published by a recognised institution/publisher\nThe work is peer-reviewed\nBut other people and media can be authoritative sources in the appropriate context.\nWhat Source Types Can Be Considered Authoritative?\nThe source type provides a preliminary idea, but it is not sufficient to determine authority. The expertise of the author matters even for traditional scholarly publications, and verification grows more necessary as we go further down the categories and gatekeeping decreases.\nScholarly publications &ndash; must be used as references\nPeer reviewed books and journals\nNon-PR academic books and journals (lesser value)\nGrey literature &ndash; can be used as references\nPreprints, working papers, etc. &ndash; non-published academic research\nReports and publications from groups and institutions\nPopular and trade/professional sources &ndash; require careful consideration before using as references\nNews, magazines\nBooks (non-academic)\nOther websites\nPublic conversation and social media &ndash; should not be used as references\nDiscussion forums\nSocial media (Facebook, X, Instagram, TikTok, etc.)",
+      "isUserProvided": true,
+      "sourceId": "SRC-1095d850e32b"
+    },
+    {
+      "title": "What the fuck - Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/What_the_fuck",
+      "canonicalUrl": "https://en.wikipedia.org/wiki/What_the_fuck",
+      "publisher": "en.wikipedia.org",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "an expression (also abbreviated as WTF), see Fuck § Modern usage",
+        "What the Fuck , a 2005 album by Acumen Nation",
+        "\"What the Fuck...\", a 1994 song by Brand Nubian song from Everything is Everything",
+        "\"What the Fuck\", a 2007 song by Carbon/Silicon from their album The Last Post"
+      ],
+      "retrievedAt": "2026-10-18T22:40:26.871Z",
+      "content": "From Wikipedia, the free encyclopedia\nWhat the fuck may refer to:\nan expression (also abbreviated as WTF), see Fuck § Modern usage\nWhat the Fuck , a 2005 album by Acumen Nation\n\"What the Fuck...\", a 1994 song by Brand Nubian song from Everything is Everything\n\"What the Fuck\", a 2007 song by Carbon/Silicon from their album The Last Post\nLoca People (What the Fuck!) , a 2011 song by Sak Noel\n\"What the Fuck\", a 2013 song by fun from their extended play Before Shane Went to Bangkok: Live in the USA\nWTFPL (Do What the Fuck You Want To Public License)\nSee also\n[ edit ]\nWhat the Bleep Do We Know!? , sometimes stylised as \"What tнē #$*! D̄ө ωΣ (k)πow!?\" and \"What the #$*! Do We Know!?\", a 2004 film purporting to link spirituality and quantum mechanics\nStar 69 (What the F**k) , a 2001 song by Fatboy Slim\nWTF (disambiguation)\nWhat the (disambiguation)\nTopics referred to by the same term\nThis disambiguation page lists articles associated with the title What the fuck . If an internal link incorrectly led you here, you may wish to change the link to point directly to the intended article.\nCategories : Disambiguation pages\nEnglish phrases\nHidden categories: Short description is different from Wikidata\nAll article disambiguation pages\nAll disambiguation pages",
+      "isUserProvided": true,
+      "sourceId": "SRC-9789ce96d07c"
+    },
+    {
+      "title": "WTF | English meaning - Cambridge Dictionary",
+      "url": "https://dictionary.cambridge.org/dictionary/english/wtf",
+      "canonicalUrl": "https://dictionary.cambridge.org/dictionary/english/wtf",
+      "publisher": "dictionary.cambridge.org",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "offensive slang written abbreviation for what the fuck : a rude phrase used, for example in text messages and on social networking websites , to show that you are surprised or annoyed , or do not care about something",
+        "(Definition of wtf from the Cambridge Advanced Learner's Dictionary & Thesaurus © Cambridge University Press)",
+        "forma abreviada escrita de \"what the fuck\"&hellip;"
+      ],
+      "retrievedAt": "2026-10-18T22:40:26.821Z",
+      "content": "Meaning of wtf in English\noffensive slang written abbreviation for what the fuck : a rude phrase used, for example in text messages and on social networking websites , to show that you are surprised or annoyed , or do not care about something\nInternet terminology\n2FA\n2SV\nabove/below the fold idiom\naddress bar\naffiliate link\nfreeware\nhangout\nheavy traffic\nhigh-traffic\nhooman\nhot take\nsmiley\nsocial engineering\nsocial login\nsocial media\nsocial media optimization\nsurfing\nthe Social Web\nviral\nweblog\nSee more results »\n(Definition of wtf from the Cambridge Advanced Learner's Dictionary & Thesaurus © Cambridge University Press)\nTranslations of wtf\nin Chinese (Traditional)\n（用於短訊和社群媒體）真他媽見鬼了（what the fuck的縮寫）&hellip;\nSee more\nin Chinese (Simplified)\n（用于短信和社交媒体）真他妈见鬼了（what the fuck的缩写）&hellip;\nin Portuguese\nforma abreviada escrita de \"what the fuck\"&hellip;\nNeed a translator?\nGet a quick, free translation!\nTranslator tool\nBrowse\nwry\nwryly\nwt\nWTD\nwtf\nWTO\nwunderkind\nwurst\nwushu",
+      "isUserProvided": true,
+      "sourceId": "SRC-ed3db5a354cf"
+    }
+  ],
+  "unresolvedQuestions": [
+    "What the fuck"
+  ],
+  "contradictions": [],
+  "completeness": "partial",
+  "limitations": [
+    "8 candidate pages failed or carried no readable text.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 4 of 6 selected sources fit in the synthesis evidence budget."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 8,
+    "failedCount": 8,
+    "rounds": 1,
+    "searches": 3
+  },
+  "archivedAt": "2026-10-18T22:40:27.793Z"
+}

@@ -1,0 +1,123 @@
+{
+  "id": "2026-10-18T22-02-32-102Z-what-s-up-today",
+  "question": "What's up today",
+  "plan": {
+    "objective": "What's up today",
+    "taskType": "current",
+    "deliverable": "A direct answer with supporting evidence and limitations.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "recent official announcements",
+      "current primary sources",
+      "dated reporting"
+    ],
+    "questions": [
+      "What's up today"
+    ],
+    "queries": [
+      "What's up today",
+      "What's up today official latest update",
+      "What's up today recent reporting"
+    ],
+    "unresolvedQuestions": [
+      "What's up today"
+    ]
+  },
+  "answer": "I retrieved 4 readable sources, but couldn't synthesize a reliable answer (provider error). Please try again shortly.",
+  "followUpQuestions": [],
+  "sources": [
+    {
+      "title": "What is Today?",
+      "url": "https://nationaltoday.com/today/",
+      "canonicalUrl": "https://nationaltoday.com/today/",
+      "publisher": "National Today",
+      "updatedAt": "2026-04-14T17:30:15.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "National Speak Up for Victims of Sexual Abuse Day",
+        "What is the most popular holiday on October 18?",
+        "On October 18, National Chocolate Cupcake Day is the most widely recognized U.S. food observance. National Mashed Potato Day is the most popular side-dish observance, and Flora Duffy Day is a Bermuda national public holiday.",
+        "What countries celebrate holidays on October 18?"
+      ],
+      "retrievedAt": "2026-10-18T22:02:11.023Z",
+      "content": "Number of holidays\n18\nDay of the year\n291\nDays left in the year\n74\nWant to sponsor October 18? Learn how\nAll holidays today\nOct 18\nFood & Beverage\nNational Chocolate Cupcake Day\nSpecial Interest\nBridge Day\nAppreciation\nFlora Duffy Day\nHealth\nHealth Care Aide Day\nCultural\nInternational: Chung Yeung Festival\nKati Bihu\nNational Alaska Day\nNational Mashed Potato Day\nNational Necktie Day\nFun\nNational No Beard Day\nReligious\nNational Prayer Day\nCause\nNational Speak Up for Victims of Sexual Abuse Day\nNational Sunday Day\nNepal: Maha Ashtami\nRide To Work Day\nSunday School Teacher Appreciation Day\nWorld Menopause Day\nWorld Toy Camera Day\nAbout October 18\nOctober 18 Q&As\nWhat is the most popular holiday on October 18?\nOn October 18, National Chocolate Cupcake Day is the most widely recognized U.S. food observance. National Mashed Potato Day is the most popular side-dish observance, and Flora Duffy Day is a Bermuda national public holiday.\nWhat countries celebrate holidays on October 18?\nOctober 18 observances span Bermuda ( Flora Duffy Day ), India ( Kati Bihu ), and the U.S., which hosts National Chocolate Cupcake Day , National Mashed Potato Day , National No Beard Day , National Necktie Day , and National Alaska Day .\nWhat are some fun or unusual holidays on October 18?\nOctober 18 includes National No Beard Day , National Necktie Day , National Chocolate Cupcake Day , National Mashed Potato Day , and Flora Duffy Day — a date pairing clean-shaven reveals, Croatian fashion history, miniature cakes, Carême’s finest side dish, and Bermuda’s sole Olympic gold medal.\nOct. 19\nNational New Friends Day\nOct. 20\nWorld Osteoporosis Day\nOct. 22\nNational Nut Day\nOct. 23\nNational Slap Your Coworker Day\nOct. 16\nNational Feral Cat Day\nOct. 28\nNational First Responders Day\nOct. 1\nNational Black Dog Day\nOct. 4\nNational Taco Day\nMashujaa Day Kenya\nOct. 17\nDessalines Day\nUnited Nations Week\nOct. 7\nNational Inner Beauty Day\nInternational holidays on October 18\nInternational\nArgentina\nAustralia\nBelgium\nBrazil\nCanada\nChile\nChina\nColombia\nCuba\nEngland\nFrance\nGermany\nHonduras\nIndia\nIran\nIreland\nIsrael\nItaly\nJapan\nMalaysia\nMexico\nNepal\nNew Zealand\nNorway\nPhilippines\nPuerto Rico\nRomania\nRussia\nSouth Africa\nSouth Korea\nSpain\nSweden\nThailand\nU.K.\nUnited Kingdom\nUnited States\nUruguay\nWales\nscotland",
+      "isUserProvided": true,
+      "sourceId": "SRC-7b7f89b873aa"
+    },
+    {
+      "title": "OnThisWeekend — What's On Near You",
+      "url": "https://onthisweekend.co.uk/",
+      "canonicalUrl": "https://onthisweekend.co.uk/",
+      "publisher": "onthisweekend.co.uk",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Friday to Sunday, sorted — the best gigs, comedy, theatre, nightlife and family days out. Pick a city.",
+        "Get to know each city — the best neighbourhoods, food scenes, music venues, and hidden gems."
+      ],
+      "retrievedAt": "2026-10-18T22:02:10.662Z",
+      "content": "What's on today?\nPick a city — we'll handle the rest.\nLondon\n33 events today\nManchester\n21 events today\nBirmingham\n12 events today\nEdinburgh\n6 events today\nBristol\nLeeds\nLiverpool\n10 events today\nGlasgow\n26 events today\nCardiff\n3 events today\nNewcastle\nBrighton\n5 events today\nSheffield\n7 events today\nNottingham\n8 events today\nLeicester\n1 events today\nBelfast\nWhat's on this weekend\nFriday to Sunday, sorted — the best gigs, comedy, theatre, nightlife and family days out. Pick a city.\nCity guides\nGet to know each city — the best neighbourhoods, food scenes, music venues, and hidden gems.",
+      "isUserProvided": true,
+      "sourceId": "SRC-4705e5a39f16"
+    },
+    {
+      "title": "Good News Today: Positive and Happy News Stories",
+      "url": "https://www.upliftingnewsapp.com/good-news-today/",
+      "canonicalUrl": "https://www.upliftingnewsapp.com/good-news-today/",
+      "publisher": "www.upliftingnewsapp.com",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "It is easy to believe there is no good news today. The headlines are built to alarm, and the algorithms are built to keep you scrolling through the worst of them. But positive things are happening constantly. They just rarely trend. This page collects today's happy news in one calm place, pulled from established positive news sources, so you can catch up on ",
+        "Want to understand why the good stuff is so easy to miss? Read our explainer on why the news is so negative , browse the best good news sources we gather from, or pick up a few habits for reading the news without the dread .",
+        "Where can I find good news today? This page shows a live feed of today's good news, updated throughout the day with positive stories from trusted good news sources. You can also get the same feed on your iPhone with the free Uplifting News app.",
+        "What counts as happy or positive news? Happy and positive news covers uplifting developments such as medical breakthroughs, environmental wins, scientific progress, community successes, and everyday acts of kindness, rather than the alarming headlines that usually dominate."
+      ],
+      "retrievedAt": "2026-10-18T22:02:11.043Z",
+      "content": "Good news, every single day\nIt is easy to believe there is no good news today. The headlines are built to alarm, and the algorithms are built to keep you scrolling through the worst of them. But positive things are happening constantly. They just rarely trend. This page collects today's happy news in one calm place, pulled from established positive news sources, so you can catch up on what is going right without wading through the dread.\nWant to understand why the good stuff is so easy to miss? Read our explainer on why the news is so negative , browse the best good news sources we gather from, or pick up a few habits for reading the news without the dread .\nFrequently asked questions\nWhere can I find good news today? This page shows a live feed of today's good news, updated throughout the day with positive stories from trusted good news sources. You can also get the same feed on your iPhone with the free Uplifting News app.\nWhat counts as happy or positive news? Happy and positive news covers uplifting developments such as medical breakthroughs, environmental wins, scientific progress, community successes, and everyday acts of kindness, rather than the alarming headlines that usually dominate.\nHow often is this good news feed updated? The feed refreshes throughout the day as new stories are published by our positive news sources, so there is almost always something new and uplifting to read.\nIs there an app for daily good news? Yes. Uplifting News for iPhone delivers a clean daily feed of good news with no ads and no tracking. You can read ten stories a day for free.",
+      "isUserProvided": true,
+      "sourceId": "SRC-7bbb63b19798"
+    },
+    {
+      "title": "Windows 11, version 26H2 known issues and notifications | Microsoft Learn",
+      "url": "https://learn.microsoft.com/en-us/windows/release-health/status-windows-11-26h2",
+      "canonicalUrl": "https://learn.microsoft.com/en-us/windows/release-health/status-windows-11-26h2",
+      "publisher": "learn.microsoft.com",
+      "author": "WindowsCommunications",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Access to this page requires authorization. You can try signing in or changing directories .",
+        "Access to this page requires authorization. You can try changing directories .",
+        "Windows 11, version 26H2 known issues and notifications",
+        "Find information on known issues and the status of the Windows 11, version 26H2 availability. For immediate help with Windows update issues, open the Get Help app if you are using a Windows device, or go to support.microsoft.com . Follow @WindowsUpdate on X for Windows release health updates. If you are an IT administrator and want to programmatically get in"
+      ],
+      "retrievedAt": "2026-10-18T22:02:10.611Z",
+      "content": "Note\nAccess to this page requires authorization. You can try signing in or changing directories .\nAccess to this page requires authorization. You can try changing directories .\nWindows 11, version 26H2 known issues and notifications\nSummarize this article for me\nFind information on known issues and the status of the Windows 11, version 26H2 availability. For immediate help with Windows update issues, open the Get Help app if you are using a Windows device, or go to support.microsoft.com . Follow @WindowsUpdate on X for Windows release health updates. If you are an IT administrator and want to programmatically get information from this page, use the Windows Updates API in Microsoft Graph .\nCurrent status as of September 29, 2026\nWindows 11, version 26H2 has reached general availability. This new version contains all the recently announced features in Windows 11, versions 25H2 and 24H2 and will be delivered using servicing technology, providing a fast installation experience.\nThe rollout is phased and will expand over the next few months. Starting today, version 26H2 is available on eligible Windows 11, version 25H2 and version 24H2 devices for users who have turned on the setting Get the latest updates as soon as they’re available . If the update is ready for your device, it will download and install automatically, and a single restart will complete the process.\nFor more details on how to install Windows 11, version 26H2, watch this video .\nHow to get the Windows 11 2026 Update\nAn IT pro’s guide to Windows 11, version 26H2\nSee all messages >\nKnown issues\nSee open issues, content updated in the last 30 days, and information on safeguard holds . To find a specific issue, use the search function on your browser (CTRL + F for Microsoft Edge).\nSummary | Originating update | Status | Last updated |\nDevices might experience a black screen or desktop loading issues after sign-in Microsoft has received reports of this issue occurring in some virtual desktop environments. | N/A | Resolved KB5127648 | 2026-10-13 10:13 PT |\nRemote Desktop connections might fail for non-admin users with error 0xC000000D This issue affects non-admin users connecting through Remote Desktop with Administrator protection enabled. | OS Build 26300.9550 KB5124010 2026-09-22 | Mitigated | 2026-10-13 10:13 PT |\nApplications which require AC-3 audio decoding might close unexpectedly This issue is more likely to occur in legacy applications, and unlikely for many modern applications. | OS Build 26300.9550 KB5124010 2026-09-22 | Resolved KB5127648 | 2026-10-13 10:13 PT |\nDomain-joined devices might lose their secure trust relationship with the domain Some Credential Guard protected machine accounts might be unable to sign in interactively will valid domain credentials. | N/A | Resolved KB5124010 | 2026-10-08 17:44 PT |\nUSB audio devices might fail to start or produce no sound Some USB Audio Class 1.0 devices display Code 10 or fail in multichannel audio modes after installing the Sept. 8",
+      "isUserProvided": true,
+      "sourceId": "SRC-728f2b127058"
+    }
+  ],
+  "unresolvedQuestions": [
+    "What's up today"
+  ],
+  "contradictions": [],
+  "completeness": "partial",
+  "limitations": [
+    "12 candidate pages failed or carried no readable text.",
+    "The configured candidate-page budget of 16 was exhausted."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 4,
+    "failedCount": 12,
+    "rounds": 1,
+    "searches": 3
+  },
+  "archivedAt": "2026-10-18T22:02:32.103Z"
+}

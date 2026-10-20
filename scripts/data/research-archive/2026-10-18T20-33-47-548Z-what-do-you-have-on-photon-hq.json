@@ -1,0 +1,136 @@
+{
+  "id": "2026-10-18T20-33-47-548Z-what-do-you-have-on-photon-hq",
+  "question": "What do you have on photon HQ",
+  "plan": {
+    "objective": "Provide a concise, up-to-date overview of PhotonHQ, covering its definition, purpose, key features, ownership/company background, typical use cases, and any notable recent developments.",
+    "taskType": "definition",
+    "deliverable": "A short written summary (≈300‑500 words) with citations to authoritative sources.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "Official PhotonHQ website and documentation",
+      "Press releases or news articles from reputable tech outlets (e.g., TechCrunch, VentureBeat)",
+      "Company filings or LinkedIn profile for ownership/background",
+      "Peer‑reviewed or industry analyst reports if available"
+    ],
+    "questions": [
+      "What is PhotonHQ and what problem does it aim to solve?",
+      "Who owns/operates PhotonHQ and what is its history?",
+      "What are the main features and typical applications of PhotonHQ?",
+      "When was PhotonHQ launched and what recent updates or milestones have been announced?"
+    ],
+    "queries": [
+      "PhotonHQ official website",
+      "PhotonHQ product overview site:photonhq.com",
+      "PhotonHQ press release 2023 OR 2024",
+      "PhotonHQ company profile LinkedIn",
+      "PhotonHQ review TechCrunch OR VentureBeat"
+    ],
+    "unresolvedQuestions": [
+      "A detailed description of the specific problem PhotonHQ was created to address beyond generic channel fragmentation.",
+      "Comprehensive list of all features and technical capabilities of Photon 2.0.",
+      "Concrete examples or case studies of developers using PhotonHQ in production.",
+      "Full ownership structure and any later funding rounds beyond the $4.5 M seed."
+    ]
+  },
+  "answer": "PhotonHQ is a developer‑focused platform that lets creators build and deploy AI‑powered messaging agents across a wide range of consumer communication channels (unverified: no matching retrieved evidence).\nIts core aim is to simplify the creation of multi‑modal conversational agents so that developers can reach users on the apps they already use, rather than forcing them onto a single proprietary interface (unverified: no matching retrieved evidence).\nBy abstracting the integration work, PhotonHQ solves the problem of fragmented channel APIs and the high engineering effort required to launch the same agent on iMessage, WhatsApp, Telegram, SMS, email and voice services (unverified: no matching retrieved evidence).\n\nThe company was founded by Daniel T (known on X as @daniel_t) and Ryan Zhu (@ryanzhuuuu). [SRC-1c87e03aa161]\nTheir X account was created in September 2025 and the corporate website (photon.codes) launched in October 2025. [SRC-1c87e03aa161]\nAfter operating in stealth mode from June 2026, PhotonHQ raised a $4.5 million seed round on 1 October 2026, as reported by Recent Funding [SRC-1c87e03aa161].\n\n**Key features** – The most recent announcement, made on 15 October 2026, introduced \"Photon 2.0,\" which enables a single‑click deployment of an agent to iMessage, voice, email, WhatsApp, Telegram and SMS (unverified: no matching retrieved evidence).\nTo encourage early adoption, PhotonHQ offered $100 in free credits to anyone building a messaging agent, with the claim link provided in the X post (unverified: no matching retrieved evidence).\n\n**Typical use cases** – While the sources do not list exhaustive scenarios, the platform’s emphasis on \"messaging agents\" and the supported channels imply common applications such as customer‑support chatbots, automated notification services, personal assistant bots, and marketing outreach tools that need to operate across both consumer messaging apps and traditional voice/email pathways (unverified: no matching retrieved evidence).\n\n**Recent developments** – The launch of Photon 2.0 and the $100 credit incentive (Oct 15 2026) represent the latest product milestone (unverified: no matching retrieved evidence).\nThe seed funding round (Oct 1 2026) also marks a major financial milestone, positioning the company for further product expansion and go‑to‑market activities (unverified: no matching retrieved evidence).\n\nIn summary, PhotonHQ is a nascent AI‑agent platform founded by Daniel T and Ryan Zhu, designed to reduce the friction of building cross‑channel conversational experiences (unverified: no matching retrieved evidence).\nIt has moved from stealth to public seed funding and is actively courting developers with its Photon 2.0 release and starter credits (unverified: no matching retrieved evidence).",
+  "followUpQuestions": [
+    "What investors participated in PhotonHQ's seed round?",
+    "How does PhotonHQ compare to competing multi‑channel chatbot platforms?"
+  ],
+  "sources": [
+    {
+      "title": "photonhq raised $4.5M Seed (2026): founders | Recent Funding",
+      "url": "https://recentfunding.com/companies/photonhq/",
+      "canonicalUrl": "https://recentfunding.com/companies/photonhq/",
+      "publisher": "Recent Funding",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Bring agents to iMessage, WhatsApp and channels millions already use. Join Discord: https://t.co/omNpZvMWSq",
+        "About photonhq Recent Funding lists photonhq under AI agents . It raised $4.5M in a Seed round in October 2026, according to x.com. It was founded by daniel_t and Ryan Zhu. Recent Funding flagged it as a stealth startup on June 27, 2026.",
+        "@photonhq · Raised $4.5M in 1 sourced round · 3 signals before the first raise",
+        "X ACCOUNT CREATED @PHOTONHQ · SEP 10, 2025 | | WEBSITE CREATED · OCT 10, 2025 | | FLAGGED IN STEALTH · JUN 27, 2026 $4.5M Seed · Oct 1, 2026 $4.5M SEED · OCT '26"
+      ],
+      "retrievedAt": "2026-10-18T20:33:38.574Z",
+      "content": "Recent Funding\nCompanies\nphotonhq\nBring agents to iMessage, WhatsApp and channels millions already use. Join Discord: https://t.co/omNpZvMWSq\nAI agents\nLatest funding\n$4.5M Seed · October 1, 2026\nSource: x.com\nFunding history ↓\nWebsite : photon.codes .\nX : @photonhq · 7,202 followers .\nCategory : AI agents .\nSectors : AI .\nLast round : Oct 1, 2026 · 17 days ago .\nX account age : 13 months .\nDomain age : 12 months .\nFlagged in stealth : Jun 27, 2026 .\nOn Recent Funding since : Jun 27, 2026 .\nAbout photonhq Recent Funding lists photonhq under AI agents . It raised $4.5M in a Seed round in October 2026, according to x.com. It was founded by daniel_t and Ryan Zhu. Recent Funding flagged it as a stealth startup on June 27, 2026.\nTIMELINE · MONEY RAISED\nphotonhq | flagged 96 days before its raise\n@photonhq · Raised $4.5M in 1 sourced round · 3 signals before the first raise\nX ACCOUNT CREATED @PHOTONHQ · SEP 10, 2025 | | WEBSITE CREATED · OCT 10, 2025 | | FLAGGED IN STEALTH · JUN 27, 2026 $4.5M Seed · Oct 1, 2026 $4.5M SEED · OCT '26\nMoney raised, round by round (amounts linked to their source). Pins are dated signals; hover the icons for dates.\nFunding rounds\nOctober 1, 2026\nSeed · $4.5M\nJune 27, 2026\nFlagged in stealth before announcing\nOctober 10, 2025\nWebsite created\nSeptember 10, 2025\nX account created\nFounders and team\nD daniel_t Cofounder\n@danieltian · source: x.com\nRZ Ryan Zhu Cofounder\n@ryanzhuuuu · source: x.com\nSimilar AI agents companies\nL LearnUpon $49.88M · Oct 2026\nR RapidCanvas $29M Series B+ · Oct 2026\nS Shamrock AI $5M Seed · Oct 2026\nO Opsin Security $21M · Oct 2026\nH Harmonic Security $50M Series B+ · Oct 2026\nZ Zenzap $33M Series A · Oct 2026\nQuestions and sources photonhq: questions and answers\nHow much has photonhq raised? photonhq has raised $4.5M in one sourced round on record (Seed), announced October 1, 2026.\nWho founded photonhq? photonhq was founded by daniel_t and Ryan Zhu.\nEvery amount links to the page it came from. * Estimated from an accelerator's published standard deal, not a company-specific disclosure. How Recent Funding sources and verifies funding data . The same data as JSON: /api/v1/companies/photonhq ( get a free API key ).\nTop raises, every week\nThe week's top funded startups and market insights, in your inbox every Monday.\nUnsubscribe anytime · privacy",
+      "sourceId": "SRC-1c87e03aa161"
+    },
+    {
+      "title": "Hackers accessed probation data in Legal Aid Agency cyber attack | Law Gazette",
+      "url": "https://www.lawgazette.co.uk/news/hackers-stole-probation-data-in-laa-cyber-attack/5128222.article",
+      "canonicalUrl": "https://www.lawgazette.co.uk/news/hackers-stole-probation-data-in-laa-cyber-attack/5128222.article",
+      "publisher": "Law Gazette",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "Hackers accessed probation data in Legal Aid Agency cyber attack | Law Gazette",
+        "Hackers stole probation data in LAA cyber attack",
+        "By Monidipa Fouzder 2026-10-15T08:19:00+01:00",
+        "Hackers who breached the Legal Aid Agency’s systems may be in possession of surnames and postcodes of suspects interviewed by the police and legal aid providers' banking details, the government has revealed."
+      ],
+      "retrievedAt": "2026-10-18T20:33:38.235Z",
+      "content": "Hackers accessed probation data in Legal Aid Agency cyber attack | Law Gazette\nSkip to main content\nSkip to navigation\nSource: iStock\nNews\nHackers stole probation data in LAA cyber attack\nBy Monidipa Fouzder 2026-10-15T08:19:00+01:00\n8 Comments\nHackers who breached the Legal Aid Agency’s systems may be in possession of surnames and postcodes of suspects interviewed by the police and legal aid providers' banking details, the government has revealed.\nSome 18 months after realising its systems had been hacked, the LAA yesterday published details of precisely whose data was potentially stolen and the type of data. For instance, details of suspects who received police station advice or assistance may have had their surname and initial, and postcode, 'exfiltrated'. Data relating to legal aid providers include office locations, bank account number and sort code.\nSome 250,000 records affected by the breach pre-date 2007, with a few from before 1990 and the earliest from 1978. Probation data may have also been stolen.\nRead more\nIn depth: LAA cyber-attack - a year on\nLAA system was 'extremely high risk in 2021, MPs told\nIn a written statement, courts minister Sarah Sackman said: ‘It is important to remember that much of the exfiltrated information was unstructured, fragmented, and incomplete, meaning that, in many instances, the identification of specific individuals will not be straightforward for the criminals who stole it.\n‘The nature and amount of information exfiltrated varies considerably between individuals. Being within one of the periods or groups described in our public information does not, of itself, mean that an individual’s information was exfiltrated or, in the event it was, that the hackers exfiltrated every category of data itemised for each individual.’\nSackman said that there was nothing to indicate that the stolen data has been published or shared.\nThe LAA’s systems were breached in December 2024 – but the LAA only became aware of the cyber attack in April 2025. The LAA’s online portal was taken offline in May 2025 after the Ministry of Justice discovered that legal aid applicants’ personal data dating back to 2010 had been accessed. A few months later, the Ministry of Justice and LAA announced that the breach was bigger than they first thought.\nThis article is now closed for comment.\n8 Readers' comments\nA walk in the park? Former colleagues plan start-up on kids' playdate\n2026-10-16T11:49:00Z\nBy John Hyde\nWorking mums were both ambitious and driven - so they decided to work together.\nTop firms' merger talks still on despite leader change\n2026-10-16T10:07:00Z\nLong-serving lawyer will take over as chief executive at the end of this year.\nCross-border enforcement ‘at risk due to AI’, master of rolls warns\n2026-10-16T09:37:00Z\nBy Michael Cross\nSir Geoffrey Vos calls for international debate on good practice in AI use for judicial and arbitral decision-making.\nLoad more articles\nFind out more about the benefits of membership Find out more a",
+      "sourceId": "SRC-95544dfab627"
+    },
+    {
+      "title": "Photon on X: \"We are giving $100 to everyone building messaging agents. Introducing Photon 2.0: bring your agent to iMessage, voice, email, WhatsApp, Telegram, and SMS in one click. Claim your credits → https://t.co/rgrbMfbSMP\" / X",
+      "url": "https://x.com/PhotonHQ/status/2110789854242218066",
+      "canonicalUrl": "https://x.com/PhotonHQ/status/2110789854242218066",
+      "publisher": "X (formerly Twitter)",
+      "publishedAt": "2026-10-15T17:48:12.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Photon on X: \"We are giving $100 to everyone building messaging agents.",
+        "Introducing Photon 2.0: bring your agent to iMessage, voice, email, WhatsApp, Telegram, and SMS in one click.",
+        "Claim your credits → https://t.co/rgrbMfbSMP\"",
+        "We are giving $100 to everyone building messaging agents."
+      ],
+      "retrievedAt": "2026-10-18T20:33:43.365Z",
+      "content": "Post\nLog in Sign up\nPhoton on X: \"We are giving $100 to everyone building messaging agents.\nIntroducing Photon 2.0: bring your agent to iMessage, voice, email, WhatsApp, Telegram, and SMS in one click.\nClaim your credits → https://t.co/rgrbMfbSMP\"\nPhoton\n@PhotonHQ\nWe are giving $100 to everyone building messaging agents.\nClaim your credits → photon.codes/beta\n00:00\n5:48 PM · Oct 15, 2026 · 439.9K\nViews\n94\n55\n542\n531",
+      "sourceId": "SRC-5ead50f77bdf"
+    },
+    {
+      "title": "venturebeat | TechCrunch",
+      "url": "https://techcrunch.com/tag/venturebeat/",
+      "canonicalUrl": "https://techcrunch.com/tag/venturebeat/",
+      "publisher": "TechCrunch",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Meet the first wave of speakers & enter your startup for The Europas Awards, 25 June",
+        "Vote now in #TheEuropas Awards to find its hottest startups, and join Europe’s key players",
+        "VLC prepares to add AirPlay support as it crosses 3 billion downloads",
+        "Google will turn on native ad-blocking in Chrome on February 15"
+      ],
+      "retrievedAt": "2026-10-18T20:33:38.104Z",
+      "content": "Headlines Only\nLoad More\nStartups\nUnity’s IPO numbers look pretty … unreal?\nJonathan Shieber\nAug 24, 2020\nMeet the first wave of speakers & enter your startup for The Europas Awards, 25 June\nMike Butcher\nFeb 26, 2020\nVote now in #TheEuropas Awards to find its hottest startups, and join Europe’s key players\nMay 20, 2019\nCES 2018\nVLC prepares to add AirPlay support as it crosses 3 billion downloads\nJon Russell\nJan 11, 2019\nGoogle will turn on native ad-blocking in Chrome on February 15\nDarrell Etherington\nDec 19, 2017\n8th Annual Crunchies Awards\nProduct Hunt Wins Best New Startup Of 2014\nSarah Perez\nFeb 5, 2015\nThe Seven Best Startups At DEMO\nAlexia Tsotsis\nSep 15, 2010\nDEMO Gets Desperate: Shipley Out, Marshall In\nErick Schonfeld\nFeb 18, 2009\nPrepping For Mobile Web Wars At MobileBeat\nJul 24, 2008\nVentureBeat Takes $320,000 First Round\nContributor\nFeb 11, 2008\nGet 50% off a second pass Cover more ground at TechCrunch’s ultimate founder bootcamp of the year by bringing your co-founder or partner. Save 50% off a second pass. Meet scaling and investment leaders, ask questions, find solutions, and more. Last day to save Oct. 16\nRegister Now\nMost Popular\nMark Wahlberg wants to take on the longevity-startup crowd with an affordable gym concept\nConnie Loizos\nTesla reveals SpaceX-powered Roadster that flies and falls with style\nSean O'Kane\nFBI arrests OpenAI employee accused of planting hidden recording device in conference room\nZack Whittaker\nBumble agrees to a $1.3B acquisition deal as online dating faces a reset\nLauren Forristal\nJust 5 years in, interactive chatbot platform Character.AI files for bankruptcy\nIvan Mehta\nMeta releases its first frontier model, Muse Wonder\nRussell Brandom\nThis AI startup says it can generate permit-ready blueprints in minutes\nKirsten Korosec",
+      "sourceId": "SRC-becf387b42c4"
+    }
+  ],
+  "unresolvedQuestions": [
+    "A detailed description of the specific problem PhotonHQ was created to address beyond generic channel fragmentation.",
+    "Comprehensive list of all features and technical capabilities of Photon 2.0.",
+    "Concrete examples or case studies of developers using PhotonHQ in production.",
+    "Full ownership structure and any later funding rounds beyond the $4.5 M seed."
+  ],
+  "contradictions": [],
+  "completeness": "partial",
+  "limitations": [
+    "13 search requests or candidate pages failed or were unreadable.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 4,
+    "failedCount": 13,
+    "rounds": 1,
+    "searches": 5
+  },
+  "archivedAt": "2026-10-18T20:33:47.549Z"
+}

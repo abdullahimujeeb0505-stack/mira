@@ -1,0 +1,106 @@
+{
+  "id": "2026-10-18T21-04-54-435Z-which-ai-is-talking-to-me",
+  "question": "Which ai is talking to me",
+  "plan": {
+    "objective": "Identify the specific AI model or system generating the current conversational response.",
+    "taskType": "definition",
+    "deliverable": "A concise answer naming the AI model (e.g., ChatGPT‑4, GPT‑4 Turbo) with brief supporting details.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "official OpenAI documentation",
+      "OpenAI blog posts",
+      "peer‑reviewed articles on large language model versions",
+      "authoritative tech news outlets (e.g., Wired, The Verge)"
+    ],
+    "questions": [
+      "What is the name and version of the AI model responding to user inputs on this platform?"
+    ],
+    "queries": [
+      "OpenAI official documentation ChatGPT model version 2024",
+      "ChatGPT-4 vs GPT-4 Turbo differences OpenAI",
+      "Which AI model powers the ChatGPT interface as of October 2026",
+      "OpenAI model naming conventions for conversational agents",
+      "Current deployed large language model for ChatGPT public usage"
+    ],
+    "unresolvedQuestions": []
+  },
+  "answer": "You are chatting with OpenAI’s ChatGPT service, which is currently powered by the GPT‑4 Turbo model – the newer, higher‑capacity generation of the GPT‑4 family that OpenAI recommends for most new ChatGPT‑style work [SRC-670932718cce].\nThe underlying API call is made through OpenAI’s Chat Completions endpoint, as indicated by the Agents SDK’s support for OpenAIChatCompletionsModel [SRC-8e764122ec2c].",
+  "followUpQuestions": [
+    "Differences between GPT‑4 Turbo and GPT‑4o",
+    "How to use the OpenAI Responses API"
+  ],
+  "sources": [
+    {
+      "title": "Model Spec (2024/05/08)",
+      "url": "https://cdn.openai.com/spec/model-spec-2024-05-08.html",
+      "canonicalUrl": "https://cdn.openai.com/spec/model-spec-2024-05-08.html",
+      "publisher": "cdn.openai.com",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "This version is provided for historical reference and may not reflect current policy.",
+        "This is the first draft of the Model Spec, a document that specifies desired behavior for our models in the OpenAI API and ChatGPT. It includes a set of core objectives, as well as guidance on how to deal with conflicting objectives or instructions.",
+        "Our intention is to use the Model Spec as guidelines for researchers and data labelers to create data as part of a technique called reinforcement learning from human feedback ( RLHF ). We have not yet used the Model Spec in its current form, though parts of it are based on documentation that we have used for RLHF at OpenAI. We are also working on techniques ",
+        "The Spec is only part of our story for how to build and deploy AI responsibly. It's complemented by our usage policies , how we expect people to use the API and ChatGPT."
+      ],
+      "retrievedAt": "2026-10-18T21:04:52.088Z",
+      "content": "Model Spec (2024/05/08)\nThis version is provided for historical reference and may not reflect current policy.\nMay 08, 2024\nOverview\nThis is the first draft of the Model Spec, a document that specifies desired behavior for our models in the OpenAI API and ChatGPT. It includes a set of core objectives, as well as guidance on how to deal with conflicting objectives or instructions.\nOur intention is to use the Model Spec as guidelines for researchers and data labelers to create data as part of a technique called reinforcement learning from human feedback ( RLHF ). We have not yet used the Model Spec in its current form, though parts of it are based on documentation that we have used for RLHF at OpenAI. We are also working on techniques that enable our models to directly learn from the Model Spec.\nThe Spec is only part of our story for how to build and deploy AI responsibly. It's complemented by our usage policies , how we expect people to use the API and ChatGPT.\nWe're publishing the Model Spec to provide more transparency on our approach to shaping model behavior and to start a public conversation about how it could be changed and improved. The Spec, like our models themselves, will be continuously updated based on what we learn by sharing it and listening to feedback from stakeholders.\nObjectives, rules, and defaults\nThere are three different types of principles that we will use to specify behavior in this document: objectives, rules, and defaults. This framework is designed to maximize steerability and control for users and developers, enabling them to adjust the model's behavior to their needs while staying within clear boundaries.\nThe most general are objectives , such as \"assist the developer and end user\" and \"benefit humanity\". They provide a directional sense of what behavior is desirable. However, these objectives are often too broad to dictate specific actions in complex scenarios where the objectives are not all in alignment. For example, if the user asks the assistant to do something that might cause harm to another human, we have to sacrifice at least one of the two objectives above. Technically, objectives only provide a partial order on preferences: They tell us when to prefer assistant action A over B, but only in some clear-cut cases. A key goal of this document is not just to specify the objectives, but also to provide concrete guidance about how to navigate common or important conflicts between them.\nOne way to resolve conflicts between objectives is to make rules , like \"never do X\", or \"if X then do Y\". Rules play an important role in ensuring safety and legality. They are used to address high-stakes situations where the potential for significant negative consequences is unacceptable and thus cannot be overridden by developers or users. However, rules simply aren't the right tool for addressing many potential conflicts (e.g., how the assistant should approach questions about controversial topics).\nFor other trade-offs, our appro",
+      "sourceId": "SRC-cc5506e8bb64"
+    },
+    {
+      "title": "GPT-4 vs GPT-4 Turbo: Real Differences",
+      "url": "https://chatai.guide/compare/gpt-4-vs-gpt-4-turbo/",
+      "canonicalUrl": "https://chatai.guide/compare/gpt-4-vs-gpt-4-turbo/",
+      "publisher": "ChatAI Guide",
+      "publishedAt": "2026-04-10T22:47:28.000Z",
+      "updatedAt": "2026-05-05T13:43:14.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "GPT-4 vs GPT-4 Turbo comes down to context, cost, and API behavior. GPT-4 is the older, steadier text model with an 8,192-token context window, 8,192 max output tokens, and $30 input / $60 output pricing per 1 million tokens. [1] GPT-4 Turbo is the later GPT-4 generation with a 128,000-token context window, image input, 4,096 max output tokens, and lower $10",
+        "GPT-4 Turbo is not just “GPT-4, but faster.” It is a different production model line that OpenAI introduced after GPT-4 to lower API cost, expand context, and improve developer features. OpenAI described it at DevDay as more capable, cheaper, and able to support a 128K context window. [3] The current OpenAI model card describes GPT-4 Turbo as the next genera",
+        "The practical answer is simple. Use GPT-4 Turbo only if you are maintaining an older workflow that depends on it. It gives you much more room for documents, system instructions, conversation history, and tool schemas. It also costs less per token than GPT-4. Use GPT-4 only if you have a legacy application that was tuned around its exact behavior, especially ",
+        "If you are choosing a model for a new project, compare newer options first. Our GPT-4o vs GPT-4 guide explains the successor path for general ChatGPT-style work. Our GPT-4 vs GPT-5 comparison covers the bigger generational jump. For the broader model family, see all GPT models compared side by side ."
+      ],
+      "retrievedAt": "2026-10-18T21:04:52.227Z",
+      "content": "GPT-4 vs GPT-4 Turbo comes down to context, cost, and API behavior. GPT-4 is the older, steadier text model with an 8,192-token context window, 8,192 max output tokens, and $30 input / $60 output pricing per 1 million tokens. [1] GPT-4 Turbo is the later GPT-4 generation with a 128,000-token context window, image input, 4,096 max output tokens, and lower $10 input / $30 output pricing per 1 million tokens. [2] For most legacy GPT-4 API workloads, GPT-4 Turbo was the more practical choice. For new work, OpenAI itself recommends newer models instead of treating either as the default. [2]\nQuick verdict\nGPT-4 Turbo is not just “GPT-4, but faster.” It is a different production model line that OpenAI introduced after GPT-4 to lower API cost, expand context, and improve developer features. OpenAI described it at DevDay as more capable, cheaper, and able to support a 128K context window. [3] The current OpenAI model card describes GPT-4 Turbo as the next generation of GPT-4 and says it was designed to be a cheaper, better version of GPT-4. [2]\nThe practical answer is simple. Use GPT-4 Turbo only if you are maintaining an older workflow that depends on it. It gives you much more room for documents, system instructions, conversation history, and tool schemas. It also costs less per token than GPT-4. Use GPT-4 only if you have a legacy application that was tuned around its exact behavior, especially if you value its longer single-response limit more than Turbo’s larger prompt window.\nIf you are choosing a model for a new project, compare newer options first. Our GPT-4o vs GPT-4 guide explains the successor path for general ChatGPT-style work. Our GPT-4 vs GPT-5 comparison covers the bigger generational jump. For the broader model family, see all GPT models compared side by side .\nSide-by-side differences\nThe biggest mistake in this comparison is treating “Turbo” as a minor speed label. It changed the economics and shape of GPT-4 API work. It made long-context prompts practical for many teams, added image input on the stable Turbo model, and reduced token prices. GPT-4 remained useful for legacy compatibility, but it was no longer the most efficient member of the GPT-4 family.\nCategory | GPT-4 | GPT-4 Turbo | What it means |\nCurrent positioning | Older high-intelligence GPT model, usable in Chat Completions. [1] | Older high-intelligence GPT model; OpenAI recommends newer models such as GPT-4o instead. [2] | Both are legacy choices, not best default choices for new builds. |\nContext window | 8,192 tokens. [1] | 128,000 tokens. [2] | Turbo can hold far more prompt text, files, instructions, and conversation history. |\nMax output | 8,192 tokens. [1] | 4,096 tokens. [2] | GPT-4 can return a longer single answer, but Turbo can read much more before answering. |\nText input price | $30 per 1 million tokens. [1] | $10 per 1 million tokens. [2] | Turbo input is one third the listed GPT-4 input price. |\nText output price | $60 per 1 million tokens. [1] | $30 per 1 mi",
+      "sourceId": "SRC-670932718cce"
+    },
+    {
+      "title": "Models - OpenAI Agents SDK",
+      "url": "https://openai.github.io/openai-agents-python/models/",
+      "canonicalUrl": "https://openai.github.io/openai-agents-python/models/",
+      "publisher": "openai.github.io",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "The Agents SDK comes with out-of-the-box support for OpenAI models in two flavors:",
+        "Recommended : the OpenAIResponsesModel , which calls OpenAI APIs using the new Responses API .",
+        "The OpenAIChatCompletionsModel , which calls OpenAI APIs using the Chat Completions API .",
+        "Use the OpenAI Decisions API for classification alongside an agent run. Call AsyncOpenAI.decisions.create() directly, then use the answer in an existing Agents SDK guardrail, approval callback, or model-selection step. Decisions does not implement the Agents SDK Model interface."
+      ],
+      "retrievedAt": "2026-10-18T21:04:52.245Z",
+      "content": "Models\nThe Agents SDK comes with out-of-the-box support for OpenAI models in two flavors:\nRecommended : the OpenAIResponsesModel , which calls OpenAI APIs using the new Responses API .\nThe OpenAIChatCompletionsModel , which calls OpenAI APIs using the Chat Completions API .\nDecisions API\nUse the OpenAI Decisions API for classification alongside an agent run. Call AsyncOpenAI.decisions.create() directly, then use the answer in an existing Agents SDK guardrail, approval callback, or model-selection step. Decisions does not implement the Agents SDK Model interface.\nInstall openai>=3.26.0,<4 to use the native Decisions client. The Agents SDK's minimum dependency version alone does not guarantee that the Decisions resource is available. Configure the native client explicitly, including any custom credentials or base URL; Agents SDK defaults such as set_default_openai_client() do not configure a separately constructed AsyncOpenAI instance.\nThe runnable Decisions examples demonstrate three workflows:\nWorkflow |\nExisting SDK API |\nApplication responsibility |\nCheck the initial request |\n@input_guardrail(run_in_parallel=False) |\nChoose a predicate and a threshold; handle refusals before the agent starts. |\nReview function-tool content |\n@tool_input_guardrail or callable needs_approval |\nDefine the content policy and choose whether to reject the call or request human approval. |\nSelect a model before a run |\nagent.clone(model=...) |\nMap a choice answer to an allowed model and choose a refusal fallback. |\nRead answers by name\nA Decisions request can contain predicate, choice, and score questions. The native response contains an answers list. Index the answers by their question names, then inspect each answer's type before reading its type-specific fields:\nfrom openai import AsyncOpenAI\nasync def is_support_request ( client : AsyncOpenAI , text : str ) -> bool :\ndecision = await client . decisions . create (\nmodel = \"gpt-6-luna\" ,\ninput = text ,\nquestions = [\n{\n\"type\" : \"predicate\" ,\n\"name\" : \"in_scope\" ,\n\"instructions\" : \"Is this a request for help with a software product?\" ,\nanswers = { answer . name : answer for answer in decision . answers }\nanswer = answers . get ( \"in_scope\" )\nif answer is None or answer . type != \"predicate\" :\nreturn False\nreturn answer . probability >= 0.8\nThe threshold above is illustrative. Select thresholds using labeled examples from your application. A refusal applies to one question; another question in the same response can still return an answer. Decide separately how each workflow handles a refusal, a missing answer, or an API error. The examples propagate API errors rather than treating an unavailable classifier as an affirmative answer.\nDefine the integration boundary\nThe input-guardrail example accepts a single text request and blocks agent execution until the check finishes. The tool example evaluates announcement arguments and only simulates publication. Its classifier implements an editorial review policy; it does not ",
+      "sourceId": "SRC-8e764122ec2c"
+    }
+  ],
+  "unresolvedQuestions": [],
+  "contradictions": [],
+  "completeness": "supported",
+  "limitations": [
+    "10 search requests or candidate pages failed or were unreadable.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 3 of 6 selected sources fit in the synthesis evidence budget."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 6,
+    "failedCount": 10,
+    "rounds": 1,
+    "searches": 5
+  },
+  "archivedAt": "2026-10-18T21:04:54.436Z"
+}

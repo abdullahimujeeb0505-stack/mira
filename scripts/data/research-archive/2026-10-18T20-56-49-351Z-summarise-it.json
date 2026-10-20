@@ -1,0 +1,64 @@
+{
+  "id": "2026-10-18T20-56-49-351Z-summarise-it",
+  "question": "Summarise it",
+  "plan": {
+    "objective": "Summarise it",
+    "taskType": "general",
+    "deliverable": "A direct answer with supporting evidence and limitations.",
+    "requiresCurrentInformation": false,
+    "sourcePreferences": [
+      "primary sources",
+      "authoritative references",
+      "independent corroboration"
+    ],
+    "questions": [
+      "Summarise it"
+    ],
+    "queries": [
+      "Summarise it",
+      "Summarise it authoritative sources",
+      "Summarise it evidence and limitations"
+    ],
+    "unresolvedQuestions": []
+  },
+  "answer": "NICE develops evidence summaries in line with its equality and diversity scheme and declaration of interests policy. [SRC-7f13774400ce]\nThe standard process usually takes about 12 weeks, though a longer period may be allowed for large evidence volumes, and a rapid evidence summary can be produced more quickly by omitting or shortening some steps, with the resource impact assessment omitted at minimum [SRC-7f13774400ce].\n\nKey steps in the development process are: [SRC-7f13774400ce]\n1.\nDefine and agree the final scope using the PICO framework with clinical advisers, external experts and commissioners. [SRC-7f13774400ce]\n2.\nSend a search request to information services. [SRC-7f13774400ce]\n3.\nContact the relevant company for data, if applicable. [SRC-7f13774400ce]\n4.\nConduct the literature search. [SRC-7f13774400ce]\n5.\nSift and select the evidence. [SRC-7f13774400ce]\n6.\nAppraise and summarise the evidence. [SRC-7f13774400ce]\n7.\nProduce an initial draft. [SRC-7f13774400ce]\n8.\nPerform an internal technical check of the revised draft. [SRC-7f13774400ce]\n9.\nDistribute the revised draft to the company (if applicable), external experts, targeted stakeholders, relevant NICE teams and the Medicines and Healthcare products Regulatory Agency (MHRA) for review. [SRC-7f13774400ce]\n10.\nIncorporate review comments and produce revised drafts for final sign‑off [SRC-7f13774400ce].",
+  "followUpQuestions": [
+    "Differences between rapid and standard evidence summaries",
+    "Role of the MHRA in the evidence summary review"
+  ],
+  "sources": [
+    {
+      "title": "6 Developing the evidence summary | Evidence summaries: process guide | Guidance | NICE",
+      "url": "https://www.nice.org.uk/process/pmg31/chapter/developing-the-evidence-summary",
+      "canonicalUrl": "https://www.nice.org.uk/process/pmg31/chapter/developing-the-evidence-summary",
+      "publisher": "www.nice.org.uk",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Evidence summaries are developed in line with NICE's equality scheme and declaration of interests policy .",
+        "The key steps in developing evidence summaries are summarised below. The process reflects their status as advice products and when the advice is needed.",
+        "Timelines are agreed for each evidence summary during scoping. It usually takes 12 weeks to produce a standard evidence summary. A longer timeline may be agreed if a large volume of evidence is expected from the literature search.",
+        "NICE will consider developing a rapid evidence summary within a shorter time, if needed. Some steps in the process may be omitted or shortened and this will be explained in the published evidence review (see section 6.6 ). The rapid evidence summary will be concise; as a minimum, resource impact will not be assessed."
+      ],
+      "retrievedAt": "2026-10-18T20:56:46.810Z",
+      "content": "Download (PDF)\n6 Developing the evidence summary\n6.1 Equality and diversity\nEvidence summaries are developed in line with NICE's equality scheme and declaration of interests policy .\n6.2 Process overview and timelines\nThe key steps in developing evidence summaries are summarised below. The process reflects their status as advice products and when the advice is needed.\nTimelines are agreed for each evidence summary during scoping. It usually takes 12 weeks to produce a standard evidence summary. A longer timeline may be agreed if a large volume of evidence is expected from the literature search.\nNICE will consider developing a rapid evidence summary within a shorter time, if needed. Some steps in the process may be omitted or shortened and this will be explained in the published evidence review (see section 6.6 ). The rapid evidence summary will be concise; as a minimum, resource impact will not be assessed.\nThe key steps in developing an evidence summary are:\ndevelop and agree final scope and population, intervention, comparator and outcomes (PICO) with clinical advisers and external topic experts as needed and/or the organisation commissioning the topic\nsend search request to information services\ncontact the company, when applicable, with data request\nsearch for evidence\nsift and select the evidence\nappraise and summarise the evidence\nproduce initial draft documents\ndo internal technical check of revised draft documents\nsend revised draft documents to company (if applicable), external topic experts, targeted stakeholders, other relevant NICE teams (including resource impact assessment if applicable) and Medicines and Healthcare products Regulatory Agency (MHRA; if applicable) for review\nreview comments received and produce revised draft documents for sign off (including advisory statement, if applicable)\ncontent sign off by associate director, clinical adviser or programme director\nreview comments received and produce revised draft documents for NICE's guidance executive or publications executive\nif applicable, company invited to check for any factual errors and informed of publication date\nsubmit final draft documents for guidance executive or publications executive sign off\nsign off by guidance executive or publications executive\nreview comments received and produce final documents\nsubmit to the organisation commissioning the topic, if applicable\npublication on the NICE website.\n6.3 Scoping\nA scope is developed by either NICE or the organisation commissioning the topic, depending on how the topic has been referred to NICE. If it is developed by NICE, clinical advisers and external topic experts advise on the content as needed. The scope outlines the key review questions, PICO, and inclusion and exclusion criteria for the review. The final scope is signed off by NICE or the organisation commissioning the topic.\nDuring scoping the following are confirmed:\nkey contacts at the company (if applicable; see section 6.4)\nkey contacts at the MHRA (if a",
+      "sourceId": "SRC-7f13774400ce"
+    }
+  ],
+  "unresolvedQuestions": [],
+  "contradictions": [],
+  "completeness": "supported",
+  "limitations": [
+    "9 search requests or candidate pages failed or were unreadable.",
+    "The configured candidate-page budget of 16 was exhausted."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 7,
+    "failedCount": 9,
+    "rounds": 1,
+    "searches": 3
+  },
+  "archivedAt": "2026-10-18T20:56:49.353Z"
+}

@@ -1,0 +1,105 @@
+{
+  "id": "2026-10-19T01-34-32-490Z-who-the-fuck-are-you",
+  "question": "Who the fuck are you",
+  "plan": {
+    "objective": "Who the fuck are you",
+    "taskType": "general",
+    "deliverable": "A direct answer with supporting evidence and limitations.",
+    "requiresCurrentInformation": false,
+    "sourcePreferences": [
+      "primary sources",
+      "authoritative references",
+      "independent corroboration"
+    ],
+    "questions": [
+      "Who the fuck are you"
+    ],
+    "queries": [
+      "Who the fuck are you",
+      "Who the fuck are you authoritative sources",
+      "Who the fuck are you evidence and limitations"
+    ],
+    "unresolvedQuestions": [
+      "Who the fuck are you"
+    ]
+  },
+  "answer": "I retrieved 3 readable sources, but couldn't synthesize a reliable answer (timeout). Please try again shortly.",
+  "followUpQuestions": [],
+  "sources": [
+    {
+      "title": "What is an Authoritative Source? - How to Search for Sources and Manage Them - LibGuides at Graduate Institute of International and Development Studies",
+      "url": "https://libguides.graduateinstitute.ch/how_to_search/authority",
+      "canonicalUrl": "https://libguides.graduateinstitute.ch/how_to_search/authority",
+      "publisher": "libguides.graduateinstitute.ch",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "What is an Authoritative Source? - How to Search for Sources and Manage Them - LibGuides at Graduate Institute of International and Development Studies",
+        "&ldquo;A source that is official. Also, a work known to be reliable because its authenticity or integrity is widely recognized by experts in the field.&rdquo;",
+        "(Reitz, Joan. ODLIS: Online Dictionary for Library and Information Science )",
+        "&ldquo; Authority is constructed and contextual . Information resources reflect their creators&rsquo; expertise and credibility, and are evaluated based on the information need and the context in which the information will be used. Authority is constructed in that various communities may recognize different types of authority. It is contextual in that the in"
+      ],
+      "retrievedAt": "2026-10-19T01:33:31.612Z",
+      "content": "What is an Authoritative Source? - How to Search for Sources and Manage Them - LibGuides at Graduate Institute of International and Development Studies\nSkip to Main Content\nWhat is an Authoritative Source?\nPhoto CC BY-SA Mark Fischer\n&ldquo;A source that is official. Also, a work known to be reliable because its authenticity or integrity is widely recognized by experts in the field.&rdquo;\n(Reitz, Joan. ODLIS: Online Dictionary for Library and Information Science )\n&ldquo; Authority is constructed and contextual . Information resources reflect their creators&rsquo; expertise and credibility, and are evaluated based on the information need and the context in which the information will be used. Authority is constructed in that various communities may recognize different types of authority. It is contextual in that the information need may help to determine the level of authority required.&rdquo;\n( ACRL Framework for Information Literacy for Higher Education , adopted 2016)\nIn the general context of academic writing, authority partly derives from current academic research activity and employment in the designated field . The following are necessary to consider a work as a valid scholarly publication:\nClaims are referenced and a bibliography is included\nThe work is published by a recognised institution/publisher\nThe work is peer-reviewed\nBut other people and media can be authoritative sources in the appropriate context.\nWhat Source Types Can Be Considered Authoritative?\nThe source type provides a preliminary idea, but it is not sufficient to determine authority. The expertise of the author matters even for traditional scholarly publications, and verification grows more necessary as we go further down the categories and gatekeeping decreases.\nScholarly publications &ndash; must be used as references\nPeer reviewed books and journals\nNon-PR academic books and journals (lesser value)\nGrey literature &ndash; can be used as references\nPreprints, working papers, etc. &ndash; non-published academic research\nReports and publications from groups and institutions\nPopular and trade/professional sources &ndash; require careful consideration before using as references\nNews, magazines\nBooks (non-academic)\nOther websites\nPublic conversation and social media &ndash; should not be used as references\nDiscussion forums\nSocial media (Facebook, X, Instagram, TikTok, etc.)",
+      "isUserProvided": true,
+      "sourceId": "SRC-1095d850e32b"
+    },
+    {
+      "title": "Understanding Authority | Library | The University of Aberdeen",
+      "url": "https://www.abdn.ac.uk/library/support/guides/information-literacy/understanding-authority/",
+      "canonicalUrl": "https://www.abdn.ac.uk/library/support/guides/information-literacy/understanding-authority/",
+      "publisher": "www.abdn.ac.uk",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "In academic work, it is essential to critically evaluate sources and rely on authoritative materials to support your research, assignments, or projects. Authority refers to the credibility and expertise of a source, typically determined by the author, publisher, or the institution behind the information. It reflects whether a source is reliable and trustwort",
+        "For example, peer-reviewed journal articles are widely regarded as authoritative because their authors possess the necessary academic credentials. These authors gather data using academically approved methods, such as experiments, archival research, case studies or surveys, and their work undergoes rigorous peer evaluation before publication.",
+        "When assessing sources, it's important to make informed decisions based on established criteria. Ask yourself: Does the source incorporate both primary and secondary evidence? Is the evidence convincing and does it effectively support the argument? What are the author's qualifications? Is there any indication of subjectivity or bias?",
+        "Being information literate also involves recognising the assumptions that authors make and assessing the subjectivity of their arguments. It's important to understand that authority is shaped by broader societal contexts, including cultural worldviews, gender, and sexual orientation. Many scholarly texts, particularly older ones, may reflect the prevailing b"
+      ],
+      "retrievedAt": "2026-10-19T01:33:31.836Z",
+      "content": "Understanding Authority\n'Authority is Constructed'\nIn academic work, it is essential to critically evaluate sources and rely on authoritative materials to support your research, assignments, or projects. Authority refers to the credibility and expertise of a source, typically determined by the author, publisher, or the institution behind the information. It reflects whether a source is reliable and trustworthy for academic purposes, often based on the author&rsquo;s qualifications and professional reputation.\nFor example, peer-reviewed journal articles are widely regarded as authoritative because their authors possess the necessary academic credentials. These authors gather data using academically approved methods, such as experiments, archival research, case studies or surveys, and their work undergoes rigorous peer evaluation before publication.\nWhen assessing sources, it's important to make informed decisions based on established criteria. Ask yourself: Does the source incorporate both primary and secondary evidence? Is the evidence convincing and does it effectively support the argument? What are the author's qualifications? Is there any indication of subjectivity or bias?\nInformation Literacy\nBeing information literate also involves recognising the assumptions that authors make and assessing the subjectivity of their arguments. It's important to understand that authority is shaped by broader societal contexts, including cultural worldviews, gender, and sexual orientation. Many scholarly texts, particularly older ones, may reflect the prevailing biases and limitations of their time. Terms and language once deemed acceptable may now be considered offensive, exclusionary, or harmful, especially regarding race, gender, disability, or cultural identity. It's crucial to approach these texts with awareness and critical thinking.\nAnother critical aspect in evaluating sources is considering the role of privilege and positionality. Authority is contextual&mdash;it depends on the circumstances and environment in which the information is produced. Therefore, it&rsquo;s not just the credentials of the author that matter, but also the broader context in which the information was created.\nUseful resource\nBias, diversity and representation in academic literature\nGood practice in developing information skills\nWhat is authoritative content?\nRecognise that authoritative content may be presented formally or informally and may include sources of different media types.\nQuestioning scholarly standards\nUnderstand that many disciplines have acknowledged authorities in the sense of well-known scholars and publications that are deemed &ldquo;standard;&rdquo; however, some scholars would challenge the authority of these sources.\nREMEMBER\nAuthority may be conferred or manifested in unexpected ways.\nREAD, THINK, ASSESS\nBe aware of the importance of assessing content with a sceptical stance and with a self-awareness of your own biases and worldview.\nPossible research outc",
+      "isUserProvided": true,
+      "sourceId": "SRC-7001bcdfa868"
+    },
+    {
+      "title": "PART 32 – EVIDENCE – Civil Procedure Rules – Justice UK",
+      "url": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part32",
+      "canonicalUrl": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part32",
+      "publisher": "www.justice.gov.uk",
+      "sourceType": "government",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "PART 32 – EVIDENCE – Civil Procedure Rules – Justice UK",
+        "We use some essential cookies to make this service work.",
+        "We’d also like to use analytics cookies so we can understand how you use the service and make improvements.",
+        "RSC ORDER 54 – APPLICATIONS FOR WRIT OF HABEAS CORPUS"
+      ],
+      "retrievedAt": "2026-10-19T01:33:31.541Z",
+      "content": "PART 32 – EVIDENCE – Civil Procedure Rules – Justice UK \n\nCookies on Justice UK \n\nWe use some essential cookies to make this service work.\n\nWe’d also like to use analytics cookies so we can understand how you use the service and make improvements.\n\nAccept analytics cookies\n\nReject analytics cookies\n\nView cookies\n\nSkip to main content \n\nJustice UK - Homepage\n\nSearch \n\nCourts \n\nProcedure rules \n\nOffenders \n\nOpen secondary menu\n\nJustice UK\n\nSkip to main content \n\nCourts \n\nProcedure rules \n\nCivil \n\nRules & Practice Directions \n\nPART 32 – EVIDENCE \n\nPRACTICE DIRECTION 32 – EVIDENCE \n\nStandard directions \n\nRequire guidance? \n\nMaking an application \n\nCase Management \n\nStatements of case \n\nDisclosure of documents \n\nDocuments \n\nFactual evidence \n\nExpert evidence \n\nTrial arrangements \n\nWitness Statements \n\nScott Schedule Note \n\nPre-action protocols \n\nStandard order for directions \n\nWish to compose an order? \n\nMenu of model paragraphs \n\nPre-Action Protocols \n\nGlossary \n\nSchedule 1 - RSC \n\nRSC ORDER 47 – WRITS OF FIERI FACIAS \n\nRSC ORDER 17 – INTERPLEADER \n\nRSC ORDER 46 – WRITS OF EXECUTION: GENERAL \n\nRSC ORDER 54 – APPLICATIONS FOR WRIT OF HABEAS CORPUS \n\nSchedule 2 - CCR \n\nCCR ORDER 33 – INTERPLEADER PROCEEDINGS \n\nCCR ORDER 26 – ATTACHMENT OF EARNINGS \n\nCCR ORDER 22 – JUDGMENTS AND ORDERS \n\nCCR ORDER 26 – WARRANTS OF EXECUTION, DELIVERY AND POSSESSION \n\nCCR ORDER 25 – ENFORCEMENT OF JUDGMENTS AND ORDERS: GENERAL \n\nCCR ORDER 24 – SUMMARY PROCEEDINGS FOR THE RECOVERY OF LAND \n\nCCR ORDER 16 – TRANSFER OF PROCEEDINGS \n\nForms \n\nPrecedent Cost Forms \n\nEnforcement forms \n\nModel=Warrants \n\nModel Orders \n\nCourt Guides \n\nUpdates & Zips \n\nStatutory Instruments \n\nContact \n\nFamily \n\nForeword and summary of the rules \n\nRules & Practice Directions \n\nMagistrates Courts Rules \n\nGlossary \n\nForms \n\nUpdates & Zips \n\nStatutory Instruments \n\nContact \n\nPRACTICE DIRECTION 36ZG – PART 3 OF THE DOMESTIC ABUSE ACT 2021: PROVISION DURING PILOTED COMMENCEMENT \n\nHMCTS email guidance: family proceedings \n\nOther procedure rules for magistrates' courts and the Crown Court \n\nCriminal \n\nOffenders \n\nHome \n\nCourts \n\nProcedure rules \n\nCivil \n\nRules & Practice Directions \n\nPART 32 – EVIDENCE \n\nPART 32 – EVIDENCE\n\nContents of this Part \n\nTitle | Number | \nPower of court to control evidence | Rule 32.1 | \nEvidence of witnesses &ndash; general rule | Rule 32.2 | \nEvidence by video link or other means | Rule 32.3 | \nRequirement to serve witness statements for use at trial | Rule 32.4 | \nUse at trial of witness statements which have been served | Rule 32.5 | \nEvidence in proceedings other than at trial | Rule 32.6 | \nOrder for cross-examination | Rule 32.7 | \nForm of witness statement | Rule 32.8 | \nWitness summaries | Rule 32.9 | \nConsequence of failure to serve witness statement or summary | Rule 32.10 | \nCross-examination on a witness statement | Rule 32.11 | \nUse of witness statements for other purposes | Rule 32.12 | \nAvailability of witness statements for inspection | Rule 32.13 | \nFalse state",
+      "isUserProvided": true,
+      "sourceId": "SRC-257beb361c52"
+    }
+  ],
+  "unresolvedQuestions": [
+    "Who the fuck are you"
+  ],
+  "contradictions": [],
+  "completeness": "partial",
+  "limitations": [
+    "8 candidate pages failed or carried no readable text.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 3 of 6 selected sources fit in the synthesis evidence budget."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 8,
+    "failedCount": 8,
+    "rounds": 1,
+    "searches": 3
+  },
+  "archivedAt": "2026-10-19T01:34:32.491Z"
+}

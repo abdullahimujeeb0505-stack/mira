@@ -1,0 +1,149 @@
+{
+  "id": "2026-10-19T22-40-02-196Z-check-photon-codes-for-me-mira",
+  "question": "Check photon.codes for me Mira",
+  "plan": {
+    "objective": "Determine whether the website photon.codes contains information related to \"Mira\" and summarize any relevant findings.",
+    "taskType": "current",
+    "deliverable": "A concise summary indicating the presence or absence of \"Mira\" on photon.codes, including URLs or page titles if found.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "photon.codes (primary source)",
+      "Official documentation or blog posts linked from photon.codes",
+      "Authoritative tech news or analysis sites referencing photon.codes"
+    ],
+    "questions": [
+      "Does photon.codes have any pages, posts, or sections mentioning \"Mira\"?"
+    ],
+    "queries": [
+      "site:photon.codes Check photon.codes for me Mira",
+      "site:photon.codes Mira",
+      "photon.codes Mira",
+      "Mira photon.codes blog",
+      "photon.codes \"Mira\" documentation",
+      "Mira project photon.codes"
+    ],
+    "unresolvedQuestions": [
+      "Are there any pages, blog posts, or sections on photon.codes (outside of the /docs path) that reference \"Mira\"?",
+      "Does the Photon platform have a component, API endpoint, or client library named \"Mira\"?"
+    ]
+  },
+  "answer": "Based on the retrieved pages from photon.codes, no mention of “Mira” was found (unverified: no matching retrieved evidence).\nThe accessible documentation (e.g., https://photon.codes/docs/llms.txt) discusses Photon’s products, SDKs, and API hosts, but does not reference a component, library, or section named “Mira.” The sign‑in dashboard () also contains no “Mira” references (unverified: no matching retrieved evidence).\nTherefore, there is currently no evidence that photon.codes includes information related to “Mira.” (unverified: no matching retrieved evidence).",
+  "followUpQuestions": [
+    "Photon platform features",
+    "Mira Python library overview"
+  ],
+  "sources": [
+    {
+      "title": "Mira Showers, Wide Range of Mira Showers Online",
+      "url": "https://www.showerdoc.com/showers/mira?msclkid=9e33fa90f42d10b0106590466810fd96",
+      "canonicalUrl": "https://www.showerdoc.com/showers/mira",
+      "publisher": "The Shower Doctor",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "Mira Showers, Wide Range of Mira Showers Online",
+        "5 most common electric shower problems (and what causes them)",
+        "Testing a heating tank element inside electric shower"
+      ],
+      "retrievedAt": "2026-10-19T22:39:58.524Z",
+      "content": "Mira Showers, Wide Range of Mira Showers Online \n\nMenu \n\nTrade Account \n\nOrder before 15:00 FOR NEXT DAY DELIVERY \n\nSearch \n\nTrustpilot \n\nIdentify my shower \n\nClose \n\nTrade Account \n\nSpares \n\nPopular Brands\n\nAll Brands A-Z\n\nView All Brands \n\nOR \nView All Categories \n\nAqualisa spares \n\nArchiteckt spares \n\nBristan spares \n\nBurlington spares \n\nCoram spares \n\nCreda spares \n\nCrosswater spares \n\nDelabie spares \n\nDeva spares \n\nDimplex spares \n\nDornbracht spares \n\nGainsborough spares \n\nGalaxy spares \n\nGESSI spares \n\nGrohe spares \n\nGrundfos spares \n\nHansgrohe spares \n\nHeatrae Sadia spares \n\nHeritage Bathrooms spares \n\nHorne spares \n\nHudson Reed spares \n\nIdeal Standard spares \n\nInta spares \n\nKLUDI spares \n\nLefroy Brooks spares \n\nMatki spares \n\nMeltronic spares \n\nMeynell spares \n\nMira spares \n\nMX Group spares \n\nNabis spares \n\nNeptune spares \n\nNewTeam spares \n\nNoken spares \n\nNuie spares \n\nOther Brands spares \n\nPaini spares \n\nPerrin & Rowe spares \n\nPremier spares \n\nRada spares \n\nRedring spares \n\nReliance spares \n\nSalamander spares \n\nSaracen spares \n\nShowerforce spares \n\nSirrus by Gummers spares \n\nStuart Turner spares \n\nSupajet spares \n\nSwadling spares \n\nTrevi spares \n\nTriton spares \n\nUltra Showers spares \n\nVado spares \n\nVola spares \n\nWhale Pumps spares \n\nXpelair spares \n\nHelpful DIY guides\n\n5 most common electric shower problems (and what causes them)\n\nTesting a heating tank element inside electric shower\n\nHow to service a Mira 88 shower valve\n\nHow to replace a shower bracket\n\nHow to replace carbon motor brushes\n\nShowers \n\nShop by shower type\n\nElectric Showers \n\nExposed Shower Valves \n\nBar Mixers \n\nPower Showers \n\nBath Shower Mixers \n\nPumped Electric \n\nDigital Showers \n\nShower Towers \n\nConcealed Shower Valves \n\nDisability Showers \n\nShower brands A-Z\n\nView All Brands \n\nAqualisa showers \n\nArmitage Shanks showers \n\nBristan showers \n\nCrosswater showers \n\nDeva showers \n\nGainsborough showers \n\nGrohe showers \n\nHansgrohe showers \n\nHudson Reed showers \n\nIdeal Standard showers \n\nInta showers \n\nKLUDI showers \n\nMeynell showers \n\nMira showers \n\nMX Group showers \n\nNevisi showers \n\nNo Brand showers \n\nNuie showers \n\nOther Brands showers \n\nPaini showers \n\nPerrin & Rowe showers \n\nPremier showers \n\nRada showers \n\nRedring showers \n\nReliance showers \n\nSalamander showers \n\nSaracen showers \n\nSirrus by Gummers showers \n\nStuart Turner showers \n\nTriton showers \n\nUltra Showers \n\nUniversal showers \n\nVado showers \n\nTap Spares \n\nPopular Brands\n\nAll Brands A-Z\n\nView All Brands \n\nAqualisa tap spares \n\nArchiteckt tap spares \n\nBaxi tap spares \n\nBristan tap spares \n\nBurlington tap spares \n\nCIFIAL tap spares \n\nCrosswater tap spares \n\nDelabie tap spares \n\nDeva tap spares \n\nDornbracht tap spares \n\nFranke tap spares \n\nGESSI tap spares \n\nGrohe tap spares \n\nHansgrohe tap spares \n\nHeritage Bathrooms tap spares \n\nHorne tap spares \n\nHudson Reed tap spares \n\nIdeal Standard tap spares \n\nInta tap spares \n\nKLUDI tap spares \n\nLefroy Brooks tap spares \n\nMira tap spares \n\nNabis tap spares \n\nNewTeam tap spares",
+      "isUserProvided": true,
+      "sourceId": "SRC-a0b2ffcc33cd"
+    },
+    {
+      "title": "photon.codes",
+      "url": "https://photon.codes/docs/llms.txt",
+      "canonicalUrl": "https://photon.codes/docs/llms.txt",
+      "publisher": "photon.codes",
+      "sourceType": "plain text",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "converted",
+      "evidenceSnippets": [
+        "> Photon documentation has two versions, and each documents a different product. Stable, the default, documents Spectrum: the `spectrum-ts` SDK, the `@photon-ai/cli` CLI, Spectrum webhooks, and the Spectrum API. Beta (2.0) documents the Photon platform: the Photon API at `https://api.photon.codes/v1`, and its TypeScript, Python, and Rust clients. Choose one ",
+        "Beta and 2.0 refer to the same Photon platform version.",
+        "- The user asks for Beta, 2.0, or Photon 2.0.",
+        "- The user links a page under `https://photon.codes/docs/beta/`."
+      ],
+      "retrievedAt": "2026-10-19T22:39:58.221Z",
+      "content": "# Photon\n\n> Photon documentation has two versions, and each documents a different product. Stable, the default, documents Spectrum: the `spectrum-ts` SDK, the `@photon-ai/cli` CLI, Spectrum webhooks, and the Spectrum API. Beta (2.0) documents the Photon platform: the Photon API at `https://api.photon.codes/v1`, and its TypeScript, Python, and Rust clients. Choose one version, then read only that version's pages.\n\n## Choose a version\n\nBeta and 2.0 refer to the same Photon platform version.\n\nUse Stable unless one of these is true:\n\n- The user asks for Beta, 2.0, or Photon 2.0.\n- The user links a page under `https://photon.codes/docs/beta/`.\n- The project uses an identifier from the Beta (2.0) column below.\n\nCheck the project before you write code. Look at dependency manifests (`package.json`, `pyproject.toml`, `requirements.txt`, `Cargo.toml`), imports, API hosts, project IDs, and credential formats. If the project uses identifiers from both columns, or its identifiers conflict with the user's request, ask the user which version to use.\n\n| Signal | Stable | Beta (2.0) |\n| --- | --- | --- |\n| Docs URL | `https://photon.codes/docs/<page>` | `https://photon.codes/docs/beta/<page>` |\n| Packages | `spectrum-ts`, `@spectrum-ts/*`, `@photon-ai/advanced-imessage`, `@photon-ai/advanced-imessage-kit`, `@photon-ai/imessage-kit`, `@photon-ai/whatsapp-business`, `chat-adapter-imessage` | `@photon-ai/api` (npm), `photonhq-api` (PyPI and crates.io) |\n| Imports | `spectrum-ts`, `spectrum-ts/providers/<platform>` | `@photon-ai/api`, `photon_api` (Python), `photon_ai_api` (Rust) |\n| API host | `https://spectrum.photon.codes` | `https://api.photon.codes/v1` |\n| Project ID | Does not start with `pho_prj_` | Starts with `pho_prj_` |\n| Credentials | Project ID and project secret, sent with HTTP Basic auth | Bearer token: an account service key (`pho_ask_...`), a project API key (`pho_sk_...`), or a JWT access token |\n\nAfter you choose a version:\n\n- Keep packages, commands, API hosts, and credentials within that version. An operation with a similar name in the other version has a different contract.\n- State the version in your answer and cite that version's page URLs.\n- If the selected version has no page for a task, say so. Do not use the other version's page instead.\n- Compare the versions only when the user asks. Label each version's examples separately.\n\n## Find pages\n\nThe sections below list every page in navigation order. Each heading names the version first. A path under `/docs/beta/` is Beta (2.0), and every other path is Stable.\n\n- Each link points to the page's Markdown. Remove `.md` for the web page.\n- Generated reference sections are listed as one link each. To find a page in one, follow links from the guides or use the documentation MCP server.\n- The [documentation MCP server](https://photon.codes/docs/mcp) searches both versions. Pass `version: \"Stable\"` or `version: \"Beta\"` on every search, because a search without a version returns both.\n- The [Photon ski",
+      "isUserProvided": true,
+      "sourceId": "SRC-f2dfc2e2a0f4"
+    },
+    {
+      "title": "Photon — Dashboard",
+      "url": "https://app.photon.codes/sign-in?callbackURL=%2F",
+      "canonicalUrl": "https://app.photon.codes/sign-in?callbackURL=%2F",
+      "publisher": "Photon",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "Continue with Google Don't have an account? Sign up",
+        "Developer dashboard for building with Photon."
+      ],
+      "retrievedAt": "2026-10-19T22:39:59.172Z",
+      "content": "Photon — Dashboard \nWelcome to Photon\nBring your agents to millions of lives\n\nEmail \nPassword Forgot password? \n\nLogin \n\nor \n\nContinue with Google Don't have an account? Sign up \n\nTerms of Service and Privacy Policy\nDeveloper dashboard for building with Photon.",
+      "isUserProvided": true,
+      "sourceId": "SRC-8de2ed019f6a"
+    },
+    {
+      "title": "mira &mdash; mira documentation",
+      "url": "https://mira-python.readthedocs.io/en/latest/index.html",
+      "canonicalUrl": "https://mira-python.readthedocs.io/en/latest/index.html",
+      "publisher": "mira-python.readthedocs.io",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "mira provides tooling for simple object detection projects. The package spans three areas of focus.",
+        "Core object detection abstractions for images and annotations",
+        "Access to datasets from common formats (e.g., VOC, COCO) and image sets (e.g., VOC 2012)",
+        "A common API to for well-known models (e.g., RetinaNet and YOLO)"
+      ],
+      "retrievedAt": "2026-10-19T22:39:58.123Z",
+      "content": "mira &mdash; mira documentation\nmira ¶\nmira provides tooling for simple object detection projects. The package spans three areas of focus.\nCore object detection abstractions for images and annotations\nAccess to datasets from common formats (e.g., VOC, COCO) and image sets (e.g., VOC 2012)\nA common API to for well-known models (e.g., RetinaNet and YOLO)\nInstallation ¶\npip install mira\nTutorials\nLogging\nBrowsing image data\nAugmentation\nBasic object detection\nTransfer Learning\nTraining on COCO 2014\nDeployment\nCore Functions\nScenes\nAnnotations\nDatasets\nLoad existing datasets\nLoad new datasets\nDetectors\nFasterRCNN\nEfficientDet\nMetrics",
+      "isUserProvided": true,
+      "sourceId": "SRC-d00705ea5493"
+    },
+    {
+      "title": "MIRA - Documentation",
+      "url": "https://www.mira-project.org/joomla-mira/index.php/resources/documentation",
+      "canonicalUrl": "https://www.mira-project.org/joomla-mira/index.php/resources/documentation",
+      "publisher": "www.mira-project.org",
+      "author": "Super User",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "For MIRA an automatic generated Doxygen documentation is available. It contains information for end-users, for application-designers and for developers.",
+        "Click here: http://www.mira-project.org/MIRA-doc/index.html , to open the documentation of the latest release in a new window.",
+        "The documentation of the current development trunk is available here: http://www.mira-project.org/MIRA-doc-devel/index.html ."
+      ],
+      "retrievedAt": "2026-10-19T22:39:58.161Z",
+      "content": "For MIRA an automatic generated Doxygen documentation is available. It contains information for end-users, for application-designers and for developers.\nClick here: http://www.mira-project.org/MIRA-doc/index.html , to open the documentation of the latest release in a new window.\nThe documentation of the current development trunk is available here: http://www.mira-project.org/MIRA-doc-devel/index.html .",
+      "isUserProvided": true,
+      "sourceId": "SRC-5d101acc21b4"
+    }
+  ],
+  "unresolvedQuestions": [
+    "Are there any pages, blog posts, or sections on photon.codes (outside of the /docs path) that reference \"Mira\"?",
+    "Does the Photon platform have a component, API endpoint, or client library named \"Mira\"?"
+  ],
+  "contradictions": [],
+  "completeness": "partial",
+  "limitations": [
+    "Supplied link https://photon.codes/ was not readable: The page exceeded the configured size limit.",
+    "9 candidate pages failed or carried no readable text.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 5,
+    "failedCount": 11,
+    "rounds": 1,
+    "searches": 6
+  },
+  "archivedAt": "2026-10-19T22:40:02.196Z"
+}

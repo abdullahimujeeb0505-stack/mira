@@ -1,0 +1,128 @@
+{
+  "id": "2026-10-18T02-44-16-558Z-what-do-you-have-on-photon-codes",
+  "question": "What do you have on photon.codes",
+  "plan": {
+    "objective": "Provide a concise overview of photon.codes, including its purpose, ownership, services, launch date, and any recent notable information.",
+    "taskType": "general",
+    "deliverable": "A summary report covering the key aspects of photon.codes.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "Official website (photon.codes)",
+      "Domain registration / WHOIS records",
+      "Company registries or business filings",
+      "Reputable tech news outlets",
+      "Press releases or official announcements"
+    ],
+    "questions": [
+      "What is the primary function or product of photon.codes?",
+      "Who owns or operates photon.codes?",
+      "When was photon.codes launched or registered?",
+      "What services or offerings does photon.codes provide?",
+      "Are there any recent news, announcements, or reviews concerning photon.codes?"
+    ],
+    "queries": [
+      "site:photon.codes \"about\"",
+      "photon.codes WHOIS information",
+      "photon.codes launch date",
+      "photon.codes product or service description",
+      "photon.codes news OR press release 2023..2024"
+    ],
+    "unresolvedQuestions": [
+      "What is the primary function or product of photon.codes?",
+      "Who owns or operates the photon.codes domain?",
+      "When was photon.codes registered or launched?",
+      "What services or offerings does photon.codes provide?",
+      "Are there any recent news, announcements, or reviews about photon.codes?"
+    ]
+  },
+  "answer": "The sources provided do not contain any specific information about the domain photon.codes. [SRC-48f52c944997]\nThe WHOIS service pages listed (, ) describe how to perform WHOIS lookups but do not show the actual registration record for photon.codes, so ownership, registration date, or registrar details are unavailable (unverified: no matching retrieved evidence).\nThe TechCrunch article () discusses an AI startup named Photon that builds messaging‑based agents, but it never mentions the photon.codes domain, so its purpose, services, or recent announcements cannot be linked to that URL (unverified: no matching retrieved evidence).\nConsequently, no concrete details on the primary function, owner, launch date, services offered, or recent news about photon.codes can be confirmed from the available evidence (unverified: no matching retrieved evidence).",
+  "followUpQuestions": [
+    "Perform a direct WHOIS lookup for photon.codes",
+    "Investigate news coverage of the Photon AI startup for possible domain use"
+  ],
+  "sources": [
+    {
+      "title": "Free Whois Lookup - Whois IP Search & Whois Domain Lookup | Whois.com",
+      "url": "https://www.whois.com/whois/",
+      "canonicalUrl": "https://www.whois.com/whois/",
+      "publisher": "www.whois.com",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Search Domain and IP ownership information from the world's largest WHOIS database",
+        "Access detailed domain and IP ownership information instantly.",
+        "Real-time data from authoritative WHOIS sources you can trust.",
+        "Lightning-fast lookups with a clean and intuitive experience."
+      ],
+      "retrievedAt": "2026-10-18T02:44:13.353Z",
+      "content": "WHOIS Domain Lookup\nSearch Domain and IP ownership information from the world's largest WHOIS database\nComprehensive Data\nAccess detailed domain and IP ownership information instantly.\nTrusted & Accurate\nReal-time data from authoritative WHOIS sources you can trust.\nFast & Easy\nLightning-fast lookups with a clean and intuitive experience.\nGlobal Coverage\nSearch domain records across hundreds of TLDs worldwide.\nFrequently Asked Questions\nWhat is a Whois domain lookup?\nA Whois domain lookup allows you to trace the ownership and tenure of a domain name. Similar to how all houses are registered with a governing authority, all domain name registries maintain a record of information about every domain name purchased through them, along with who owns it, and the date till which it has been purchased.\nWhat does the Whois domain database contain?\nThe Whois database contains details such as the registration date of the domain name, when it expires, ownership and contact information, nameserver information of the domain, the registrar via which the domain was purchased, etc.\nWhat is a Whois IP lookup?\nAn IP is a unique address of a server on the internet. Similar to how a telephone number allows you to connect to a specific phone on the telecom network, similarly, an IP address allows your computer to connect to a specific server on the internet.\nDomain names and IP numbers are the framework upon which the entire world wide web is built.\nIP numbers are assigned to networking organisations with a record maintained by governing bodies for each IP number and the organisation to which it has been assigned. A whois IP lookup allows you track the above mentioned details for a domain.\nHow do I conduct a Whois search?\nEnter the domain or IP address for which you would like to conduct a Whois lookup in the search box above. We will query the appropriate database and provide a recent record.\nHow do I keep my Whois information updated?\nIf you have purchased a domain, the information stored with your Domain registrar is what is passed on to the Registry for the Whois database. Get in touch with your Registrar to make changes to the Whois contact information for each of your domains.\nWhat steps can I take to ensure my domain privacy is protected?\nSome Registrars offer privacy protection services that allow their customers to mask their actual contact details in the Whois search result in order to prevent their private contact information falling into the hands of spammers and scammers. Get in touch with your Registrar to learn more about your options.\nWhy are some entries hidden in my Whois Domain lookup?\nIf the owner of a Domain name has used the privacy protection services of their Registrar, some details may be hidden within the Whois lookup results. Additionally, some Registries proactively conceal some information in order to comply with local data privacy protection laws.\nMy information doesn't match the Whois results, how do I change my Whois information?\nAccordi",
+      "sourceId": "SRC-48f52c944997"
+    },
+    {
+      "title": "Photon held a funeral for mobile apps. Now it has $4.5M to help replace them with agents. | TechCrunch",
+      "url": "https://techcrunch.com/2026/10/01/photon-held-a-funeral-for-mobile-apps-now-it-has-4-5m-to-help-replace-them-with-agents/",
+      "canonicalUrl": "https://techcrunch.com/2026/10/01/photon-held-a-funeral-for-mobile-apps-now-it-has-4-5m-to-help-replace-them-with-agents/",
+      "publisher": "TechCrunch",
+      "author": "Sarah Perez",
+      "publishedAt": "2026-10-01T14:00:00.000Z",
+      "updatedAt": "2026-10-02T15:17:26.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "The AI startup Photon is so sure that agents will eventually come to replace mobile apps that it held a funeral for the latter — yes, a real funeral in a church, with speeches and everything. Photon, which helps developers build agents that work over iMessage and WhatsApp, now has $4.5 million in seed funding to develop its products. The raise comes after th",
+        "Photon co-founder and CEO Daniel Tian said the “ app funeral ,” held in San Francisco on September 17, was also a developer day for the startup, featuring panels from Vercel, Stripe, and OpenAI. It also included an actual coffin for app icons.",
+        "The move to host an app funeral was obviously somewhat tongue-in-cheek, but Tian believes the app era is coming to an end. “Honestly, it’s going to take a while, but I think, directionally, it’s inevitable,” he said of the shift from apps to agents.",
+        "The thesis behind the startup, as you may have guessed, is that users no longer want to install new apps. Instead, they want access to agents that work through the messaging apps they already use, like iMessage and WhatsApp."
+      ],
+      "retrievedAt": "2026-10-18T02:44:13.109Z",
+      "content": "The AI startup Photon is so sure that agents will eventually come to replace mobile apps that it held a funeral for the latter — yes, a real funeral in a church, with speeches and everything. Photon, which helps developers build agents that work over iMessage and WhatsApp, now has $4.5 million in seed funding to develop its products. The raise comes after the company signed up over 40,000 developers and grew its revenue 10x in just four months, it says.\nImage Credits: Photon\nPhoton co-founder and CEO Daniel Tian said the “ app funeral ,” held in San Francisco on September 17, was also a developer day for the startup, featuring panels from Vercel, Stripe, and OpenAI. It also included an actual coffin for app icons.\nThe move to host an app funeral was obviously somewhat tongue-in-cheek, but Tian believes the app era is coming to an end. “Honestly, it’s going to take a while, but I think, directionally, it’s inevitable,” he said of the shift from apps to agents.\nThe thesis behind the startup, as you may have guessed, is that users no longer want to install new apps. Instead, they want access to agents that work through the messaging apps they already use, like iMessage and WhatsApp.\nMeta’s Muse, whose app has soared to No. 1 on the app stores, is putting that theory to the test. But even if Muse comes to dominate the consumer AI space, Tian sees a market for serving developers who want their applications to work over messaging services. That’s why Photon is offering a package of tools, including a unified API, an extensible channel framework, a command-line interface (CLI), and an observability suite. Combined, they allow developers to build and operate an agent experience that works over iMessage, WhatsApp, Telegram, SMS or RCS, email, voice, and more.\nThe idea for Photon emerged from the time co-founders Tian and Ryan Zhu, the CTO, spent building consumer apps as students, often at hackathons. Every time they finished a new app, they hit the same bottleneck: getting people to discover it. By building an agent that worked within iMessage, they realized they could reach people through an app those people already use every day: Apple’s Messages.\nTian, for instance, had built a bot that would text his friends back as him over iMessage. When he and Zhu made the technology open source on GitHub, thousands of developers adopted it. So they went all in. Tian dropped out of UPenn’s M&T program, and Zhu left high school, later becoming a visiting student at MIT’s Media Lab.\nToday, the open source version of Photon still accounts for 98% of its use.\nThis April, the founders decided to create a managed platform and sell access to it via subscription tiers. This hosted version of the product offers 99.95% uptime, which is much higher than what you’d get if you were just running the open source version on your local Mac for a hobby project. It’s also SOC 2 Type II and HIPAA-compliant, which opens the door to healthcare agent use cases.\nTo date, the startup’s pl",
+      "sourceId": "SRC-0beaa0880b73"
+    },
+    {
+      "title": "WHOIS Search, Domain Name, Website, and IP Tools - Who.is",
+      "url": "https://who.is/",
+      "canonicalUrl": "https://who.is/",
+      "publisher": "who.is",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Search WHOIS, RDAP, DNS, and nameserver information for any domain name",
+        "Instantly look up registration data, contact details, nameservers, DNS records, and more for any domain name or IP address using WHOIS and RDAP protocols.",
+        "Registrant, registrar, and registration dates for any domain.",
+        "Structured registration data via the modern WHOIS successor."
+      ],
+      "retrievedAt": "2026-10-18T02:44:13.523Z",
+      "content": "Domain Name Information Lookup\nSearch WHOIS, RDAP, DNS, and nameserver information for any domain name\nYour IP Address: 172.166.156.168\nComprehensive Domain & IP Information\nInstantly look up registration data, contact details, nameservers, DNS records, and more for any domain name or IP address using WHOIS and RDAP protocols.\nWHOIS Lookup\n→\nRegistrant, registrar, and registration dates for any domain.\nRDAP Lookup\nStructured registration data via the modern WHOIS successor.\nDNS Records\nA, AAAA, MX, TXT, NS and other records for any domain.\nNameserver Lookup\nSee which domains a given nameserver hosts.\nIP Address Lookup\nOwnership and network data for any IPv4 or IPv6 address.\nDomain History\nHow much historical WHOIS/RDAP we hold for a domain.\nUptime Check\nCheck whether a website is reachable right now.\nRegistrars\nBrowse domain registrars and the domains they manage.\nOur Premium Services\nFor researchers, investigators, and site owners who need more.\nDomain History Report\nThe complete historical WHOIS/RDAP record for a single domain — every snapshot, the ownership-change timeline, and registrar history, delivered as a downloadable report.\nLook up a domain\nPro Website Monitoring\nWatch the domains that matter: uptime, DNS changes, and TLS-certificate expiry, all from one setup. We probe each domain live so you see exactly what we see, then notify you the moment a site goes down, its DNS shifts, or its certificate nears expiry. Up to 10 domains.\nStart monitoring\nPro API Access\nParsed WHOIS, normalized RDAP, and DNS and TLS-certificate history for any domain as JSON over HTTPS. Start on the free tier, no card required.\nExplore the API\nWhat is WHOIS?\nWHOIS is a widely used internet protocol to query databases storing information about registered users of domain names, IP addresses, and autonomous systems. It helps you find owner contact details, registration dates, and nameserver information.\nWhat is RDAP?\nRDAP (Registration Data Access Protocol) is the modern successor to WHOIS. It provides a standardized, secure, and more structured way to access registration data, often offering richer information and better privacy controls.\n2B+\nHistorical WHOIS & RDAP snapshots\nSince 2007\n20 years of domain data\nMillions\nOf lookups served every month",
+      "sourceId": "SRC-f77be8d42076"
+    }
+  ],
+  "unresolvedQuestions": [
+    "What is the primary function or product of photon.codes?",
+    "Who owns or operates the photon.codes domain?",
+    "When was photon.codes registered or launched?",
+    "What services or offerings does photon.codes provide?",
+    "Are there any recent news, announcements, or reviews about photon.codes?"
+  ],
+  "contradictions": [
+    "The TechCrunch article refers to a company called Photon but does not mention the photon.codes domain, creating potential confusion about whether the article’s subject uses that URL.",
+    "The WHOIS pages are generic and do not present actual registration data for photon.codes, leaving ownership and registration details unverified."
+  ],
+  "completeness": "insufficient",
+  "limitations": [
+    "9 search requests or candidate pages failed or were unreadable.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 3 of 6 selected sources fit in the synthesis evidence budget.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 7,
+    "failedCount": 9,
+    "rounds": 1,
+    "searches": 5
+  },
+  "archivedAt": "2026-10-18T02:44:16.559Z"
+}

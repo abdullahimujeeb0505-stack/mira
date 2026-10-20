@@ -1,0 +1,110 @@
+{
+  "id": "2026-10-18T21-02-19-564Z-research",
+  "question": "?",
+  "plan": {
+    "objective": "Provide a clear definition of the question mark punctuation and summarize its standard usage rules in English writing.",
+    "taskType": "definition",
+    "deliverable": "A concise definition of the question mark along with a brief guide to its grammatical usage, citing authoritative style guides.",
+    "requiresCurrentInformation": false,
+    "sourcePreferences": [
+      "The Chicago Manual of Style",
+      "APA Publication Manual",
+      "MLA Handbook",
+      "Oxford English Dictionary",
+      "Merriam-Webster Dictionary"
+    ],
+    "questions": [
+      "What is a question mark and how is it used in English?"
+    ],
+    "queries": [
+      "\"question mark\" definition punctuation",
+      "rules for using a question mark in English grammar",
+      "question mark usage Chicago Manual of Style",
+      "question mark APA style guide",
+      "question mark MLA handbook guidelines"
+    ],
+    "unresolvedQuestions": []
+  },
+  "answer": "Definition:\nA question mark (?) is a punctuation mark used primarily at the end of a direct question, signaling to the reader that a query is being posed. [SRC-4fade99a6954]\nIt consists of a curved stroke with a dot beneath it. [SRC-4fade99a6954]\n\nStandard Usage Rules in English: [SRC-4fade99a6954]\n- **Direct questions**: End a sentence that asks for information with a question mark (e.g., “Where are you going?”). [SRC-aee047434268]\n- **Tag questions**: Add a short interrogative tag to a statement, ending with a question mark (e.g., “You are coming, aren’t you?”). [SRC-aee047434268]\n- **Rhetorical questions**: Use a question mark even when no answer is expected (e.g., “Who could have predicted that?”). [SRC-aee047434268]\n- **Uncertain dates or facts**: Place a question mark after a date or fact that is doubtful (e.g., “Geoffrey Chaucer (1343?–1400)”). [SRC-aee047434268]\n- **Indirect questions**: Do **not** use a question mark; treat them as statements and end with a period (e.g., “She asked whether the meeting was scheduled.”). [SRC-aee047434268]\n- **Placement with quotation marks**: When a quoted sentence itself is a question, the question mark stays inside the closing quotation marks, following Chicago style conventions (unverified: no matching retrieved evidence).\n- **Placement with parentheses**: If a whole sentence within parentheses is a question, the question mark goes inside the parentheses; if the surrounding sentence is a question, the mark goes outside. (Derived from general punctuation practice described in the sources.) (unverified: no matching retrieved evidence).",
+  "followUpQuestions": [
+    "Differences between direct and indirect questions",
+    "Punctuation of tag questions"
+  ],
+  "sources": [
+    {
+      "title": "What is a Question Mark (?) – Rules, Use and Examples",
+      "url": "https://grammarinsights.com/english-grammar/question-mark/",
+      "canonicalUrl": "https://grammarinsights.com/english-grammar/question-mark/",
+      "publisher": "Grammar Insights",
+      "publishedAt": "2025-03-06T18:45:47.000Z",
+      "updatedAt": "2025-03-06T18:45:49.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "A question mark (?), though seemingly simple, is one of the most important punctuation marks in the English language. It helps convey a sense of inquiry, indicates curiosity, and serves as a visual cue to readers that a question is being posed. Despite its straightforward appearance, there are several rules and uses surrounding the question mark that writers",
+        "A question mark is a punctuation mark that is used primarily at the end of a direct question. It signifies to the reader or listener that the sentence is a query, prompting a response or further clarification. The symbol itself consists of a curved stroke with a dot beneath it (?). In written language, the question mark is essential for indicating that an in",
+        "The question mark has a fascinating history. While its modern form is well recognized today, its origins trace back to ancient languages.",
+        "In the 8th century, monks began marking questions with a symbol that resembled a line over a letter, likely to denote uncertainty or an inquiry. However, the question mark as we know it today began to take shape in the late Middle Ages."
+      ],
+      "retrievedAt": "2026-10-18T21:02:16.721Z",
+      "content": "A question mark (?), though seemingly simple, is one of the most important punctuation marks in the English language. It helps convey a sense of inquiry, indicates curiosity, and serves as a visual cue to readers that a question is being posed. Despite its straightforward appearance, there are several rules and uses surrounding the question mark that writers and speakers must understand to ensure clarity and correctness.\nTable of Contents\n1 What is a Question Mark (?)\n2 History of the Question Mark\n3 When to Use a Question Mark (?)\n4 Question Marks and Quotation Marks\n5 Question Marks and Parentheses\n6 Indirect Questions\n7 When a Question Mark Isn’t Enough\nWhat is a Question Mark (?)\nA question mark is a punctuation mark that is used primarily at the end of a direct question. It signifies to the reader or listener that the sentence is a query, prompting a response or further clarification. The symbol itself consists of a curved stroke with a dot beneath it (?). In written language, the question mark is essential for indicating that an inquiry is being made.\nHistory of the Question Mark\nThe question mark has a fascinating history. While its modern form is well recognized today, its origins trace back to ancient languages.\nIn the 8th century, monks began marking questions with a symbol that resembled a line over a letter, likely to denote uncertainty or an inquiry. However, the question mark as we know it today began to take shape in the late Middle Ages.\nBy the 13th century, early English manuscripts began using the word “quaestio” to indicate questions, but it wasn’t until the 17th century that the distinct symbol, resembling a question mark, became standard. This was largely due to the printing press, which made punctuation marks more uniform and widely used.\nSince then, the question mark has evolved into an indispensable part of the written language, serving its crucial function in questioning.\nWhen to Use a Question Mark (?)\nThe rules for when to use a question mark are straightforward, but the complexities arise when dealing with indirect questions, multiple punctuation marks, and specific sentence structures.\nHere’s a table outlining when to use a question mark and examples for each scenario:\nWhen to Use a Question Mark | Example(s) |\nAt the end of a direct question | – What time does the train leave? – Are you coming to the party tonight? |\nWhen the sentence structure is inverted (subject-verb inversion) | – Did she go to the store? – Can you help me with this? |\nIn tag questions | – You’re coming to the meeting, aren’t you? – It’s a beautiful day, isn’t it? |\nFor “Yes” or “No” questions | – Are you hungry? – Do you want to go for a walk? |\nWith wh-questions (who, what, where, when, why, how) | – Where are my keys? – What do you want for dinner? – Why is the sky blue? |\nWhen a question is inside quotation marks | – She asked, “What time are we meeting?” – “How did you know that?” he wondered. |\nWhen a question is outside quotation marks | –",
+      "sourceId": "SRC-4fade99a6954"
+    },
+    {
+      "title": "Question Mark: Rules, Uses, Examples, Placement - AceEnglishGrammar",
+      "url": "https://aceenglishgrammar.com/question-mark/",
+      "canonicalUrl": "https://aceenglishgrammar.com/question-mark/",
+      "publisher": "AceEnglishGrammar",
+      "author": "Simon Avery",
+      "publishedAt": "2026-09-29T17:45:00.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "A question mark is a punctuation mark (?) that ends a direct question. It replaces the period at the end of the sentence rather than joining it.",
+        "The question mark applies to direct questions only. An indirect question, a polite request phrased as a question, and a statement containing an embedded question all end with a period instead, which is where most errors with the mark begin.",
+        "The Question Mark in English: Rules and Uses What Is a Question Mark?",
+        "A question mark is a punctuation mark (?) that ends a sentence asking a direct question. It is made of a hooked stroke over a dot, and it takes the place of the period in that position."
+      ],
+      "retrievedAt": "2026-10-18T21:02:17.191Z",
+      "content": "A question mark is a punctuation mark (?) that ends a direct question. It replaces the period at the end of the sentence rather than joining it.\nThe question mark applies to direct questions only. An indirect question, a polite request phrased as a question, and a statement containing an embedded question all end with a period instead, which is where most errors with the mark begin.\nThe Question Mark in English: Rules and Uses What Is a Question Mark?\nA question mark is a punctuation mark (?) that ends a sentence asking a direct question. It is made of a hooked stroke over a dot, and it takes the place of the period in that position.\nThe mark signals interrogative force. A sentence ending in a period reads as a statement; the same words ending in a question mark ask for an answer.\nWhere are you going?\nDid she call yesterday?\nWhat time does the meeting start?\nYou are coming, aren’t you?\nNote that the question mark is also called the interrogation mark or the interrogation point, though both names are rare in modern usage. The name and the rules for this mark are identical in British and American English.\nCommon Uses of the Question Mark with Examples\nThe question mark has four established uses in English writing. The most common uses appear here with one example each; each rule is covered in detail later.\nDirect questions: Where are you going?\nTag questions: You are coming, aren’t you?\nRhetorical questions: Who could have predicted that?\nUncertain dates or facts: Geoffrey Chaucer (1343?–1400)\nQuestion Mark in Direct Questions\nA direct question asks for information and ends with a question mark. Most direct questions invert the subject and the auxiliary verb, or open with a question word such as who, what, where, when, why, or how.\nAre you ready to leave?\nWhere did you put the keys?\nHow long does the journey take?\nWhy was the meeting cancelled?\nA statement can also function as a question when the speaker raises the intonation. These take a question mark even though the word order stays declarative.\nYou are leaving already?\nShe said that to your face?\nHe finished the whole report in one night?\nNote that the question mark depends on the function rather than the word order. Any sentence that asks for an answer takes the mark.\nIndirect Questions Take No Question Mark\nAn indirect question reports a question inside a statement. It ends with a period, because the sentence as a whole makes a statement rather than asking anything.\nDirect: Where are the keys? → Indirect: She asked where the keys were.\nDirect: Are you coming? → Indirect: He wanted to know whether I was coming.\nDirect: What time is it? → Indirect: I wonder what time it is.\nCompare:\nShe asked where the keys were? ✗\nI wonder what time it is? ✗\nNote that an indirect question keeps statement word order. “She asked where the keys were” does not invert to “where were the keys,” which is the structural signal that no question mark belongs.\nQuestion Mark With Tag Questions\nA tag question is a short qu",
+      "sourceId": "SRC-aee047434268"
+    },
+    {
+      "title": "Quotations and Signal Phrases - Chicago Style Guide - 17th Edition - Research guides at Camosun College Library",
+      "url": "https://camosun.libguides.com/Chicago-17thEd/quotations",
+      "canonicalUrl": "https://camosun.libguides.com/Chicago-17thEd/quotations",
+      "publisher": "camosun.libguides.com",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "Quotations and Signal Phrases - Chicago Style Guide - 17th Edition - Research guides at Camosun College Library",
+        "Camosun Plagiarism Guide This link opens in a new window",
+        "Purdue OWL - Paraphrase: Write It In Your Own Words This link opens in a new window",
+        "Purdue OWL - Avoiding Plagiarism This link opens in a new window"
+      ],
+      "retrievedAt": "2026-10-18T21:02:16.862Z",
+      "content": "Quotations and Signal Phrases - Chicago Style Guide - 17th Edition - Research guides at Camosun College Library\nSkip to Main Content\nCamosun Plagiarism Guide This link opens in a new window\nPurdue OWL - Paraphrase: Write It In Your Own Words This link opens in a new window\nPurdue OWL - Avoiding Plagiarism This link opens in a new window\nSFU Library - Plagiarism Tutorial This link opens in a new window\nChicago Manual of Style - Online\nThis link opens in a new window\nAccess to the 17th edition of Chicago writing and citation style guides. Includes the full contents, a quick guide, help & tools, Q&A, etc.\nQuotations\nA quotation is a collection spoken or written words repeated in speech or text by someone other than the original speaker or author. Quoting the work and ideas of others in your assignments helps to demonstrate that you have undertaken some scholarly research as well as helps establish credibility for your topic or position. In order to avoid plagiarism, you must acknowledge all the resources (oral, print, and electronic) that you used in your research.\nShort Quotations\nA quotation of four or less lines should be cited within quotation marks (appearing at the beginning and end of the quote). The end punctuation of the quotation (e.g., period, question mark, exclamation mark) should be contained within the quotation marks . The footnote should be inserted after the closing quotation mark .\nEXAMPLE\nBlock Quotations\nQuotations of five or more lines should be put into &ldquo; blocked &rdquo; formatting. Blocked quotations require no quotation marks ; however, to properly format the quotation you need to:\nSingle-space the quotation (this will visually contrast with the double-spacing of the rest of your paper);\nIndent each line of the quotation &frac12; inch from the left margin;\nCreate an extra line of space immediately before and after the quotation;\nAdd the footnote at the end of the quote .\nQuoting and Paraphrasing – Signal Phrases\nSignal Phrases\nSignal phrases are ways to lead into or introduce a source or quote.\nWhen introducing your sources, Chicago style uses verbs in the present tense (for details, see sec. 5.129 of The Chicago Manual of Style. 17 th ed. and Chicago Style Q & A ).\nA signal phrase often names the author of the source and provides context . Include:\nthe full name of the author the first time you refer to them &ndash; (Jean Barman says \" . . . \" 14 ).\nthe author's last name only in subsequent references &ndash; (Barman emphasizes \" . . . \" 16 ).\nExamples of Signal Phrases\nTry one of these signal phrases to create a smooth transition in your text:\nHistorian Sylvia Van Kirk insists that \". . .\" 1\nAndrew Mclaughlin suggests \". . .\" 6\nVan Kirk points out \". . .\" 9\nMclaughlin reports \". . .\" 12\nOther signal words include:\ndemonstrates\ncontends\nimplies\nargues\nshows that\nsupports\nThis information on signal phrases has been adapted from:\nHacker, Diana, and Nancy Sommers. A Canadian Writer's Reference. 5th ed. Boston: Bedford/St",
+      "sourceId": "SRC-c71bf070d7d7"
+    }
+  ],
+  "unresolvedQuestions": [],
+  "contradictions": [],
+  "completeness": "partial",
+  "limitations": [
+    "9 search requests or candidate pages failed or were unreadable.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 3 of 6 selected sources fit in the synthesis evidence budget.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 7,
+    "failedCount": 9,
+    "rounds": 1,
+    "searches": 5
+  },
+  "archivedAt": "2026-10-18T21:02:19.565Z"
+}

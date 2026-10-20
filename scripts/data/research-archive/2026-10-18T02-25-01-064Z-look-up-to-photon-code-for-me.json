@@ -1,0 +1,50 @@
+{
+  "id": "2026-10-18T02-25-01-064Z-look-up-to-photon-code-for-me",
+  "question": "Look up to photon.code for me",
+  "plan": {
+    "objective": "Identify and summarize the current information, purpose, and available resources for photon.code, including official website, repository, and documentation.",
+    "taskType": "technical",
+    "deliverable": "A concise summary of photon.code with relevant links to its official site, source code repository, and documentation.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "official website",
+      "GitHub or other primary repository",
+      "authoritative documentation",
+      "peer‑reviewed articles if available"
+    ],
+    "questions": [
+      "What is photon.code and what does it provide?"
+    ],
+    "queries": [
+      "\"photon.code\" site",
+      "\"photon.code\" GitHub",
+      "\"photon code\" library documentation",
+      "\"photon.code\" project description",
+      "\"photon.code\" repository"
+    ],
+    "unresolvedQuestions": [
+      "What is photon.code and what does it provide?"
+    ]
+  },
+  "answer": "I could not retrieve any readable web sources for this question, so I can't provide a source-grounded answer yet. Search may be blocked or relevant pages may be inaccessible. Please try a narrower query or provide a source URL.",
+  "followUpQuestions": [],
+  "sources": [],
+  "unresolvedQuestions": [
+    "What is photon.code and what does it provide?"
+  ],
+  "contradictions": [],
+  "completeness": "insufficient",
+  "limitations": [
+    "8 search requests or candidate pages failed or were unreadable.",
+    "The configured search budget of 8 queries was exhausted.",
+    "The configured research round limit of 2 was reached."
+  ],
+  "retrieval": {
+    "candidateCount": 0,
+    "retrievedCount": 0,
+    "failedCount": 8,
+    "rounds": 2,
+    "searches": 8
+  },
+  "archivedAt": "2026-10-18T02:25:01.065Z"
+}

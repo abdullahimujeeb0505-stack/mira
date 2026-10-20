@@ -1,0 +1,108 @@
+{
+  "id": "2026-10-19T21-45-09-712Z-you-sure",
+  "question": "You sure?",
+  "plan": {
+    "objective": "You sure?",
+    "taskType": "general",
+    "deliverable": "A direct answer with supporting evidence and limitations.",
+    "requiresCurrentInformation": false,
+    "sourcePreferences": [
+      "primary sources",
+      "authoritative references",
+      "independent corroboration"
+    ],
+    "questions": [
+      "You sure?"
+    ],
+    "queries": [
+      "You sure?",
+      "You sure? authoritative sources",
+      "You sure? evidence and limitations"
+    ],
+    "unresolvedQuestions": [
+      "You sure?"
+    ]
+  },
+  "answer": "I retrieved 3 readable sources, but couldn't synthesize a reliable answer (provider outage (HTTP 503)). Please try again shortly.",
+  "followUpQuestions": [],
+  "sources": [
+    {
+      "title": "Are you sure? Judges in England told to abandon ‘beyond all reasonable doubt’ | Scottish Legal News",
+      "url": "https://www.scottishlegal.com/articles/are-you-sure-judges-in-england-told-to-abandon-beyond-all-reasonable-doubt",
+      "canonicalUrl": "https://www.scottishlegal.com/articles/are-you-sure-judges-in-england-told-to-abandon-beyond-all-reasonable-doubt",
+      "publisher": "Scottish Legal News",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Are you sure? Judges in England told to abandon ‘beyond all reasonable doubt’",
+        "Judges have been urged to abandon the phrase “beyond all reasonable doubt” as it apparently confuses juries.",
+        "In new guidance for the judiciary they have been advised to tell jurors they should be &ldquo;satisfied so that they are sure&rdquo; a defendant is guilty before convicting.",
+        "The Crown Court Compendium , written by the Judicial College , tells judges they can drop the phrase."
+      ],
+      "retrievedAt": "2026-10-19T21:45:04.631Z",
+      "content": "Are you sure? Judges in England told to abandon ‘beyond all reasonable doubt’\n27 Apr 2020\nReading time: 2 minutes\nArticle Tags:\nstandard of proof\nJudges have been urged to abandon the phrase “beyond all reasonable doubt” as it apparently confuses juries.\nIn new guidance for the judiciary they have been advised to tell jurors they should be &ldquo;satisfied so that they are sure&rdquo; a defendant is guilty before convicting.\nThe Crown Court Compendium , written by the Judicial College , tells judges they can drop the phrase.\n&ldquo;It is unwise to elaborate on the standard of proof, although if an advocate has referred to &lsquo;beyond reasonable doubt&rsquo;, the jury should be told that this means the same thing as being sure.&rdquo;\nThe Judicial Office said: &ldquo;Judges may adapt their language to avoid difficulties some juries have with the phrase &lsquo;reasonable doubt&rsquo;.&rdquo;\nMatthew Scott, of Pump Court Chambers , told The Mail on Sunday : &ldquo;I think &lsquo;beyond reasonable doubt&rsquo; is a good phrase. It&rsquo;s more solemn and appropriate for a courtroom, and people understand it perfectly well.&rdquo;\nOthers think the term “sure” is more confusing.\nPenny Darbyshire, of Kingston University Law School , said: &ldquo;I have long argued that the word &lsquo;sure&rsquo; should be eliminated from the jury direction on &lsquo;beyond reasonable doubt&rsquo;. All it does is confuse jurors and send some jurors looking for absolute proof, which is impossible. There is plenty of evidence that it confuses jurors.&rdquo;\nRelated Articles\n12 Jan 2026\n3 minutes\nSLAS: Why has the standard of proof in solicitor disciplinary cases been reduced?\n5 Dec 2025\n1 minute\nSSDT lowers standard of proof to balance of probabilities\n30 Oct 2025\nViews sought on standard of proof in disciplinary tribunals in Northern Ireland\n5 Jul 2019\nSLCC calls for lower standard of proof in misconduct proceedings",
+      "isUserProvided": true,
+      "sourceId": "SRC-09a9aed318cc"
+    },
+    {
+      "title": "Are You Sure? (TV series) - Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Are_You_Sure%3F_(TV_series)",
+      "canonicalUrl": "https://en.wikipedia.org/wiki/Are_You_Sure%3F_(TV_series)",
+      "publisher": "en.wikipedia.org",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "\"},\"num_episodes\":{\"wt\":\"16 (8 in season 1, 8 in season 2)<!--Per the Infobox template, do not add \\\"as of (date)\\\". Only increment as a new episode premieres-->\"},\"executive_producer\":{\"wt\":\"\"},\"location\":{\"wt\":\"{{Plainlist|\\n* [[Connecticut]], [[USA]] (season 1)\\n* [[Jeju Island]], [[South Korea]] (season 1)\\n* [[Sapporo]], [[Japan]] (season 1)\\n* [[Zermat",
+        "Number</span>\"}]]}'>No. of episodes | 16 (8 in season 1, 8 in season 2) |",
+        "Are You Sure?! ( Korean : 이게 맞아?! ; literal translation</span>\"}]]}'>lit. ' Is This Right?! ' ) is a South Korean reality television series created by Hybe and Disney+ , starring members of Korean boy group BTS , Jimin and Jung Kook . The eight-episode first season premiered on August 8, 2024, on Disney+ , and features the two taking a break from their busy ",
+        "A second season, premiering on December 3, 2025, follows Jimin and Jung Kook as they spend 12 days in Switzerland and Vietnam with special missions and games. This season also contains eight episodes, with six in Zermatt and Zurich and two in Da Nang . [ 2 ] [ 3 ]"
+      ],
+      "retrievedAt": "2026-10-19T21:45:04.541Z",
+      "content": "From Wikipedia, the free encyclopedia\nSouth Korean reality series\n\"},\"num_episodes\":{\"wt\":\"16 (8 in season 1, 8 in season 2)<!--Per the Infobox template, do not add \\\"as of (date)\\\". Only increment as a new episode premieres-->\"},\"executive_producer\":{\"wt\":\"\"},\"location\":{\"wt\":\"{{Plainlist|\\n* [[Connecticut]], [[USA]] (season 1)\\n* [[Jeju Island]], [[South Korea]] (season 1)\\n* [[Sapporo]], [[Japan]] (season 1)\\n* [[Zermatt]] and [[Zurich]], [[Switzerland]] (season 2)\\n* [[Da Nang]], [[Vietnam]] (season 2) }}\"},\"cinematography\":{\"wt\":\"\"},\"editor\":{\"wt\":\"\"},\"runtime\":{\"wt\":\"55-114 minutes\"},\"company\":{\"wt\":\"[[Disney+]]\"},\"network\":{\"wt\":\"[[Disney+]]\"},\"first_aired\":{\"wt\":\"{{start date|2024|8|8}}\"},\"last_aired\":{\"wt\":\"\"},\"related\":{\"wt\":\"\"}},\"i\":0}}]}'> Are You Sure? |\n|\nHangul | 이게 맞아?!\nRR | Ige maja?! |\nMR | Ige maja?! |\nGenre | Reality |\nStarring |\nJimin\nJung Kook\nCountry of origin | South Korea |\nOriginal language | Korean |\nNumber</span>\"}]]}'>No. of seasons | 2 |\nNumber</span>\"}]]}'>No. of episodes | 16 (8 in season 1, 8 in season 2) |\nProduction |\nProduction locations |\nConnecticut , USA (season 1)\nJeju Island , South Korea (season 1)\nSapporo , Japan (season 1)\nZermatt and Zurich , Switzerland (season 2)\nDa Nang , Vietnam (season 2)\nRunning time | 55-114 minutes |\nProduction company | Disney+ |\nOriginal release |\nNetwork | Disney+ |\nRelease | August 8, 2024 ( 2024-08-08 ) |\nAre You Sure?! ( Korean : 이게 맞아?! ; literal translation</span>\"}]]}'>lit. ' Is This Right?! ' ) is a South Korean reality television series created by Hybe and Disney+ , starring members of Korean boy group BTS , Jimin and Jung Kook . The eight-episode first season premiered on August 8, 2024, on Disney+ , and features the two taking a break from their busy lives and traveling to Connecticut , Jeju Island , and Sapporo to spend days together for fun, food, and activities before they enlist in the military. [ 1 ]\nA second season, premiering on December 3, 2025, follows Jimin and Jung Kook as they spend 12 days in Switzerland and Vietnam with special missions and games. This season also contains eight episodes, with six in Zermatt and Zurich and two in Da Nang . [ 2 ] [ 3 ]\nBig Hit Music releases photo books for both seasons.\nCast\n[ edit ]\nJimin as himself\nJung Kook as himself\nBroadcast\nThe series are broadcast at Disney+. Three behind-the-scene videos are released in Weverse .\n[ 4 ] [ 5 ]\nFilming\nFilming for the first season took place in between Jimin and Jung Kook 's schedule before they enlisted in military. For example, for episode 1 and 2, Jung Kook just finished his performance in Good Morning America and Jimin joined him for filming the episodes in New York and Connecticut. [ 6 ] For the second season, Jimin and Jung Kook traveled right away only a few days after they were discharged from the military in June 2025. [ 7 ]\nSeason 1 (2024)\nSeason 1 was filmed in 2023 during summer in America, fall in South Korea, and winter in Japan.\n{{cite news|url=https://www.prestig",
+      "isUserProvided": true,
+      "sourceId": "SRC-8c5e5e618197"
+    },
+    {
+      "title": "Authoritative Source: What Is and How Can You Find It? | Analog Blog",
+      "url": "https://analoghq.ai/blog/en/authoritative-source/",
+      "canonicalUrl": "https://analoghq.ai/blog/en/authoritative-source/",
+      "publisher": "Analog Blog",
+      "author": "Matt Montenegro",
+      "publishedAt": "2023-04-22T19:01:59.000Z",
+      "updatedAt": "2026-08-02T18:49:11.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Authoritative Source: What Is and How Can You Find It?",
+        "An authoritative source is authoritative for a particular claim and context, not because it looks polished or uses a favored domain suffix. Check the author, evidence, date, audience, purpose, and funding, then corroborate the claim with independent sources.",
+        "Why it matters: Surface signals can create false confidence.",
+        "How it works: Evaluate scope, method, evidence, currency, and conflicts."
+      ],
+      "retrievedAt": "2026-10-19T21:45:05.637Z",
+      "content": "All\nMarketing\n1166\nSEO\n192\nAI & Tech\n171\nSales & CRM\n55\nLeadership & Career\n33\nAuthoritative Source: What Is and How Can You Find It?\n22/04/2023\n5 min\nTL;DR\nAn authoritative source is authoritative for a particular claim and context, not because it looks polished or uses a favored domain suffix. Check the author, evidence, date, audience, purpose, and funding, then corroborate the claim with independent sources.\nWhy it matters: Surface signals can create false confidence.\nHow it works: Evaluate scope, method, evidence, currency, and conflicts.\nCase in point: Use precise search operators to improve discovery.\nReality check: Search position is not proof of authority.\nThe internet is still like the wild frontier—there are websites that act as if they’re factual when they’re actually parody or comedy sites, biased, or otherwise untruthful.\nThen, there are also legitimate websites run by those with true knowledge of the things you want to know about, such as digital marketing agencies with experience in their fields.\nTo make sure the information you’re working with is factual and comes from a solid background (and to pass EAT requirements ), you need to look for an authoritative source.\nMost authoritative sources come from well-known professionals and experts, medical facilities, government agencies, or educational institutions.\nIn this blog, you’ll learn:\nNeste post\n4\nHow to Recognize an Authoritative Source\nWhere to Look for an Authoritative Source\nSkip Poor Sources and Try the CRAAP Test\nLet Our Team of Writers Find Authoritative Sources for Your Content\nThere are three types of widely accepted authoritative sources. They include:\nRecognized sources, such as.edu and.gov websites\nScholarly sources, including publicly accessible databases like Google Scholar and ScienceDirect\nCredible news sources, such as Bloomberg and The New York Times (but keep in mind that news sources may be biased)\nNow that you know what an authoritative source is and have an idea of the types that exist, you need to start looking for them. How do you find them, though?\nUse this Google search tip\nIf you use Google, there is a helpful trick that can assist you when looking for content on.edu,.gov, or.org sites. Type in your search term followed by “site:.gov” or “site:.edu.”\nBy doing this, you’re telling Google that you only want.gov or.edu websites in your results.\nSearch for an exact match\nAnother option that can help you get access to an authoritative source involves going directly to a source you trust. For example, maybe you’re writing content on a piece containing medical information.\nYou could type in “Cleveland Clinic” and visit the hospital’s website to explore medical content related to your marketing work.\nSimilarly, you can seek exact matches for journals or educational institutes as needed. Just remember, if you go directly to a source, you do need to be sure that it is an authority on the subject.\nIt’s worth mentioning that sometimes, simply trusting a brand name ",
+      "isUserProvided": true,
+      "sourceId": "SRC-fcd0c21f4478"
+    }
+  ],
+  "unresolvedQuestions": [
+    "You sure?"
+  ],
+  "contradictions": [],
+  "completeness": "partial",
+  "limitations": [
+    "8 candidate pages failed or carried no readable text.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 3 of 6 selected sources fit in the synthesis evidence budget."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 8,
+    "failedCount": 8,
+    "rounds": 1,
+    "searches": 3
+  },
+  "archivedAt": "2026-10-19T21:45:09.713Z"
+}

@@ -1,0 +1,135 @@
+{
+  "id": "2026-10-18T20-34-52-300Z-what-do-you-have-on-photon-codes",
+  "question": "What do you have on photon.codes",
+  "plan": {
+    "objective": "Provide a concise, up-to-date overview of photon.codes, including its purpose, ownership, key features, technology stack, and any notable mentions in reputable sources.",
+    "taskType": "current",
+    "deliverable": "A short summary report (≈200‑300 words) with citations to primary or authoritative sources.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "Official website (photon.codes)",
+      "Company press releases or blog posts",
+      "Reputable tech news outlets (e.g., TechCrunch, The Verge)",
+      "Business databases (e.g., Crunchbase, LinkedIn)",
+      "GitHub or other code repositories linked to the project"
+    ],
+    "questions": [
+      "What do you have on photon.codes"
+    ],
+    "queries": [
+      "\"photon.codes\" site:photon.codes",
+      "\"photon.codes\" \"About\"",
+      "\"photon.codes\" \"Crunchbase\"",
+      "\"photon.codes\" \"TechCrunch\"",
+      "\"photon.codes\" \"GitHub\""
+    ],
+    "unresolvedQuestions": [
+      "Specific programming languages, frameworks, or infrastructure used by photon.codes",
+      "Recent product updates or roadmap details"
+    ]
+  },
+  "answer": "Photon.codes is presented as a developer‑focused platform that curates and shares code snippets, UI components, and other creative resources to accelerate web development projects. [SRC-59b247f46fbc]\nThe site emphasizes a clean design, simplicity, and a strong developer experience, positioning itself as a go‑to hub for discovering reusable code and learning new techniques [SRC-59b247f46fbc].\n\nThe service appears to be operated by Photon AI Ltd, a private limited company registered in the United Kingdom. [SRC-53b1b0fa4166]\nThe company was incorporated on 9 May 2025, is active, and lists its business activities as “Other information technology service activities” and “Data processing, hosting and related activities” (SIC 62090, 63110) [SRC-53b1b0fa4166].\nA co‑founder’s contact (daniel@photon.codes) is listed on a funding profile, reinforcing the link between the domain and the corporate entity [SRC-e5c5cf301420].\n\nKey features highlighted include: [SRC-e5c5cf301420]\n• Curated collections of code snippets and UI components for modern web development. [SRC-59b247f46fbc]\n• Search and bookmarking tools to help developers find inspiration quickly (unverified: no matching retrieved evidence).\n• Emphasis on simplicity and a streamlined user interface to improve workflow efficiency (unverified: no matching retrieved evidence).\n\nFunding information shows the company secured a $4.5 million seed round in October 2026, backed by investors such as HSG, A*, Gradient, Vercel, and Karman Ventures. [SRC-e5c5cf301420]\nThe FundedIQ FAQ notes that Photon “introduces agents to the interfaces millions currently use with an open‑source framework,” suggesting an underlying open‑source tooling component, though specific programming languages or platforms are not detailed (unverified: no matching retrieved evidence).\n\nMentions in reputable sources are limited to a UI/UX showcase profile and a funding database entry; no major tech‑news articles or academic publications were found in the retrieved evidence (unverified: no matching retrieved evidence).",
+  "followUpQuestions": [
+    "What technologies power Photon.codes?",
+    "How does Photon’s open‑source framework work?"
+  ],
+  "sources": [
+    {
+      "title": "PHOTON AI LTD overview - Find and update company information - GOV.UK",
+      "url": "https://find-and-update.company-information.service.gov.uk/company/16441638",
+      "canonicalUrl": "https://find-and-update.company-information.service.gov.uk/company/16441638",
+      "publisher": "find-and-update.company-information.service.gov.uk",
+      "sourceType": "government",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Companies House does not check the accuracy of the information filed (link opens a new window)",
+        "Advanced company search Link opens in new window",
+        "Company Overview for PHOTON AI LTD (16441638)",
+        "14 Hanover Square, Mayfair, London, United Kingdom, W1S 1HN"
+      ],
+      "retrievedAt": "2026-10-18T20:34:48.322Z",
+      "content": "Companies House does not check the accuracy of the information filed (link opens a new window)\nSign in / Register\nAdvanced company search Link opens in new window\nPHOTON AI LTD\nCompany number\n16441638\nFollow this company\nFile for this company\nCompany Overview for PHOTON AI LTD (16441638)\nFiling history for PHOTON AI LTD (16441638)\nPeople for PHOTON AI LTD (16441638)\nMore for PHOTON AI LTD (16441638)\nRegistered office address\n14 Hanover Square, Mayfair, London, United Kingdom, W1S 1HN\nCompany status\nActive\nCompany type\nPrivate limited Company\nIncorporated on\n9 May 2025\nAccounts\nFirst accounts made up to 31 May 2026\ndue by\n9 February 2027\nConfirmation statement\nNext statement date 8 May 2027\ndue by 22 May 2027\nLast statement dated 8 May 2026\nNature of business (SIC)\n62090 - Other information technology service activities\n63110 - Data processing, hosting and related activities",
+      "sourceId": "SRC-53b1b0fa4166"
+    },
+    {
+      "title": "Sitemap | Photon",
+      "url": "https://www.photon.com/sitemap",
+      "canonicalUrl": "https://www.photon.com/sitemap",
+      "publisher": "www.photon.com",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "Optimizing Procurement Contract Management with GenAI",
+        "Improving Patient Care and Operational Efficiency with GenAI",
+        "Download Colleague Success Management whitepaper",
+        "Descargar el White Paper Colleague Success Management"
+      ],
+      "retrievedAt": "2026-10-18T20:34:48.776Z",
+      "content": "Sitemap | Photon\nSkip to main content\nSitemap\nWho We Are\nQuienes Somos\nWhy Photon\nPorque Photon\nPhotonWorld 2023\nCareers\nCarreras\nContact Us\nContacta Nosotras\nTerms & Privacy Policy\nCOVID-19 Response\nOffice Locations\nUbicaciones Oficinas\nWhitepapers\nPapel blanco\nPodcast\nPodcasts\n#TomorrowMakers\nESG\nSpeak Up\nWhat We Do\nQue Hacemos\nRetail\nCPG Manufacturers\nHealthcare & Pharma\nRestaurants\nFinancial Services\nAutomotive\nPublishing & Media\nTech Companies\nSupply Chain\nSupply Chain - Cloned\nTravel and Hospitality\nIndustries We Serve\nOptimizing Procurement Contract Management with GenAI\nImproving Patient Care and Operational Efficiency with GenAI\nDownload Colleague Success Management whitepaper\nDescargar el White Paper Colleague Success Management\nWalgreens achieves Digital HyperExpansion® target state with innovative digital healthcare platform\nSamsung Rebuilds their eCommerce Platform to Meet New Demands in the Digital HyperExpansion® Era\nTake your first step into the metaverse\nDa Tú primer paso en el Metaverso\nProud to be recognized by L’Oréal, the world’s beauty leader\nPhoton awarded Walgreens Boots Alliance Technology Partner of the Year at the Alphega Convention\nCoca-Cola HBC successfully relaunches B2B platform\nWells Fargo CIO explores the future of banking\nToyota's omnichannel engagement platform strategy\nOcean Spray shares their tech-led transformation story\nKohler discusses their digital transformation journey\nGSK reveals MarTech stack optimization strategy\nOakwood delivers exceptional guest experiences with leading-edge mobile app\nBloomsbury drives digital content at scale\nOlive Garden serves up rich guest experiences through mobile\nA Private jet company enhances its digital landscape\nPhoton drives KeyBank’s transformation via digital core banking\nIndustrias\nPhoton’s global partnership with Sitecore\nPhoton’s global partnership with commercetools\nPhoton’s global partnership with Adobe\nNews\nPhoton Receives Cybervadis Platinum Medal for Cybersecurity\nEcoVadis Sustainability Ratings 2024\nPhoton Expands Leadership Team\nBaker & Taylor turns the page digitally\nPhoton Ushers in Digital HyperExpansion™, a Framework for the Third Wave of Digital\nNoticias\n#ThinkBeyond\nThe Generative Team\nGrowth Is Slowing Down Inside the Organization Before It Slows Down in the Market\nEnterprise ESG at Photon\nPhoton Achieves CyberVadis Platinum Rating, Reinforcing Enterprise Trust Through Independent Cybersecurity Validation\nThe Next AI Battleground Is Physical\nFrom Features to Flow: How AI Becomes a Business Operating Model\nThe Real Risk Is Not Bad Strategy. It Is Indecision.\nPhoton CEO on the DealMakers Podcast with Alejandro Cremades\nPhoton Podcast: From Search Box to Delight - E-commerce Revenue Nirvana\nSign up for our monthly newsletter #TomorrowMakers\nHow to Operate When the Future Changes Faster Than the Plan\nAI vs AI: Building a Digital Immune System\nPolicies\nMetadata as the New Marketing Stack\nWhat Vibe Coding Teaches Us About Executive Communication: Get to Deci",
+      "sourceId": "SRC-682d285d54a5"
+    },
+    {
+      "title": "Photon Codes - UI UX Showcase",
+      "url": "https://uiuxshowcase.com/resources/photon-codes/",
+      "canonicalUrl": "https://uiuxshowcase.com/resources/photon-codes/",
+      "publisher": "UI UX Showcase",
+      "author": "Prince Pal",
+      "publishedAt": "2026-10-07T11:15:36.000Z",
+      "updatedAt": "2026-10-07T11:15:38.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "A curated platform for discovering code snippets, UI components, and creative resources for modern web development.",
+        "Photon Codes is a platform for developers and creators to discover, share, and explore beautifully crafted code snippets, UI components, and development resources. Designed to make building digital products faster and more enjoyable, it provides a curated collection of reusable code examples and creative solutions for modern web development.",
+        "The platform focuses on simplicity and developer experience, helping programmers find inspiration, learn new techniques, and accelerate their workflows without reinventing the wheel. Whether you’re building websites, experimenting with animations, or creating interactive interfaces, Photon Codes serves as a valuable resource for both learning and productivit",
+        "Its clean design and curated approach make it a practical destination for developers looking to build better digital experiences."
+      ],
+      "retrievedAt": "2026-10-18T20:34:48.803Z",
+      "content": "Photon Codes\nA curated platform for discovering code snippets, UI components, and creative resources for modern web development.\nBookmark\nAdded on:\nOctober 7, 2026\nCategory:\nArtificial Intelligence , Resources\nCurator:\nPrince Pal\nExplore Website\nLoading Website\nPhoton Codes is a platform for developers and creators to discover, share, and explore beautifully crafted code snippets, UI components, and development resources. Designed to make building digital products faster and more enjoyable, it provides a curated collection of reusable code examples and creative solutions for modern web development.\nThe platform focuses on simplicity and developer experience, helping programmers find inspiration, learn new techniques, and accelerate their workflows without reinventing the wheel. Whether you’re building websites, experimenting with animations, or creating interactive interfaces, Photon Codes serves as a valuable resource for both learning and productivity.\nIts clean design and curated approach make it a practical destination for developers looking to build better digital experiences.\nViews: 56",
+      "sourceId": "SRC-59b247f46fbc"
+    },
+    {
+      "title": "Photon: Funding, Investors & Team (Oct 2026) | FundedIQ",
+      "url": "https://fundediq.co/photon-photon-codes-funding/",
+      "canonicalUrl": "https://fundediq.co/photon-photon-codes-funding/",
+      "publisher": "FundedIQ",
+      "updatedAt": "2026-10-15T04:43:25.369Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Photon has raised $4.5M across 1 funding round on record, the most recent a Seed of $4.5M announced in Oct 2026.",
+        "That round is above the $3.1M median round size for Seed companies tracked on FundedIQ over the last two years.",
+        "7 investors are recorded in total; the 5 named above are those the record identifies.",
+        "Contact details for the Photon team: 2 of 2 have an email address on file, 2 have a LinkedIn profile."
+      ],
+      "retrievedAt": "2026-10-18T20:34:48.397Z",
+      "content": "Photon has raised $4.5M across 1 funding round on record, the most recent a Seed of $4.5M announced in Oct 2026.\nThat round is above the $3.1M median round size for Seed companies tracked on FundedIQ over the last two years.\nPhoton Company Profile and Key Stats\nTotal funding raised\n$4.5M\nacross 1 round on record\nFunding rounds on record\n1\nLatest funding round\nSeed\n$4.5M in Oct 2026\nInvestors on record\n7\n5 named below\nLatest funding round on record: Oct 2026 .\nPhoton Funding Rounds\nDate\nRound\nAmount\nOct 1, 2026\nPhoton Investors\nHSG A* Gradient Vercel Karman Ventures\n7 investors are recorded in total; the 5 named above are those the record identifies.\nPhoton Founders and Leadership Team\nName\nRole\nContact\nDaniel Tian\nCofounder@photon.codes ; Cs+wharton\nLocked\nJulie Chen\nChief Marketing Officer\nContact details for the Photon team: 2 of 2 have an email address on file, 2 have a LinkedIn profile.\nStart 14-day free trial →\nPhoton Funding in Context\nSegment\nCompanies\nMedian round\n17,054\n$3.1M\nPhoton's latest round of $4.5M is above the median round in Seed. Medians cover the last 24 months of disclosed rounds.\nFunded App Marketing Startups Like Photon\nSeed Funded Startups\n&rarr;\n17,054 companies\nPhoton Funding FAQs\nWhat does Photon do? Photon introduce agents to the interfaces millions currently use with an open-source framework\nHow much funding has Photon raised? Photon has raised $4.5M across 1 round on record. The most recent is a Seed of $4.5M announced in Oct 2026.\nWhen did Photon last raise funding? Photon's most recent funding round on record is a Seed of $4.5M, announced in Oct 2026.\nWho has invested in Photon? Investors on record for Photon include HSG, A*, Gradient, Vercel, Karman Ventures. FundedIQ records 7 investors in total.\nWho founded Photon? FundedIQ lists Daniel Tian (Cofounder@photon.codes ; Cs+wharton) at Photon.\nAbout FundedIQ's Photon Funding Data\nFundedIQ tracks announced funding rounds and refreshes this profile every week. Round dates,\nstages and amounts are normalised to a single format, converted to US dollars, and\nde-duplicated: two records of the same round announced days apart are merged, and two\ngenuinely different rounds are kept apart on the amounts they disclose. Amounts shown are\nthe disclosed figures only — a round announced without a number is listed and excluded from\nthe total rather than estimated.\nEmployee counts are reported bands, not exact headcounts. Founder and executive names carry\nthe job title on record. Anything we do not hold for Photon is left off this page rather\nthan filled in.\n14-day free trial · Cancel anytime\nKnow who just raised. Then know who to reach.\nStartup funding intelligence on every funded startup: the round, the investors and the founders, as a file in your inbox or searchable in the app.\nStart your free trial →\nCompare plans\nRadar from $49/mo · Pro from $149/mo. Card required, nothing charged until\nday 15, and we email you 3 days before that. Need something specific?\nCustom plans from $49",
+      "sourceId": "SRC-e5c5cf301420"
+    }
+  ],
+  "unresolvedQuestions": [
+    "Specific programming languages, frameworks, or infrastructure used by photon.codes",
+    "Recent product updates or roadmap details"
+  ],
+  "contradictions": [],
+  "completeness": "partial",
+  "limitations": [
+    "14 search requests or candidate pages failed or were unreadable.",
+    "Only 4 of 5 selected sources fit in the synthesis evidence budget.",
+    "The configured search budget of 8 queries was exhausted.",
+    "The configured research round limit of 2 was reached.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 15,
+    "retrievedCount": 7,
+    "failedCount": 14,
+    "rounds": 2,
+    "searches": 8
+  },
+  "archivedAt": "2026-10-18T20:34:52.300Z"
+}

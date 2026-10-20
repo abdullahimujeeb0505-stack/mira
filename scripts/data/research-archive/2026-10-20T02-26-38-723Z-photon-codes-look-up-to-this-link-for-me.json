@@ -1,0 +1,150 @@
+{
+  "id": "2026-10-20T02-26-38-723Z-photon-codes-look-up-to-this-link-for-me",
+  "question": "photon.codes, look up to this link for me",
+  "plan": {
+    "objective": "Collect up-to-date information about the website photon.codes, including its purpose, services, ownership, and any relevant technical documentation or reviews.",
+    "taskType": "current",
+    "deliverable": "A concise summary of photon.codes covering its primary function, target audience, key features, and any notable public references.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "Official photon.codes website",
+      "Authoritative tech articles or press releases",
+      "Peer‑reviewed or reputable developer forums",
+      "Recent (last 2 years) documentation or changelogs"
+    ],
+    "questions": [
+      "What is photon.codes and what services does it provide?"
+    ],
+    "queries": [
+      "site:photon.codes photon.codes, look up to this link for me",
+      "photon.codes official website",
+      "photon.codes platform overview",
+      "photon.codes documentation",
+      "photon.codes review site",
+      "photon.codes GitHub repository"
+    ],
+    "unresolvedQuestions": [
+      "What is photon.codes and what services does it provide?"
+    ]
+  },
+  "answer": "I retrieved 5 readable sources, but couldn't synthesize a reliable answer (rate limited). Please try again shortly.",
+  "followUpQuestions": [],
+  "sources": [
+    {
+      "title": "photon.codes Reviews | check if site is scam or legit | Scamadviser",
+      "url": "https://www.scamadviser.com/check-website/photon.codes",
+      "canonicalUrl": "https://www.scamadviser.com/check-website/photon.codes",
+      "publisher": "photon.codes",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "photon.codes Reviews | check if site is scam or legit | Scamadviser",
+        "photon.codes has an average to good trust score. Why?",
+        "This website hasn't been scanned in more than 30 days ago. Press the button to get a real time update.",
+        "According to the SSL check the certificate is valid"
+      ],
+      "retrievedAt": "2026-10-20T02:26:37.044Z",
+      "content": "photon.codes Reviews | check if site is scam or legit | Scamadviser\nDeutsch\nEnglish\nEspañol\nFrançais\nItaliano\n日本\nNederlands\nPortuguês\nRomanian\nRussian\n繁体中文\nUkrainian\n简体中文\nTry our App\nphoton.codes\nVISIT REPORT\nphoton.codes has an average to good trust score. Why?\nScamAdviser\nTrust Score 0\nLast Update: 1 year ago\nExpert Analysis\nBusiness Verification\nWarning\nThis website hasn't been scanned in more than 30 days ago. Press the button to get a real time update.\nPositive Highlights\nAccording to the SSL check the certificate is valid\nDNSFilter considers this website safe\nNegative highlights\nThis website does not have many visitors\nIn summary, It seems that photon.codes is legit and safe to use and not a scam website.\nYour Go-To Tools for Online Safety Disclaimer: Some of the links here are affiliate links. If you click them and make a purchase, we may earn a commission at no extra cost to you.\nScamAdviser App : That site looks legit. That's exactly how they get you. Modern scams are frighteningly convincing. ScamAdviser scans sites and blocks fraud calls automatically. Free on iOS & Android.\nNordVPN : NordVPN delivers powerful, seamless protection for your online life - whether you're at home, on public Wi-Fi, or traveling abroad. Recognized as one of the fastest VPN services available, it combines lightning-fast speeds with advanced encryption to keep\nIncogni : Incogni automatically removes your personal data from data brokers that trade in personal information online, helping reduce scam and identity theft risks without the hassle of manual opt-outs. Reclaim your privacy now!\nPrivate Internet Access (PIA) : PIA gives you a no-logs VPN built on the latest encryption standards and WireGuard protocol — meaning your browsing activity stays yours alone. Fast, private, and transparent. Take back your privacy today!\nSurfshark VPN : One subscription, unlimited devices. Surfshark is the fastest VPN out there — covering your phone, laptop, tablet and more with a stable, secure connection for browsing, streaming and working. Get Surfshark now!\nProton VPN : Independently audited and built with a strict no-logs policy, Proton VPN is trusted by over 3 million users worldwide. It’s been named Best VPN by Wired, PCMag, and Vice—offering strong encryption for anyone who takes their privacy seriously. Give Proton\nMysterium VPN : MysteriumVPN gives you real privacy without relying on a single company to protect it. Built on a decentralized network of independent nodes across the globe, it hides your traffic from ISPs, trackers, and the VPN provider itself. Choose data center IPs f\nSHOW DETAILS\nVISIT photon.codes\nEntire Review photon.codes\nWebshop Evaluation\nIn our Analysis we always check the Tranco ranking. In this case it was low. A low Tranco ranking means that the website has relatively few visitors. For a new website this is logical. The same is true for a highly specialized website. However if the website claims to be a large corporate or popular site, than warni",
+      "isUserProvided": true,
+      "sourceId": "SRC-60581634ee18"
+    },
+    {
+      "title": "Photon — Dashboard",
+      "url": "https://app.photon.codes/sign-in?callbackURL=%2F",
+      "canonicalUrl": "https://app.photon.codes/sign-in?callbackURL=%2F",
+      "publisher": "Photon",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "Continue with Google Don't have an account? Sign up",
+        "Developer dashboard for building with Photon."
+      ],
+      "retrievedAt": "2026-10-20T02:26:34.553Z",
+      "content": "Photon — Dashboard \nWelcome to Photon\nBring your agents to millions of lives\n\nEmail \nPassword Forgot password? \n\nLogin \n\nor \n\nContinue with Google Don't have an account? Sign up \n\nTerms of Service and Privacy Policy\nDeveloper dashboard for building with Photon.",
+      "isUserProvided": true,
+      "sourceId": "SRC-8de2ed019f6a"
+    },
+    {
+      "title": "photon-codes · GitHub Topics · GitHub",
+      "url": "https://github.com/topics/photon-codes",
+      "canonicalUrl": "https://github.com/topics/photon-codes",
+      "publisher": "GitHub",
+      "sourceType": "source repository",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Escalates unanswered Oh My Pi ask prompts to native iMessage polls through Photon, with terminal fallback and profile-aware configuration.",
+        "oh-my-pi oh-my-pi-extension spectrum-ts photon-codes",
+        "topic, visit your repo's landing page and select \"manage topics.\""
+      ],
+      "retrievedAt": "2026-10-20T02:26:33.508Z",
+      "content": "#\nphoton-codes\nStar\nHere is\n1 public repository\nmatching this topic...\nImArtisann /\nomp-photon-escalate\n1\nEscalates unanswered Oh My Pi ask prompts to native iMessage polls through Photon, with terminal fallback and profile-aware configuration.\noh-my-pi oh-my-pi-extension spectrum-ts photon-codes\nUpdated\nAug 29, 2026\nTypeScript\nAdd this topic to your repo\nTo associate your repository with the\ntopic, visit your repo's landing page and select \"manage topics.\"\nLearn more",
+      "isUserProvided": true,
+      "sourceId": "SRC-a24f31901638"
+    },
+    {
+      "title": "The Messaging Platform for AI Agents | Gradient Ventures",
+      "url": "https://www.gradient.com/blog/posts/photon-codes/",
+      "canonicalUrl": "https://www.gradient.com/blog/posts/photon-codes/",
+      "publisher": "Gradient Ventures",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Most AI models today sit within a new browser tab or custom mobile application but this has begun to change. OpenClaw, Poke, and Instinct have successively demonstrated the opportunity available by meeting the user where they exist already – messaging channels including iMessage, WhatsApp, SMS and Email. Managing identity, state, deliverability, and analytic",
+        "Messaging channels traditionally built for humans hold two key advantages as a deployment target for developers. The first is the acquisition and onboarding process that is available across a large set of users. WhatsApp has more than 3 billion users, and iMessage ships by default on more than 1 billion active iPhones. Acquiring users is as simple as having ",
+        "Photon has championed the developer in every step of their journey and have made the experience available wherever you may be building. We’re proud to support their mission and co-lead their $4.5 million seed round with A* alongside participation from Vercel, HongShan, Z Fellows, and more."
+      ],
+      "retrievedAt": "2026-10-20T02:26:33.555Z",
+      "content": "Investing in Photon\nThe Messaging Platform for AI Agents\nVig Sachidananda Darian Shirazi\nOctober 1, 2026\nMost AI models today sit within a new browser tab or custom mobile application but this has begun to change. OpenClaw, Poke, and Instinct have successively demonstrated the opportunity available by meeting the user where they exist already – messaging channels including iMessage, WhatsApp, SMS and Email. Managing identity, state, deliverability, and analytics across these distinct channels presents a new challenge to startups and enterprises. Daniel Tian and Ryan Zhu ran into this problem last year when building personal agents of their own and decided shortly after to start Photon . Photon now has more than 50,000 developers building on their platform with millions of messages relayed a day.\nMessaging channels traditionally built for humans hold two key advantages as a deployment target for developers. The first is the acquisition and onboarding process that is available across a large set of users. WhatsApp has more than 3 billion users, and iMessage ships by default on more than 1 billion active iPhones. Acquiring users is as simple as having them send a text and there is no need to teach users how to use the interface. Secondly, these channels have over the years added rich functionality that typically exceeds those presented by first party applications. Group chats let an agent join a conversation among several people. Tapbacks are a feedback mechanism and reply threads keep context pinned to the right message. Rich media, polls, message effects, and live location are native. iMessage apps and WhatsApp Flows render mini-apps inside a thread so an agent can present a user a custom UI instead of blocks of text. Lastly, payment rails are already in place. With Photon, developers can reach users across these channels while focusing on model development and the user experience rather than infrastructure.\nPhoton has championed the developer in every step of their journey and have made the experience available wherever you may be building. We’re proud to support their mission and co-lead their $4.5 million seed round with A* alongside participation from Vercel, HongShan, Z Fellows, and more.",
+      "isUserProvided": true,
+      "sourceId": "SRC-258c7044c7cb"
+    },
+    {
+      "title": "Photon Developer Resources",
+      "url": "https://doc.photonengine.com/photon/current/resources",
+      "canonicalUrl": "https://doc.photonengine.com/photon/current/resources",
+      "publisher": "doc.photonengine.com",
+      "updatedAt": "2026-08-06T00:00:00.000Z",
+      "sourceType": "technical documentation",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Everything you need to build, launch, and operate your project with Photon — learning material, community channels, and account tools — collected in one place.",
+        "Browse all available Photon samples and demos across products in one gallery.",
+        "Ready-to-use examples and step-by-step tutorials for every Photon product.",
+        "Get the latest Photon SDKs for all supported engines and platforms."
+      ],
+      "retrievedAt": "2026-10-20T02:26:33.327Z",
+      "content": "Resources\nEverything you need to build, launch, and operate your project with Photon — learning material, community channels, and account tools — collected in one place.\nLearning Resources\nBrowse all available Photon samples and demos across products in one gallery.\nReady-to-use examples and step-by-step tutorials for every Photon product.\nGet the latest Photon SDKs for all supported engines and platforms.\nNews, release announcements, and technical deep dives from the Photon team.\nTutorial videos and talks on the official Photon Engine channel.\nCommunity & Support\nJoin the Photon Engine Discord to ask questions and connect with other developers.\nPremium development support for game teams, with private access to Photon engineers.\nPremium support and exclusive samples for enterprise and industrial use cases.\nAll support options at a glance, from free community help to enterprise operations support.\nGet in touch with the Photon team for anything else.\nAccount & Operations\nCreate and manage your Photon applications, plans, and account.\nCheck the live service status of Photon Cloud regions and services.\nPlans and pricing for Photon Cloud, from the free tier to enterprise.\nResources for AI Ingestion\nMachine-readable index of the Photon documentation for LLMs and AI assistants.\nMachine-readable overview of the Photon website for LLMs and AI assistants.\nLast updated on 06/08/2026\nBack to top",
+      "isUserProvided": true,
+      "sourceId": "SRC-b6fca638179b"
+    }
+  ],
+  "unresolvedQuestions": [
+    "What is photon.codes and what services does it provide?"
+  ],
+  "contradictions": [
+    "The Gradient Ventures blog describes photon.codes as \"The Messaging Platform for AI Agents\" with millions of messages and 50,000 developers, while the UIUXShowcase entry describes it as a \"curated platform for discovering code snippets, UI components, and creative resources\" – two very different service descriptions.",
+    "The login dashboard (app.photon.codes) presents a developer dashboard for building agents, which aligns with the AI‑messaging description, but the Scamadviser and Gridinsoft pages provide only generic safety scores and no detail on service type, leaving the exact nature of the site ambiguous.",
+    "Photon Engine documentation (e.g., Photon PUN, Photon SDK) appears in the search results, but it refers to a multiplayer gaming networking service unrelated to photon.codes, suggesting possible name confusion between distinct products."
+  ],
+  "completeness": "partial",
+  "limitations": [
+    "Web search access was blocked or challenged on 1 of 6 queries.",
+    "Supplied link https://photon.codes/ was not readable: The page exceeded the configured size limit.",
+    "6 candidate pages failed or carried no readable text.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 5 of 6 selected sources fit in the synthesis evidence budget."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 8,
+    "failedCount": 9,
+    "rounds": 1,
+    "searches": 6
+  },
+  "archivedAt": "2026-10-20T02:26:38.723Z"
+}

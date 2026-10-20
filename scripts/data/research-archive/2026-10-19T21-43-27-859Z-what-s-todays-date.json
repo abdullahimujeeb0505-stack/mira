@@ -1,0 +1,103 @@
+{
+  "id": "2026-10-19T21-43-27-859Z-what-s-todays-date",
+  "question": "What's todays date",
+  "plan": {
+    "objective": "Determine the current calendar date.",
+    "taskType": "current",
+    "deliverable": "A direct statement of today's date.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "Official time and date services",
+      "Real-time system data"
+    ],
+    "questions": [
+      "What is today's date?"
+    ],
+    "queries": [
+      "current date today",
+      "today's date UTC"
+    ],
+    "unresolvedQuestions": [
+      "What is today's date?"
+    ]
+  },
+  "answer": "I retrieved 3 readable sources, but couldn't synthesize a reliable answer (provider outage (HTTP 503)). Please try again shortly.",
+  "followUpQuestions": [],
+  "sources": [
+    {
+      "title": "Today's Date and Time - Current Date, Time & More",
+      "url": "https://todaydateandtime.com/",
+      "canonicalUrl": "https://todaydateandtime.com/",
+      "publisher": "TodayDateAndTime.com",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Need to plan around holidays in two countries?",
+        "The Business Days Planner compares built-in holiday calendars, shows the next common working day, and helps when a deadline spans more than one market.",
+        "Convert a date and time between cities and time zones. See local dates, UTC offsets, and practical scheduling context.",
+        "Calculate the exact difference between two dates in days, weeks, months, years, weekdays, and inclusive ranges."
+      ],
+      "retrievedAt": "2026-10-19T21:43:20.196Z",
+      "content": "Today's Date and Time\nSwitch to 24h Copy time\nTimezone\nUTC Time\nWeek Number\nDay of Year\nNeed to plan around holidays in two countries?\nThe Business Days Planner compares built-in holiday calendars, shows the next common working day, and helps when a deadline spans more than one market.\nExplore the planner\nTime Zone Converter\nConvert a date and time between cities and time zones. See local dates, UTC offsets, and practical scheduling context.\nDate Difference\nCalculate the exact difference between two dates in days, weeks, months, years, weekdays, and inclusive ranges.\nUnix Timestamp Converter\nConvert Unix timestamps in seconds or milliseconds to readable local and UTC dates, and generate the current timestamp.\nWhy Recurring International Meetings Shift During Daylight Saving Time\nA worked example showing how one 9:00 New York meeting changes across London, Madrid, Los Angeles, Dubai, Tokyo, and Sydney during 2026 daylight saving transitions.\nUses IANA time-zone rules\nCompares city anchoring with UTC\nIncludes calendar-invite wording\nRead the guide\nClocks, calendars, timers & more\nWhat Day Is It\nFind out what day of the week it is today. Learn about the current day, day number, and how days of the week got their names.\nWhat Time Is It\nCheck the exact current time in your timezone. View time in 12-hour and 24-hour formats, UTC time, and learn about timezones.\nToday's Date\nSee today's date in every format: ISO 8601, US, European, written, and more. Copy any date format to your clipboard instantly.\nFind out the current ISO week number. Learn how week numbers are calculated and why they matter for business and planning.\nCalendar\nView the current month calendar. See today highlighted, navigate between months, and keep track of upcoming dates.\nWorld Clock\nSee the current time in cities around the world. Compare time zones, track daylight saving changes, and plan across borders.\nSunrise & Sunset\nFind sunrise and sunset times for any supported city and date. See dawn, dusk, golden hour, and daylight duration.\nCountdown Timer\nSet a countdown timer for minutes, hours, or any custom duration. Features alerts, fullscreen mode, and popular preset times.\nStopwatch\nFree online stopwatch with lap timing, split times, and millisecond precision. Perfect for sports, cooking, and productivity.\nDeadline Calculator\nCalculate legal, court, business, calendar-day, and SLA deadlines with holidays, cut-offs, audit trails, and exports.\nMeeting Planner\nCompare several cities, rank fair meeting slots, save shareable setups, and export calendar invites for distributed teams.\nPublic Holidays\nView public holidays by country and year, find the next holiday, inspect month coverage, and export CSV or ICS calendar files.\nAge Calculator\nWork out your exact age in years, months and days, watch it tick live in seconds, and see your next birthday, the day you were born, Korean age, Chinese zodiac and life milestones.\nWelcome to TodayDateAndTime.com , your go-to resource for accurate date ",
+      "isUserProvided": true,
+      "sourceId": "SRC-9698bca3bdca"
+    },
+    {
+      "title": "Current Timestamp - Live Unix Epoch, UTC | UnixEpoch.net",
+      "url": "https://unixepoch.net/current-timestamp",
+      "canonicalUrl": "https://unixepoch.net/current-timestamp",
+      "publisher": "UnixEpoch.net",
+      "author": "SectoJoy",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "View the current Unix timestamp, UTC time, and local time in real-time. One-click copy for developers.",
+        "Fast, accurate timestamp and date conversion tools.",
+        "A Unix timestamp (also known as epoch time or POSIX time) is the number of seconds that have elapsed since January 1, 1970, 00:00:00 UTC. It is widely used in programming, databases, and system logs as a universal time reference that is timezone-independent.",
+        "This tool displays the current time in multiple formats, updating every second. You can copy any format with one click or change the timezone to see the current time elsewhere."
+      ],
+      "retrievedAt": "2026-10-19T21:43:20.051Z",
+      "content": "Current Timestamp\nView the current Unix timestamp, UTC time, and local time in real-time. One-click copy for developers.\nTimezone:\nLocal Time\nUnix Epoch (Seconds)\n--\nCopy\nUnix Epoch (Milliseconds)\nUTC (ISO 8601)\nRFC 2822\nGPS Time\nJulian Day\nUnixEpoch.net\nFast, accurate timestamp and date conversion tools.\nWhat is a Unix Timestamp?\nA Unix timestamp (also known as epoch time or POSIX time) is the number of seconds that have elapsed since January 1, 1970, 00:00:00 UTC. It is widely used in programming, databases, and system logs as a universal time reference that is timezone-independent.\nHow to Use This Tool\nThis tool displays the current time in multiple formats, updating every second. You can copy any format with one click or change the timezone to see the current time elsewhere.\nView the live-updating current time in all formats on the page\nClick the copy button next to any format to copy it to your clipboard\nUse the timezone dropdown to see the current time in a different timezone\nAll values refresh automatically every second with no page reload needed\nFeatures\nReal-time auto-refreshing display updated every second\nSeven time formats including Unix epoch, UTC, RFC 2822, GPS, and Julian Day\nOne-click copy buttons for each format\nTimezone selector to view current time in any timezone\nNo server calls needed - all processing in the browser\nResponsive design works on desktop and mobile\nCommon Use Cases\nGetting the current Unix timestamp for API requests or database entries\nChecking the current UTC time for server synchronization\nConverting current time to GPS time for navigation systems\nFinding the Julian Day for astronomical calculations\nComparing time across different timezones for distributed teams\nDebugging timestamp-related issues in application logs\nRelated Timestamp Tools\nWatching the live epoch is step one; the next step is usually converting or comparing values. To decode any\nseconds or milliseconds epoch into UTC and local date-time, use the\nUnix Timestamp Converter .\nFor epoch-only workflows such as normalizing 10-digit or 13-digit values, the\nEpoch Converter covers both units,\nand to measure the gap between two epoch readings, try the\nTimestamp Difference Calculator .\nFor batch jobs or log analysis, the\nBatch Epoch Converter handles many values at once.\nFrequently Asked Questions\nWhat is the difference between Unix time and GPS time?\nUnix time counts seconds since January 1, 1970 UTC and includes leap seconds in its count. GPS time started on January 6, 1980 and does not account for leap seconds, so it currently differs from UTC by 18 seconds.\nWhat is Julian Day?\nJulian Day is a continuous count of days since the beginning of the Julian Period (January 1, 4713 BC). It is used primarily in astronomy and can represent any date as a single number, making date arithmetic straightforward.\nWhy does the millisecond timestamp have 13 digits?\nA Unix timestamp in seconds is typically 10 digits (until November 2286). The millisecond version multipli",
+      "isUserProvided": true,
+      "sourceId": "SRC-53ef18517a99"
+    },
+    {
+      "title": "Today Calendar — What Is Today's Date & Day?",
+      "url": "https://tomorrowcalendar.com/today-calendar/",
+      "canonicalUrl": "https://tomorrowcalendar.com/today-calendar/",
+      "publisher": "Tomorrow Calendar",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "What is today's date and day? Calculated live for your own timezone, with a running clock, how much of the day and year is left, and today's holidays.",
+        "The date and local time right now in each country we cover. Countries already on a different date are highlighted.",
+        "Country | Date there | Local time | Time zone |",
+        "India | — | — | Indian Standard Time (UTC+5:30) |"
+      ],
+      "retrievedAt": "2026-10-19T21:43:19.888Z",
+      "content": "TODAY\nToday Calendar\nWhat is today's date and day? Calculated live for your own timezone, with a running clock, how much of the day and year is left, and today's holidays.\n—\nBased on your device's timezone\nISO Week\nDay of Year\nDays Left\nHow far through…\nThis week (Mon–Sun) —\nThis month —\nThis year —\nToday in every format\nDay / Month / Year —\nMonth / Day / Year (US) —\nISO 8601 —\nWritten out —\nYesterday —\nTomorrow —\nHolidays today\nLoading…\nToday around the world\nThe date and local time right now in each country we cover. Countries already on a different date are highlighted.\nCountry | Date there | Local time | Time zone |\nIndia | — | — | Indian Standard Time (UTC+5:30) |\nUnited States | — | — | Eastern Time (ET, UTC−5/−4) |\nUnited Kingdom | — | — | GMT/BST (UTC+0/+1) |\nCanada | — | — | Eastern Time (ET, UTC−5/−4) |\nAustralia | — | — | Australian Eastern Time (AEDT/AEST, UTC+11/+10) |\nSingapore | — | — | Singapore Standard Time (UTC+8) |\nUnited Arab Emirates | — | — | Gulf Standard Time (UTC+4) |\nPhilippines | — | — | Philippine Time (PHT, UTC+8) |\nBangladesh | — | — | Bangladesh Standard Time (UTC+6) |\nChina | — | — | China Standard Time (CST, UTC+8) |\nBrazil | — | — | Brasília Time (BRT, UTC−3) |\nNetherlands | — | — | Central European Time (CET/CEST, UTC+1/+2) |\nIndonesia | — | — | Western Indonesia Time (WIB, UTC+7) |\nPakistan | — | — | Pakistan Standard Time (PKT, UTC+5) |\nSouth Africa | — | — | South Africa Standard Time (SAST, UTC+2) |\nNew Zealand | — | — | New Zealand Time (NZST/NZDT, UTC+12/+13) |\nNigeria | — | — | West Africa Time (WAT, UTC+1) |\nJapan | — | — | Japan Standard Time (JST, UTC+9) |\nGermany | — | — | Central European Time (CET/CEST, UTC+1/+2) |\nFrance | — | — | Central European Time (CET/CEST, UTC+1/+2) |\nMexico | — | — | Central Standard Time (CST, UTC−6) |\nSpain | — | — | Central European Time (CET/CEST, UTC+1/+2) |\nItaly | — | — | Central European Time (CET/CEST, UTC+1/+2) |\nSouth Korea | — | — | Korea Standard Time (KST, UTC+9) |\nTurkey | — | — | Turkey Time (TRT, UTC+3) |\nVietnam | — | — | Indochina Time (ICT, UTC+7) |\nMalaysia | — | — | Malaysia Time (MYT, UTC+8) |\nIreland | — | — | Irish Standard Time (GMT/IST, UTC+0/+1) |\nNepal | — | — | Nepal Time (NPT, UTC+5:45) |\nKenya | — | — | East Africa Time (EAT, UTC+3) |\nEgypt | — | — | Eastern European Time (EET/EEST, UTC+2/+3) |\nQatar | — | — | Arabia Standard Time (AST, UTC+3) |\nMorocco | — | — | Morocco Time (UTC+1; UTC+0 during Ramadan) |\nCambodia | — | — | Indochina Time (ICT, UTC+7) |\nHong Kong | — | — | Hong Kong Time (HKT, UTC+8) |\nIran | — | — | Iran Standard Time (IRST, UTC+3:30) |\nSweden | — | — | Central European Time (CET/CEST, UTC+1/+2) |\nKuwait | — | — | Arabia Standard Time (AST, UTC+3) |\nLebanon | — | — | Eastern European Time (EET/EEST, UTC+2/+3) |\nNorway | — | — | Central European Time (CET/CEST, UTC+1/+2) |\nGreece | — | — | Eastern European Time (EET/EEST, UTC+2/+3) |\nRomania | — | — | Eastern European Time (EET/EEST, UTC+2/+3) |\nSaudi Arabia | — | — | Arab",
+      "isUserProvided": true,
+      "sourceId": "SRC-fa9fe4897263"
+    }
+  ],
+  "unresolvedQuestions": [
+    "What is today's date?"
+  ],
+  "contradictions": [],
+  "completeness": "partial",
+  "limitations": [
+    "3 candidate pages failed or carried no readable text.",
+    "Only 3 of 6 selected sources fit in the synthesis evidence budget."
+  ],
+  "retrieval": {
+    "candidateCount": 14,
+    "retrievedCount": 11,
+    "failedCount": 3,
+    "rounds": 1,
+    "searches": 2
+  },
+  "archivedAt": "2026-10-19T21:43:27.860Z"
+}

@@ -1,0 +1,122 @@
+{
+  "id": "2026-10-18T22-17-04-537Z-what",
+  "question": "What!",
+  "plan": {
+    "objective": "What!",
+    "taskType": "general",
+    "deliverable": "A direct answer with supporting evidence and limitations.",
+    "requiresCurrentInformation": false,
+    "sourcePreferences": [
+      "primary sources",
+      "authoritative references",
+      "independent corroboration"
+    ],
+    "questions": [
+      "What!"
+    ],
+    "queries": [
+      "What!",
+      "What! authoritative sources",
+      "What! evidence and limitations"
+    ],
+    "unresolvedQuestions": [
+      "What!"
+    ]
+  },
+  "answer": "I retrieved 4 readable sources, but couldn't synthesize a reliable answer (the provider rejected the request (HTTP 404)). Please try again shortly.",
+  "followUpQuestions": [],
+  "sources": [
+    {
+      "title": "WhatsApp Web",
+      "url": "https://web.whatsapp.com/",
+      "canonicalUrl": "https://web.whatsapp.com/",
+      "publisher": "web.whatsapp.com",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "We recommend using WhatsApp with one of the following browsers:",
+        "Log in to WhatsApp Web for simple, reliable and private messaging on your desktop. Send and receive messages and files with ease, all for free."
+      ],
+      "retrievedAt": "2026-10-18T22:17:03.003Z",
+      "content": "Browser not supported\nWe recommend using WhatsApp with one of the following browsers:\nGoogle Chrome \nMozilla Firefox \nMicrosoft Edge \n\nWhatsApp also supports:\nOpera \nSafari (macOS 11+ only)\nLog in to WhatsApp Web for simple, reliable and private messaging on your desktop. Send and receive messages and files with ease, all for free.",
+      "isUserProvided": true,
+      "sourceId": "SRC-0174b5c51c01"
+    },
+    {
+      "title": "What is an Authoritative Source? - How to Search for Sources and Manage Them - LibGuides at Graduate Institute of International and Development Studies",
+      "url": "https://libguides.graduateinstitute.ch/how_to_search/authority",
+      "canonicalUrl": "https://libguides.graduateinstitute.ch/how_to_search/authority",
+      "publisher": "libguides.graduateinstitute.ch",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "What is an Authoritative Source? - How to Search for Sources and Manage Them - LibGuides at Graduate Institute of International and Development Studies",
+        "&ldquo;A source that is official. Also, a work known to be reliable because its authenticity or integrity is widely recognized by experts in the field.&rdquo;",
+        "(Reitz, Joan. ODLIS: Online Dictionary for Library and Information Science )",
+        "&ldquo; Authority is constructed and contextual . Information resources reflect their creators&rsquo; expertise and credibility, and are evaluated based on the information need and the context in which the information will be used. Authority is constructed in that various communities may recognize different types of authority. It is contextual in that the in"
+      ],
+      "retrievedAt": "2026-10-18T22:17:02.868Z",
+      "content": "What is an Authoritative Source? - How to Search for Sources and Manage Them - LibGuides at Graduate Institute of International and Development Studies\nSkip to Main Content\nWhat is an Authoritative Source?\nPhoto CC BY-SA Mark Fischer\n&ldquo;A source that is official. Also, a work known to be reliable because its authenticity or integrity is widely recognized by experts in the field.&rdquo;\n(Reitz, Joan. ODLIS: Online Dictionary for Library and Information Science )\n&ldquo; Authority is constructed and contextual . Information resources reflect their creators&rsquo; expertise and credibility, and are evaluated based on the information need and the context in which the information will be used. Authority is constructed in that various communities may recognize different types of authority. It is contextual in that the information need may help to determine the level of authority required.&rdquo;\n( ACRL Framework for Information Literacy for Higher Education , adopted 2016)\nIn the general context of academic writing, authority partly derives from current academic research activity and employment in the designated field . The following are necessary to consider a work as a valid scholarly publication:\nClaims are referenced and a bibliography is included\nThe work is published by a recognised institution/publisher\nThe work is peer-reviewed\nBut other people and media can be authoritative sources in the appropriate context.\nWhat Source Types Can Be Considered Authoritative?\nThe source type provides a preliminary idea, but it is not sufficient to determine authority. The expertise of the author matters even for traditional scholarly publications, and verification grows more necessary as we go further down the categories and gatekeeping decreases.\nScholarly publications &ndash; must be used as references\nPeer reviewed books and journals\nNon-PR academic books and journals (lesser value)\nGrey literature &ndash; can be used as references\nPreprints, working papers, etc. &ndash; non-published academic research\nReports and publications from groups and institutions\nPopular and trade/professional sources &ndash; require careful consideration before using as references\nNews, magazines\nBooks (non-academic)\nOther websites\nPublic conversation and social media &ndash; should not be used as references\nDiscussion forums\nSocial media (Facebook, X, Instagram, TikTok, etc.)",
+      "isUserProvided": true,
+      "sourceId": "SRC-1095d850e32b"
+    },
+    {
+      "title": "Limitations in Medical Research: Recognition, Influence, and Warning - PMC",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10882193/",
+      "canonicalUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10882193/",
+      "publisher": "PubMed Central (PMC)",
+      "sourceType": "government",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        ". 2024 Jan-Mar;28(1):e2023.00049. doi: 10.4293/JSLS.2023.00049",
+        "Limitations in Medical Research: Recognition, Influence, and Warning",
+        "✉ Address correspondence to: Douglas E. Ott, MD, MBA, 109 Preston Court, Macon, GA 31210, USA, Telephone: 478-747-1655, E-mail: gabiomed83@gmail.com .",
+        "© 2024 by SLS, Society of Laparoscopic & Robotic Surgeons."
+      ],
+      "retrievedAt": "2026-10-18T22:17:02.960Z",
+      "content": "JSLS\n. 2024 Jan-Mar;28(1):e2023.00049. doi: 10.4293/JSLS.2023.00049\nLimitations in Medical Research: Recognition, Influence, and Warning\nDouglas E Ott\nDouglas E Ott , MD, MBA\n1 Mercer University, Macon, Georgia, USA.\nFind articles by Douglas E Ott\n1, ✉\nAuthor information\nCopyright and License information\n✉ Address correspondence to: Douglas E. Ott, MD, MBA, 109 Preston Court, Macon, GA 31210, USA, Telephone: 478-747-1655, E-mail: gabiomed83@gmail.com .\n✉ Corresponding author.\n© 2024 by SLS, Society of Laparoscopic & Robotic Surgeons.\nPMC Copyright notice\nPMCID: PMC10882193 PMID: 38405216\nAbstract\nBackground:\nAs the number of limitations increases in a medical research article, their consequences multiply and the validity of findings decreases. How often do limitations occur in a medical article? What are the implications of limitation interaction? How often are the conclusions hedged in their explanation?\nObjective:\nTo identify the number, type, and frequency of limitations and words used to describe conclusion(s) in medical research articles.\nMethods:\nSearch, analysis, and evaluation of open access research articles from 2021 and 2022 from the Journal of the Society of Laparoscopic and Robotic Surgery and 2022 Surgical Endoscopy for type(s) of limitation(s) admitted to by author(s) and the number of times they occurred. Limitations not admitted to were found, obvious, and not claimed. An automated text analysis was performed for hedging words in conclusion statements. A limitation index score is proposed to gauge the validity of statements and conclusions as the number of limitations increases.\nResults:\nA total of 298 articles were reviewed and analyzed, finding 1,764 limitations. Four articles had no limitations. The average was between 3.7% and 6.9% per article. Hedging, weasel words and words of estimative probability description was found in 95.6% of the conclusions.\nConclusions:\nLimitations and their number matter. The greater the number of limitations and ramifications of their effects, the more outcomes and conclusions are affected. Wording ambiguity using hedging or weasel words shows that limitations affect the uncertainty of claims. The limitation index scoring method shows the diminished validity of finding(s) and conclusion(s).\nKeywords: Bias, Hedging, Limitations, Methods, Research, Uncertainty, Validity\nINTRODUCTION\nAs the number of limitations in a medical research article increases, does their influence have a more significant effect than each one considered separately, making the findings and conclusions less reliable and valid? Limitations are known variables that influence data collection and findings and compromise outcomes, conclusions, and inferences. A large body of work recognizes the effect(s) and consequence(s) of limitations. 1 – 77 Other than the ones known to the author(s), unknown and unrecognized limitations influence research credibility. This study and analysis aim to determine how frequently and what limitations",
+      "isUserProvided": true,
+      "sourceId": "SRC-defc76870cc1"
+    },
+    {
+      "title": "15 Types of Academic Sources and Where to Find Them",
+      "url": "https://www.sourcely.net/resources/15-types-of-academic-sources-and-where-to-find-them",
+      "canonicalUrl": "https://www.sourcely.net/resources/15-types-of-academic-sources-and-where-to-find-them",
+      "publisher": "www.sourcely.net",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "15 Types of Academic Sources and Where to Find Them Features",
+        "15 Types of Academic Sources and Where to Find Them",
+        "Looking for reliable academic sources? Here's a quick guide to the 15 types of academic sources that can strengthen your research. Each source type offers unique insights and serves specific purposes in academic work. From peer-reviewed articles to government reports, this list covers where to find them and how to evaluate their quality .",
+        "Peer-Reviewed Journal Articles : Found on databases like EBSCOhost , ProQuest , or Google Scholar . These are highly credible and rigorously reviewed."
+      ],
+      "retrievedAt": "2026-10-18T22:17:03.837Z",
+      "content": "15 Types of Academic Sources and Where to Find Them Features\nPricing\nReviews\nBlog\nResources\nAbout\nAffiliate\nContact\nLog in\nGet started\nHome Resources Academic Research\nPublished Sep 20, 2025 ⦁ 32 min read\n15 Types of Academic Sources and Where to Find Them\nLooking for reliable academic sources? Here's a quick guide to the 15 types of academic sources that can strengthen your research. Each source type offers unique insights and serves specific purposes in academic work. From peer-reviewed articles to government reports, this list covers where to find them and how to evaluate their quality .\nKey Academic Sources:\nPeer-Reviewed Journal Articles : Found on databases like EBSCOhost , ProQuest , or Google Scholar . These are highly credible and rigorously reviewed.\nBooks (Monographs & Edited Volumes) : Available via university libraries, Google Books, or publishers like Oxford University Press .\nConference Papers : Access through IEEE Xplore , ACM Digital Library , or conference websites.\nGovernment Publications : Search on GovInfo.gov , FedWorld.gov, or specific agency sites like the EPA or CDC.\nTheses and Dissertations : Use ProQuest Dissertations, university repositories, or NDLTD .\nAcademic Encyclopedias : Platforms like Oxford Reference Online or SAGE Reference are ideal.\nScholarly Magazines : Accessible on JSTOR , Project MUSE , or professional association websites.\nTechnical Standards : Look to ASTM , IEEE , or NIST for detailed protocols.\nData Sets : Government agencies (e.g., Census Bureau), academic repositories, or platforms like FRED .\nPatents : Search Google Patents , USPTO , or WIPO for technological insights.\nLegal Documents : Use PACER , CourtListener , or GovInfo for case law and statutes.\nAcademic Websites : Trust .edu and .gov domains for credible information.\nScientific Reports : Explore agency sites like NASA or RAND Corporation for detailed findings.\nNewspaper Articles : Investigative pieces from outlets like The New York Times or The Guardian .\nMultimedia Sources : Podcasts, videos, and lectures from institutions like MIT OpenCourseWare .\nHow to Evaluate Sources:\nCheck credentials : Look for authors with expertise and affiliations.\nVerify peer review : Confirm through journal policies or tools like Ulrichsweb .\nAssess relevance : Ensure the source aligns with your research topic.\nWatch for bias : Investigate funding sources or affiliations.\nUse tools like Sourcely : Simplify your search with AI-driven recommendations.\nPro Tip : Diversify your sources for a well-rounded analysis and use tools like Sourcely to save time. Whether you’re writing a college essay or conducting advanced research, this guide ensures you’re equipped with the right tools and strategies.\nHow to use Scholarly Sources in your Research\n1. Peer-Reviewed Journal Articles\nPeer-reviewed journal articles are often considered the most reliable academic sources. Before publication, these articles undergo a thorough evaluation by experts who assess their quality, res",
+      "isUserProvided": true,
+      "sourceId": "SRC-11e95b7772ce"
+    }
+  ],
+  "unresolvedQuestions": [
+    "What!"
+  ],
+  "contradictions": [],
+  "completeness": "partial",
+  "limitations": [
+    "11 candidate pages failed or carried no readable text.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 4 of 5 selected sources fit in the synthesis evidence budget."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 5,
+    "failedCount": 11,
+    "rounds": 1,
+    "searches": 3
+  },
+  "archivedAt": "2026-10-18T22:17:04.538Z"
+}

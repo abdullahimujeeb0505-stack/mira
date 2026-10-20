@@ -1,0 +1,115 @@
+{
+  "id": "2026-10-18T20-59-41-334Z-what-s-elon-musk-net-worth",
+  "question": "What's Elon Musk net worth",
+  "plan": {
+    "objective": "Identify Elon Musk's most recent net worth estimate and the primary source(s) reporting it.",
+    "taskType": "current",
+    "deliverable": "A concise statement of Elon Musk's current net worth with the exact figure, date of estimate, and citation of the authoritative source(s).",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "Official billionaire rankings (e.g., Forbes real‑time billionaires list, Bloomberg Billionaires Index)",
+      "Recent SEC filings or company disclosures that impact Musk's holdings",
+      "Reputable financial news outlets (e.g., Financial Times, Wall Street Journal) that cite primary data",
+      "Direct statements from Elon Musk or his representatives, if publicly available"
+    ],
+    "questions": [
+      "What's Elon Musk's net worth?"
+    ],
+    "queries": [
+      "Elon Musk net worth Forbes real‑time billionaire list 2024",
+      "Elon Musk net worth Bloomberg Billionaires Index October 2026",
+      "Elon Musk recent SEC filings Tesla holdings value",
+      "Elon Musk net worth latest financial news October 2026",
+      "Elon Musk net worth based on private company valuations 2024‑2026"
+    ],
+    "unresolvedQuestions": []
+  },
+  "answer": "Elon Musk’s net worth is estimated at roughly $1.04 trillion to $1.05 trillion as of early October 2026, based on Bloomberg’s latest valuation (which reported a $65 billion jump on 5 Oct 2026) and corroborating Forbes figures published in early October 2026. [SRC-f019ba061d70] The earlier September 2026 estimates were lower (Forbes $915.4 billion on 28 Sept 2026; Bloomberg $924 billion a few days earlier). [SRC-d7fcab8fa349]",
+  "followUpQuestions": [
+    "Elon Musk net‑worth trend in 2026",
+    "How Musk’s wealth compares to other top billionaires"
+  ],
+  "sources": [
+    {
+      "title": "Elon Musk Net Worth [Updated 2026]",
+      "url": "https://www.companieshistory.com/elon-musk-net-worth/",
+      "canonicalUrl": "https://www.companieshistory.com/elon-musk-net-worth/",
+      "publisher": "Companies History",
+      "publishedAt": "2026-10-03T10:57:41.000Z",
+      "updatedAt": "2026-10-03T10:57:44.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Forbes put Elon Musk’s net worth at $915.4 billion on September 28, 2026, and Bloomberg had Musk at $924 billion four days earlier. Both are estimates built from share prices, since no filing, court record or audit confirms Musk’s total wealth.",
+        "Reported net worth | About $915.4 billion (Forbes, Sept. 28, 2026) |",
+        "Born | June 28, 1971, Pretoria, South Africa (age 55) |",
+        "Primary income source | Stakes in SpaceX and Tesla; no Tesla salary |"
+      ],
+      "retrievedAt": "2026-10-18T20:59:36.146Z",
+      "content": "Forbes put Elon Musk’s net worth at $915.4 billion on September 28, 2026, and Bloomberg had Musk at $924 billion four days earlier. Both are estimates built from share prices, since no filing, court record or audit confirms Musk’s total wealth.\nKey facts about Elon Musk’s net worth\nReported net worth | About $915.4 billion (Forbes, Sept. 28, 2026) |\nFull name | Elon Reeve Musk |\nBorn | June 28, 1971, Pretoria, South Africa (age 55) |\nPrimary income source | Stakes in SpaceX and Tesla; no Tesla salary |\nEducation | University of Pennsylvania |\nMarital status | Divorced; 14 publicly known children |\nHow much is Elon Musk worth, and who does the counting\nForbes and Bloomberg price Musk’s public stakes at the market, estimate the private ones, and subtract known debt. On September 6, 2026, their totals were $904 billion and $908 billion, according to Wikipedia’s summary of both indexes.\nSpaceX is most of the number. The Forbes profile counts a 38% SpaceX stake including options and nearly 11% of Tesla, before unvested restricted stock that could add about 8% more.\nMusk also owns pieces of Neuralink and The Boring Company. Both are private and publish no financials, so any dollar figure for them is an outside guess.\nWhat made up Elon Musk’s net worth on Aug. 1, 2026\nBloomberg’s split of a $684 billion total, in billions of U.S. dollars\nSource: Bloomberg Billionaires Index, as reported by Fortune on Aug. 1, 2026. Figures are estimates. “Other” covers Neuralink, The Boring Company and cash, which Bloomberg did not itemize. No newer dollar breakdown has been published.\nWho is Elon Musk, and where the first money came from\nElon Musk made about $180 million when eBay bought PayPal in October 2002. PayPal had formed from a merger with X.com, the online bank Musk started in 1999, as PayPal’s ownership history shows.\nThat money went into SpaceX, founded in 2002, and Tesla, which Musk backed in 2004 and has run as CEO since 2008. Forbes first listed Musk as a billionaire in 2012, at $2 billion.\nTesla carried the next decade. Its market value went from $75.7 billion at the end of 2019 to $1.06 trillion two years later, per Tesla’s year-by-year market capitalization .\nElon Musk today runs SpaceX, which now includes xAI and X, and is still Tesla’s CEO.\nElon Musk net worth 2025 vs. 2026: the SpaceX swing\nPrivate share sales did the work in 2025. Forbes had Musk at 500billioninOctoberand 677 billion on December 15, after a tender offer valued SpaceX at $800 billion.\nIn February 2026, SpaceX acquired xAI, which already owned the former Twitter. That deal pushed Forbes’ estimate past $800 billion; the earlier step is covered in how X ended up inside xAI .\nSpaceX priced its IPO at $135 a share on June 11, valuing the company near $1.77 trillion, CNN reported . Shares reached $225.64 on June 16, and Bloomberg’s estimate peaked near $1.33 trillion.\nThe fall took about six weeks. By August 1, Bloomberg had Musk at $684 billion, and Forbes had the figure back at $892 bill",
+      "sourceId": "SRC-d7fcab8fa349"
+    },
+    {
+      "title": "Elon Musk Net Worth in October 2026: The Real Numbers",
+      "url": "https://earlymagazine.co.uk/elon-musk-net-worth/",
+      "canonicalUrl": "https://earlymagazine.co.uk/elon-musk-net-worth/",
+      "publisher": "olivihome",
+      "publishedAt": "2026-10-08T06:58:17.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Rajinikanth $52 million Ajay Devgn $51 million Tyla $8 Kelly Clarkson $60 million Shah Rukh Khan $1.2 billion Selma Blair $6 million Caitlin Clark $20 million Melanie Walters $2 million Sydney Sweeney $40 million Kathryn Edwards $2 million Dani Daniels $800,000 Dave Blaney $8 million",
+        "Elon Musk net worth is about $1.04 trillion to $1.05 trillion as of early October 2026, based on Bloomberg and Forbes estimates. His wealth comes mainly from Tesla and SpaceX shares, so the figure changes every trading day.",
+        "By the Editorial Team. Figures checked against Bloomberg and Forbes reporting published through October 7, 2026.",
+        "Elon Musk net worth is back above $1 trillion. Bloomberg estimated his wealth at $1.04 trillion after a $65 billion increase on October 5, 2026, as Tesla and SpaceX shares climbed. Bloomberg reports this is his first return above that level in about three months. One trading day added $65 billion. Musk first reached the trillion mark on June 12, 2026, when S"
+      ],
+      "retrievedAt": "2026-10-18T20:59:37.448Z",
+      "content": "More Net Worth Celebrities\n‹\nRajinikanth $52 million Ajay Devgn $51 million Tyla $8 Kelly Clarkson $60 million Shah Rukh Khan $1.2 billion Selma Blair $6 million Caitlin Clark $20 million Melanie Walters $2 million Sydney Sweeney $40 million Kathryn Edwards $2 million Dani Daniels $800,000 Dave Blaney $8 million\nElon Musk net worth is about $1.04 trillion to $1.05 trillion as of early October 2026, based on Bloomberg and Forbes estimates. His wealth comes mainly from Tesla and SpaceX shares, so the figure changes every trading day.\nBy the Editorial Team. Figures checked against Bloomberg and Forbes reporting published through October 7, 2026.\nElon Musk net worth is back above $1 trillion. Bloomberg estimated his wealth at $1.04 trillion after a $65 billion increase on October 5, 2026, as Tesla and SpaceX shares climbed. Bloomberg reports this is his first return above that level in about three months. One trading day added $65 billion. Musk first reached the trillion mark on June 12, 2026, when SpaceX went public on the Nasdaq.\nSearch for his current figure and you will find several different totals. Forbes, Bloomberg, and live trackers each use their own method and update at different times. This guide gives you the latest numbers, explains the gaps between them, and shows you which figure to trust for your purpose.\nThis article covers four topics. You will see the latest Elon Musk net worth figures from Bloomberg and Forbes. You will learn why those figures differ. You will see how SpaceX and Tesla drive his wealth and how he compares with other billionaires. Finally, you get short answers to common questions.\nBloomberg’s own profile page shows a net worth of $1.05 trillion, with a year-over-year gain of $583 billion, or 125.2%. Business Insider reported a slightly higher Forbes estimate of $1.046 trillion on October 6. Those two numbers are close, which is a good sign.\nHere is how the main readings compare:\nSource |\nReported net worth |\nDate |\nBloomberg |\n$1.04 trillion |\nAfter October 5 trading |\nForbes (via Business Insider) |\n$1.046 trillion |\nReported October 6 |\nForbes monthly ranking |\n$936 billion |\nOctober 1 |\nForbes annual list |\n$839 billion |\nMarch 1 |\nBloomberg peak |\n$1.32 trillion |\nJune 16 |\nThe table shows a wide range. The date explains most of it. Forbes put Musk at $936 billion on October 1, a gain of $44 billion over the prior month as SpaceX stock rose 5%. Then shares rallied again. On October 2 alone, his Forbes estimate jumped $61 billion to $979.7 billion. By October 6, it had passed $1 trillion.\nWhy Bloomberg and Forbes Numbers Differ\nTwo things cause most of the gap: timing and method.\nTiming matters because prices move all day. A snapshot at 2:15 p.m. will not match a closing price. Always check the date next to any figure you read.\nMethod matters because each outlet treats certain shares differently. Tesla and Musk agreed in April to restrict his $116 billion in stock, and Forbes removed that stock from its calculat",
+      "sourceId": "SRC-f019ba061d70"
+    },
+    {
+      "title": "Elon Musk's Net Worth 2026: Tesla, SpaceX & X Holdings | Investormint",
+      "url": "https://investormint.com/investing/elon-musk-net-worth",
+      "canonicalUrl": "https://investormint.com/investing/elon-musk-net-worth",
+      "publisher": "Investormint",
+      "author": "George Windsor",
+      "publishedAt": "2026-03-18T11:35:45.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Elon Musk’s Net Worth 2026: Tesla, SpaceX & X Holdings",
+        "Elon Musk Estimated Net Worth 2026: Breaking Down Tesla Equity, SpaceX Valuation, and X Holdings",
+        "As of March 2026, Elon Musk’s estimated net worth sits between $676 billion (Bloomberg Billionaires Index, conservative estimate) and $852 billion (Forbes Real-Time Billionaires), making him the wealthiest individual ever recorded in either index. The $176 billion gap between those two figures is not a rounding error — it reflects genuine methodological disa",
+        "His wealth is concentrated in three primary assets: an approximate 13–17% stake in Tesla, a ~43% ownership stake in the newly merged SpaceX-xAI entity, and a controlling position in X Holdings (formerly Twitter). Nearly 95% of that figure consists of unrealized equity gains — meaning Musk remains largely illiquid despite holding wealth that exceeds the GDP o"
+      ],
+      "retrievedAt": "2026-10-18T20:59:36.637Z",
+      "content": "Celebrity , Finance , Investing\nElon Musk’s Net Worth 2026: Tesla, SpaceX & X Holdings\nMarch 18, 2026\nGeorge Windsor\nElon Musk Estimated Net Worth 2026: Breaking Down Tesla Equity, SpaceX Valuation, and X Holdings\nAs of March 2026, Elon Musk’s estimated net worth sits between $676 billion (Bloomberg Billionaires Index, conservative estimate) and $852 billion (Forbes Real-Time Billionaires), making him the wealthiest individual ever recorded in either index. The $176 billion gap between those two figures is not a rounding error — it reflects genuine methodological disagreement about how to value private companies before an IPO, how to treat unvested equity, and whether to discount future compensation packages.\nHis wealth is concentrated in three primary assets: an approximate 13–17% stake in Tesla, a ~43% ownership stake in the newly merged SpaceX-xAI entity, and a controlling position in X Holdings (formerly Twitter). Nearly 95% of that figure consists of unrealized equity gains — meaning Musk remains largely illiquid despite holding wealth that exceeds the GDP of many mid-size economies.\nThis article breaks down each wealth driver with current estimates, outlines the key events that drove a $200+ billion increase in early 2026, and explains why analysts disagree so sharply on the final number.\nDisclaimer: All net worth figures are estimates based on publicly reported data as of March 2026. This article is not financial advice.\nElon Musk’s Estimated 2026 Net Worth: The Quick Breakdown\nTwo headline figures dominate coverage of Musk’s 2026 wealth:\nBloomberg Billionaires Index: ~$676 billion (conservative; applies private company discounts and excludes contingent compensation)\nForbes Real-Time Billionaires: ~$852 billion (uses full SpaceX-xAI merged valuation and includes majority of Tesla compensation package value)\nThe bulk of the early-2026 wealth surge — estimated at over $200 billion — came from two events:\nThe February 2026 SpaceX-xAI all-stock merger , which valued the combined private entity at approximately $1.25 trillion\nThe late-February 2026 Delaware court reinstatement of Musk’s ~$1 trillion Tesla compensation package, which had been initially blocked in January 2026\nThe wealth gap between Musk and the second-richest person — Google co-founder Larry Page, estimated at approximately $250–281 billion — now exceeds $400–600 billion depending on the index used. By comparison, previous gaps between the #1 and #2 billionaires (e.g., Bezos vs. Gates in the early 2010s) typically ranged from $50 billion to $150 billion. Musk’s current lead is historically unprecedented.\nOne critical caveat applies to all of these figures: approximately 95% of Musk’s net worth consists of unrealized equity gains . He does not hold a cash reserve proportionate to his net worth. Musk himself has described his financial position as “cash poor” — a structural reality that creates both volatility risk and liquidity mismatch.\nTesla Stock Ownership: The Original Wealth",
+      "sourceId": "SRC-25ffd1146d6e"
+    }
+  ],
+  "unresolvedQuestions": [
+    "What is the exact net‑worth figure reported by Bloomberg for Elon Musk in early October 2026?",
+    "What is the exact net‑worth figure reported by Forbes’ Real‑Time Billionaires list for Elon Musk in October 2026?",
+    "Which of the conflicting estimates (e.g., >$1 trillion vs. <$1 trillion) is considered the most current and reliable by major financial outlets?"
+  ],
+  "contradictions": [
+    "September 2026 estimates ($915‑$924 billion) differ from early‑October 2026 estimates ($1.04‑$1.05 trillion)."
+  ],
+  "completeness": "supported",
+  "limitations": [
+    "8 search requests or candidate pages failed or were unreadable.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 3 of 6 selected sources fit in the synthesis evidence budget."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 8,
+    "failedCount": 8,
+    "rounds": 1,
+    "searches": 5
+  },
+  "archivedAt": "2026-10-18T20:59:41.334Z"
+}

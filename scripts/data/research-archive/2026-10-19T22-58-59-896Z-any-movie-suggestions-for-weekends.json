@@ -1,0 +1,121 @@
+{
+  "id": "2026-10-19T22-58-59-896Z-any-movie-suggestions-for-weekends",
+  "question": "Any movie suggestions for weekends ?",
+  "plan": {
+    "objective": "Provide a curated list of movie recommendations suitable for weekend viewing, covering a range of genres and audience preferences.",
+    "taskType": "general",
+    "deliverable": "A concise list of movie suggestions with brief descriptions, genre tags, runtime, and rationale for each recommendation.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "IMDb",
+      "Rotten Tomatoes",
+      "Metacritic",
+      "Letterboxd",
+      "Official studio press releases"
+    ],
+    "questions": [
+      "What are popular and critically acclaimed movies released in the last five years that are good for a weekend watch?",
+      "Which movies have runtimes under 2.5 hours for easy weekend viewing?",
+      "What family‑friendly or group‑friendly titles are recommended for weekend entertainment?",
+      "Which classic films are timeless picks for a weekend marathon?",
+      "What genre‑specific recommendations (e.g., comedy, thriller, sci‑fi) are ideal for weekend relaxation?"
+    ],
+    "queries": [
+      "top rated movies 2023 weekend watch site:rottentomatoes.com",
+      "IMDb most popular movies 2022-2024 runtime under 150 minutes",
+      "family friendly movies weekend recommendations Rotten Tomatoes",
+      "classic movies must watch for weekend IMDb list",
+      "best comedy thriller movies 2021-2024 Metacritic weekend"
+    ],
+    "unresolvedQuestions": [
+      "Exact runtimes for the listed movies to verify the <2.5‑hour guideline",
+      "Classic film suggestions not covered by the current sources"
+    ]
+  },
+  "answer": "### Weekend‑Ready Picks (based on Rotten Tomatoes listings)\n\n**Critically‑Acclaimed Recent Releases** (unverified: no matching retrieved evidence).\n- *Oppenheimer* (2023) – 93% Tomatometer, praised for Cillian Murphy’s performance and visual scope. [SRC-63672feb5e58]\n- *Mission: Impossible – Dead Reckoning Part One* (2023) – 96% Tomatometer, noted for its high‑stakes action and set pieces. [SRC-63672feb5e58]\n- *Killers of the Flower Moon* (2023) – highlighted for its ambitious runtime and thematic depth; rated highly by critics. [SRC-63672feb5e58]\n\n**Family‑Friendly / Group‑Friendly Options** (unverified: no matching retrieved evidence).\n- *The Breadwinner* – popular kids‑and‑family title, streaming in 2026. [SRC-946f1102c19c]\n- *The Super Mario Galaxy Movie* – recent animated adventure for all ages. [SRC-946f1102c19c]\n- *Moana* – beloved animated musical, available for home streaming. [SRC-946f1102c19c]\n- *Hocus Pocus* – cult‑favorite family comedy, streaming again in 2026. [SRC-946f1102c19c]\n- *A Minecraft Movie* – newer family‑oriented film tied to the popular game. [SRC-946f1102c19c]\n- *Hotel Transylvania* – classic animated comedy for group viewing (unverified: no matching retrieved evidence).\n- *Scooby‑Doo* – nostalgic family mystery adventure. [SRC-946f1102c19c]\n- *The Super Mario Bros. [SRC-956cf9582fe7]\nMovie* (2023) – modern animated hit for families (unverified: no matching retrieved evidence).\n- *Dr. [SRC-946f1102c19c]\nSeuss' The Cat in the Hat* – whimsical adaptation suitable for kids. [SRC-946f1102c19c]\n- *Animal Farm* – animated rendition of the classic tale, streaming in 2026 (unverified: no matching retrieved evidence).\n- *The Gray Man* – action‑thriller that also appeals to broader audiences (unverified: no matching retrieved evidence).\n\n**Rationale**\n- The first block offers award‑level, recent films that can make a weekend feel special, though they may run longer than a typical 2.5‑hour slot (runtime not provided in sources) (unverified: no matching retrieved evidence).\n- The second block supplies a variety of family‑oriented titles across animation, adventure, comedy, and classic adaptations, all listed as popular for home streaming in 2026, making them easy weekend picks for mixed‑age groups (unverified: no matching retrieved evidence).\n\n*Note: Specific runtimes are not included in the retrieved sources, so duration suitability could not be confirmed.* (unverified: no matching retrieved evidence).",
+  "followUpQuestions": [
+    "More recent family comedies",
+    "Classic weekend marathon ideas"
+  ],
+  "sources": [
+    {
+      "title": "Best Kids & Family Movies to Stream at Home (2026) | Rotten Tomatoes",
+      "url": "https://www.rottentomatoes.com/browse/movies_at_home/genres:kids_and_family~sort:popular",
+      "canonicalUrl": "https://www.rottentomatoes.com/browse/movies_at_home/genres:kids_and_family~sort:popular",
+      "publisher": "Rotten Tomatoes",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "A special distinction awarded to the highest verified theatrical movies.",
+        "At least 60% of user ratings for a movie or TV show are positive.",
+        "Less than 60% of user ratings for a movie or TV show are positive.",
+        "A special distinction awarded to the best reviewed movies and TV shows."
+      ],
+      "retrievedAt": "2026-10-19T22:58:53.858Z",
+      "content": "In Theaters\nAt Home\nComing Soon\nTV Shows\nSort\nGenre\nRating\nPopcornmeter\nTomatometer &reg;\nCertified Fresh\nVerified Hot\nReset Filters\nClose\nMost popular\nNewest\nA → Z\nTomatometer &reg; (highest)\nTomatometer &reg; (lowest)\nPopcornmeter (highest)\nPopcornmeter (lowest)\nClear all\nAction\nAdventure\nAnimation\nAnime\nBiography\nComedy\nCrime\nDocumentary\nDrama\nEntertainment\nFaith & Spirituality\nFantasy\nGame Show\nLGBTQ+\nHealth & Wellness\nHistory\nHoliday\nHorror\nHouse & Garden\nKids & Family\nMusic\nMusical\nMystery & Thriller\nNature\nNews\nReality\nRomance\nSci-Fi\nShort\nSoap\nSpecial Interest\nSports\nStand-Up\nTalk Show\nTravel\nVariety\nWar\nWestern\nApply\nG\nPG\nPG-13\nR\nNC-17\nNot rated\nUnrated\nA special distinction awarded to the highest verified theatrical movies.\nHot\nAt least 60% of user ratings for a movie or TV show are positive.\nStale\nLess than 60% of user ratings for a movie or TV show are positive.\nA special distinction awarded to the best reviewed movies and TV shows.\nFresh\nAt least 60% of reviews for a movie or TV show are positive.\nRotten\nLess than 60% of reviews for a movie or TV show are positive.\nWhere to watch\nTheaters\nFandango\nApple TV\nNetflix\nPrime Video\nDisney+\nHBO Max\nPeacock\nHulu\nParamount+\nAMC+\nAcorn TV\nNo results\nReload\n96%\n94%\nCoyote vs. Acme\nStreaming Sep 29, 2026\nWatchlist\n19%\n85%\nThe Breadwinner\nStreaming Jul 14, 2026\n95%\nThe Sheep Detectives\nStreaming Jun 24, 2026\n91%\n74%\nCoraline\nStreaming Feb 12, 2014\n92%\nToy Story 5\nStreaming Aug 18, 2026\n80%\n81%\nThe Magic Faraway Tree\nStreaming Sep 22, 2026\n99%\nShaun the Sheep: The Beast of Mossy Bottom\nStreaming Oct 23, 2026\n89%\n75%\nMinions & Monsters\nStreaming Aug 11, 2026\n42%\n87%\nThe Super Mario Galaxy Movie\nStreaming May 19, 2026\n33%\nMoana\nStreaming Sep 8, 2026\n72%\nHocus Pocus\nStreaming Jan 1, 2014\n76%\n61%\nThe Chronicles of Narnia: The Lion, the Witch and the Wardrobe\nStreaming May 27, 2016\nTim Burton's The Nightmare Before Christmas\nPaddington 2\nStreaming Mar 6, 2018\n47%\n84%\nA Minecraft Movie\nStreaming May 13, 2025\n97%\nCoco\nStreaming Feb 13, 2018\n83%\nPAW Patrol: The Dino Movie\n93%\nHoppers\nStreaming Apr 28, 2026\n73%\nParaNorman\nStreaming Oct 19, 2015\n77%\nTim Burton's Corpse Bride\nStreaming Jul 21, 2008\nSpider-Man: Into the Spider-Verse\nStreaming Mar 7, 2019\n100%\nToy Story\n98%\nThe Wild Robot\nStreaming Oct 15, 2024\n86%\nKubo and the Two Strings\nStreaming Nov 8, 2016\n64%\nMonster House\nStreaming Jun 5, 2012\n65%\nHocus Pocus 2\nStreaming Sep 30, 2022\n45%\nHotel Transylvania\nStreaming Sep 7, 2014\n32%\n41%\nScooby-Doo\nStreaming Dec 26, 2011\nLoad more\n&ensp; Tap to Unmute\nSee Details",
+      "isUserProvided": true,
+      "sourceId": "SRC-956cf9582fe7"
+    },
+    {
+      "title": "Best Movies 2023 | Rotten Tomatoes",
+      "url": "https://editorial.rottentomatoes.com/guide/best-2023-movies/",
+      "canonicalUrl": "https://editorial.rottentomatoes.com/guide/best-2023-movies/",
+      "publisher": "editorial.rottentomatoes.com",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "After an explosive run in theaters, including generating over $900 million worldwide and a revitalizing IMAX engagement, Universal’s creative gamble pays off as critics crown director Christopher Nolan and star Cillian Murphy for Oppenheimer .",
+        "Critics Consensus: Oppenheimer marks another engrossing achievement from Christopher Nolan that benefits from Murphy's tour-de-force performance and stunning visuals.",
+        "Synopsis: During World War II, Lt. Gen. Leslie Groves Jr. appoints physicist J. Robert Oppenheimer to work on the top-secret Manhattan Project. Oppenheimer and a team... View Full Synopsis",
+        "Cillian Murphy , Emily Blunt , Robert Downey Jr. , Matt Damon"
+      ],
+      "retrievedAt": "2026-10-19T22:58:55.494Z",
+      "content": "Best Movies 2023\nBy\nAlex Vo\n| Updated September 27, 2024\nAfter an explosive run in theaters, including generating over $900 million worldwide and a revitalizing IMAX engagement, Universal’s creative gamble pays off as critics crown director Christopher Nolan and star Cillian Murphy for Oppenheimer .\nNext Category »\n#1\nOppenheimer\n(2023)\n93%\nCritics Consensus: Oppenheimer marks another engrossing achievement from Christopher Nolan that benefits from Murphy's tour-de-force performance and stunning visuals.\nSynopsis: During World War II, Lt. Gen. Leslie Groves Jr. appoints physicist J. Robert Oppenheimer to work on the top-secret Manhattan Project. Oppenheimer and a team... View Full Synopsis\nStarring:\nCillian Murphy , Emily Blunt , Robert Downey Jr. , Matt Damon\nDirected By:\nChristopher Nolan\n#2\nMission: Impossible - Dead Reckoning Part One\n96%\nCritics Consensus: With world-threatening stakes and epic set pieces to match that massive title, Mission: Impossible - Dead Reckoning Part One proves this is still a franchise you should choose to accept.\nSynopsis: In Mission: Impossible - Dead Reckoning Part One, Ethan Hunt (Tom Cruise) and his IMF team embark on their most dangerous mission yet: To track... View Full Synopsis\nTom Cruise , Hayley Atwell , Ving Rhames , Simon Pegg\nChristopher McQuarrie\n#3\nKillers of the Flower Moon\nCritics Consensus: Enormous in runtime, theme, and achievement, Killers of the Flower Moon is a sobering appraisal of America's relationship with Indigenous peoples and yet another artistic zenith for Martin Scorsese and his collaborators.\nSynopsis: Based on David Grann's broadly lauded best-selling book, \"Killers of the Flower Moon\" is set in 1920s Oklahoma and depicts the serial murder of members... View Full Synopsis\nLeonardo DiCaprio , Robert De Niro , Jesse Plemons , Lily Gladstone\nMartin Scorsese\n#4\nSpider-Man: Across the Spider-Verse\n95%\nCritics Consensus: Just as visually dazzling and action-packed as its predecessor, Spider-Man: Across the Spider-Verse thrills from start to cliffhanger conclusion.\nSynopsis: Miles Morales returns for the next chapter of the Oscar®-winning Spider-Verse saga, an epic adventure that will transport Brooklyn's full-time, friendly neighborhood Spider-Man across the... View Full Synopsis\nShameik Moore , Hailee Steinfeld , Oscar Isaac , Jake Johnson\nJoaquim Dos Santos , Kemp Powers , Justin K. Thompson\n#5\nBarbie\n88%\nCritics Consensus: Barbie is a visually dazzling comedy whose meta humor is smartly complemented by subversive storytelling.\nSynopsis: To live in Barbie Land is to be a perfect being in a perfect place. Unless you have a full-on existential crisis. Or you're a... View Full Synopsis\nMargot Robbie , Ryan Gosling , America Ferrera , Kate McKinnon\nGreta Gerwig\n#6\nJohn Wick: Chapter 4\n94%\nCritics Consensus: John Wick: Chapter 4 piles on more of everything -- and suggests that when it comes to a well-dressed Keanu Reeves dispatching his enemies in lethally balletic style, there can never be",
+      "isUserProvided": true,
+      "sourceId": "SRC-63672feb5e58"
+    },
+    {
+      "title": "Best Rotten Kids & Family Movies to Stream at Home (2026) | Rotten Tomatoes",
+      "url": "https://www.rottentomatoes.com/browse/movies_at_home/critics:rotten~genres:kids_and_family~sort:popular",
+      "canonicalUrl": "https://www.rottentomatoes.com/browse/movies_at_home/critics:rotten~genres:kids_and_family~sort:popular",
+      "publisher": "Rotten Tomatoes",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "A special distinction awarded to the highest verified theatrical movies.",
+        "At least 60% of user ratings for a movie or TV show are positive.",
+        "Less than 60% of user ratings for a movie or TV show are positive.",
+        "A special distinction awarded to the best reviewed movies and TV shows."
+      ],
+      "retrievedAt": "2026-10-19T22:58:54.508Z",
+      "content": "In Theaters\nAt Home\nComing Soon\nTV Shows\nSort\nGenre\nRating\nPopcornmeter\nTomatometer &reg;\nCertified Fresh\nVerified Hot\nReset Filters\nClose\nMost popular\nNewest\nA → Z\nTomatometer &reg; (highest)\nTomatometer &reg; (lowest)\nPopcornmeter (highest)\nPopcornmeter (lowest)\nClear all\nAction\nAdventure\nAnimation\nAnime\nBiography\nComedy\nCrime\nDocumentary\nDrama\nEntertainment\nFaith & Spirituality\nFantasy\nGame Show\nLGBTQ+\nHealth & Wellness\nHistory\nHoliday\nHorror\nHouse & Garden\nKids & Family\nMusic\nMusical\nMystery & Thriller\nNature\nNews\nReality\nRomance\nSci-Fi\nShort\nSoap\nSpecial Interest\nSports\nStand-Up\nTalk Show\nTravel\nVariety\nWar\nWestern\nApply\nG\nPG\nPG-13\nR\nNC-17\nNot rated\nUnrated\nA special distinction awarded to the highest verified theatrical movies.\nHot\nAt least 60% of user ratings for a movie or TV show are positive.\nStale\nLess than 60% of user ratings for a movie or TV show are positive.\nA special distinction awarded to the best reviewed movies and TV shows.\nFresh\nAt least 60% of reviews for a movie or TV show are positive.\nRotten\nLess than 60% of reviews for a movie or TV show are positive.\nWhere to watch\nTheaters\nFandango\nApple TV\nNetflix\nPrime Video\nDisney+\nHBO Max\nPeacock\nHulu\nParamount+\nAMC+\nAcorn TV\nNo results\nReload\n19%\n85%\nThe Breadwinner\nStreaming Jul 14, 2026\nWatchlist\n42%\n87%\nThe Super Mario Galaxy Movie\nStreaming May 19, 2026\n33%\nMoana\nStreaming Sep 8, 2026\n72%\nHocus Pocus\nStreaming Jan 1, 2014\n47%\n84%\nA Minecraft Movie\nStreaming May 13, 2025\n45%\nHotel Transylvania\nStreaming Sep 7, 2014\n32%\n41%\nScooby-Doo\nStreaming Dec 26, 2011\n58%\n95%\nThe Super Mario Bros. Movie\nStreaming May 16, 2023\n10%\n59%\nDr. Seuss' The Cat in the Hat\nStreaming Feb 4, 2014\n29%\n51%\nAnimal Farm\nStreaming May 26, 2026\n90%\nThe Gray Man\nStreaming Jul 22, 2022\n39%\n69%\nDisney's Snow White\nCasper\nStreaming Sep 2, 2014\n49%\nThe Chronicles of Narnia: The Voyage of the Dawn Treader\nStreaming Mar 1, 2013\n18%\n38%\nIce Age: Collision Course\nStreaming Sep 30, 2016\n6%\n36%\nThe Emoji Movie\nStreaming Sep 24, 2017\n14%\nThe Haunted Mansion\n40%\n50%\nCars 2\n22%\nScooby-Doo 2: Monsters Unleashed\nStreaming Feb 1, 2012\n13%\n30%\nThe Mummy: Tomb of the Dragon Emperor\nStreaming May 8, 2015\n37%\n76%\nHook\nStreaming Apr 16, 2012\n61%\nIce Age: Continental Drift\nStreaming Apr 27, 2014\n64%\nHotel Transylvania 2\nStreaming May 9, 2016\n46%\n53%\nThe Curse of Bridge Hollow\nStreaming Oct 14, 2022\n56%\nHoodwinked!\nStreaming Aug 10, 2016\nHotel Transylvania: Transformania\nStreaming Jan 14, 2022\n63%\nIce Age: Dawn of the Dinosaurs\nStreaming Aug 4, 2014\n57%\n94%\nAladdin\nStreaming Aug 27, 2019\nLoad more\n&ensp; Tap to Unmute\nSee Details",
+      "isUserProvided": true,
+      "sourceId": "SRC-946f1102c19c"
+    }
+  ],
+  "unresolvedQuestions": [
+    "Exact runtimes for the listed movies to verify the <2.5‑hour guideline",
+    "Classic film suggestions not covered by the current sources"
+  ],
+  "contradictions": [
+    "The evidence highlights Oppenheimer (2023) as a top‑rated film, but it exceeds the 2.5‑hour runtime limit for easy weekend viewing, conflicting with the requirement for short runtimes."
+  ],
+  "completeness": "partial",
+  "limitations": [
+    "10 candidate pages failed or carried no readable text.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 3 of 6 selected sources fit in the synthesis evidence budget.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 6,
+    "failedCount": 10,
+    "rounds": 1,
+    "searches": 5
+  },
+  "archivedAt": "2026-10-19T22:58:59.897Z"
+}

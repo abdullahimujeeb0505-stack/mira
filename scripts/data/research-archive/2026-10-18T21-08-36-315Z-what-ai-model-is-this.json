@@ -1,0 +1,111 @@
+{
+  "id": "2026-10-18T21-08-36-315Z-what-ai-model-is-this",
+  "question": "What Ai model is this",
+  "plan": {
+    "objective": "Identify the specific AI model (name and version) that powers the current chat interface.",
+    "taskType": "definition",
+    "deliverable": "A concise statement naming the AI model (e.g., GPT‑4, GPT‑3.5) with any relevant version or deployment details.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "Official OpenAI documentation (help center, API reference)",
+      "OpenAI blog announcements",
+      "OpenAI product pages (ChatGPT, Playground)",
+      "Authoritative tech news outlets (e.g., The Verge, TechCrunch) for recent updates"
+    ],
+    "questions": [
+      "What AI model is used to generate responses in this chat?"
+    ],
+    "queries": [
+      "OpenAI ChatGPT model version 2023 site:openai.com",
+      "What model powers ChatGPT as of 2024 OpenAI documentation",
+      "ChatGPT model name GPT-4 vs GPT-3.5 official announcement",
+      "OpenAI blog \"ChatGPT model\" 2024",
+      "OpenAI API model list current ChatGPT deployment"
+    ],
+    "unresolvedQuestions": [
+      "What exact model version (including any Turbo or o variants) is used for the present chat session?"
+    ]
+  },
+  "answer": "The retrieved sources note that OpenAI’s ChatGPT has been built on GPT‑4 and that newer variants such as GPT‑4 Turbo and GPT‑4o have been released (see [SRC-60f22842853d] and the original GPT‑4 announcement ).\nHowever, none of the available documents explicitly state which specific model (e.g., GPT‑4, GPT‑4 Turbo, GPT‑4o) is currently powering this chat interface (unverified: no matching retrieved evidence).",
+  "followUpQuestions": [
+    "Differences between GPT‑4 Turbo and GPT‑4o",
+    "How OpenAI updates ChatGPT models over time"
+  ],
+  "sources": [
+    {
+      "title": "ChatGPT-4o vs GPT-4 vs GPT-3.5: What’s the Difference?",
+      "url": "https://gettalkative.com/info/gpt-models-compared",
+      "canonicalUrl": "https://gettalkative.com/info/gpt-models-compared",
+      "publisher": "gettalkative.com",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "ChatGPT-4o vs GPT-4 vs GPT-3.5: What’s the Difference?",
+        "[Updated October 2024 to include OpenAI's latest models : o1-preview and o1-mini] ‍",
+        "In 2022, OpenAI took the world by storm with the launch of ChatGPT-3.5.",
+        "Since then, many industry leaders have realised this technology's potential to improve customer experiences and operational efficiency."
+      ],
+      "retrievedAt": "2026-10-18T21:08:33.640Z",
+      "content": "ChatGPT-4o vs GPT-4 vs GPT-3.5: What’s the Difference?\nSign in\nProduct\nCustomers Pricing Resources\nBook Demo Talk To Us\nJune 3, 2024\nTime:\n9\nmins\n[Updated October 2024 to include OpenAI's latest models : o1-preview and o1-mini] ‍\n‍\nIn 2022, OpenAI took the world by storm with the launch of ChatGPT-3.5.\nSince then, many industry leaders have realised this technology's potential to improve customer experiences and operational efficiency.\nOpenAI’s latest releases, GPT-4 Turbo and GPT-4o, have further advanced the platform’s capabilities.\nDespite this, the predecessor model (GPT-3.5) continues to be widely used by businesses and consumers alike.\nThis raises a number of questions...\nHow exactly do GPT-4 models differ from ChatGPT-3.5?\nWhat new capabilities does GPT-4 bring to the table?\nAnd which model is best for your business needs and customer service goals?\nThese are the questions we’ll aim to answer in this guide. We’ll cover:\nWhat is ChatGPT and how does it work?\nA breakdown of the differences between ChatGPT-4 and ChatGPT-3.5\nNew bonus section: OpenAI o1-preview and o1-mini\nUsing GPT models to improve customer service\nTL;DR:\nChatGPT-3.5 vs ChatGPT-4, GPT-4 Turbo, and GPT-4o: Key Differences...\nSize & Architecture: GPT-4, with around 1 trillion parameters, is much larger and more complex than GPT-3.5's 175 billion, leading to better contextual understanding and response coherence. Variants like GPT-4 Turbo and GPT-4o are even more efficient.\nTraining Dataset: GPT-4 models use a larger, more diverse dataset, improving their ability to handle complex requests and generate accurate responses. Enhanced training and quality assurance processes contribute to superior performance.\nCapabilities: GPT-4 can process longer inputs (up to 128,000 tokens) and has better contextual understanding and accuracy. It also includes multimodal capabilities, handling text, images, audio, and video.\nBias & Safety: GPT-4 employs advanced techniques to reduce bias and enhance safety, making it 82% less likely to generate disallowed content compared to GPT-3.5.\nUser Experience: GPT-4 offers a more human-like, seamless experience with improved context retention and response depth. GPT-4 Turbo and GPT-4o enhance these further, but GPT-3.5 remains faster and more cost-effective.\nWhat is ChatGPT?\nChatGPT is a powerful conversational AI agent built by OpenAI.\nIt’s designed to understand user inputs and generate intelligent, human-like outputs in response.\nIn addition to AI customer service , this technology facilitates many use cases, including...\nContent creation/editing\nCreative writing\nCommunications\nTranslating languages\nSoftware code generation and debugging\nData analysis\nOffering information/advice on countless topics (e.g. general knowledge, current events, education, technology, health, arts/literature, finance, travel, education, etc.).\nIt can also be tailored with custom AI prompts so that its outputs align with a specific user's needs or use cases more closely.\nThe ",
+      "sourceId": "SRC-60f22842853d"
+    },
+    {
+      "title": "Model Spec (2024/05/08)",
+      "url": "https://cdn.openai.com/spec/model-spec-2024-05-08.html",
+      "canonicalUrl": "https://cdn.openai.com/spec/model-spec-2024-05-08.html",
+      "publisher": "cdn.openai.com",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "This version is provided for historical reference and may not reflect current policy.",
+        "This is the first draft of the Model Spec, a document that specifies desired behavior for our models in the OpenAI API and ChatGPT. It includes a set of core objectives, as well as guidance on how to deal with conflicting objectives or instructions.",
+        "Our intention is to use the Model Spec as guidelines for researchers and data labelers to create data as part of a technique called reinforcement learning from human feedback ( RLHF ). We have not yet used the Model Spec in its current form, though parts of it are based on documentation that we have used for RLHF at OpenAI. We are also working on techniques ",
+        "The Spec is only part of our story for how to build and deploy AI responsibly. It's complemented by our usage policies , how we expect people to use the API and ChatGPT."
+      ],
+      "retrievedAt": "2026-10-18T21:08:33.500Z",
+      "content": "Model Spec (2024/05/08)\nThis version is provided for historical reference and may not reflect current policy.\nMay 08, 2024\nOverview\nThis is the first draft of the Model Spec, a document that specifies desired behavior for our models in the OpenAI API and ChatGPT. It includes a set of core objectives, as well as guidance on how to deal with conflicting objectives or instructions.\nOur intention is to use the Model Spec as guidelines for researchers and data labelers to create data as part of a technique called reinforcement learning from human feedback ( RLHF ). We have not yet used the Model Spec in its current form, though parts of it are based on documentation that we have used for RLHF at OpenAI. We are also working on techniques that enable our models to directly learn from the Model Spec.\nThe Spec is only part of our story for how to build and deploy AI responsibly. It's complemented by our usage policies , how we expect people to use the API and ChatGPT.\nWe're publishing the Model Spec to provide more transparency on our approach to shaping model behavior and to start a public conversation about how it could be changed and improved. The Spec, like our models themselves, will be continuously updated based on what we learn by sharing it and listening to feedback from stakeholders.\nObjectives, rules, and defaults\nThere are three different types of principles that we will use to specify behavior in this document: objectives, rules, and defaults. This framework is designed to maximize steerability and control for users and developers, enabling them to adjust the model's behavior to their needs while staying within clear boundaries.\nThe most general are objectives , such as \"assist the developer and end user\" and \"benefit humanity\". They provide a directional sense of what behavior is desirable. However, these objectives are often too broad to dictate specific actions in complex scenarios where the objectives are not all in alignment. For example, if the user asks the assistant to do something that might cause harm to another human, we have to sacrifice at least one of the two objectives above. Technically, objectives only provide a partial order on preferences: They tell us when to prefer assistant action A over B, but only in some clear-cut cases. A key goal of this document is not just to specify the objectives, but also to provide concrete guidance about how to navigate common or important conflicts between them.\nOne way to resolve conflicts between objectives is to make rules , like \"never do X\", or \"if X then do Y\". Rules play an important role in ensuring safety and legality. They are used to address high-stakes situations where the potential for significant negative consequences is unacceptable and thus cannot be overridden by developers or users. However, rules simply aren't the right tool for addressing many potential conflicts (e.g., how the assistant should approach questions about controversial topics).\nFor other trade-offs, our appro",
+      "sourceId": "SRC-cc5506e8bb64"
+    },
+    {
+      "title": "GPT-4 is here! OpenAI's newest language model - Announcements - OpenAI Developer Community",
+      "url": "https://community.openai.com/t/gpt-4-is-here-openais-newest-language-model/99068",
+      "canonicalUrl": "https://community.openai.com/t/gpt-4-is-here-openais-newest-language-model/99068",
+      "publisher": "OpenAI Developer Community",
+      "publishedAt": "2023-03-14T20:51:28.000Z",
+      "updatedAt": "2023-03-14T20:51:28.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "GPT-4 is here! OpenAI's newest language model - Announcements - OpenAI Developer Community",
+        "= 40rem)\" rel=\"stylesheet\" data-target=\"chat_desktop\" />",
+        "= 40rem)\" rel=\"stylesheet\" data-target=\"discourse-ai_desktop\" />",
+        "= 40rem)\" rel=\"stylesheet\" data-target=\"discourse-gamification_desktop\" />"
+      ],
+      "retrievedAt": "2026-10-18T21:08:34.062Z",
+      "content": "GPT-4 is here! OpenAI's newest language model - Announcements - OpenAI Developer Community\n= 40rem)\" rel=\"stylesheet\" data-target=\"chat_desktop\" />\n= 40rem)\" rel=\"stylesheet\" data-target=\"discourse-ai_desktop\" />\n= 40rem)\" rel=\"stylesheet\" data-target=\"discourse-gamification_desktop\" />\n= 40rem)\" rel=\"stylesheet\" data-target=\"discourse-reactions_desktop\" />\n= 40rem)\" rel=\"stylesheet\" data-target=\"poll_desktop\" />\nGPT-4 is here! OpenAI's newest language model\nAnnouncements\nlogankilpatrick\nMarch 14, 2023, 8:51pm\n1\nAnnouncing GPT-4, a large multimodal model, with our best-ever results on capabilities and alignment: GPT-4\nIf you are a ChatGPT Plus subscriber, you can access GPT-4 right now! If you want access via the API, you can join the waitlist: GPT-4 API waitlist\nWe are also giving priority API access to those who contribute evals via: GitHub - openai/evals\nLast, check out a live developer preview of GPT-4: GPT-4 Developer Livestream - YouTube\nWe can’t wait to see what you think and build!\nWhy OpenAI doesn't let me use GPT-4 API?\nAbra\nMarch 14, 2023, 9:17pm\n5\nHello!\nIm very excited for gpt4, i signed up with chatgpt+ and when i switch to the gpt4 model and ask it what it is it tells me its gpt3 and that gpt4 does not exist and it knows nothing past 2021\nScreenshot_20230314-150118_Chrome 1080×2280 138 KB\nMarch 14, 2023, 9:32pm\n6\nThis is correct, we are aware it is doing that, see here for details on the model: OpenAI API\nPaulBellow\nMarch 14, 2023, 10:00pm\n7\nNice! I’m hearing some devs already have API access.\nFingers crossed. I’ve got a good D&D demo up…\nlmccallum\nMarch 14, 2023, 10:02pm\n8\nHi, I was really hoping that GPT-4 would be compatible with the v1/completions endpoint (using text-davinci-003). I am not building a chat bot. Many other users are also not building chat bots, and there is much confusion in the community forum about this issue. Having to use v1/chat/completions and structure the inputs around 3 different roles, as if I was building a chat bot, in order to use OpenAI’s newest model, is frustrating. Can you give the community some insight as to whether GPT-4 will become available for use with the v1/completions endpoint any time soon? For people not building chat bots, the necessary changes to the code and parameters required for the v1/chat/completions endpoint take quite a bit of work and seem illogical. Obviously, we non-chat folks would much prefer not to have to make those changes. Thanks for you help.\nMarch 15, 2023, 12:02am\n9\nTotally fair, I agree that it would be cool to have v1/completions, best thing to do would be to build around the existing chat completions and hopefully lean into the area where it can be more helpful to use the new format.\nMarch 15, 2023, 12:08am\n10\nIt’s so helpful with prompt injection, imho. Not too difficult to convert old prompts to ChatML.\nI can’t wait for ChatML to be expanded upon, personally.\nmo0nman\nMarch 15, 2023, 1:24am\n11\nHi. I was under the assumption that the new GPT-4 backed chatgpt+ ",
+      "sourceId": "SRC-998a26a5ba97"
+    }
+  ],
+  "unresolvedQuestions": [
+    "What exact model version (including any Turbo or o variants) is used for the present chat session?"
+  ],
+  "contradictions": [],
+  "completeness": "insufficient",
+  "limitations": [
+    "12 search requests or candidate pages failed or were unreadable.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 3 of 4 selected sources fit in the synthesis evidence budget.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 4,
+    "failedCount": 12,
+    "rounds": 1,
+    "searches": 5
+  },
+  "archivedAt": "2026-10-18T21:08:36.316Z"
+}

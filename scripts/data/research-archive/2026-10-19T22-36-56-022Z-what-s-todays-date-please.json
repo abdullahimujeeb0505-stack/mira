@@ -1,0 +1,124 @@
+{
+  "id": "2026-10-19T22-36-56-022Z-what-s-todays-date-please",
+  "question": "What's todays date please",
+  "plan": {
+    "objective": "Provide the current calendar date",
+    "taskType": "current",
+    "deliverable": "A concise statement of today's date in a standard format (e.g., YYYY‑MM‑DD)",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "official time services (e.g., time.gov, NIST)",
+      "reliable world clock APIs",
+      "authoritative government or standards sites"
+    ],
+    "questions": [
+      "What is today's date?"
+    ],
+    "queries": [
+      "current date UTC",
+      "today's date in YYYY-MM-DD",
+      "time.gov current date",
+      "world clock today date",
+      "official US government date today"
+    ],
+    "unresolvedQuestions": [
+      "What is today's date?"
+    ]
+  },
+  "answer": "I retrieved 4 readable sources, but couldn't synthesize a reliable answer (rate limited). Please try again shortly.",
+  "followUpQuestions": [],
+  "sources": [
+    {
+      "title": "National Institute of Standards and Technology | NIST",
+      "url": "https://www.time.gov/",
+      "canonicalUrl": "https://www.time.gov/",
+      "publisher": "NIST",
+      "sourceType": "government",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "National Institute of Standards and Technology | NIST"
+      ],
+      "retrievedAt": "2026-10-19T22:36:47.732Z",
+      "content": "National Institute of Standards and Technology | NIST\nNon-Contiguous U.S. and Territories\nAlaska Standard Time\nAK S T (UTC- 9 )\nAleutian Standard Time\nHA S T (UTC- 10 )\nHawaii Standard Time\nHST (UTC-10)\nSamoa Standard Time\nSST (UTC-11)\nChamorro Standard Time\nCHST (UTC+10)\nAtlantic Standard Time\nPuerto Rico / US Virgin Islands\nAST (UTC-4)\nPacific Standard Time\nP S T (UTC- 8 )\nSYNCHRONIZING\nMountain Standard Time\nM S T (UTC- 7 )\nCentral Standard Time\nC S T (UTC- 6 )\nEastern Standard Time\nE S T (UTC- 5 )\nArizona Mountain Standard Time\nMST (UTC-7)\n24-Hour Clock Display\nCoordinated Universal Time (UTC)\nUTC is always displayed as a 24-hour clock.\nYour Device's Clock UTC-0\nYour clock is off by: s\nAbout/Contact\nFAQ\n= DAYLIGHT SAVING TIME NOT OBSERVED\nClocks are corrected for network delay",
+      "isUserProvided": true,
+      "sourceId": "SRC-5e5a742ee230"
+    },
+    {
+      "title": "UTC - Time.is",
+      "url": "https://time.is/UTC",
+      "canonicalUrl": "https://time.is/UTC",
+      "publisher": "time.is",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "Make UTC time default - Add to favorite locations",
+        "UTC is the same as the time in London when London is on standard time, and 1 hour behind the time in London when London is on daylight saving time.",
+        "UTC does not change between summer time and winter time.",
+        "The IANA time zone identifier for UTC is UTC."
+      ],
+      "retrievedAt": "2026-10-19T22:36:47.457Z",
+      "content": "UTC - Time.is\n×\nTime.is\nUTC now\n22:36:47\nMonday, 19 October, 2026, week 43\nMake UTC time default - Add to favorite locations\nTokyo 07:36\nBeijing 06:36\nParis 00:36\nLondon 23:36\nNew York 18:36\nLos Angeles 15:36\nmore\nCoordinated Universal Time\nUTC +0\nnow 1 hour behind London\nUTC is the same as the time in London when London is on standard time, and 1 hour behind the time in London when London is on daylight saving time.\nUTC does not change between summer time and winter time.\nThe IANA time zone identifier for UTC is UTC.\nTime difference from UTC\nLos Angeles |\n− 7 hours | − 7 hours |\nChicago |\n− 5 hours | − 5 hours |\nNew York |\n− 4 hours | − 4 hours |\nToronto |\nSão Paulo |\n− 3 hours | − 3 hours |\nLagos | + 1 hours |\nLondon | + 1 hours |\nJohannesburg | + 2 hours |\nParis | + 2 hours |\nZurich | + 2 hours |\nCairo | + 3 hours |\nIstanbul | + 3 hours |\nMoscow | + 3 hours |\nDubai | + 4 hours |\nMumbai | + 5 . 5 hours |\nHong Kong | + 8 hours |\nShanghai | + 8 hours |\nSingapore | + 8 hours |\nTokyo | + 9 hours |\nSydney | + 1 1 hours |\nCompare other time zones",
+      "isUserProvided": true,
+      "sourceId": "SRC-f9497faee7eb"
+    },
+    {
+      "title": "UTC Time Now",
+      "url": "https://www.utctime.net/",
+      "canonicalUrl": "https://www.utctime.net/",
+      "publisher": "www.utctime.net",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "UTC current date is 19th Monday October 2026.",
+        "Here, you can learn what time is it in UTC time now and what the most accurate time now is , use our UTC time zone converter designed to easily convert time from current time in UTC to one of over a hundred presently existing time zones, as well as use some useful links at the bottom of the page collected for you by the experts of our team.",
+        "UTC , or Universal Time Coordinated, is the most precise and commonly referred to time standard.",
+        "UTC was officially introduced on January 1, 1972, as the global standard for timekeeping, replacing the previously used GMT standard, which is now considered just a regular time zone."
+      ],
+      "retrievedAt": "2026-10-19T22:36:47.812Z",
+      "content": "UTC Time Now\n22:36:47\n24h\n12h am/pm\nUTC current time is 22:36:47\nUTC current date is 19th Monday October 2026.\nUTC: Coordinated Universal Time\nAbout UTC Time\nHere, you can learn what time is it in UTC time now and what the most accurate time now is , use our UTC time zone converter designed to easily convert time from current time in UTC to one of over a hundred presently existing time zones, as well as use some useful links at the bottom of the page collected for you by the experts of our team.\nUTC , or Universal Time Coordinated, is the most precise and commonly referred to time standard.\nUTC was officially introduced on January 1, 1972, as the global standard for timekeeping, replacing the previously used GMT standard, which is now considered just a regular time zone.\nIn order to learn the current time in UTC , it is enough for you just to open the main page of our website. In addition, you can also see a few types of UTC time format, with some being very widespread, and some being less commonly used.\nThose who plan a trip or an online meeting with their overseas business partners, those who have friends on the other continents and want to make a call at a convenient time can use this fast and effective UTC time zone converter. It is a unique online tool to help our users convert UTC time into the current time in a certain time zone. Therefore, by using it you can find an answer to the question, what is the time now in the time zone you're interested in.\nWhat is UTC Time in ISO-8601 Format?\nCurrent time: 22:36:47 UTC .\nUTC is replaced with Z that is the zero UTC offset .\nUTC time in ISO-8601 is 22:36:47 Z . Note that the Z letter without a space.\nUTC Time in 12-hour clock time (AM/PM) 22:36:47:PM\nUTC Date and Time in Various Formats\nDate Time Format | UTC Date Time Now |\nUTC | 2026-10-19T22:36:47Z |\nISO-8601 | 2026-10-19T22:36:47+0000 |\nRFC 2822 | Mon, 19 Oct 2026 22:36:47 +0000 |\nRFC 850 | Monday, 19-Oct-26 22:36:47 UTC |\nRFC 1036 | Mon, 19 Oct 26 22:36:47 +0000 |\nRFC 1123 | Mon, 19 Oct 2026 22:36:47 +0000 |\nRFC 822 | Mon, 19 Oct 26 22:36:47 +0000 |\nRFC 3339 | 2026-10-19T22:36:47+00:00 |\nATOM | 2026-10-19T22:36:47+00:00 |\nCOOKIE | Monday, 19-Oct-2026 22:36:47 UTC |\nRSS | Mon, 19 Oct 2026 22:36:47 +0000 |\nW3C | 2026-10-19T22:36:47+00:00 |\nUnix Epoch | 1792449407 |\nYYYY-DD-MM HH:MM:SS | 2026-19-10 22:36:47 |\nYYYY-DD-MM HH:MM:SS am/pm | 2026-19-10 10:36:47 PM |\nDD-MM-YYYY HH:MM:SS | 19-10-2026 22:36:47 |\nMM-DD-YYYY HH:MM:SS | 10-19-2026 22:36:47 |\nUTC Time Zone Converter\nUTC Timestamp\nUTC Time Zone Offsets\nUTC Time Now Chrome Extension\nReferences\nCoordinated Universal Time (Wikipedia)\nWhat is UTC (NOAA)",
+      "isUserProvided": true,
+      "sourceId": "SRC-309c92cf559a"
+    },
+    {
+      "title": "Time.is - exact time, any time zone",
+      "url": "https://time.is/",
+      "canonicalUrl": "https://time.is/",
+      "publisher": "time.is",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "Sun: &uarr; 07:30 &darr; 18:01 (10h 31m) - More info - Make London time default - Remove from favorite locations",
+        "Amsterdam Antalya Baghdad Bangkok Barcelona Beijing Bogotá Boston Brussels Cairo Chicago Delhi Dhaka Dubai Dublin Guangzhou Helsinki Hong Kong Honolulu Istanbul Jakarta Karachi Kinshasa Kuala Lumpur Lagos Las Vegas Lima London Los Angeles Manila Mecca Mexico City Miami Milan Moscow Mumbai New York Osaka Oslo Paris Prague Rio de Janeiro Riyadh Rome Saint Pete",
+        "\"The fall of a civilization is a gradual process; it's a little bit every day.\" John Michael Greer"
+      ],
+      "retrievedAt": "2026-10-19T22:36:47.531Z",
+      "content": "Time.is - exact time, any time zone\n×\nTime.is\nExact time now:\nTime in London, United Kingdom now:\n23:36:47\nMonday, 19 October, 2026, week 43\nSun: &uarr; 07:30 &darr; 18:01 (10h 31m) - More info - Make London time default - Remove from favorite locations\nTokyo 07:36\nBeijing 06:36\nParis 00:36\nLondon 23:36\nNew York 18:36\nLos Angeles 15:36\nmore\nUTC\nGMT\nCET\nPacific Time\nMountain Time\nCentral Time\nEastern Time\nChina Standard Time\nIndia Standard Time\nAmsterdam Antalya Baghdad Bangkok Barcelona Beijing Bogotá Boston Brussels Cairo Chicago Delhi Dhaka Dubai Dublin Guangzhou Helsinki Hong Kong Honolulu Istanbul Jakarta Karachi Kinshasa Kuala Lumpur Lagos Las Vegas Lima London Los Angeles Manila Mecca Mexico City Miami Milan Moscow Mumbai New York Osaka Oslo Paris Prague Rio de Janeiro Riyadh Rome Saint Petersburg San Francisco Santiago Seoul Shanghai Shenzhen Stockholm Sydney São Paulo Taipei Tehran Tokyo Toronto Vienna Yangon\n\"The fall of a civilization is a gradual process; it's a little bit every day.\" John Michael Greer",
+      "isUserProvided": true,
+      "sourceId": "SRC-0f900856009a"
+    }
+  ],
+  "unresolvedQuestions": [
+    "What is today's date?"
+  ],
+  "contradictions": [],
+  "completeness": "partial",
+  "limitations": [
+    "Web search access was blocked or challenged on 1 of 5 queries.",
+    "7 candidate pages failed or carried no readable text.",
+    "1 of 5 search requests failed or returned no usable results.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 4 of 6 selected sources fit in the synthesis evidence budget."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 9,
+    "failedCount": 9,
+    "rounds": 1,
+    "searches": 5
+  },
+  "archivedAt": "2026-10-19T22:36:56.023Z"
+}

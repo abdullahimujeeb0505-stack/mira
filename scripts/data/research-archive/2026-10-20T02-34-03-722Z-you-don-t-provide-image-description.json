@@ -1,0 +1,124 @@
+{
+  "id": "2026-10-20T02-34-03-722Z-you-don-t-provide-image-description",
+  "question": "You don't provide image description?",
+  "plan": {
+    "objective": "Determine whether and how the assistant provides image descriptions, including policy, technical capability, and accessibility considerations.",
+    "taskType": "definition",
+    "deliverable": "A concise summary of OpenAI’s official stance and technical ability regarding image description generation for user‑provided images.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "OpenAI official documentation and policy pages",
+      "Peer‑reviewed articles on AI accessibility and image description generation",
+      "Authoritative accessibility standards (e.g., WCAG)",
+      "Technical blog posts from OpenAI engineers"
+    ],
+    "questions": [
+      "What does OpenAI’s current policy say about providing textual descriptions of images?",
+      "What technical limitations, if any, prevent the model from generating image descriptions?",
+      "How does OpenAI address accessibility requirements for visually impaired users?",
+      "Are there any official guidelines or best practices for image description within the ChatGPT product?"
+    ],
+    "queries": [
+      "\"OpenAI\" \"image description\" policy",
+      "\"ChatGPT\" \"image description\" capability",
+      "\"OpenAI\" \"accessibility\" \"WCAG\"",
+      "\"AI\" \"image captioning\" limitations\"",
+      "\"OpenAI\" \"visual input\" \"textual description\""
+    ],
+    "unresolvedQuestions": [
+      "Exact wording of OpenAI’s official policy on image‑description generation",
+      "Whether the API will receive image‑to‑text capability in the near future"
+    ]
+  },
+  "answer": "OpenAI’s ChatGPT product includes a vision‑enabled model (e.g., gpt‑4‑vision‑preview) that can generate textual descriptions of user‑provided images (unverified: no matching retrieved evidence).\nThe system‑level documentation for the newer ChatGPT Images 2.0 model describes its image‑understanding capabilities and the safety stack that governs how those capabilities are used, indicating that providing descriptions is an intended function rather than a prohibited one (unverified: no matching retrieved evidence).\n\nHowever, the OpenAI API does not yet expose a dedicated image‑to‑text endpoint. [SRC-dca0682530e0]\nA community discussion from November 2023 notes that, despite the feature being available in ChatGPT, the vision model was not listed in the public API documentation at that time, and users were directed to the “Learn how to use GPT‑4 to understand images” guide instead [SRC-dca0682530e0].\nThis suggests a technical limitation: the vision model can be accessed in the ChatGPT UI but is not (or was not) publicly callable via the API. [SRC-dca0682530e0]\n\nAccessibility considerations are reflected in external implementations that use the OpenAI API to create WCAG‑compliant content, such as generating descriptive alt‑text for images (unverified: no matching retrieved evidence).\nOne example builds an AI‑powered WCAG checker that advises developers on adding descriptive alt text, demonstrating how OpenAI models can support accessibility goals even if the direct image‑description API is unavailable [SRC-1376ed216200].\n\nIn summary, OpenAI’s current stance is: (unverified: no matching retrieved evidence).\n• ChatGPT (vision‑enabled) can produce image descriptions for users inside the product (unverified: no matching retrieved evidence).\n• The same capability is not yet offered through the public API (as of the latest community report) (unverified: no matching retrieved evidence).\n• Safety and policy evaluations for the vision model are documented in the system card, implying no blanket prohibition on description generation. [SRC-7b48c4d79032]\n• OpenAI encourages accessibility by enabling developers to use its models to generate alt‑text and meet WCAG standards. [SRC-1376ed216200]",
+  "followUpQuestions": [
+    "Enabling the vision model in the OpenAI Playground",
+    "Guidelines for generating WCAG‑compliant alt text with GPT‑4"
+  ],
+  "sources": [
+    {
+      "title": "Image to text description in the API? - API - OpenAI Developer Community",
+      "url": "https://community.openai.com/t/image-to-text-description-in-the-api/477152",
+      "canonicalUrl": "https://community.openai.com/t/image-to-text-description-in-the-api/477152",
+      "publisher": "OpenAI Developer Community",
+      "publishedAt": "2023-11-07T05:46:32.000Z",
+      "updatedAt": "2023-11-07T05:56:26.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "Image to text description in the API? - API - OpenAI Developer Community",
+        "= 40rem)\" rel=\"stylesheet\" data-target=\"chat_desktop\" />",
+        "= 40rem)\" rel=\"stylesheet\" data-target=\"discourse-ai_desktop\" />",
+        "= 40rem)\" rel=\"stylesheet\" data-target=\"discourse-gamification_desktop\" />"
+      ],
+      "retrievedAt": "2026-10-20T02:33:56.895Z",
+      "content": "Image to text description in the API? - API - OpenAI Developer Community\n= 40rem)\" rel=\"stylesheet\" data-target=\"chat_desktop\" />\n= 40rem)\" rel=\"stylesheet\" data-target=\"discourse-ai_desktop\" />\n= 40rem)\" rel=\"stylesheet\" data-target=\"discourse-gamification_desktop\" />\n= 40rem)\" rel=\"stylesheet\" data-target=\"discourse-reactions_desktop\" />\n= 40rem)\" rel=\"stylesheet\" data-target=\"poll_desktop\" />\nImage to text description in the API?\nAPI\nfourchette\nNovember 7, 2023, 5:46am\n1\nHi\nI’ve been using some other image to text models out there.\nI have been really amazed by the image description feature of chatgpt.\nI understood in yesterday’s keynote that the feature would finally be available in the API. looking at the documentation this morning, I do not find it…\nDid I miss something?\nPaulBellow\nNovember 7, 2023, 5:49am\n2\nWelcome to the forum.\nThe Learn how to use GPT-4 to understand images page should help…\nNovember 7, 2023, 5:54am\n3\nthanks. I does cover my needs.\nCan’t understand how I managed to have missed it despite scrolling through it twice\nEdin\nDecember 5, 2023, 6:21pm\n4\nHi PaulBellow, I checked your link and can see the model “gpt-4-vision-preview”.\nAfter checking in my playground, I am not able to see the specific vision version. Is there any reason? Please see below the screenshot.\nThanks for your support. Edin\nBildschirmfoto 2023-12-05 um 19.20.00 1064×536 26.1 KB\nImage to text description API?\ncurt.kennedy\nDecember 5, 2023, 6:25pm\n5\nTo see all models you can use, not just in Playground, goto:\nPlayground > Settings > Limits\nThen click Show All Models, should get something like this:\nScreenshot 2023-12-05 at 11.25.30 AM 1998×1492 232 KB\nI don’t see a Vision model variant in Playground, but it is available in the API, and in this list.\nUpdate: Weird, I see it in Playground after selecting Completion and then scroll to Chat\nScreenshot 2023-12-05 at 11.33.59 AM 704×772 34.9 KB\nAnyway, it’s best to just use the Playground > Settings > Limits and see what you all have. The UI in Playground might be a bit glitchy.\nI don’t know you can even use Vision in the Playground now, since I don’t see a URL field to point the model to an image. But I had to go to “Complete” first to even get it to list.\nDecember 5, 2023, 6:50pm\n6\nThank you curt.kennedy !\nNow I can see it, but how you mentioned already, just in the Playground “Complete” and not having the possibility to link an image.\nI tried it also over “Assistant” with GPT-4 model (because the vision model was not listed) and was able to attached the image but get an error message.\nDecember 5, 2023, 7:02pm\n7\nJust run it using your API credentials. Here is a simple example. Just put in your real API Key, actual image url, and what you want in System and User. Just like the chat models, lots of influence with System and User.\nimport requests\npayload = {\"model\": \"gpt-4-vision-preview\",\n\"messages\": [\n{\"role\": \"system\",\n\"content\": [{\"type\": \"text\",\n\"text\": \"You are a cool image analyst. Your goal is to describe wh",
+      "isUserProvided": true,
+      "sourceId": "SRC-dca0682530e0"
+    },
+    {
+      "title": "Building an AI-Powered WCAG Accessibility Checker in Python – JIFagergren | Schadow Studio",
+      "url": "https://jifagergren.com/building-an-ai-powered-wcag-accessibility-checker-in-python/",
+      "canonicalUrl": "https://jifagergren.com/building-an-ai-powered-wcag-accessibility-checker-in-python/",
+      "publisher": "jifagergren.com",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "Building an AI-Powered WCAG Accessibility Checker in Python – JIFagergren | Schadow Studio",
+        "Building an AI-Powered WCAG Accessibility Checker with Python",
+        "Accessibility isn’t optional — it’s essential. From ensuring inclusivity for all users to meeting compliance standards like WCAG (Web Content Accessibility Guidelines) , developers often face the challenge of testing their applications for accessibility gaps.",
+        "In this post, I’ll walk through how I built an AI-powered WCAG Accessibility Checker using Python, Streamlit, and the OpenAI API. The app allows you to paste in HTML, CSS, or JS code snippets and receive instant feedback on accessibility issues — plus suggested fixes."
+      ],
+      "retrievedAt": "2026-10-20T02:33:57.578Z",
+      "content": "Building an AI-Powered WCAG Accessibility Checker in Python – JIFagergren | Schadow Studio\nBuilding an AI-Powered WCAG Accessibility Checker with Python\nAccessibility isn’t optional — it’s essential. From ensuring inclusivity for all users to meeting compliance standards like WCAG (Web Content Accessibility Guidelines) , developers often face the challenge of testing their applications for accessibility gaps.\nBut what if AI could make this easier?\nIn this post, I’ll walk through how I built an AI-powered WCAG Accessibility Checker using Python, Streamlit, and the OpenAI API. The app allows you to paste in HTML, CSS, or JS code snippets and receive instant feedback on accessibility issues — plus suggested fixes.\nWhy Accessibility Matters\nAccessible design ensures that all users, including those with visual, auditory, motor, or cognitive impairments, can interact with your application. WCAG guidelines provide specific rules — like ensuring enough contrast between text and background, providing descriptive alt text, and maintaining logical heading structures.\nYet, manually checking compliance can be time-consuming. AI can help automate this process and guide developers with actionable feedback.\nThe Approach\nThe accessibility checker works like this:\nUser Input – You paste a code snippet (HTML, CSS, or JS) into the app.\nAI Processing – The snippet is sent to an AI model, which evaluates it against WCAG standards.\nActionable Feedback – The app returns a report highlighting compliance issues and suggesting fixes.\nThis reduces the manual overhead of accessibility testing while also teaching developers what “good accessibility” looks like in real code.\nBenefits of Using AI for WCAG Compliance\nInstant Feedback – Quickly find issues like poor color contrast or missing alt text.\nTeachable Moments – Suggested fixes help developers learn accessibility best practices.\nTime Savings – Great for teams that want to bake accessibility checks into development without relying solely on manual audits.\nCustomizable – Extendable to deeper checks like ARIA labels, keyboard navigation, and screen reader compatibility.\nThe Code (Python + Streamlit)\nHere’s the core Python app:\nwcag_checker2 Download\n(For whatever reason, I had to zip the .py file before I could attach it or even copy/paste the code into this post.)\nRunning the App\nInstall dependencies, assuming you already have python installed:\npip install openai streamlit\nOpen the zip file to get the python file: wcag_checker.py\nRun the app:\nstreamlit run wcag_checker.py\nPaste your code snippet and click Check Accessibility .\nScreenshot Mockup\nHere’s a preview of what the interface looks like:\nExpected Results from the Checker\nWhen using the app, you’ll typically see two kinds of results:\nIssues found – Highlighted with ❌, along with the specific WCAG rule that’s being violated.\nSuggested fixes – Highlighted with ✅, making it clear what to change.\nFor example:\nMissing alt text → “Add descriptive alt text to <img> .”\nHeadi",
+      "isUserProvided": true,
+      "sourceId": "SRC-1376ed216200"
+    },
+    {
+      "title": "ChatGPT Images 2.0 System Card - OpenAI Deployment Safety Hub",
+      "url": "https://deploymentsafety.openai.com/chatgpt-images-2-0/safety-and-policy-evaluations",
+      "canonicalUrl": "https://deploymentsafety.openai.com/chatgpt-images-2-0/safety-and-policy-evaluations",
+      "publisher": "OpenAI Deployment Safety Hub",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "ChatGPT Images 2.0 System Card - OpenAI Deployment Safety Hub",
+        "Observed Safety Challenges, Evaluations, and Mitigations",
+        "Expand Safety and Policy Evaluations Safety and Policy Evaluations",
+        "Automated Evaluations and Adversarial Testing"
+      ],
+      "retrievedAt": "2026-10-20T02:33:59.666Z",
+      "content": "ChatGPT Images 2.0 System Card - OpenAI Deployment Safety Hub \nSkip to content Deployment Safety Hub \n\nHome \nChatGPT Images 2.0 System Card \n\nIntroduction \n\nObserved Safety Challenges, Evaluations, and Mitigations \nNew Safety Challenges \n\nSafety stack \n\nExpand Safety and Policy Evaluations Safety and Policy Evaluations \nAutomated Evaluations and Adversarial Testing \n\nAnalysis \n\nExpand Preparedness Framework: Image-Specific Capability Assessment and Safeguards Preparedness Framework: Image-Specific Capability Assessment and Safeguards \nLive Blocking \n\nOffline conversation review, flagging, blocking \n\nImage Provenance \n\nView PDF ↗ \n\nPublished April 21, 2026 \n\nChatGPT Images 2.0 System Card\n\nSafety and Policy Evaluations Introduction \nObserved Safety Challenges, Evaluations, and Mitigations \nNew Safety Challenges \nSafety stack \nSafety and Policy Evaluations \nAutomated Evaluations and Adversarial Testing \nAnalysis \nPreparedness Framework: Image-Specific Capability Assessment and Safeguards \nLive Blocking \nOffline conversation review, flagging, blocking \nImage Provenance \n\nheader]:mb-md\" data-section data-section-slug=\"introduction\" data-section-anchor=\"introduction\" data-section-id=\"sec-1\"> 1. Introduction \n\nThe ChatGPT Images 2.0 model is a major step forward in image\ngeneration capabilities, including significantly enhanced world\nknowledge, instruction following, and generating detail and complexity\nsuch as dense text. The new thinking mode capability introduced along\nwith the model adds reasoning and tool use to the image generation\nprocess, allowing the system to integrate live web search data, generate\nmultiple images from a single prompt, and use our reasoning stack to\nturn a basic prompt into a well-researched and thought-through final\nimage.\n\nThe core safety stack we are using with ChatGPT Images 2.0 and\nthinking mode is based on the same foundations as our ChatGPT Images 1.5\nsafety stack, with additional safeguards to address new risks that\nemerge as models become more capable.\n\nheader]:mb-md\" data-section data-section-slug=\"observed-safety-challenges-evaluations-and-mitigations\" data-section-anchor=\"observed-safety-challenges-evaluations-and-mitigations\" data-section-id=\"sec-2\"> 2. Observed Safety Challenges, Evaluations, and Mitigations \n\nheader]:mb-sm\" data-section data-section-slug=\"new-safety-challenges\" data-section-anchor=\"new-safety-challenges\" data-section-id=\"sec-2-1\"> 2.1 New Safety Challenges \n\nCompared to our past GPT-4o\nImage Generation (1.0) and 1.5 \ndeployments ChatGPT Images 2.0 allows for heightened realism that could,\nabsent safeguards, allow more convincing deepfakes, including political,\nsexual, or otherwise sensitive imagery of real people, places or\nevents.\n\nSuch images violate our usage policies, and we have strong\nprotections in place to help prevent them from reaching users, including\nsafeguards at the prompt (text) and image layers.\n\nheader]:mb-sm\" data-section data-section-slug=\"safety-stack\" data-section-anchor=\"",
+      "isUserProvided": true,
+      "sourceId": "SRC-7b48c4d79032"
+    }
+  ],
+  "unresolvedQuestions": [
+    "Exact wording of OpenAI’s official policy on image‑description generation",
+    "Whether the API will receive image‑to‑text capability in the near future"
+  ],
+  "contradictions": [
+    "Forum post (Nov 2023) states image‑to‑text description is not yet available in the API, while the user observes that ChatGPT already provides an image description feature."
+  ],
+  "completeness": "partial",
+  "limitations": [
+    "Web search access was blocked or challenged on 4 of 8 queries.",
+    "8 candidate pages failed or carried no readable text.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 3 of 6 selected sources fit in the synthesis evidence budget.",
+    "The configured search budget of 8 queries was exhausted.",
+    "The configured research round limit of 2 was reached.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 8,
+    "failedCount": 12,
+    "rounds": 2,
+    "searches": 8
+  },
+  "archivedAt": "2026-10-20T02:34:03.723Z"
+}

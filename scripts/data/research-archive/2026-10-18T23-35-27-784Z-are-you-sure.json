@@ -1,0 +1,57 @@
+{
+  "id": "2026-10-18T23-35-27-784Z-are-you-sure",
+  "question": "Are you sure?",
+  "plan": {
+    "objective": "Provide a clear definition and explanation of the phrase \"Are you sure?\", including its literal meaning, pragmatic function, typical contexts of use, and any notable nuances in tone or intent.",
+    "taskType": "definition",
+    "deliverable": "A concise definition with supporting citations from authoritative dictionaries and linguistic sources, plus a brief overview of common usage contexts and pragmatic implications.",
+    "requiresCurrentInformation": false,
+    "sourcePreferences": [
+      "Oxford English Dictionary",
+      "Merriam-Webster Dictionary",
+      "Cambridge Dictionary",
+      "Linguistic textbooks on pragmatics and discourse analysis",
+      "Peer‑reviewed articles on speech acts and politeness"
+    ],
+    "questions": [
+      "What is the dictionary definition of the phrase \"Are you sure?\"?",
+      "What pragmatic function does the question serve in conversation (e.g., confirmation, challenge, politeness)?",
+      "In what typical contexts or registers is \"Are you sure?\" used?"
+    ],
+    "queries": [
+      "\"are you sure\" phrase meaning definition",
+      "\"are you sure\" pragmatic function",
+      "\"are you sure\" usage in English conversation",
+      "\"are you sure\" idiom analysis",
+      "\"are you sure\" discourse analysis"
+    ],
+    "unresolvedQuestions": [
+      "What is the dictionary definition of the phrase \"Are you sure?\"?",
+      "What pragmatic function does the question serve in conversation (e.g., confirmation, challenge, politeness)?",
+      "In what typical contexts or registers is \"Are you sure?\" used?"
+    ]
+  },
+  "answer": "I could not retrieve any readable web sources for this question, so I can't provide a source-grounded answer yet.\n\n- Web search was blocked by a bot challenge on every query, so no additional sources could be discovered. This commonly happens from cloud-hosted IP addresses.\n\nIf you have a specific page in mind, send its URL and I will read it directly.",
+  "followUpQuestions": [],
+  "sources": [],
+  "unresolvedQuestions": [
+    "What is the dictionary definition of the phrase \"Are you sure?\"?",
+    "What pragmatic function does the question serve in conversation (e.g., confirmation, challenge, politeness)?",
+    "In what typical contexts or registers is \"Are you sure?\" used?"
+  ],
+  "contradictions": [],
+  "completeness": "insufficient",
+  "limitations": [
+    "Web search was blocked by a bot challenge on 8 of 8 queries.",
+    "The configured search budget of 8 queries was exhausted.",
+    "The configured research round limit of 2 was reached."
+  ],
+  "retrieval": {
+    "candidateCount": 0,
+    "retrievedCount": 0,
+    "failedCount": 8,
+    "rounds": 2,
+    "searches": 8
+  },
+  "archivedAt": "2026-10-18T23:35:27.785Z"
+}

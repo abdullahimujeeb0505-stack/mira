@@ -1,0 +1,108 @@
+{
+  "id": "2026-10-19T02-02-18-477Z-what-s-todays-date",
+  "question": "What's todays date",
+  "plan": {
+    "objective": "Determine today's current date.",
+    "taskType": "current",
+    "deliverable": "The accurate current date.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "Official time and date sources",
+      "Standard system calendar data"
+    ],
+    "questions": [
+      "What is today's date?"
+    ],
+    "queries": [
+      "current date today",
+      "today's date UTC"
+    ],
+    "unresolvedQuestions": [
+      "What is today's exact current date?"
+    ]
+  },
+  "answer": "The retrieved web pages (, ) rely on client-side JavaScript to display time and calendar information and contain placeholders (such as \"Loading your local date…\" and \"--:--:--\") rather than static text (unverified: no matching retrieved evidence).\nConsequently, today's exact current date is not available in the readable text of the provided sources (unverified: no matching retrieved evidence).",
+  "followUpQuestions": [
+    "Checking live timestamp formats",
+    "How client-side time tools function"
+  ],
+  "sources": [
+    {
+      "title": "Today's Date and Time - Current Date, Time & More",
+      "url": "https://todaydateandtime.com/",
+      "canonicalUrl": "https://todaydateandtime.com/",
+      "publisher": "TodayDateAndTime.com",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Need to plan around holidays in two countries?",
+        "The Business Days Planner compares built-in holiday calendars, shows the next common working day, and helps when a deadline spans more than one market.",
+        "Convert a date and time between cities and time zones. See local dates, UTC offsets, and practical scheduling context.",
+        "Calculate the exact difference between two dates in days, weeks, months, years, weekdays, and inclusive ranges."
+      ],
+      "retrievedAt": "2026-10-19T02:02:03.612Z",
+      "content": "Today's Date and Time\nSwitch to 24h Copy time\nTimezone\nUTC Time\nWeek Number\nDay of Year\nNeed to plan around holidays in two countries?\nThe Business Days Planner compares built-in holiday calendars, shows the next common working day, and helps when a deadline spans more than one market.\nExplore the planner\nTime Zone Converter\nConvert a date and time between cities and time zones. See local dates, UTC offsets, and practical scheduling context.\nDate Difference\nCalculate the exact difference between two dates in days, weeks, months, years, weekdays, and inclusive ranges.\nUnix Timestamp Converter\nConvert Unix timestamps in seconds or milliseconds to readable local and UTC dates, and generate the current timestamp.\nWhy Recurring International Meetings Shift During Daylight Saving Time\nA worked example showing how one 9:00 New York meeting changes across London, Madrid, Los Angeles, Dubai, Tokyo, and Sydney during 2026 daylight saving transitions.\nUses IANA time-zone rules\nCompares city anchoring with UTC\nIncludes calendar-invite wording\nRead the guide\nClocks, calendars, timers & more\nWhat Day Is It\nFind out what day of the week it is today. Learn about the current day, day number, and how days of the week got their names.\nWhat Time Is It\nCheck the exact current time in your timezone. View time in 12-hour and 24-hour formats, UTC time, and learn about timezones.\nToday's Date\nSee today's date in every format: ISO 8601, US, European, written, and more. Copy any date format to your clipboard instantly.\nFind out the current ISO week number. Learn how week numbers are calculated and why they matter for business and planning.\nCalendar\nView the current month calendar. See today highlighted, navigate between months, and keep track of upcoming dates.\nWorld Clock\nSee the current time in cities around the world. Compare time zones, track daylight saving changes, and plan across borders.\nSunrise & Sunset\nFind sunrise and sunset times for any supported city and date. See dawn, dusk, golden hour, and daylight duration.\nCountdown Timer\nSet a countdown timer for minutes, hours, or any custom duration. Features alerts, fullscreen mode, and popular preset times.\nStopwatch\nFree online stopwatch with lap timing, split times, and millisecond precision. Perfect for sports, cooking, and productivity.\nDeadline Calculator\nCalculate legal, court, business, calendar-day, and SLA deadlines with holidays, cut-offs, audit trails, and exports.\nMeeting Planner\nCompare several cities, rank fair meeting slots, save shareable setups, and export calendar invites for distributed teams.\nPublic Holidays\nView public holidays by country and year, find the next holiday, inspect month coverage, and export CSV or ICS calendar files.\nAge Calculator\nWork out your exact age in years, months and days, watch it tick live in seconds, and see your next birthday, the day you were born, Korean age, Chinese zodiac and life milestones.\nWelcome to TodayDateAndTime.com , your go-to resource for accurate date ",
+      "isUserProvided": true,
+      "sourceId": "SRC-9698bca3bdca"
+    },
+    {
+      "title": "Current Timestamp - Live Unix Epoch, UTC | UnixEpoch.net",
+      "url": "https://unixepoch.net/current-timestamp",
+      "canonicalUrl": "https://unixepoch.net/current-timestamp",
+      "publisher": "UnixEpoch.net",
+      "author": "SectoJoy",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "View the current Unix timestamp, UTC time, and local time in real-time. One-click copy for developers.",
+        "Fast, accurate timestamp and date conversion tools.",
+        "A Unix timestamp (also known as epoch time or POSIX time) is the number of seconds that have elapsed since January 1, 1970, 00:00:00 UTC. It is widely used in programming, databases, and system logs as a universal time reference that is timezone-independent.",
+        "This tool displays the current time in multiple formats, updating every second. You can copy any format with one click or change the timezone to see the current time elsewhere."
+      ],
+      "retrievedAt": "2026-10-19T02:02:03.588Z",
+      "content": "Current Timestamp\nView the current Unix timestamp, UTC time, and local time in real-time. One-click copy for developers.\nTimezone:\nLocal Time\nUnix Epoch (Seconds)\n--\nCopy\nUnix Epoch (Milliseconds)\nUTC (ISO 8601)\nRFC 2822\nGPS Time\nJulian Day\nUnixEpoch.net\nFast, accurate timestamp and date conversion tools.\nWhat is a Unix Timestamp?\nA Unix timestamp (also known as epoch time or POSIX time) is the number of seconds that have elapsed since January 1, 1970, 00:00:00 UTC. It is widely used in programming, databases, and system logs as a universal time reference that is timezone-independent.\nHow to Use This Tool\nThis tool displays the current time in multiple formats, updating every second. You can copy any format with one click or change the timezone to see the current time elsewhere.\nView the live-updating current time in all formats on the page\nClick the copy button next to any format to copy it to your clipboard\nUse the timezone dropdown to see the current time in a different timezone\nAll values refresh automatically every second with no page reload needed\nFeatures\nReal-time auto-refreshing display updated every second\nSeven time formats including Unix epoch, UTC, RFC 2822, GPS, and Julian Day\nOne-click copy buttons for each format\nTimezone selector to view current time in any timezone\nNo server calls needed - all processing in the browser\nResponsive design works on desktop and mobile\nCommon Use Cases\nGetting the current Unix timestamp for API requests or database entries\nChecking the current UTC time for server synchronization\nConverting current time to GPS time for navigation systems\nFinding the Julian Day for astronomical calculations\nComparing time across different timezones for distributed teams\nDebugging timestamp-related issues in application logs\nRelated Timestamp Tools\nWatching the live epoch is step one; the next step is usually converting or comparing values. To decode any\nseconds or milliseconds epoch into UTC and local date-time, use the\nUnix Timestamp Converter .\nFor epoch-only workflows such as normalizing 10-digit or 13-digit values, the\nEpoch Converter covers both units,\nand to measure the gap between two epoch readings, try the\nTimestamp Difference Calculator .\nFor batch jobs or log analysis, the\nBatch Epoch Converter handles many values at once.\nFrequently Asked Questions\nWhat is the difference between Unix time and GPS time?\nUnix time counts seconds since January 1, 1970 UTC and includes leap seconds in its count. GPS time started on January 6, 1980 and does not account for leap seconds, so it currently differs from UTC by 18 seconds.\nWhat is Julian Day?\nJulian Day is a continuous count of days since the beginning of the Julian Period (January 1, 4713 BC). It is used primarily in astronomy and can represent any date as a single number, making date arithmetic straightforward.\nWhy does the millisecond timestamp have 13 digits?\nA Unix timestamp in seconds is typically 10 digits (until November 2286). The millisecond version multipli",
+      "isUserProvided": true,
+      "sourceId": "SRC-53ef18517a99"
+    },
+    {
+      "title": "What Is Today's Date? — Live Date, Time & Week Number — TodaysDateAndTime.com",
+      "url": "https://todaysdateandtime.com/today/",
+      "canonicalUrl": "https://todaysdateandtime.com/today/",
+      "publisher": "TodaysDateAndTime.com",
+      "author": "TodaysDateAndTime.com",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Live date and time in multiple formats, updated every second.",
+        "Your local date and time appear below, updated live.",
+        "Convert any calendar date to JD, JDN, and MJD, or reverse the conversion.",
+        "Find the exact number of days between two dates."
+      ],
+      "retrievedAt": "2026-10-19T02:02:03.380Z",
+      "content": "Today's Date & Time\nLive date and time in multiple formats, updated every second.\nYour local date and time appear below, updated live.\nCurrent Time\n--:--:--\nLoading your local date…\nYour local time zone\nDate Formats\nISO 8601 —\nUS Format (MM/DD/YYYY) —\nEU Format (DD/MM/YYYY) —\nLong Date —\nRFC 2822 —\nUnix Timestamp —\nUnix (ms) —\nJulian Day Number —\nCalendar Information\nDay of Year\nDays Remaining\nWeek Number (ISO)\nQuarter\nLeap Year\nDay of Week\nMoon Phase (Approximate)\nCalculating…\nMoon age: —\nRelated Tools\nJulian Date Converter\nConvert any calendar date to JD, JDN, and MJD, or reverse the conversion.\nDate Difference Calculator\nFind the exact number of days between two dates.\nWeek Number Finder\nFind the ISO week number for any date.\nThe Many Ways We Refer to Today\nThe word \"today\" comes from the Old English tōdæġe , literally meaning \"on this day.\" It is one of the oldest and most fundamental words in any language, and nearly every culture has developed its own rich vocabulary for locating a moment in time relative to the present. English alone offers dozens of ways to say \"today\" without ever using the word: this morning , this afternoon , the present day , as we speak , at this point , right now .\nOther languages go further. Japanese distinguishes kyō (今日, today) from honjitsu (本日), a more formal variant used in announcements, news, and official documents — two words for the same day, separated by social register. Italian has oggi and the literary oggigiorno (nowadays), while in Hindi, āj (आज) serves for both \"today\" and \"nowadays,\" collapsing the present moment and the present era into a single syllable.\nYesterday, Today, Tomorrow — and the Words Between\nEnglish has names for yesterday and tomorrow, but many languages extend the system much further. Japanese has dedicated single words for the day before yesterday ( ototoi ) and the day after tomorrow ( asatte ), and even a word for three days from now ( shiasatte ). German mirrors this with vorgestern (day before yesterday) and übermorgen (day after tomorrow). Georgian pushes it to four days out with zeg (day after tomorrow) and mazeg (the day after that).\nThese words reveal something about how cultures experience time. Languages that compress several days into single words tend to treat the near future and near past as a continuous, accessible zone — not a distant abstraction but something close enough to name in one breath. English speakers, by contrast, must construct phrases: \"the day before yesterday\" is four words where German needs one.\nHow Computers Understand \"Today\"\nFor humans, \"today\" is intuitive. For computers, it is surprisingly complicated. At its core, a computer does not know what \"today\" is — it only knows how many seconds have elapsed since January 1, 1970 (the Unix epoch). Every time software displays \"today's date,\" it is performing a chain of calculations: reading a timestamp, applying a time zone offset, converting to a calendar date, and formatting it for human eyes.\nThe co",
+      "isUserProvided": true,
+      "sourceId": "SRC-d30686154f2d"
+    }
+  ],
+  "unresolvedQuestions": [
+    "What is today's exact current date?"
+  ],
+  "contradictions": [],
+  "completeness": "insufficient",
+  "limitations": [
+    "4 candidate pages failed or carried no readable text.",
+    "Only 3 of 6 selected sources fit in the synthesis evidence budget.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 14,
+    "retrievedCount": 10,
+    "failedCount": 4,
+    "rounds": 1,
+    "searches": 2
+  },
+  "archivedAt": "2026-10-19T02:02:18.479Z"
+}

@@ -1,0 +1,111 @@
+{
+  "id": "2026-10-18T23-51-10-352Z-are-you-okay",
+  "question": "Are you okay?",
+  "plan": {
+    "objective": "Are you okay?",
+    "taskType": "general",
+    "deliverable": "A direct answer with supporting evidence and limitations.",
+    "requiresCurrentInformation": false,
+    "sourcePreferences": [
+      "primary sources",
+      "authoritative references",
+      "independent corroboration"
+    ],
+    "questions": [
+      "Are you okay?"
+    ],
+    "queries": [
+      "Are you okay?",
+      "Are you okay? authoritative sources",
+      "Are you okay? evidence and limitations"
+    ],
+    "unresolvedQuestions": [
+      "Whether the user intended an operational status check or was inquiring about interpersonal communication phrases."
+    ]
+  },
+  "answer": "I am functioning normally and ready to assist (unverified: no matching retrieved evidence).\n\nThe provided sources do not address my individual status, focusing instead on the interpersonal use of the question (unverified: no matching retrieved evidence).\nIn communication, asking \"Are you okay?\" functions as a direct inquiry to express concern about someone's emotional, physical, or mental well-being [SRC-b37e8cea5e6e].\nBecause the question can often be closed off with a brief \"yes\" or \"no,\" communication guides suggest using alternative phrasing—such as asking \"How are you feeling?\" or explicitly offering support—depending on the context and closeness of the relationship, (unverified: no matching retrieved evidence).",
+  "followUpQuestions": [
+    "Alternatives to asking 'Are you okay?'",
+    "Expressing empathy across different communication settings"
+  ],
+  "sources": [
+    {
+      "title": "7 Better Ways To Ask \"Are You Okay?\" (Friendly & Caring)",
+      "url": "https://grammarhow.com/better-ways-to-ask-are-you-okay/",
+      "canonicalUrl": "https://grammarhow.com/better-ways-to-ask-are-you-okay/",
+      "publisher": "Grammarhow",
+      "publishedAt": "2022-01-20T08:51:25.000Z",
+      "updatedAt": "2024-10-17T09:16:27.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "When we ask a friend or family member, “are you okay,” we want them to know we mean it. We want them to understand that we care about them, and we want to help. That’s why this article will show you better alternatives to use in place of it.",
+        "There are plenty of ways we can ask, “are you okay” without using the phrase. Most of it comes down to what kind of answer you expect someone to give. Here are the best options to choose from:",
+        "I want you to understand that I’m here for you.",
+        "Whatever you’re going through, I’m happy to help."
+      ],
+      "retrievedAt": "2026-10-18T23:50:40.373Z",
+      "content": "When we ask a friend or family member, “are you okay,” we want them to know we mean it. We want them to understand that we care about them, and we want to help. That’s why this article will show you better alternatives to use in place of it.\nWhat Can I Ask Instead Of “Are You Okay”?\nThere are plenty of ways we can ask, “are you okay” without using the phrase. Most of it comes down to what kind of answer you expect someone to give. Here are the best options to choose from:\nI just want you to know that I love you.\nIs there anything I can do to help?\nHow are you feeling?\nWhat’s on your mind?\nIs there anything you need from me?\nI want you to understand that I’m here for you.\nWhatever you’re going through, I’m happy to help.\nThe preferred version is “I just want you to know that I love you.” This isn’t a question, but it works really well to show someone that they are valued, loved, and cared for. Whatever they might be going through, our love will always come through to help them.\nLet’s start with the preferred option and what makes it so useful. Of course, if you don’t actually “love” the person you’re asking “are you okay” to, then this might not be for you.\n“I just want you to know that I love you” works when you’re really close with a person. We can use it to show that, no matter what they’re feeling right now, we will always love them. It’s our way of offering help, even if they don’t feel like they deserve help from anyone.\nSometimes, “are you okay” can be shrugged off with a quick “yes” or “no” response. Therefore, it’s not the best way to ask someone how they’re feeling and whether they need help from us.\nInstead, letting them know they are loved encourages them to open up a little more. Even if they didn’t intend to, they might be ready to share their troubles with you.\nHere are the best ways to use it:\nI know you’ve been struggling a lot lately, and I just want you to know that I love you.\nI want you to know that I love you, and I’ll do anything you need from me to help you get through this.\nI just want you to know that I love you. As long as you know that, you can get through this!\nWe might just want to rephrase “are you okay” to something more useful to us. If we know that someone is dealing with issues, “are you okay” doesn’t always get the best answer, and we can do more to help.\n“Is there anything I can do to help” works when we want to ask whether we can be of assistance. It doesn’t pry into their personal issues, which is great if they’re not comfortable sharing them with us. Still, we can always be of service to someone.\nThe idea is that all they need to do to get our help is ask it of us. As long as they know we are available, they may take us up on the offer.\nHere’s how it works:\nI know you’re struggling right now. Is there anything I can do to help you through it?\nIs there anything I can do to help? I don’t want you to have to suffer alone.\nI’m here for you, and I always will be. Is there anything I can do to help?\nSometimes, eve",
+      "isUserProvided": true,
+      "sourceId": "SRC-901a46c3c93b"
+    },
+    {
+      "title": "17 Other Ways to Ask Are You Okay with Care",
+      "url": "https://englitics.com/other-ways-to-ask-are-you-okay/",
+      "canonicalUrl": "https://englitics.com/other-ways-to-ask-are-you-okay/",
+      "publisher": "Englitics",
+      "publishedAt": "2025-11-27T08:07:00.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "The question “Are you okay?” is simple and caring, but it can sometimes feel too blunt or repetitive. Depending on the situation, you might want to use softer or more thoughtful alternatives like “How are you feeling?” “Is everything alright?” “Do you need anything?” or “Want to talk about it?”",
+        "For example, instead of asking “Are you okay?” to a friend who seems upset, you could say “I’m here if you want to talk” or “How are you holding up?” In a professional setting, you might ask “Is everything alright on your end?” These alternatives allow you to show concern while matching the right tone for personal, casual, or workplace situations.",
+        "Expressing concern involves inquiring about someone’s well-being, indicating that you care about their physical, emotional, or mental state. It goes beyond a simple greeting and demonstrates empathy and willingness to offer support.",
+        "The phrases used can vary widely depending on the context, relationship with the person, and the perceived severity of their situation. The function of expressing concern is to offer support, show empathy, and potentially identify ways to help the person in need."
+      ],
+      "retrievedAt": "2026-10-18T23:50:40.788Z",
+      "content": "The question “Are you okay?” is simple and caring, but it can sometimes feel too blunt or repetitive. Depending on the situation, you might want to use softer or more thoughtful alternatives like “How are you feeling?” “Is everything alright?” “Do you need anything?” or “Want to talk about it?”\nFor example, instead of asking “Are you okay?” to a friend who seems upset, you could say “I’m here if you want to talk” or “How are you holding up?” In a professional setting, you might ask “Is everything alright on your end?” These alternatives allow you to show concern while matching the right tone for personal, casual, or workplace situations.\nDefinition: Expressing Concern\nExpressing concern involves inquiring about someone’s well-being, indicating that you care about their physical, emotional, or mental state. It goes beyond a simple greeting and demonstrates empathy and willingness to offer support.\nThe phrases used can vary widely depending on the context, relationship with the person, and the perceived severity of their situation. The function of expressing concern is to offer support, show empathy, and potentially identify ways to help the person in need.\nIt strengthens social bonds and promotes a caring environment.\nThe context in which you express concern greatly influences the choice of words. A casual setting with a close friend calls for informal and empathetic language, whereas a formal situation with a colleague requires a more polite and professional approach.\nThe key is to be genuine and adapt your expression to suit the situation and the individual involved.\nStructural Breakdown\nThe structure of phrases used to express concern can be categorized into several types:\nDirect Questions: These are straightforward inquiries about someone’s well-being, such as “Are you alright?” or “Is everything okay?”. They typically involve a form of the verb ‘to be’ followed by a pronoun and an adjective or adverb.\nIndirect Questions: These are less direct and often involve observations or statements followed by a question, such as “You seem a bit down, is something the matter?” or “You don’t look yourself today, what’s wrong?”.\nSupportive Statements: These are statements that offer support and indicate your willingness to help, such as “I’m here if you need anything” or “Let me know if there’s anything I can do”.\nEmpathetic Questions: These questions show empathy and understanding, such as “Are you feeling overwhelmed?” or “Is there anything troubling you?”.\nFormal Inquiries: These are polite and professional inquiries used in formal settings, such as “Is there anything I can assist you with?” or “Are you experiencing any difficulties?”.\nUnderstanding these structural elements allows you to create a wide range of expressions tailored to different situations and relationships. The choice of words, tone, and body language all contribute to the overall impact of your expression of concern.\nOther Ways to Ask Are You Okay\nThere are several categories of expres",
+      "isUserProvided": true,
+      "sourceId": "SRC-b37e8cea5e6e"
+    },
+    {
+      "title": "Source Credibility Checker You Can Trust",
+      "url": "https://www.sourcely.net/resources/source-credibility-checker-you-can-trust",
+      "canonicalUrl": "https://www.sourcely.net/resources/source-credibility-checker-you-can-trust",
+      "publisher": "www.sourcely.net",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "Source Credibility Checker You Can Trust Loading...",
+        "Verify Online Information with a Source Credibility Checker",
+        "In today’s digital age, separating fact from fiction online is tougher than ever. With endless streams of content at our fingertips, how do you know which websites or articles are worth trusting? That’s where a tool to assess the reliability of online sources comes in handy. It’s like having a personal fact-checker that helps you dig into the details behind ",
+        "Whether you’re a student crafting a paper, a professional building a report, or just curious about a news story, the foundation of your work depends on solid data. Using unverified or biased content can lead to mistakes or even spread misinformation. A reliability evaluator looks at critical markers—think author expertise, publication history, and supporting"
+      ],
+      "retrievedAt": "2026-10-18T23:50:40.565Z",
+      "content": "Source Credibility Checker You Can Trust Loading...\nFeatures\nPricing\nReviews\nBlog\nResources\nAbout\nAffiliate\nContact\nLog in\nGet started\nPublished Jun 25, 2026 ⦁ 2 min read\nSource Credibility Checker You Can Trust\nVerify Online Information with a Source Credibility Checker\nIn today’s digital age, separating fact from fiction online is tougher than ever. With endless streams of content at our fingertips, how do you know which websites or articles are worth trusting? That’s where a tool to assess the reliability of online sources comes in handy. It’s like having a personal fact-checker that helps you dig into the details behind any piece of information.\nWhy Trust Matters in Research and Beyond\nWhether you’re a student crafting a paper, a professional building a report, or just curious about a news story, the foundation of your work depends on solid data. Using unverified or biased content can lead to mistakes or even spread misinformation. A reliability evaluator looks at critical markers—think author expertise, publication history, and supporting evidence—to give you confidence in what you’re reading. Beyond that, it teaches you to spot red flags like outdated info or questionable affiliations on your own.\nTake Control of Your Information\nDon’t let dubious websites derail your efforts. By routinely checking the trustworthiness of your sources, you’re taking a proactive step toward smarter, more informed decisions. Try it out and see the difference!\nFind Real Academic Sources →\nFAQs\nWhy does source credibility matter so much?\nGreat question! When you’re researching or writing, the quality of your sources directly impacts the strength of your work. Relying on shaky or biased information can mislead your audience or weaken your arguments. Credible sources—those backed by expertise, evidence, and transparency—build trust and ensure you’re sharing accurate info. Our tool helps you spot the difference so you’re not caught off guard by misinformation.\nWhat factors does this tool look at to score credibility?\nWe’ve designed this checker to focus on the stuff that really matters. It looks at the author’s background—are they an expert in the field? Then there’s the publication or website’s reputation, the recency of the content, and whether there’s solid evidence or citations backing up claims. We also flag potential biases or affiliations that might skew the info. Each factor gets a breakdown in your report so you can see the full picture.\nCan I trust the score if I’m checking a lesser-known source?\nAbsolutely, though context is key. Our tool uses a consistent set of criteria to evaluate any source, whether it’s a big-name outlet or a small blog. Lesser-known sources might score lower due to limited info on author credentials or site reputation, but that doesn’t always mean they’re unreliable—just harder to verify. Use the detailed explanations in the report to weigh the pros and cons yourself.\nSourcely weekly newsletters\nCut through the AI noise with a focu",
+      "isUserProvided": true,
+      "sourceId": "SRC-f0957b5c25bc"
+    }
+  ],
+  "unresolvedQuestions": [
+    "Whether the user intended an operational status check or was inquiring about interpersonal communication phrases."
+  ],
+  "contradictions": [],
+  "completeness": "insufficient",
+  "limitations": [
+    "13 candidate pages failed or carried no readable text.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 3,
+    "failedCount": 13,
+    "rounds": 1,
+    "searches": 3
+  },
+  "archivedAt": "2026-10-18T23:51:10.353Z"
+}

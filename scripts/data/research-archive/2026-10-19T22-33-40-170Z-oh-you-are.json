@@ -1,0 +1,106 @@
+{
+  "id": "2026-10-19T22-33-40-170Z-oh-you-are",
+  "question": "Oh you are?",
+  "plan": {
+    "objective": "Oh you are?",
+    "taskType": "general",
+    "deliverable": "A direct answer with supporting evidence and limitations.",
+    "requiresCurrentInformation": false,
+    "sourcePreferences": [
+      "primary sources",
+      "authoritative references",
+      "independent corroboration"
+    ],
+    "questions": [
+      "Oh you are?"
+    ],
+    "queries": [
+      "Oh you are?",
+      "Oh you are? authoritative sources",
+      "Oh you are? evidence and limitations"
+    ],
+    "unresolvedQuestions": []
+  },
+  "answer": "I am an AI language model designed to assist with information retrieval and synthesis (unverified: no matching retrieved evidence).\nThe supplied sources do not contain any information about my identity or role, so no direct evidence can be cited for that claim (unverified: no matching retrieved evidence).",
+  "followUpQuestions": [
+    "What defines an authoritative source?",
+    "How is evidence used in research?"
+  ],
+  "sources": [
+    {
+      "title": "What is an Authoritative Source? - How to Search for Sources and Manage Them - LibGuides at Graduate Institute of International and Development Studies",
+      "url": "https://libguides.graduateinstitute.ch/how_to_search/authority",
+      "canonicalUrl": "https://libguides.graduateinstitute.ch/how_to_search/authority",
+      "publisher": "libguides.graduateinstitute.ch",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "What is an Authoritative Source? - How to Search for Sources and Manage Them - LibGuides at Graduate Institute of International and Development Studies",
+        "&ldquo;A source that is official. Also, a work known to be reliable because its authenticity or integrity is widely recognized by experts in the field.&rdquo;",
+        "(Reitz, Joan. ODLIS: Online Dictionary for Library and Information Science )",
+        "&ldquo; Authority is constructed and contextual . Information resources reflect their creators&rsquo; expertise and credibility, and are evaluated based on the information need and the context in which the information will be used. Authority is constructed in that various communities may recognize different types of authority. It is contextual in that the in"
+      ],
+      "retrievedAt": "2026-10-19T22:33:37.459Z",
+      "content": "What is an Authoritative Source? - How to Search for Sources and Manage Them - LibGuides at Graduate Institute of International and Development Studies\nSkip to Main Content\nWhat is an Authoritative Source?\nPhoto CC BY-SA Mark Fischer\n&ldquo;A source that is official. Also, a work known to be reliable because its authenticity or integrity is widely recognized by experts in the field.&rdquo;\n(Reitz, Joan. ODLIS: Online Dictionary for Library and Information Science )\n&ldquo; Authority is constructed and contextual . Information resources reflect their creators&rsquo; expertise and credibility, and are evaluated based on the information need and the context in which the information will be used. Authority is constructed in that various communities may recognize different types of authority. It is contextual in that the information need may help to determine the level of authority required.&rdquo;\n( ACRL Framework for Information Literacy for Higher Education , adopted 2016)\nIn the general context of academic writing, authority partly derives from current academic research activity and employment in the designated field . The following are necessary to consider a work as a valid scholarly publication:\nClaims are referenced and a bibliography is included\nThe work is published by a recognised institution/publisher\nThe work is peer-reviewed\nBut other people and media can be authoritative sources in the appropriate context.\nWhat Source Types Can Be Considered Authoritative?\nThe source type provides a preliminary idea, but it is not sufficient to determine authority. The expertise of the author matters even for traditional scholarly publications, and verification grows more necessary as we go further down the categories and gatekeeping decreases.\nScholarly publications &ndash; must be used as references\nPeer reviewed books and journals\nNon-PR academic books and journals (lesser value)\nGrey literature &ndash; can be used as references\nPreprints, working papers, etc. &ndash; non-published academic research\nReports and publications from groups and institutions\nPopular and trade/professional sources &ndash; require careful consideration before using as references\nNews, magazines\nBooks (non-academic)\nOther websites\nPublic conversation and social media &ndash; should not be used as references\nDiscussion forums\nSocial media (Facebook, X, Instagram, TikTok, etc.)",
+      "isUserProvided": true,
+      "sourceId": "SRC-1095d850e32b"
+    },
+    {
+      "title": "Ooh... You Are Awful - Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Ooh..._You_Are_Awful",
+      "canonicalUrl": "https://en.wikipedia.org/wiki/Ooh..._You_Are_Awful",
+      "publisher": "en.wikipedia.org",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "[[Sidney Gilliat]]<br />[[Frank Launder]]\"},\"writer\":{\"wt\":\"[[John Warren (actor)|John Warren]]<br />John Singer\"},\"story\":{\"wt\":\"\"},\"based_on\":{\"wt\":\"<!-- {{based on|title of the original work|writer of the original work}} -->\"},\"narrator\":{\"wt\":\"\"},\"starring\":{\"wt\":\"[[Dick Emery]]<br />[[Derren Nesbitt]]<br>[[Ronald Fraser (actor)|Ronald Fraser]]<br>[[Cher",
+        "Produced by | E.M. Smedley-Aston Sidney Gilliat Frank Launder |",
+        "Starring | Dick Emery Derren Nesbitt Ronald Fraser Cheryl Kennedy |",
+        "Ooh... You Are Awful (U.S. title: Get Charlie Tully [ 2 ] ) is a 1972 British comedy film directed by Cliff Owen and starring Dick Emery , Derren Nesbitt , Ronald Fraser and Cheryl Kennedy . [ 3 ] It was written by John Warren and John Singer. It is a feature-length adaptation of The Dick Emery Show ( BBC TV , 1963–1981). It was Emery's sole starring film. ["
+      ],
+      "retrievedAt": "2026-10-19T22:33:37.410Z",
+      "content": "From Wikipedia, the free encyclopedia\n1972 British film by Cliff Owen\n[[Sidney Gilliat]]<br />[[Frank Launder]]\"},\"writer\":{\"wt\":\"[[John Warren (actor)|John Warren]]<br />John Singer\"},\"story\":{\"wt\":\"\"},\"based_on\":{\"wt\":\"<!-- {{based on|title of the original work|writer of the original work}} -->\"},\"narrator\":{\"wt\":\"\"},\"starring\":{\"wt\":\"[[Dick Emery]]<br />[[Derren Nesbitt]]<br>[[Ronald Fraser (actor)|Ronald Fraser]]<br>[[Cheryl Kennedy]]\"},\"music\":{\"wt\":\"[[Christopher Gunning]]\"},\"cinematography\":{\"wt\":\"[[Ernest Steward]]\"},\"editing\":{\"wt\":\"[[Bill Blunden]]\"},\"studio\":{\"wt\":\"[[British Lion Film Corporation|British Lion Films]]\"},\"distributor\":{\"wt\":\"British Lion Films\"},\"released\":{\"wt\":\"{{Film date|1972|12|28|df=yes}}\"},\"runtime\":{\"wt\":\"97 minutes\"},\"country\":{\"wt\":\"United Kingdom\"},\"language\":{\"wt\":\"English\"},\"budget\":{\"wt\":\"£201,443<ref name=\\\"money\\\">Chapman, J. (2022). ''The Money Behind the Screen: A History of British Film Finance, 1945–1985''. Edinburgh University Press p. 357. Income is distributor's receipts, combined domestic and international, as at 31 Dec 1978.</ref>\"},\"gross\":{\"wt\":\"£267,173<ref name=\\\"money\\\"/>\"}},\"i\":0}}]}'> Ooh… You Are Awful |\nTheatrical release poster\n|\nDirected by | Cliff Owen |\nWritten by | John Warren John Singer |\nProduced by | E.M. Smedley-Aston Sidney Gilliat Frank Launder |\nStarring | Dick Emery Derren Nesbitt Ronald Fraser Cheryl Kennedy |\nCinematography | Ernest Steward |\nEdited by | Bill Blunden |\nMusic by | Christopher Gunning |\nProduction company\n| British Lion Films\nDistributed by | British Lion Films |\nRelease date\n28 December 1972 ( 1972-12-28 )\nRunning time\n| 97 minutes |\nCountry | United Kingdom |\nLanguage | English |\nBudget | £201,443 [ 1 ] |\nBox office | £267,173 [ 1 ] |\nOoh... You Are Awful (U.S. title: Get Charlie Tully [ 2 ] ) is a 1972 British comedy film directed by Cliff Owen and starring Dick Emery , Derren Nesbitt , Ronald Fraser and Cheryl Kennedy . [ 3 ] It was written by John Warren and John Singer. It is a feature-length adaptation of The Dick Emery Show ( BBC TV , 1963–1981). It was Emery's sole starring film. [ 4 ]\nPlot\n[ edit ]\nConmen Charlie Tully and Reggie Peek have successfully conned a couple of Italian men, and are making an easy escape with £500,000. Flushed with success, Tully is unable to resist running a \"quick and easy\" con on a passing American tourist, but Tully is arrested. While Tully is imprisoned, Peek manages to escape and deposits the £500,000 in a Swiss bank account. Peek meets Tully on his release, intending to give him the bank account number. But Peek has been having an affair with the sister of London crime lord Sid Sabbath, and his reunion with Tully is cut short when Peek is murdered, on the orders of Sabbath.\nPeek has left a record of the bank account number, tattooed on the bottoms of four young women. Tully adopts a range of disguises to track down each woman in turn to see her naked bottom.\nThroughout, Tully is confronted by members of Sid Sabbath",
+      "isUserProvided": true,
+      "sourceId": "SRC-1bfa737cba54"
+    },
+    {
+      "title": "The concept and practice of evidence and evidencing: misuses and misconceptions | UCL Institute of Education Blog",
+      "url": "https://blogs.ucl.ac.uk/ioe/2026/05/07/the-concept-and-practice-of-evidence-and-evidencing-misuses-and-misconceptions/",
+      "canonicalUrl": "https://blogs.ucl.ac.uk/ioe/2026/05/07/the-concept-and-practice-of-evidence-and-evidencing-misuses-and-misconceptions/",
+      "publisher": "Institute of Education Blog",
+      "author": "UCL",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "The concept and practice of evidence and evidencing: misuses and misconceptions",
+        "In common speech and everyday activity, we use the concept of evidence to indicate or suggest that something is true or that it exists or to support an argument or an idea. Here are some examples of how the concept of evidence is used in life: coloured contusions on your arm might be evidence of an encounter with a physical object or a more serious medical c",
+        "Evidence can also refer to the signs, indications or proofs that a person is guilty in a court of law. And, in addition, evidence and evidencing is used in making a judgement or forming an opinion, regardless of whether it is sound and reliable. The notion of evidence is used in a fundamental sense by the Education Endowment Foundation , and it played a prom",
+        "Evidence is a conceptual configuration in the realm of language, and, as a word or expression, it has some metaphysical properties. Because it is a concept-in-language it can be said to be multisemic, semantically contested, networked, interactive, powerful and dynamic. In addition, as an object it has causal powers, both as a conceptual object and also beca"
+      ],
+      "retrievedAt": "2026-10-19T22:33:37.611Z",
+      "content": "The concept and practice of evidence and evidencing: misuses and misconceptions\nBy IOE Blog Editor, on 7 May 2026\nCredit: tonefotografia via Adobe Stock.\n7 May 2026\nBy David Scott\nIn common speech and everyday activity, we use the concept of evidence to indicate or suggest that something is true or that it exists or to support an argument or an idea. Here are some examples of how the concept of evidence is used in life: coloured contusions on your arm might be evidence of an encounter with a physical object or a more serious medical condition, such as blood clotting disorders (haemophilia or thrombocytopenia, for example), or liver disease (such as leukaemia), or a vitamin deficiency. If we say that there is no evidence to support a theory, we are making a claim that the particular theory being promoted is weak and insufficient, and that a theory such as this needs a particular type of evidence to be credible.\nEvidence can also refer to the signs, indications or proofs that a person is guilty in a court of law. And, in addition, evidence and evidencing is used in making a judgement or forming an opinion, regardless of whether it is sound and reliable. The notion of evidence is used in a fundamental sense by the Education Endowment Foundation , and it played a prominent role in justifying the assertions and recommendations of the Department for Education’s recent English Curriculum and Assessment Review .\nEvidence is a conceptual configuration in the realm of language, and, as a word or expression, it has some metaphysical properties. Because it is a concept-in-language it can be said to be multisemic, semantically contested, networked, interactive, powerful and dynamic. In addition, as an object it has causal powers, both as a conceptual object and also because it is in the world, or at least in a world. However, evidence as such can never allow us to make an unequivocal and true judgement about educational, legal and social objects and configurations of objects.\nThere are different types of evidence and there are different types of inferential relations that connect evidence and assertion. For example, legal evidence comprises the rules and principles that govern proof of facts in a legal proceeding. A quantum of evidence refers to the amount which is needed and the quality of proof refers to how such evidence should be treated in coming to a conclusion. These rules of legal evidence govern admissibility, hearsay, authentication, relevance, privilege, witness, opinion, expert testimony, identification and physicality. For each rule and each area of jurisdiction there is a designated inferential relationship between the type of evidence collected and the subsequent assertion or judgement that is made. In every area of life, there are different understandings of what evidence is and what the appropriate inferential relations are between evidence and assertion.\nThe concept of evidence is central to both the domain of epistemology and the philosophy",
+      "isUserProvided": true,
+      "sourceId": "SRC-6ec9690cb550"
+    }
+  ],
+  "unresolvedQuestions": [],
+  "contradictions": [],
+  "completeness": "insufficient",
+  "limitations": [
+    "10 candidate pages failed or carried no readable text.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 3 of 6 selected sources fit in the synthesis evidence budget.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 6,
+    "failedCount": 10,
+    "rounds": 1,
+    "searches": 3
+  },
+  "archivedAt": "2026-10-19T22:33:40.171Z"
+}

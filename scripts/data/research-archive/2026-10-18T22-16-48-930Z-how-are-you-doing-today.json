@@ -1,0 +1,106 @@
+{
+  "id": "2026-10-18T22-16-48-930Z-how-are-you-doing-today",
+  "question": "How are you doing today 😘",
+  "plan": {
+    "objective": "How are you doing today 😘",
+    "taskType": "current",
+    "deliverable": "A direct answer with supporting evidence and limitations.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "recent official announcements",
+      "current primary sources",
+      "dated reporting"
+    ],
+    "questions": [
+      "How are you doing today 😘"
+    ],
+    "queries": [
+      "How are you doing today 😘",
+      "How are you doing today 😘 official latest update",
+      "How are you doing today 😘 recent reporting"
+    ],
+    "unresolvedQuestions": [
+      "How are you doing today 😘"
+    ]
+  },
+  "answer": "I retrieved 3 readable sources, but couldn't synthesize a reliable answer (the provider rejected the request (HTTP 404)). Please try again shortly.",
+  "followUpQuestions": [],
+  "sources": [
+    {
+      "title": "Windows 11, version 26H2 known issues and notifications | Microsoft Learn",
+      "url": "https://learn.microsoft.com/en-us/windows/release-health/status-windows-11-26h2",
+      "canonicalUrl": "https://learn.microsoft.com/en-us/windows/release-health/status-windows-11-26h2",
+      "publisher": "learn.microsoft.com",
+      "author": "WindowsCommunications",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Access to this page requires authorization. You can try signing in or changing directories .",
+        "Access to this page requires authorization. You can try changing directories .",
+        "Windows 11, version 26H2 known issues and notifications",
+        "Find information on known issues and the status of the Windows 11, version 26H2 availability. For immediate help with Windows update issues, open the Get Help app if you are using a Windows device, or go to support.microsoft.com . Follow @WindowsUpdate on X for Windows release health updates. If you are an IT administrator and want to programmatically get in"
+      ],
+      "retrievedAt": "2026-10-18T22:16:47.661Z",
+      "content": "Note\nAccess to this page requires authorization. You can try signing in or changing directories .\nAccess to this page requires authorization. You can try changing directories .\nWindows 11, version 26H2 known issues and notifications\nSummarize this article for me\nFind information on known issues and the status of the Windows 11, version 26H2 availability. For immediate help with Windows update issues, open the Get Help app if you are using a Windows device, or go to support.microsoft.com . Follow @WindowsUpdate on X for Windows release health updates. If you are an IT administrator and want to programmatically get information from this page, use the Windows Updates API in Microsoft Graph .\nCurrent status as of September 29, 2026\nWindows 11, version 26H2 has reached general availability. This new version contains all the recently announced features in Windows 11, versions 25H2 and 24H2 and will be delivered using servicing technology, providing a fast installation experience.\nThe rollout is phased and will expand over the next few months. Starting today, version 26H2 is available on eligible Windows 11, version 25H2 and version 24H2 devices for users who have turned on the setting Get the latest updates as soon as they’re available . If the update is ready for your device, it will download and install automatically, and a single restart will complete the process.\nFor more details on how to install Windows 11, version 26H2, watch this video .\nHow to get the Windows 11 2026 Update\nAn IT pro’s guide to Windows 11, version 26H2\nSee all messages >\nKnown issues\nSee open issues, content updated in the last 30 days, and information on safeguard holds . To find a specific issue, use the search function on your browser (CTRL + F for Microsoft Edge).\nSummary | Originating update | Status | Last updated |\nDevices might experience a black screen or desktop loading issues after sign-in Microsoft has received reports of this issue occurring in some virtual desktop environments. | N/A | Resolved KB5127648 | 2026-10-13 10:13 PT |\nRemote Desktop connections might fail for non-admin users with error 0xC000000D This issue affects non-admin users connecting through Remote Desktop with Administrator protection enabled. | OS Build 26300.9550 KB5124010 2026-09-22 | Mitigated | 2026-10-13 10:13 PT |\nApplications which require AC-3 audio decoding might close unexpectedly This issue is more likely to occur in legacy applications, and unlikely for many modern applications. | OS Build 26300.9550 KB5124010 2026-09-22 | Resolved KB5127648 | 2026-10-13 10:13 PT |\nDomain-joined devices might lose their secure trust relationship with the domain Some Credential Guard protected machine accounts might be unable to sign in interactively will valid domain credentials. | N/A | Resolved KB5124010 | 2026-10-08 17:44 PT |\nUSB audio devices might fail to start or produce no sound Some USB Audio Class 1.0 devices display Code 10 or fail in multichannel audio modes after installing the Sept. 8",
+      "isUserProvided": true,
+      "sourceId": "SRC-728f2b127058"
+    },
+    {
+      "title": "Service updates │ Royal Mail Group Ltd",
+      "url": "https://www.royalmail.com/service-update",
+      "canonicalUrl": "https://www.royalmail.com/service-update",
+      "publisher": "www.royalmail.com",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "For Parcelforce Service Updates, please visit: Parcelforce Service Updates",
+        "Saturday, 17 October and Sunday, 18 October 2026",
+        "Weekend delivery and collection services are expected to take place on Saturday, 17 October and parcel deliveries on Sunday, 18 October.",
+        "Most of our Customer Service Points are open over the weekend for you to collect items for which we’ve left a 'Something for you’ card - please visit: royalmail.com/locations ."
+      ],
+      "retrievedAt": "2026-10-18T22:16:47.811Z",
+      "content": "close\nService Update\nFor Parcelforce Service Updates, please visit: Parcelforce Service Updates\nSaturday, 17 October and Sunday, 18 October 2026\nWeekend delivery and collection services are expected to take place on Saturday, 17 October and parcel deliveries on Sunday, 18 October.\nMost of our Customer Service Points are open over the weekend for you to collect items for which we’ve left a 'Something for you’ card - please visit: royalmail.com/locations .\nWe aim to deliver to all addresses we have mail for, six days a week. In a small number of local offices, this may temporarily not be possible due to local issues such as high levels of sick absence, resourcing, or other local factors. In those cases, we will rotate deliveries to minimise the delay to individual customers. We also provide targeted support to those offices to address their challenges and restore our service to the high standard our customers would normally receive.\nWe're sorry for any inconvenience and thank you for your understanding. We will regularly update customers on the offices most impacted here:\nBasingstoke DO (RG21-RG26, RG28)\nBirchwood DO (WA3)\nBristol North DO (BS6, BS7)\nNuneaton DO (CV10, CV11, CV13)\nOxford East DO (OX3, OX4, OX33, OX44, OX49)\nPortree DO (IV51)\nRadstock DO (BA3)\nSelsey SUDO (PO20)\nWaterlooville DO (PO7, PO8)\nWestham DO (BN23, BN24)\nIf you need to collect an item for which we've left a 'Something for you' card, please check royalmail.com/locations for details of our Customer Service Point locations and opening hours.\nDuring periods of adverse weather, such as extreme heat, or severe wintry conditions, the weather can change quickly, and we continually monitor the conditions and undertake risk assessments to ensure we’re doing all we can to maintain our services, while protecting the safety of our posties - which is our priority.\nWe may occasionally be unable to safely access certain streets or addresses. When this happens, we may need to temporarily adjust or pause services in the affected areas.\nPlease be assured, we will do everything we can to maintain and restore our services when it’s safe to do so.\nPublic and local holidays\nWe deliver and collect your mail on most days of the year, including Saturdays. However, we don’t usually deliver or collect on public or local holidays. ( Please note: Local holidays are subject to change).\nPlease use the links below to see the public and local holidays and how they will affect our services.\nEngland and Wales 2026\nNorthern Ireland 2026\nScotland 2026\nDate |\nHoliday |\nRoyal Mail Services |\nThursday 1 January |\nNew Year's Day |\nNo collections or deliveries |\nFriday 3 April |\nGood Friday |\nNo collections or deliveries - Except in TD15 |\nMonday 6 April |\nEaster Monday |\nMonday 4 May |\nEarly May Bank Holiday |\nMonday 25 May |\nSpring Bank Holiday |\nMonday 31 August |\nSummer Bank Holiday |\nFriday 25 December |\nChristmas Day |\nSaturday 26 December |\nBoxing Day |\nMonday 28 December |\nSubstitute day for Boxing Day |\nTue",
+      "isUserProvided": true,
+      "sourceId": "SRC-99df5414e569"
+    },
+    {
+      "title": "how are you doing recently or how are you doing lately?",
+      "url": "https://textranch.com/c/how-are-you-doing-recently-or-how-are-you-doing-lately/",
+      "canonicalUrl": "https://textranch.com/c/how-are-you-doing-recently-or-how-are-you-doing-lately/",
+      "publisher": "TextRanch",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "how are you doing recently or how are you doing lately? TextRanch The best way to perfect your writing.",
+        "Discover why 1,062,726 users count on TextRanch to get their English corrected!",
+        "1. Input your text below. 2. Get it corrected in a few minutes by our editors. 3. Improve your English!",
+        "One of our experts will correct your English."
+      ],
+      "retrievedAt": "2026-10-18T22:16:47.712Z",
+      "content": "how are you doing recently or how are you doing lately? TextRanch The best way to perfect your writing.\nDiscover why 1,062,726 users count on TextRanch to get their English corrected!\n1. Input your text below. 2. Get it corrected in a few minutes by our editors. 3. Improve your English!\nSUBMIT YOUR TEXT NOW\nOne of our experts will correct your English.\nRegister to get your text revised right away for FREE ⚡\nREGISTER WITH GOOGLE REGISTER WITH EMAIL\nToday 7245 people got their English checked with TextRanch\nBy continuing to use this website, you agree to our Terms of Service .\nhow are you doing recently vs how are you doing lately\nBoth phrases are correct and commonly used to inquire about someone's well-being. They are interchangeable and can be used in informal conversations to ask about the person's current state or situation.\nLast updated: March 25, 2024 • 55598 views\nThis phrase is correct and commonly used to ask about someone's well-being in informal conversations.\n\"how are you doing recently\"\nThis phrase is used to inquire about someone's current state or situation in a casual manner. It implies a recent time frame for the inquiry.\nShow examples from the web [+] Last updated: October 25, 2024\nJun 21, 2024 ... Her account messaged me asking: \" How are you doing recently ?\" I was touched. ... Then i wondered and began to worry: 'How am I doing? Am I ...\nThe part of a sentence \" how are you doing recently \" is correct and usable in written English. It can be used as a greeting or in an informal dialogue.\n1 day ago ... r/AskReddit in 2 hr. unknownfair. ADMIN MOD. Join. Options. Report. Honestly , how are you doing recently ? Upvote 2. Downvote 5 Go to comments\nJun 7, 2013 ... JAY, how are you DOING, recently for my NISSAN MAXIMA 2000, the POWER STEERING FLUID is running down very QUICKLY; the.\nMar 19, 2024 ... dạo này bạn thế nào: how are you doing recently (are you happy/sad/apathetic/etc.) dạo này sao rồi: how has it been lately (it's been a ...\nDec 21, 2023 ... 31K likes, 192 comments - ochya0 on December 21, 2023: \" How are you doing recently ? It's been a while since I talked with you all\".\nSep 7, 2017 ... ... how are you doing recently /lately if you want to & please stay safe out there & be careful :). Logged. desocietas. Global Mod; *; Posts: 5,737 ...\nOct 7, 2019 ... How are you doing recently ? Feeling very grateful that's for sure! How is the bass/dubstep scene in Belgium and surrounding areas? What is ...\nSep 3, 2021 ... How are you doing recently ? In my previous issue “Feeling the pandemic blues”, I shared that I was feeling down and overwhelmed. But ...\nAlternatives:\nhow have you been doing recently\nhow have you been lately\nhow are things going recently\nhow's everything been recently\nhow's life been treating you recently\n\"how are you doing lately\"\nMar 26, 2018 ... How are you doing lately ? Would you say you're doing well? All related (34).\nFeb 6, 2022 ... ... text messages... Mine said \"hello, long time no see, how are you doing",
+      "isUserProvided": true,
+      "sourceId": "SRC-aa383f80f8d5"
+    }
+  ],
+  "unresolvedQuestions": [
+    "How are you doing today 😘"
+  ],
+  "contradictions": [],
+  "completeness": "partial",
+  "limitations": [
+    "9 candidate pages failed or carried no readable text.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 3 of 6 selected sources fit in the synthesis evidence budget."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 7,
+    "failedCount": 9,
+    "rounds": 1,
+    "searches": 3
+  },
+  "archivedAt": "2026-10-18T22:16:48.931Z"
+}

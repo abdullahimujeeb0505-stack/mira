@@ -1,0 +1,134 @@
+{
+  "id": "2026-10-18T20-58-48-033Z-do-you-know-ahmad-muhammad",
+  "question": "Do you know Ahmad Muhammad",
+  "plan": {
+    "objective": "Provide a concise, factual summary of the individual named Ahmad Muhammad, including relevant biographical details, notable achievements, and context.",
+    "taskType": "general",
+    "deliverable": "A brief, well‑sourced overview (2–4 paragraphs) describing who Ahmad Muhammad is/was, with citations to authoritative references.",
+    "requiresCurrentInformation": false,
+    "sourcePreferences": [
+      "authoritative biographical entries (e.g., encyclopedia or official website)",
+      "peer‑reviewed articles or academic publications if available",
+      "primary sources such as interviews, speeches, or official documents",
+      "reputable news outlets for recent activity"
+    ],
+    "questions": [
+      "Who is Ahmad Muhammad?"
+    ],
+    "queries": [
+      "\"Ahmad Muhammad\" biography",
+      "\"Ahmad Muhammad\" notable figure",
+      "\"Ahmad Muhammad\" scholar",
+      "\"Ahmad Muhammad\" Wikipedia",
+      "\"Ahmad Muhammad\" news"
+    ],
+    "unresolvedQuestions": [
+      "Are the researcher and the political adviser the same Ahmad Muhammad?",
+      "Detailed biographical data (e.g., education, birthdate) for each individual"
+    ]
+  },
+  "answer": "The name Ahmad Muhammad refers to at least two documented individuals (unverified: no matching retrieved evidence).\nOne is a researcher at the Center for Peatland and Disaster Studies (CPDS) in the Department of Biology, Riau University, Indonesia; his work focuses on tropical peatland ecology and restoration, including biodiversity dynamics (e.g., a 2026 commentary on peatland seed production)[SRC-ba7021b7b1d6].\nAnother Ahmad Muhammad appears in Nigerian politics: in January 2025 he was appointed Special Adviser on Publicity to Kano State Governor Alhaji Abba Yusuf, with the governor’s statement highlighting his experience in grassroots governance and party organization[SRC-74c52927f336].\nThe sources do not clarify whether these references describe the same person, suggesting they are likely separate individuals sharing the same name (unverified: no matching retrieved evidence).",
+  "followUpQuestions": [
+    "Peatland research in Indonesia",
+    "Kano State political appointments"
+  ],
+  "sources": [
+    {
+      "title": "Election 2026 – Getting to Know the Parties: Bright Future Vancouver & Muhammad Ahmad – CityHallWatch: Tools to engage in Vancouver city decisions",
+      "url": "https://cityhallwatch.wordpress.com/2026/08/25/election2026-party-series-bright-future-ahmad/",
+      "canonicalUrl": "https://cityhallwatch.wordpress.com/2026/08/25/election2026-party-series-bright-future-ahmad/",
+      "publisher": "CityHallWatch: Tools to engage in Vancouver city decisions",
+      "publishedAt": "2026-08-25T22:06:39.000Z",
+      "updatedAt": "2026-10-17T18:36:21.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "The next Vancouver civic election is on October 17, 2026.",
+        "Update: All in one page by Fairview / South Granville Action Committee: “ Getting to Know the Parties: Closing Summary, Updates & Election Information .”",
+        "Over the coming weeks, CityHallWatch will republish weekly excerpts of analysis of the main civic parties and mayoral candidates, as announced in “ CityHallWatch launches civic party intro series, courtesy of FSGAC .” The content is courtesy of the Fairview/South Granville Action Committee . The second in this series is the new Bright Future Vancouver party.",
+        "FSGAC e-mailed the following analysis to their subscribers on August 20."
+      ],
+      "retrievedAt": "2026-10-18T20:58:45.372Z",
+      "content": "The next Vancouver civic election is on October 17, 2026.\nUpdate: All in one page by Fairview / South Granville Action Committee: “ Getting to Know the Parties: Closing Summary, Updates & Election Information .”\nOver the coming weeks, CityHallWatch will republish weekly excerpts of analysis of the main civic parties and mayoral candidates, as announced in “ CityHallWatch launches civic party intro series, courtesy of FSGAC .” The content is courtesy of the Fairview/South Granville Action Committee . The second in this series is the new Bright Future Vancouver party. For more election coverage and resources, please visit our election portal page here .\nFSGAC e-mailed the following analysis to their subscribers on August 20.\nWith Vancouver’s municipal election approaching on October 17 , the Fairview/South Granville Action Committee is continuing our weekly series introducing the municipal parties and their mayoral candidates.\nOur goal is straightforward: use publicly available news sources to provide residents with factual information about the choices before them so that they can do their own research, compare the alternatives and make an informed decision.\nLast time, we looked at ABC Vancouver and Mayor Ken Sim, including ABC’s four-year record in office. This newsletter, we turn to Bright Future Vancouver (BFV) , a new municipal political party offering itself as an alternative to the established parties at City Hall.\nIntroduction\nBright Future Vancouver ( official website ) is a new civic political organization , registered by Elections BC in January 2026. Its candidates have never held elected office in Vancouver, so there is no Council record to evaluate.\nBFV describes itself as a movement for “the people who make Vancouver work,” including workers, renters, families, seniors, young people, newcomers, community organizations and small businesses. The party says it was created in response to rising housing costs, affordability concerns, public safety issues and a growing perception that City Hall is disconnected from residents.\nThe party traces its origins to Muhammad Ahmad’s experience during the BCGEU strike, which it says reinforced his belief in communication, consensus-building and responsive leadership. BFV presents itself as a new voice in Vancouver politics , explicitly rejecting what it describes as the “same old script” at City Hall.\nThe party’s campaign slogan is particularly direct: “Vancouver is no longer for sale. It’s for us.” Its platform, called The Blueprint, describes itself as a plan “for the working class, funded by the few, built for the many.”\nBecause BFV is new, voters cannot evaluate it against a previous term in office. Instead, the key questions are whether its proposed policies are practical, affordable and achievable, and whether its candidates have the experience necessary to implement them.\nMayoral Candidate\nMuhammad Ahmad\nMuhammad Ahmad ( LinkedIn ) ( Biography ) is a communications and public affairs professio",
+      "sourceId": "SRC-07d07ca7be33"
+    },
+    {
+      "title": "Kano gov appoints special advisers, others, fixes inauguration for Monday",
+      "url": "https://punchng.com/kano-gov-appoints-special-advisers-others-fixes-inauguration-for-monday/",
+      "canonicalUrl": "https://punchng.com/kano-gov-appoints-special-advisers-others-fixes-inauguration-for-monday/",
+      "publisher": "Punch Newspapers",
+      "author": "Our Reporters",
+      "publishedAt": "2025-01-05T18:14:32.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Make PUNCH part of your everyday experience. Add us to your Preferred Sources",
+        "Kano gov appoints special advisers, others, fixes inauguration for Monday",
+        "Kano State Governor, Alhaji Abba Yusuf, has announced a fresh round of appointments and reassignments, aimed at enhancing governance across the state.",
+        "In a statement released by his spokesperson, Sanusi Tofa, on Sunday, Yusuf announced that Ahmad Muhammad has been appointed Special Adviser on Publicity."
+      ],
+      "retrievedAt": "2026-10-18T20:58:45.005Z",
+      "content": "Make PUNCH part of your everyday experience. Add us to your Preferred Sources\nKano gov appoints special advisers, others, fixes inauguration for Monday\nNews\nJanuary 5, 2025 7:14 pm\nFile: Kano State Governor, Abba Yusuf\nBy Tukur Muntari, Ted Odogwu\nKano State Governor, Alhaji Abba Yusuf, has announced a fresh round of appointments and reassignments, aimed at enhancing governance across the state.\nIn a statement released by his spokesperson, Sanusi Tofa, on Sunday, Yusuf announced that Ahmad Muhammad has been appointed Special Adviser on Publicity.\n“Hon. Ahmad’s experience in grassroots governance and party organisation makes him a valuable asset to our administration’s communication efforts,” the statement read.\nYusuf also appointed Ahmad Ishaq as Special Adviser on Works, reinforcing the administration’s focus on infrastructure.\n“Engr. Ishaq’s track record in project execution will be pivotal to our development drive,” the governor remarked. Make PUNCH part of your everyday experience. Add us to your Preferred Sources\nMeanwhile, Tijjani Goje was elevated to Special Adviser, Lagos Liaison Office.\nYusuf emphasised the importance of this role, stating, “With Tijjani Kaura Goje’s extensive experience, I am confident he will effectively represent Kano’s interests in Lagos, fostering stronger inter-state cooperation.”\nThe appointments also include Sani Tofa as Special Adviser on Special Duties. 109 children die as measles spreads to 14 states\nThree sisters drown as canoe capsizes at Kano’s dam\nDiphtheria: 29 Katsina LGs affected, Kano confirms two deaths\n“Malam Sani’s distinguished service in the judiciary and civil service positions him uniquely to oversee critical assignments for the state,” the statement highlighted.\nAdditionally, Ibrahim Fagge was named Chairman of the Local Government Service Commission, while Ladidi Garko was appointed Chairperson of the Kano State Civil Service Commission.\nBoth were formerly Commissioners of Finance and Tourism.\nThe governor’s spokesperson confirmed that the swearing-in will take place on Monday, January 6, 2025, at 11am in the Ante-Chamber of the Kano Government House.\nThe event will also see the inauguration of seven commissioner nominees recently screened by the Kano State House of Assembly, along with the newly appointed advisers.\n“These appointments reflect Governor Yusuf’s dedication to assembling a team capable of delivering results and addressing the needs of the people of Kano State,” the statement concluded.Our\nTukur Muntari\nTed Odogwu\nAll rights reserved. This material, and other digital content on this website, may not be reproduced, published, broadcast, rewritten or redistributed in whole or in part without prior express written permission from PUNCH.\nContact: [email protected]",
+      "sourceId": "SRC-74c52927f336"
+    },
+    {
+      "title": "Interview with Muhammad Ahmad | The Shoulders Beneath My Feet",
+      "url": "https://blackaugustpo.org/interview-with-muhammad-ahmad/",
+      "canonicalUrl": "https://blackaugustpo.org/interview-with-muhammad-ahmad/",
+      "publisher": "The Shoulders Beneath My Feet",
+      "publishedAt": "2012-08-08T06:54:34.000Z",
+      "updatedAt": "2012-08-08T06:58:56.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "Interview with Muhammad Ahmad | The Shoulders Beneath My Feet",
+        "Muhammad Ahmad (formerly Max Stanford Jr.) was a pivotal figure within the Black Liberation Movement and struggle for Black Power in the 1960s and 70s; notably, he was the national field chairman of the Revolutionary Action Movement (RAM) and a direct target of J. Edgar Hoover’s COINTELPRO. In this interview with Naji Mujahid of the DC Radio Co-op, he discus",
+        "http://archive.org/details/AWordWithMuhammadAhmad",
+        "Create your own website, free on WordPress.com. Create your own website."
+      ],
+      "retrievedAt": "2026-10-18T20:58:45.307Z",
+      "content": "Interview with Muhammad Ahmad | The Shoulders Beneath My Feet\nInterview with Muhammad Ahmad\nMuhammad Ahmad (formerly Max Stanford Jr.) was a pivotal figure within the Black Liberation Movement and struggle for Black Power in the 1960s and 70s; notably, he was the national field chairman of the Revolutionary Action Movement (RAM) and a direct target of J. Edgar Hoover’s COINTELPRO. In this interview with Naji Mujahid of the DC Radio Co-op, he discusses how he became involved and reflects on his involvement as well as the current state of affairs in the Black community. Currently, he is a professor at Temple University\nhttp://archive.org/details/AWordWithMuhammadAhmad\nMuhammadAhmad_3-30-08_pt1\nMuhammadAhmad_3-30-08_pt2\nMuhammadAhmad_3-30-08_pt3\nMuhammadAhmad_3-30-08_pt4\nMuhammadAhmad_3-30-08_pt5\nMuhammadAhmad_3-30-08_pt6\nMuhammadAhmad_3-30-08_pt7\nLeave a Reply Cancel reply\nSubscribe\nSubscribed\nThe Shoulders Beneath My Feet\nHave a WordPress.com account? Log in now.\nPrivacy\n%d\nCreate your own website, free on WordPress.com. Create your own website.\nStart free",
+      "sourceId": "SRC-279c6b314cbb"
+    },
+    {
+      "title": "Stories by Ahmad Muhammad -",
+      "url": "https://news.mongabay.com/by/ahmad-muhammad/",
+      "canonicalUrl": "https://news.mongabay.com/by/ahmad-muhammad/",
+      "publisher": "Conservation news",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "Ahmad Muhammad is a researcher at the Center for Peatland and Disaster Studies (CPDS), Department of Biology, Riau University, Indonesia, and his research focuses on peatland ecology and peatland restoration, with particular interest in the biodiversity and ecological dynamics of tropical peatland ecosystems.",
+        "Rooting tree seed production in local knowledge boosts forest restoration outcomes (commentary)",
+        "Zu Dienle Tan, Ahmad Muhammad, Sigit Sutikno, Nur Estya Binte Rahman",
+        "News and Inspiration from Nature's Frontline."
+      ],
+      "retrievedAt": "2026-10-18T20:58:45.296Z",
+      "content": "Stories by Ahmad Muhammad -\nAhmad Muhammad\nAbout\nAhmad Muhammad is a researcher at the Center for Peatland and Disaster Studies (CPDS), Department of Biology, Riau University, Indonesia, and his research focuses on peatland ecology and peatland restoration, with particular interest in the biodiversity and ecological dynamics of tropical peatland ecosystems.\nL\nG\nRooting tree seed production in local knowledge boosts forest restoration outcomes (commentary)\nZu Dienle Tan, Ahmad Muhammad, Sigit Sutikno, Nur Estya Binte Rahman\n1 Sep 2026\nNews and Inspiration from Nature's Frontline.\nVideos\nArticles\nPodcasts\nyou're currently offline",
+      "sourceId": "SRC-ba7021b7b1d6"
+    }
+  ],
+  "unresolvedQuestions": [
+    "Are the researcher and the political adviser the same Ahmad Muhammad?",
+    "Detailed biographical data (e.g., education, birthdate) for each individual"
+  ],
+  "contradictions": [],
+  "completeness": "partial",
+  "limitations": [
+    "7 search requests or candidate pages failed or were unreadable.",
+    "Only 4 of 6 selected sources fit in the synthesis evidence budget.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 13,
+    "retrievedCount": 6,
+    "failedCount": 7,
+    "rounds": 1,
+    "searches": 5
+  },
+  "archivedAt": "2026-10-18T20:58:48.034Z"
+}

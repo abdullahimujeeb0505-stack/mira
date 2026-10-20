@@ -1,0 +1,124 @@
+{
+  "id": "2026-10-20T02-25-50-073Z-what-do-you-know-about-photonhq",
+  "question": "What do you know about photonhq",
+  "plan": {
+    "objective": "Compile a concise, up-to-date overview of PhotonHQ, covering its business focus, products/services, history, key personnel, funding, and recent news.",
+    "taskType": "current",
+    "deliverable": "A short briefing report summarizing PhotonHQ’s core activities, market positioning, and latest developments.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "Official PhotonHQ website",
+      "Press releases",
+      "Reputable news outlets (e.g., TechCrunch, Bloomberg)",
+      "Business databases (Crunchbase, PitchBook)",
+      "Professional networking sites (LinkedIn) for leadership info"
+    ],
+    "questions": [],
+    "queries": [
+      "PhotonHQ company overview",
+      "PhotonHQ product and services description",
+      "PhotonHQ funding and investors",
+      "PhotonHQ recent news 2023 OR 2024",
+      "PhotonHQ leadership team LinkedIn"
+    ],
+    "unresolvedQuestions": [
+      "Exact headquarters or legal entity location",
+      "Full executive leadership beyond Daniel Tian and Julie Chen (e.g., CTO, COO)",
+      "Specific customers or partner integrations for the AI agent platform",
+      "Any funding rounds or extensions after the October 2026 Seed round",
+      "Detailed product roadmap or timeline for new channel support"
+    ]
+  },
+  "answer": "Business Focus & Products: PhotonHQ builds an AI‑agent platform that lets developers embed conversational agents into consumer messaging channels such as iMessage, WhatsApp and other popular apps (unverified: no matching retrieved evidence).\nIt offers an open‑source framework for creating and deploying these agents across “millions already use” channels (unverified: no matching retrieved evidence).\n\nHistory & Timeline: • Sep 2025 – X (Twitter) account created. • Oct 2025 – Company website (photon.codes) launched. • Jun 27 2026 – Flagged as a stealth startup. • Oct 1 2026 – Announced a $4.5 M Seed financing round. [SRC-1c87e03aa161]\n\nKey Personnel: • Daniel Tian (listed as “daniel_t” in source 1 and as Daniel Tian in source 3) – Co‑founder. • Ryan Zhu – Co‑founder mentioned in source 1 but not in source 3. • Julie Chen – Chief Marketing Officer per source 3. [SRC-e5c5cf301420]\nNo other executives are identified in the retrieved sources (unverified: no matching retrieved evidence).\n\nFunding: • Seed round of $4.5 M announced Oct 1 2026. • Recorded investors include HSG, A*, Gradient, Vercel and Karman Ventures (five named out of seven total). [SRC-e5c5cf301420]\nSource 1 confirms the amount and date but does not list investors. [SRC-e5c5cf301420]\n\nRecent News: The company remains in stealth mode as of mid‑2026 and is preparing to roll out its AI agents on major messaging platforms (unverified: no matching retrieved evidence).\nNo additional funding rounds, product releases, or partnership announcements are captured in the available sources (unverified: no matching retrieved evidence).",
+  "followUpQuestions": [
+    "PhotonHQ headquarters location",
+    "Full executive team and roles"
+  ],
+  "sources": [
+    {
+      "title": "photonhq raised $4.5M Seed (2026): founders | Recent Funding",
+      "url": "https://recentfunding.com/companies/photonhq/",
+      "canonicalUrl": "https://recentfunding.com/companies/photonhq/",
+      "publisher": "Recent Funding",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Bring agents to iMessage, WhatsApp and channels millions already use. Join Discord: https://t.co/omNpZvMWSq",
+        "About photonhq Recent Funding lists photonhq under AI agents . It raised $4.5M in a Seed round in October 2026, according to x.com. It was founded by daniel_t and Ryan Zhu. Recent Funding flagged it as a stealth startup on June 27, 2026.",
+        "@photonhq · Raised $4.5M in 1 sourced round · 3 signals before the first raise",
+        "X ACCOUNT CREATED @PHOTONHQ · SEP 10, 2025 | | WEBSITE CREATED · OCT 10, 2025 | | FLAGGED IN STEALTH · JUN 27, 2026 $4.5M Seed · Oct 1, 2026 $4.5M SEED · OCT '26"
+      ],
+      "retrievedAt": "2026-10-20T02:25:43.759Z",
+      "content": "Recent Funding\nCompanies\nphotonhq\nBring agents to iMessage, WhatsApp and channels millions already use. Join Discord: https://t.co/omNpZvMWSq\nAI agents\nLatest funding\n$4.5M Seed · October 1, 2026\nSource: x.com\nFunding history ↓\nWebsite : photon.codes .\nX : @photonhq · 7,202 followers .\nCategory : AI agents .\nSectors : AI .\nLast round : Oct 1, 2026 · 19 days ago .\nX account age : 13 months .\nDomain age : 12 months .\nFlagged in stealth : Jun 27, 2026 .\nOn Recent Funding since : Jun 27, 2026 .\nAbout photonhq Recent Funding lists photonhq under AI agents . It raised $4.5M in a Seed round in October 2026, according to x.com. It was founded by daniel_t and Ryan Zhu. Recent Funding flagged it as a stealth startup on June 27, 2026.\nTIMELINE · MONEY RAISED\nphotonhq | flagged 96 days before its raise\n@photonhq · Raised $4.5M in 1 sourced round · 3 signals before the first raise\nX ACCOUNT CREATED @PHOTONHQ · SEP 10, 2025 | | WEBSITE CREATED · OCT 10, 2025 | | FLAGGED IN STEALTH · JUN 27, 2026 $4.5M Seed · Oct 1, 2026 $4.5M SEED · OCT '26\nMoney raised, round by round (amounts linked to their source). Pins are dated signals; hover the icons for dates.\nFunding rounds\nOctober 1, 2026\nSeed · $4.5M\nJune 27, 2026\nFlagged in stealth before announcing\nOctober 10, 2025\nWebsite created\nSeptember 10, 2025\nX account created\nFounders and team\nD daniel_t Cofounder\n@danieltian · source: x.com\nRZ Ryan Zhu Cofounder\n@ryanzhuuuu · source: x.com\nSimilar AI agents companies\nV Vessla $3.31M Pre Seed · Oct 2026\nS SupaHuman $1.47M Series A · Oct 2026\nT Town $108M Series B+ · Oct 2026\nG Greptile $50M Series B+ · Oct 2026\nL LearnUpon $49.88M · Oct 2026\nR RapidCanvas $29M Series B+ · Oct 2026\nQuestions and sources photonhq: questions and answers\nHow much has photonhq raised? photonhq has raised $4.5M in one sourced round on record (Seed), announced October 1, 2026.\nWho founded photonhq? photonhq was founded by daniel_t and Ryan Zhu.\nEvery amount links to the page it came from. * Estimated from an accelerator's published standard deal, not a company-specific disclosure. How Recent Funding sources and verifies funding data . The same data as JSON: /api/v1/companies/photonhq ( get a free API key ).\nTop raises, every week\nThe week's top funded startups and market insights, in your inbox every Monday.\nUnsubscribe anytime · privacy",
+      "isUserProvided": true,
+      "sourceId": "SRC-1c87e03aa161"
+    },
+    {
+      "title": "Photon - Products, Competitors, Financials, Employees, Headquarters Locations",
+      "url": "https://www.cbinsights.com/company/photon-2",
+      "canonicalUrl": "https://www.cbinsights.com/company/photon-2",
+      "publisher": "CB Insights",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Photon is a global leader in digital transformation services and IT consulting. The company offers a range of services including creative design, strategy consulting, and technology integration, with a focus on digital transformation. Their primary customer segments include the financial services, retail, healthcare, automotive, and hospitality industries. I",
+        "Photon Achieves CyberVadis Platinum Rating, Reinforcing Enterprise Trust Through Independent Cybersecurity Validation Sep 1, 2026",
+        "PARIS Sept. 1, 2026 /PRNewswire/ -- As enterprises accelerate investments in artificial intelligence, cloud modernization, and digital transformation, cybersecurity has become a defining measure of enterprise trust. Organizations increasingly expect technology partners to demonstrate mature security governance supported by independent validation—not simply t"
+      ],
+      "retrievedAt": "2026-10-20T02:25:44.123Z",
+      "content": "Founded Year\n2007\nStage\nOther Investors | Alive\nAbout Photon\nPhoton is a global leader in digital transformation services and IT consulting. The company offers a range of services including creative design, strategy consulting, and technology integration, with a focus on digital transformation. Their primary customer segments include the financial services, retail, healthcare, automotive, and hospitality industries. It was founded in 2007 and is based in London, England.\nHeadquarters Location\n145 City Road WeWork\nLondon, England, EC1V 1AZ,\nUnited Kingdom\nLoading...\nLatest Photon News\nPhoton Achieves CyberVadis Platinum Rating, Reinforcing Enterprise Trust Through Independent Cybersecurity Validation Sep 1, 2026\nPARIS Sept. 1, 2026 /PRNewswire/ -- As enterprises accelerate investments in artificial intelligence, cloud modernization, and digital transformation, cybersecurity has become a defining measure of enterprise trust. Organizations increasingly expect technology partners to demonstrate mature security governance supported by independent validation—not simply technical capability. Against this backdrop, Photon today announced that it has achieved the CyberVadis Platinum Rating, receiving an exceptional 987 out of 1,000 in the 2026 CyberVadis cybersecurity assessment. The Platinum Rating—the highest recognition level within the CyberVadis assessment framework—provides independent, evidence-based validation of the organization's cybersecurity maturity, recognizing the strength of its governance, operational controls, risk management practices, and continuous improvement program. For organizations across banking, financial services, insurance, healthcare, retail, manufacturing, and other highly regulated industries, cybersecurity is no longer simply about protecting technology. It is fundamental to business resilience, responsible AI adoption, regulatory confidence, and sustainable digital transformation. \"Trust is the foundation of every transformation we deliver,\" said Srinivas Balasubramanian, Co-Founder, Chairman and Chief Executive Officer of Photon. \"Our clients rely on Photon to modernize mission-critical platforms, engineer AI-powered experiences, and operate secure digital ecosystems at enterprise scale. Achieving the CyberVadis Platinum Rating with a score of 987 provides independent validation of the governance, operational discipline, and security culture that underpin every engagement. As AI reshapes the enterprise, we will continue investing in the cybersecurity capabilities that enable our clients to innovate with confidence.\" Photon's 2026 result builds on an already exceptional prior assessment, when the company achieved a CyberVadis score of 953 out of 1,000, placing it among the top 1% of companies worldwide. Improving to 987 out of 1,000 makes this year's result especially significant, demonstrating year-over-year progress from an already industry-leading position and reinforcing Photon's standing among the top tier of global",
+      "isUserProvided": true,
+      "sourceId": "SRC-09652d4502ab"
+    },
+    {
+      "title": "Photon: Funding, Investors & Team (Oct 2026) | FundedIQ",
+      "url": "https://fundediq.co/photon-photon-codes-funding/",
+      "canonicalUrl": "https://fundediq.co/photon-photon-codes-funding/",
+      "publisher": "FundedIQ",
+      "updatedAt": "2026-10-19T16:38:50.404Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Photon has raised $4.5M across 1 funding round on record, the most recent a Seed of $4.5M announced in Oct 2026.",
+        "That round is above the $3.1M median round size for Seed companies tracked on FundedIQ over the last two years.",
+        "7 investors are recorded in total; the 5 named above are those the record identifies.",
+        "Contact details for the Photon team: 2 of 2 have an email address on file, 2 have a LinkedIn profile."
+      ],
+      "retrievedAt": "2026-10-20T02:25:43.650Z",
+      "content": "Photon has raised $4.5M across 1 funding round on record, the most recent a Seed of $4.5M announced in Oct 2026.\nThat round is above the $3.1M median round size for Seed companies tracked on FundedIQ over the last two years.\nPhoton Company Profile and Key Stats\nTotal funding raised\n$4.5M\nacross 1 round on record\nFunding rounds on record\n1\nLatest funding round\nSeed\n$4.5M in Oct 2026\nInvestors on record\n7\n5 named below\nLatest funding round on record: Oct 2026 .\nPhoton Funding Rounds\nDate\nRound\nAmount\nOct 1, 2026\nPhoton Investors\nHSG A* Gradient Vercel Karman Ventures\n7 investors are recorded in total; the 5 named above are those the record identifies.\nPhoton Founders and Leadership Team\nName\nRole\nContact\nDaniel Tian\nCofounder@photon.codes ; Cs+wharton\nLocked\nJulie Chen\nChief Marketing Officer\nContact details for the Photon team: 2 of 2 have an email address on file, 2 have a LinkedIn profile.\nStart 14-day free trial →\nPhoton Funding in Context\nSegment\nCompanies\nMedian round\n17,153\n$3.1M\nPhoton's latest round of $4.5M is above the median round in Seed. Medians cover the last 24 months of disclosed rounds.\nFunded App Marketing Startups Like Photon\nSeed Funded Startups\n&rarr;\n17,153 companies\nPhoton Funding FAQs\nWhat does Photon do? Photon introduce agents to the interfaces millions currently use with an open-source framework\nHow much funding has Photon raised? Photon has raised $4.5M across 1 round on record. The most recent is a Seed of $4.5M announced in Oct 2026.\nWhen did Photon last raise funding? Photon's most recent funding round on record is a Seed of $4.5M, announced in Oct 2026.\nWho has invested in Photon? Investors on record for Photon include HSG, A*, Gradient, Vercel, Karman Ventures. FundedIQ records 7 investors in total.\nWho founded Photon? FundedIQ lists Daniel Tian (Cofounder@photon.codes ; Cs+wharton) at Photon.\nAbout FundedIQ's Photon Funding Data\nFundedIQ tracks announced funding rounds and refreshes this profile every week. Round dates,\nstages and amounts are normalised to a single format, converted to US dollars, and\nde-duplicated: two records of the same round announced days apart are merged, and two\ngenuinely different rounds are kept apart on the amounts they disclose. Amounts shown are\nthe disclosed figures only — a round announced without a number is listed and excluded from\nthe total rather than estimated.\nEmployee counts are reported bands, not exact headcounts. Founder and executive names carry\nthe job title on record. Anything we do not hold for Photon is left off this page rather\nthan filled in.\n14-day free trial · Cancel anytime\nKnow who just raised. Then know who to reach.\nStartup funding intelligence on every funded startup: the round, the investors and the founders, as a file in your inbox or searchable in the app.\nStart your free trial →\nCompare plans\nRadar from $49/mo · Pro from $149/mo. Card required, nothing charged until\nday 15, and we email you 3 days before that. Need something specific?\nCustom plans from $49",
+      "isUserProvided": true,
+      "sourceId": "SRC-e5c5cf301420"
+    }
+  ],
+  "unresolvedQuestions": [
+    "Exact headquarters or legal entity location",
+    "Full executive leadership beyond Daniel Tian and Julie Chen (e.g., CTO, COO)",
+    "Specific customers or partner integrations for the AI agent platform",
+    "Any funding rounds or extensions after the October 2026 Seed round",
+    "Detailed product roadmap or timeline for new channel support"
+  ],
+  "contradictions": [
+    "Source 1 lists founders as \"daniel_t\" and Ryan Zhu, while Source 3 lists only Daniel Tian (co‑founder) and does not mention Ryan Zhu.",
+    "Source 1 mentions investors only via a generic X.com reference, whereas Source 3 provides a partial list (HSG, A*, Gradient, Vercel, Karman Ventures) that does not fully match any broader investor description.",
+    "Source 3 lists Julie Chen as Chief Marketing Officer, but Source 1 does not mention her or any other C‑suite members beyond the co‑founders."
+  ],
+  "completeness": "partial",
+  "limitations": [
+    "Web search access was blocked or challenged on 1 of 5 queries.",
+    "8 candidate pages failed or carried no readable text.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 3 of 6 selected sources fit in the synthesis evidence budget.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 8,
+    "failedCount": 9,
+    "rounds": 1,
+    "searches": 5
+  },
+  "archivedAt": "2026-10-20T02:25:50.073Z"
+}

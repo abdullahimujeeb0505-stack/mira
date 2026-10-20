@@ -1,0 +1,164 @@
+{
+  "id": "2026-10-20T03-02-13-741Z-what-do-you-have-on-photon-codes",
+  "question": "What do you have on photon.codes",
+  "plan": {
+    "objective": "Gather up-to-date, authoritative information about the website/photon.codes domain, including its purpose, ownership, services offered, technology stack, target audience, and any recent news or notable projects associated with it.",
+    "taskType": "current",
+    "deliverable": "A concise summary report outlining the key facts about photon.codes, supported by links to primary or reputable sources.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "Official photon.codes website (about page, documentation, blog)",
+      "Domain registration records (WHOIS) from authoritative registrars",
+      "Press releases or news articles from reputable tech news outlets",
+      "Technical analyses or reviews from recognized developer blogs or platforms (e.g., Hacker News, Stack Overflow, Medium)",
+      "Company or organization profiles from LinkedIn or Crunchbase"
+    ],
+    "questions": [
+      "What is photon.codes and what services or products does it provide?",
+      "Who owns or operates photon.codes (individual, company, organization)?",
+      "What is the primary target audience or user base for photon.codes?",
+      "What technologies or platforms does photon.codes utilize (e.g., programming languages, frameworks, hosting infrastructure)?",
+      "Are there any recent news items, updates, or notable projects related to photon.codes?"
+    ],
+    "queries": [
+      "site:photon.codes What do you have on photon.codes",
+      "\"photon.codes\" site:photon.codes",
+      "\"photon.codes\" \"about\"",
+      "\"photon.codes\" ownership",
+      "\"photon.codes\" technology stack",
+      "\"photon.codes\" news"
+    ],
+    "unresolvedQuestions": [
+      "What specific programming languages, frameworks, or hosting infrastructure power photon.codes?",
+      "Are there any recent announcements, releases, or notable projects associated with photon.codes?"
+    ]
+  },
+  "answer": "**Purpose and services**\nPhoton Codes is described as a curated platform where developers and creators can discover, share, and explore code snippets, UI components, and other development resources. [SRC-59b247f46fbc]\nIt aims to help programmers learn new techniques and accelerate their workflows without reinventing the wheel[SRC-59b247f46fbc].\n\n**Ownership**\nThe domain appears to be operated by **Photon Software Limited**, a private limited company registered in England (company number 12188457). [SRC-ee331bbfc9f3]\nThe company was incorporated on 4 September 2019 and its stated business is “business and domestic software development”[SRC-ee331bbfc9f3].\n\n**Target audience**\nThe platform is explicitly aimed at *developers and creators* building modern web products, seeking reusable code examples and design inspiration[SRC-59b247f46fbc].\n\n**Technology stack**\nThe retrieved sources do not specify the programming languages, frameworks, hosting infrastructure, or other technical details used by photon.codes (unverified: no matching retrieved evidence).\nNo concrete information on the technology stack was found (unverified: no matching retrieved evidence).\n\n**Recent news or notable projects** (unverified: no matching retrieved evidence).\nNo recent news items, updates, or notable projects related to photon.codes were identified in the available sources (unverified: no matching retrieved evidence).\n\n**Additional context**\nA sign‑in dashboard (app.photon.codes) exists for developers to manage their Photon projects, indicating that the site offers an account‑based developer portal (unverified: no matching retrieved evidence).\nHowever, this page provides no further detail on services or technology (unverified: no matching retrieved evidence).",
+  "followUpQuestions": [
+    "Photon Software Limited corporate details",
+    "Relationship between photon.codes and Photon Engine"
+  ],
+  "sources": [
+    {
+      "title": "Photon Codes - UI UX Showcase",
+      "url": "https://uiuxshowcase.com/resources/photon-codes/",
+      "canonicalUrl": "https://uiuxshowcase.com/resources/photon-codes/",
+      "publisher": "UI UX Showcase",
+      "author": "Prince Pal",
+      "publishedAt": "2026-10-07T11:15:36.000Z",
+      "updatedAt": "2026-10-07T11:15:38.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "A curated platform for discovering code snippets, UI components, and creative resources for modern web development.",
+        "Photon Codes is a platform for developers and creators to discover, share, and explore beautifully crafted code snippets, UI components, and development resources. Designed to make building digital products faster and more enjoyable, it provides a curated collection of reusable code examples and creative solutions for modern web development.",
+        "The platform focuses on simplicity and developer experience, helping programmers find inspiration, learn new techniques, and accelerate their workflows without reinventing the wheel. Whether you’re building websites, experimenting with animations, or creating interactive interfaces, Photon Codes serves as a valuable resource for both learning and productivit",
+        "Its clean design and curated approach make it a practical destination for developers looking to build better digital experiences."
+      ],
+      "retrievedAt": "2026-10-20T03:02:10.316Z",
+      "content": "Photon Codes\nA curated platform for discovering code snippets, UI components, and creative resources for modern web development.\nBookmark\nAdded on:\nOctober 7, 2026\nCategory:\nArtificial Intelligence , Resources\nCurator:\nPrince Pal\nExplore Website\nLoading Website\nPhoton Codes is a platform for developers and creators to discover, share, and explore beautifully crafted code snippets, UI components, and development resources. Designed to make building digital products faster and more enjoyable, it provides a curated collection of reusable code examples and creative solutions for modern web development.\nThe platform focuses on simplicity and developer experience, helping programmers find inspiration, learn new techniques, and accelerate their workflows without reinventing the wheel. Whether you’re building websites, experimenting with animations, or creating interactive interfaces, Photon Codes serves as a valuable resource for both learning and productivity.\nIts clean design and curated approach make it a practical destination for developers looking to build better digital experiences.\nViews: 59",
+      "isUserProvided": true,
+      "sourceId": "SRC-59b247f46fbc"
+    },
+    {
+      "title": "PHOTON SOFTWARE LIMITED overview - Find and update company information - GOV.UK",
+      "url": "https://find-and-update.company-information.service.gov.uk/company/12188457",
+      "canonicalUrl": "https://find-and-update.company-information.service.gov.uk/company/12188457",
+      "publisher": "find-and-update.company-information.service.gov.uk",
+      "sourceType": "government",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Companies House does not check the accuracy of the information filed (link opens a new window)",
+        "Advanced company search Link opens in new window",
+        "Company Overview for PHOTON SOFTWARE LIMITED (12188457)",
+        "Filing history for PHOTON SOFTWARE LIMITED (12188457)"
+      ],
+      "retrievedAt": "2026-10-20T03:02:09.871Z",
+      "content": "Companies House does not check the accuracy of the information filed (link opens a new window)\nSign in / Register\nAdvanced company search Link opens in new window\nPHOTON SOFTWARE LIMITED\nCompany number\n12188457\nFollow this company\nFile for this company\nCompany Overview for PHOTON SOFTWARE LIMITED (12188457)\nFiling history for PHOTON SOFTWARE LIMITED (12188457)\nPeople for PHOTON SOFTWARE LIMITED (12188457)\nMore for PHOTON SOFTWARE LIMITED (12188457)\nRegistered office address\nC/O Sterlings Ltd Lawford House, Albert Place, London, England, N3 1QA\nCompany status\nActive\nCompany type\nPrivate limited Company\nIncorporated on\n4 September 2019\nAccounts\nNext accounts made up to 30 September 2026\ndue by\n30 June 2027\nLast accounts made up to\n30 September 2025\nConfirmation statement\nNext statement date 3 September 2027\ndue by 17 September 2027\nLast statement dated 3 September 2026\nNature of business (SIC)\n62012 - Business and domestic software development",
+      "isUserProvided": true,
+      "sourceId": "SRC-ee331bbfc9f3"
+    },
+    {
+      "title": "PHOTON LIMITED overview - Find and update company information - GOV.UK",
+      "url": "https://find-and-update.company-information.service.gov.uk/company/04372790",
+      "canonicalUrl": "https://find-and-update.company-information.service.gov.uk/company/04372790",
+      "publisher": "find-and-update.company-information.service.gov.uk",
+      "sourceType": "government",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Companies House does not check the accuracy of the information filed (link opens a new window)",
+        "Advanced company search Link opens in new window",
+        "Company Overview for PHOTON LIMITED (04372790)",
+        "12 Chillery Leys, Willen, Milton Keynes, England, MK15 9LZ"
+      ],
+      "retrievedAt": "2026-10-20T03:02:09.911Z",
+      "content": "Companies House does not check the accuracy of the information filed (link opens a new window)\nSign in / Register\nAdvanced company search Link opens in new window\nPHOTON LIMITED\nCompany number\n04372790\nFollow this company\nFile for this company\nCompany Overview for PHOTON LIMITED (04372790)\nFiling history for PHOTON LIMITED (04372790)\nPeople for PHOTON LIMITED (04372790)\nCharges for PHOTON LIMITED (04372790)\nMore for PHOTON LIMITED (04372790)\nRegistered office address\n12 Chillery Leys, Willen, Milton Keynes, England, MK15 9LZ\nCompany status\nActive\nCompany type\nPrivate limited Company\nIncorporated on\n13 February 2002\nAccounts\nNext accounts made up to 31 March 2026\ndue by\n31 December 2026\nLast accounts made up to\n31 March 2025\nConfirmation statement\nNext statement date 13 February 2027\ndue by 27 February 2027\nLast statement dated 13 February 2026\nNature of business (SIC)\n55900 - Other accommodation",
+      "isUserProvided": true,
+      "sourceId": "SRC-1c80ce086f1d"
+    },
+    {
+      "title": "Photon Developer Resources",
+      "url": "https://doc.photonengine.com/photon/current/resources",
+      "canonicalUrl": "https://doc.photonengine.com/photon/current/resources",
+      "publisher": "doc.photonengine.com",
+      "updatedAt": "2026-08-06T00:00:00.000Z",
+      "sourceType": "technical documentation",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Everything you need to build, launch, and operate your project with Photon — learning material, community channels, and account tools — collected in one place.",
+        "Browse all available Photon samples and demos across products in one gallery.",
+        "Ready-to-use examples and step-by-step tutorials for every Photon product.",
+        "Get the latest Photon SDKs for all supported engines and platforms."
+      ],
+      "retrievedAt": "2026-10-20T03:02:09.946Z",
+      "content": "Resources\nEverything you need to build, launch, and operate your project with Photon — learning material, community channels, and account tools — collected in one place.\nLearning Resources\nBrowse all available Photon samples and demos across products in one gallery.\nReady-to-use examples and step-by-step tutorials for every Photon product.\nGet the latest Photon SDKs for all supported engines and platforms.\nNews, release announcements, and technical deep dives from the Photon team.\nTutorial videos and talks on the official Photon Engine channel.\nCommunity & Support\nJoin the Photon Engine Discord to ask questions and connect with other developers.\nPremium development support for game teams, with private access to Photon engineers.\nPremium support and exclusive samples for enterprise and industrial use cases.\nAll support options at a glance, from free community help to enterprise operations support.\nGet in touch with the Photon team for anything else.\nAccount & Operations\nCreate and manage your Photon applications, plans, and account.\nCheck the live service status of Photon Cloud regions and services.\nPlans and pricing for Photon Cloud, from the free tier to enterprise.\nResources for AI Ingestion\nMachine-readable index of the Photon documentation for LLMs and AI assistants.\nMachine-readable overview of the Photon website for LLMs and AI assistants.\nLast updated on 06/08/2026\nBack to top",
+      "isUserProvided": true,
+      "sourceId": "SRC-b6fca638179b"
+    },
+    {
+      "title": "Photon — Dashboard",
+      "url": "https://app.photon.codes/sign-in?callbackURL=%2F",
+      "canonicalUrl": "https://app.photon.codes/sign-in?callbackURL=%2F",
+      "publisher": "Photon",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "Continue with Google Don't have an account? Sign up",
+        "Developer dashboard for building with Photon."
+      ],
+      "retrievedAt": "2026-10-20T03:02:11.142Z",
+      "content": "Photon — Dashboard \nWelcome to Photon\nBring your agents to millions of lives\n\nEmail \nPassword Forgot password? \n\nLogin \n\nor \n\nContinue with Google Don't have an account? Sign up \n\nTerms of Service and Privacy Policy\nDeveloper dashboard for building with Photon.",
+      "isUserProvided": true,
+      "sourceId": "SRC-8de2ed019f6a"
+    }
+  ],
+  "unresolvedQuestions": [
+    "What specific programming languages, frameworks, or hosting infrastructure power photon.codes?",
+    "Are there any recent announcements, releases, or notable projects associated with photon.codes?"
+  ],
+  "contradictions": [],
+  "completeness": "partial",
+  "limitations": [
+    "Web search access was blocked or challenged on 6 of 8 queries.",
+    "Supplied link https://photon.codes/ was not readable: The page exceeded the configured size limit.",
+    "7 candidate pages failed or carried no readable text.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 5 of 6 selected sources fit in the synthesis evidence budget.",
+    "The configured search budget of 8 queries was exhausted.",
+    "The configured research round limit of 2 was reached.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 7,
+    "failedCount": 15,
+    "rounds": 2,
+    "searches": 8
+  },
+  "archivedAt": "2026-10-20T03:02:13.742Z"
+}

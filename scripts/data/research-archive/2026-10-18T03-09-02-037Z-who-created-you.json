@@ -1,0 +1,110 @@
+{
+  "id": "2026-10-18T03-09-02-037Z-who-created-you",
+  "question": "Who created you",
+  "plan": {
+    "objective": "Identify the organization and team responsible for creating the dots AI model.",
+    "taskType": "historical",
+    "deliverable": "A concise statement naming the creator(s) of dots, with supporting details about the development team and organization.",
+    "requiresCurrentInformation": false,
+    "sourcePreferences": [
+      "official website",
+      "press release",
+      "news article",
+      "academic paper"
+    ],
+    "questions": [
+      "Who developed the dots AI model?",
+      "What is the organizational background of dots' creation?"
+    ],
+    "queries": [
+      "dots AI model creator",
+      "who developed dots AI",
+      "dots model rednote Dots Studio",
+      "history of dots AI development",
+      "dots AI team origin"
+    ],
+    "unresolvedQuestions": []
+  },
+  "answer": "<|tool_call_start|>[answer(\"The 'Dots' AI model primarily refers to the product launched by OpenAI. [SRC-b956d590cb3f]\nAccording to the official OpenAI announcement reported by The Back Room Tech (citing OpenAI's own post), Dots are always-on personal AI agents unveiled at DevDay on September 29, 2026, built into ChatGPT and powered by the GPT-6 Astra model. [SRC-9b3a2e0e3ee0]\nOpenAI is the organization responsible for developing and releasing this Dots model (unverified: no matching retrieved evidence).\n\nHowever, there is also a separate entity called 'Dots Studio' (or 'dots') associated with Dots Studio (rednote-hilab), the AI lab of Xiaohongshu (RedNote), a Chinese lifestyle and social-commerce platform. [SRC-abc531d7d993]\nThis Dots Studio operates as an open-weight MoE foundation model lab and has released models including the dots3 series.[SRC-abc531d7d993]\n\nThese appear to be distinct products with similar naming: OpenAI's Dots (powered by GPT-6 Astra, integrated into ChatGPT) versus Dots Studio from RedNote (focused on open-weight models and the dots3 series) (unverified: no matching retrieved evidence).\nThe primary 'Dots' model referenced in most recent announcements is the OpenAI-developed system.\", \"followUpQuestions\", \"unresolvedQuestions\", \"contradictions\", \"completeness\"]<|tool_call_end|> (unverified: no matching retrieved evidence).",
+  "followUpQuestions": [],
+  "sources": [
+    {
+      "title": "Dots (OpenAI) - AI Wiki | Wikiprompt",
+      "url": "https://www.wikiprompt.org/wiki/dots-openai",
+      "canonicalUrl": "https://www.wikiprompt.org/wiki/dots-openai",
+      "publisher": "Wikiprompt",
+      "author": "Wikiprompt",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Dots are always-on personal AI agents from OpenAI, unveiled at DevDay on 29 September 2026, built into ChatGPT and powered by GPT-6 Astra.",
+        "Dots are personal AI agents developed by OpenAI , unveiled during the DevDay 2026 keynote in San Francisco on 29 September 2026. Built into ChatGPT and powered by the GPT-6 Astra model, Dots are part of the 2026 wave of personal AI agents that also included Meta's Muse , xAI's Grok Bot and the startup Instinct .",
+        "Unlike a chatbot that answers in a single exchange, Dots are always on, each running on its own cloud computer, and pursue user-defined goals continuously in the background with minimal oversight. A user can reach a dot from ChatGPT, text messages, Slack, Teams or a phone call, and OpenAI said users would eventually control several dots at once.",
+        "Dots can connect to more than 4,000 applications, including workplace tools such as Slack and Teams, to carry out tasks. In launch demos, a dot named Alfred ended a phone call by reporting that a user's website had gone live with the design already approved, and a dot named Felipe edited a company dashboard by voice and proactively flagged a scheduling clash"
+      ],
+      "retrievedAt": "2026-10-18T03:08:31.573Z",
+      "content": "AI Wiki › Model\nDots (OpenAI)\nArticle History Edit\nDots are always-on personal AI agents from OpenAI, unveiled at DevDay on 29 September 2026, built into ChatGPT and powered by GPT-6 Astra.\nDots are personal AI agents developed by OpenAI , unveiled during the DevDay 2026 keynote in San Francisco on 29 September 2026. Built into ChatGPT and powered by the GPT-6 Astra model, Dots are part of the 2026 wave of personal AI agents that also included Meta's Muse , xAI's Grok Bot and the startup Instinct .\nConcept\nUnlike a chatbot that answers in a single exchange, Dots are always on, each running on its own cloud computer, and pursue user-defined goals continuously in the background with minimal oversight. A user can reach a dot from ChatGPT, text messages, Slack, Teams or a phone call, and OpenAI said users would eventually control several dots at once.\nCapabilities\nDots can connect to more than 4,000 applications, including workplace tools such as Slack and Teams, to carry out tasks. In launch demos, a dot named Alfred ended a phone call by reporting that a user's website had gone live with the design already approved, and a dot named Felipe edited a company dashboard by voice and proactively flagged a scheduling clash between a finance meeting and a family event.\nAvailability\nThe first dot is included at no extra cost in OpenAI's Pro and Business Premium plans in eligible markets, with the Pro plan priced at $100 per month.\nText is available under the Creative Commons Attribution-ShareAlike 4.0 license. Attribution: wikiprompt.org. Raw markdown (for humans and machines).\nCategories : AI agents · OpenAI · Personal AI agents\nThis page was last edited on Oct 6, 2026 by AI Wiki Bot · History",
+      "sourceId": "SRC-9b3a2e0e3ee0"
+    },
+    {
+      "title": "Dots Studio (rednote-hilab) model releases · LLM Releases",
+      "url": "https://www.llm-releases.com/labs/dots-studio",
+      "canonicalUrl": "https://llm-releases.com/labs/dots-studio",
+      "publisher": "LLM Releases",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "The AI lab (aka rednote-hilab / humane-intelligence lab) of Xiaohongshu (RedNote), the Chinese lifestyle and social-commerce platform. Known for the open-weight dots.llm text models and dots.ocr document-parsing model, and for the dots3 series — whose internal build scored a perfect 42/42 at the 2026 International Mathematical Olympiad. Ships open-weight Mix",
+        "All models · Latest releases · Open-weight models · Changelog · Home"
+      ],
+      "retrievedAt": "2026-10-18T03:08:31.418Z",
+      "content": "Lab release history\nLast updated Aug 14, 2026\nDots Studio (rednote-hilab) model releases\nThe AI lab (aka rednote-hilab / humane-intelligence lab) of Xiaohongshu (RedNote), the Chinese lifestyle and social-commerce platform. Known for the open-weight dots.llm text models and dots.ocr document-parsing model, and for the dots3 series — whose internal build scored a perfect 42/42 at the 2026 International Mathematical Olympiad. Ships open-weight Mixture-of-Experts foundation models on Hugging Face. This page collects the lab's model releases, lifecycle events, source links, and model metadata in one crawlable record.\n1\nModels\nLabs\nOpen\nRecent\nAll models · Latest releases · Open-weight models · Changelog · Home\nMost recent in this set\nAug 14, 2026 Dots3-Note Preview\nDots Studio\nLoading catalog...",
+      "sourceId": "SRC-abc531d7d993"
+    },
+    {
+      "title": "OpenAI Dots AI Agent Launches: What IT Teams Should Know Before Piloting (2026) - The Back Room Tech",
+      "url": "https://thebackroomtech.com/openai-dots-ai-agent-launch-it-pilot/",
+      "canonicalUrl": "https://thebackroomtech.com/openai-dots-ai-agent-launch-it-pilot/",
+      "publisher": "The Back Room Tech - Serving up the info for back room techs everywhere",
+      "author": "Aseem Kishore",
+      "publishedAt": "2026-10-14T05:11:17.000Z",
+      "updatedAt": "2026-10-14T05:11:17.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "On September 28–29, 2026, OpenAI used DevDay to launch Dots , an always-on AI agent platform. Dots runs inside ChatGPT on the web and in the desktop apps, and it also works in Slack and Microsoft Teams ( OpenAI announcement , retrieved 2026-10-03). The short answer for IT: pilot it, don’t adopt it. The access model is bold, and OpenAI describes real admin co",
+        "Disclosure: The Back Room Tech has not tested Dots. Everything below comes from OpenAI’s announcement and third-party reporting, including The Verge’s October 2, 2026 hands-on, which we cite as a third-party source only.",
+        "OpenAI’s Introducing dots post describes a Dot as an agent that keeps working toward a goal you set. It keeps going after you close the chat window. Here’s what OpenAI says each Dot does:",
+        "Runs on its own cloud computer and browser. Each agent gets its own environment, apart from your machine."
+      ],
+      "retrievedAt": "2026-10-18T03:08:31.215Z",
+      "content": "On September 28–29, 2026, OpenAI used DevDay to launch Dots , an always-on AI agent platform. Dots runs inside ChatGPT on the web and in the desktop apps, and it also works in Slack and Microsoft Teams ( OpenAI announcement , retrieved 2026-10-03). The short answer for IT: pilot it, don’t adopt it. The access model is bold, and OpenAI describes real admin controls. But prices for extra dots, outside benchmarks, and a security track record aren’t public yet.\nDisclosure: The Back Room Tech has not tested Dots. Everything below comes from OpenAI’s announcement and third-party reporting, including The Verge’s October 2, 2026 hands-on, which we cite as a third-party source only.\nWhat Happened\nOpenAI’s Introducing dots post describes a Dot as an agent that keeps working toward a goal you set. It keeps going after you close the chat window. Here’s what OpenAI says each Dot does:\nRuns on its own cloud computer and browser. Each agent gets its own environment, apart from your machine.\nConnects to more than 4,000 apps. It can take actions across thousands of third-party services.\nRuns on GPT-6 Astra, a model OpenAI named at launch.\nShows up where people already work: ChatGPT, Slack, and Microsoft Teams. There’s no separate Dots client to install.\nWho this affects\nAccording to OpenAI’s Meet dots documentation , access looks like this right now:\nPlan | Dots access at launch | Notes |\nChatGPT Pro (Pro 100, Pro 200, Pro 500) | Users over 18 outside the European Economic Area, United Kingdom, and Switzerland | First dot included at no extra cost |\nBusiness Premium | Rolling out worldwide | First dot included at no extra cost |\nEnterprise | Rolling out worldwide. Off by default ; a workspace admin must turn it on | No Enterprise Dots price listed |\nOpenAI’s announcement says the first dot is included at no extra cost on Pro and Business Premium, and that adding more dots or paying for more speed or workload will come later, without published prices. OpenAI also says dots are rolling out gradually, so an eligible plan may not see them right away. For the first month only , conversations with a dot don’t count toward eligible Pro, Business, and Enterprise plan usage limits; work or Codex tasks a dot starts still use those products’ normal allowances. What happens to dot-conversation usage after that first month hasn’t been published — OpenAI says plan-specific terms will follow, so don’t plan a pilot budget around the introductory allowance staying permanent.\nThe enterprise pieces that matter to admins\nSpecialist Dots are the most interesting part for IT. OpenAI’s announcement is only a preview here: specialist dots with their own identity for access management , IT-provisioned hardware, and deep integrations with a company’s systems of record. OpenAI hasn’t published how those identities are created or scoped. If it works as described, that’s close to a managed service account. The agent doesn’t inherit one employee’s full login. If you already run least-privileg",
+      "sourceId": "SRC-b956d590cb3f"
+    }
+  ],
+  "unresolvedQuestions": [
+    "Which 'dots' is the user asking about?",
+    "Is the answering AI model the dots model?",
+    "What is the organizational background of the dots model in question?"
+  ],
+  "contradictions": [
+    "Evidence [1] states dots models are created by Dots Studio (Xiaohongshu), while evidence [2] and [3] state Dots are created by OpenAI."
+  ],
+  "completeness": "partial",
+  "limitations": [
+    "13 search requests or candidate pages failed or were unreadable.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 3,
+    "failedCount": 13,
+    "rounds": 1,
+    "searches": 5
+  },
+  "archivedAt": "2026-10-18T03:09:02.039Z"
+}
