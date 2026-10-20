@@ -47,11 +47,28 @@ const researchResult: ResearchResult = {
   },
 };
 
+const noImageSearch: NonNullable<ConstructorParameters<typeof MuseAgent>[4]> =
+  async () => [];
+
+function createTestAgent(
+  ...args: ConstructorParameters<typeof MuseAgent>
+): MuseAgent {
+  const [provider, memories, sharedMemories, researcher, imageFinder, taskProviders] = args;
+  return new MuseAgent(
+    provider,
+    memories,
+    sharedMemories,
+    researcher,
+    imageFinder ?? noImageSearch,
+    taskProviders,
+  );
+}
+
 test("Mira identifies as Muse's assistant without delegating identity to the model", async () => {
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-identity-"));
   let modelCalls = 0;
   let researchCalls = 0;
-  const agent = new MuseAgent(
+  const agent = createTestAgent(
     {
       async generateText() {
         modelCalls += 1;
@@ -100,7 +117,7 @@ test("attached-image questions stay in chat unless the user explicitly requests 
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-image-routing-"));
   const researchQuestions: string[] = [];
   let modelCalls = 0;
-  const agent = new MuseAgent(
+  const agent = createTestAgent(
     {
       async generateText() {
         modelCalls += 1;
@@ -140,7 +157,7 @@ test("Muse handles casual messages without web research and researches factual q
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-test-"));
   let modelCalls = 0;
   const researchQuestions: string[] = [];
-  const agent = new MuseAgent(
+  const agent = createTestAgent(
     {
       async generateText() {
         modelCalls += 1;
@@ -182,7 +199,7 @@ test("Muse handles opinions and brainstorming through natural chat, not web rese
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-conversation-first-"));
   let modelCalls = 0;
   const researchQuestions: string[] = [];
-  const agent = new MuseAgent(
+  const agent = createTestAgent(
     {
       async generateText(request) {
         modelCalls += 1;
@@ -222,7 +239,7 @@ test("Muse handles opinions and brainstorming through natural chat, not web rese
 test("a confirmation with no conversation context asks what to verify instead of calling a model", async () => {
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-empty-confirmation-"));
   let modelCalls = 0;
-  const agent = new MuseAgent(
+  const agent = createTestAgent(
     {
       async generateText() {
         modelCalls += 1;
@@ -246,7 +263,7 @@ test("a confirmation with no conversation context asks what to verify instead of
 test("Muse can use emoji when requested", async () => {
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-emoji-"));
   let systemPrompt = "";
-  const agent = new MuseAgent(
+  const agent = createTestAgent(
     {
       async generateText(request) {
         systemPrompt = request.systemPrompt;
@@ -268,7 +285,7 @@ test("research follow-ups use prior conversation without repeating research", as
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-followup-"));
   const questions: string[] = [];
   const modelRequests: TextGenerationRequest[] = [];
-  const agent = new MuseAgent(
+  const agent = createTestAgent(
     {
       generateText: async (request) => {
         modelRequests.push(request);
@@ -303,7 +320,7 @@ test("rewrite requests about the previous answer reuse prior research instead of
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-rewrite-followup-"));
   const questions: string[] = [];
   const requests: TextGenerationRequest[] = [];
-  const agent = new MuseAgent(
+  const agent = createTestAgent(
     {
       async generateText(request) {
         requests.push(request);
@@ -337,7 +354,7 @@ test("Are you sure and Confirm follow-ups reuse prior research instead of resear
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-confirmation-"));
   const questions: string[] = [];
   const requests: TextGenerationRequest[] = [];
-  const agent = new MuseAgent(
+  const agent = createTestAgent(
     {
       async generateText(request) {
         requests.push(request);
@@ -381,7 +398,7 @@ test("pronoun-based research follow-ups receive the previous topic and evidence"
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-pronoun-followup-"));
   const questions: string[] = [];
   const researchContexts: string[] = [];
-  const agent = new MuseAgent(
+  const agent = createTestAgent(
     { generateText: async () => "unused" },
     new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
     undefined,
@@ -474,12 +491,13 @@ test("Muse adds attributed Commons images when requested to support research", a
     creator: "Photographer",
     license: "CC BY-SA 4.0",
   };
-  const agent = new MuseAgent(
+  const agent = createTestAgent(
     { generateText: async () => "unused" },
     new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
     undefined,
     async (question) => ({ ...researchResult, question }),
-    async (request) => {
+    async (request, _fallbackContext, maxResults) => {
+      assert.equal(maxResults, 3);
       imageRequests.push(request);
       return [image];
     },
@@ -495,6 +513,155 @@ test("Muse adds attributed Commons images when requested to support research", a
     assert.deepEqual(imageRequests, [
       "Research monarch butterflies and show me pictures to support the research.",
     ]);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("research answers automatically put one relevant sourced image before the story", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "muse-agent-auto-research-image-"));
+  const question = "What is the history of Donald Trump?";
+  const imageRequests: string[] = [];
+  let imageSearchStarted = false;
+  const image: ResearchImage = {
+    title: "Donald Trump portrait",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/1/1a/Donald_Trump.jpg",
+    pageUrl: "https://commons.wikimedia.org/wiki/File:Donald_Trump.jpg",
+    creator: "Photographer",
+    license: "CC BY 4.0",
+    licenseUrl: "https://creativecommons.org/licenses/by/4.0/",
+    source: "Wikimedia Commons",
+  };
+  const result: ResearchResult = {
+    ...researchResult,
+    question,
+    answer: "Donald Trump served as the 45th and 47th U.S. president. [1]",
+    sources: [{
+      ...researchResult.sources[0]!,
+      title: "Presidential biography",
+      content: "Donald Trump served as the 45th and 47th U.S. president.",
+    }],
+  };
+  const agent = createTestAgent(
+    { generateText: async () => "unused" },
+    new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
+    undefined,
+    async () => {
+      assert.equal(imageSearchStarted, true, "image retrieval should overlap research");
+      return result;
+    },
+    async (request, _fallbackContext, maxResults) => {
+      assert.equal(maxResults, 1);
+      imageSearchStarted = true;
+      imageRequests.push(request);
+      assert.equal(imageSearchQuery(request), "Donald Trump");
+      return [image, { ...image, title: "Duplicate portrait" }];
+    },
+  );
+
+  try {
+    const reply = await agent.respond(question);
+    assert.match(reply, /^### Images\n\n!\[Donald Trump portrait\]/);
+    assert.ok(
+      reply.indexOf("![Donald Trump portrait]") <
+        reply.indexOf("Donald Trump served as the 45th and 47th U.S. president"),
+      "the image should appear before the research story",
+    );
+    assert.equal((reply.match(/!\[/g) ?? []).length, 1);
+    assert.match(reply, /\[Donald Trump portrait — Wikimedia Commons\]/);
+    assert.match(reply, /license: \[CC BY 4\.0\]/);
+    assert.deepEqual(imageRequests, [question]);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("research-based articles also get a sourced image before the draft", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "muse-agent-auto-writing-image-"));
+  const question = "Write an article about the history of Donald Trump.";
+  const image: ResearchImage = {
+    title: "Donald Trump portrait",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/1/1a/Donald_Trump.jpg",
+    pageUrl: "https://commons.wikimedia.org/wiki/File:Donald_Trump.jpg",
+    source: "Wikimedia Commons",
+  };
+  let imageSearchCalls = 0;
+  const agent = createTestAgent(
+    { generateText: async () => "Donald Trump served as the 45th and 47th U.S. president. [1]" },
+    new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
+    undefined,
+    async (requestedQuestion) => ({
+      ...researchResult,
+      question: requestedQuestion,
+      answer: "Donald Trump served as the 45th and 47th U.S. president. [1]",
+      sources: [{
+        ...researchResult.sources[0]!,
+        title: "Presidential biography",
+        content: "Donald Trump served as the 45th and 47th U.S. president.",
+      }],
+    }),
+    async (_request, _fallbackContext, maxResults) => {
+      assert.equal(maxResults, 1);
+      imageSearchCalls += 1;
+      return [image];
+    },
+  );
+
+  try {
+    const reply = await agent.respond(question);
+    assert.match(reply, /^### Images\n\n!\[Donald Trump portrait\]/);
+    assert.ok(reply.indexOf("![Donald Trump portrait]") < reply.indexOf("Donald Trump served"));
+    assert.equal(imageSearchCalls, 1);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("research answers disclose when no suitable sourced image is available", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "muse-agent-no-image-result-"));
+  const question = "What is the history of Donald Trump?";
+  const agent = createTestAgent(
+    { generateText: async () => "unused" },
+    new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
+    undefined,
+    async (requestedQuestion) => ({ ...researchResult, question: requestedQuestion }),
+    async () => [],
+  );
+
+  try {
+    const reply = await agent.respond(question);
+    assert.match(
+      reply,
+      /^Image note: I couldn't find a suitable sourced image for this topic\./,
+    );
+    assert.ok(
+      reply.indexOf("Image note:") <
+        reply.indexOf("The sources describe the mechanism"),
+    );
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("researchers can explicitly opt out of automatic sourced images", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "muse-agent-no-auto-image-"));
+  let imageSearchCalls = 0;
+  const question = "What is the history of Donald Trump? No image, please.";
+  const agent = createTestAgent(
+    { generateText: async () => "unused" },
+    new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
+    undefined,
+    async (requestedQuestion) => ({ ...researchResult, question: requestedQuestion }),
+    async () => {
+      imageSearchCalls += 1;
+      return [];
+    },
+  );
+
+  try {
+    const reply = await agent.respond(question);
+    assert.equal(imageSearchCalls, 0);
+    assert.doesNotMatch(reply, /!\[/);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
@@ -520,7 +687,7 @@ test("definition requests for an accompanying image attach sourced online art", 
     creator: "Photographer",
     license: "CC BY-SA 4.0",
   };
-  const agent = new MuseAgent(
+  const agent = createTestAgent(
     { generateText: async () => "unused" },
     new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
     undefined,
@@ -584,7 +751,7 @@ test("generic image follow-ups reuse the latest research topic and keep its sour
     creator: "Photographer",
     license: "CC BY-SA 4.0",
   };
-  const agent = new MuseAgent(
+  const agent = createTestAgent(
     { generateText: async () => "Here is a sourced visual for the research." },
     new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
     undefined,
@@ -613,9 +780,12 @@ test("generic image follow-ups reuse the latest research topic and keep its sour
     const reply = await agent.respond("Add an image to that.");
 
     assert.match(reply, /!\[Pollination by a bee\]\(https:\/\/upload\.wikimedia\.org/);
-    assert.equal(imageRequests.length, 1);
-    assert.equal(imageRequests[0]?.message, "Add an image to that.");
-    assert.match(imageRequests[0]?.context ?? "", /pollination/i);
+    assert.equal(imageRequests.length, 2);
+    assert.deepEqual(
+      imageRequests.map(({ message }) => message),
+      ["What is pollination?", "Add an image to that."],
+    );
+    assert.match(imageRequests[1]?.context ?? "", /pollination/i);
     assert.deepEqual(researchQuestions, ["What is pollination?"]);
 
     const sources = await agent.respond("Show me the sources");
@@ -636,7 +806,7 @@ test("a linked-page research request uses its fresh findings to find the accompa
     creator: "Photographer",
     license: "CC BY-SA 4.0",
   };
-  const agent = new MuseAgent(
+  const agent = createTestAgent(
     { generateText: async () => "unused" },
     new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
     undefined,
@@ -673,7 +843,7 @@ test("a linked-page research request uses its fresh findings to find the accompa
 test("a topicless image request asks for context instead of searching irrelevant Commons terms", async () => {
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-image-topic-needed-"));
   let imageSearchCalls = 0;
-  const agent = new MuseAgent(
+  const agent = createTestAgent(
     { generateText: async () => "I can help with that." },
     new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
     undefined,
@@ -726,7 +896,7 @@ test("research replies include raw source URLs only when requested", () => {
 test("a source request reuses the latest research without rerunning search", async () => {
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-source-followup-"));
   const researchQuestions: string[] = [];
-  const agent = new MuseAgent(
+  const agent = createTestAgent(
     { generateText: async () => "unused" },
     new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
     undefined,
@@ -753,7 +923,7 @@ test("multi-turn chat keeps roles and routes simple follow-ups separately from e
   const requests: TextGenerationRequest[] = [];
   const researchQuestions: string[] = [];
   const researchContexts: string[] = [];
-  const agent = new MuseAgent(
+  const agent = createTestAgent(
     {
       generateText: async (request) => {
         requests.push(request);
@@ -816,7 +986,7 @@ test("Muse researches factual writing requests and preserves the assignment for 
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-writing-"));
   const generated: string[] = [];
   const researchQuestions: string[] = [];
-  const agent = new MuseAgent(
+  const agent = createTestAgent(
     {
       async generateText(request) {
         generated.push(request.systemPrompt);
@@ -854,7 +1024,7 @@ test("a failed synthesis stops article generation and gives one concise next ste
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-insufficient-research-"));
   let modelCalls = 0;
   let researchCalls = 0;
-  const agent = new MuseAgent(
+  const agent = createTestAgent(
     {
       async generateText() {
         modelCalls += 1;
@@ -880,6 +1050,7 @@ test("a failed synthesis stops article generation and gives one concise next ste
       "Turn those findings into a concise, publishable article.",
     );
     const expected =
+      "Image note: I couldn't find a suitable sourced image for this topic.\n\n" +
       "I retrieved 3 readable sources, but couldn't synthesize a reliable answer. " +
       "Please try again shortly.";
 
@@ -896,7 +1067,7 @@ test("a failed synthesis stops article generation and gives one concise next ste
 test("a draft with unsupported claims is withheld rather than returned as a full article", async () => {
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-unsupported-draft-"));
   let modelCalls = 0;
-  const agent = new MuseAgent(
+  const agent = createTestAgent(
     {
       async generateText() {
         modelCalls += 1;
@@ -935,7 +1106,7 @@ test("a brief history keeps validated research when an unrelated claim is unsupp
     content:
       "Elon Musk was born in Pretoria, South Africa, and later co-founded SpaceX.",
   };
-  const agent = new MuseAgent(
+  const agent = createTestAgent(
     {
       async generateText() {
         generationCalls += 1;
@@ -978,7 +1149,7 @@ test("writing requests still answer when no readable sources were retrieved", as
   const failure =
     "I could not retrieve any readable web sources for this question, so I can't provide a source-grounded answer yet. " +
     "Search may be blocked or relevant pages may be inaccessible. Please try a narrower query or provide a source URL.";
-  const agent = new MuseAgent(
+  const agent = createTestAgent(
     {
       async generateText() {
         modelCalls += 1;
@@ -1010,7 +1181,7 @@ test("research-based writing falls back to general knowledge when retrieval has 
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-writing-fallback-"));
   const requests: TextGenerationRequest[] = [];
   let researchCalls = 0;
-  const agent = new MuseAgent(
+  const agent = createTestAgent(
     {
       async generateText(request) {
         requests.push(request);
@@ -1047,7 +1218,7 @@ test("research-based writing falls back to general knowledge when retrieval has 
 test("Muse writes a concise note when research retrieves no usable sources", async () => {
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-note-fallback-"));
   const requests: TextGenerationRequest[] = [];
-  const agent = new MuseAgent(
+  const agent = createTestAgent(
     {
       async generateText(request) {
         requests.push(request);
@@ -1082,7 +1253,7 @@ test("a writing follow-up reuses only its immediately relevant retrieved evidenc
   const researchContexts: string[] = [];
   let researchCalls = 0;
   let modelCalls = 0;
-  const agent = new MuseAgent(
+  const agent = createTestAgent(
     {
       async generateText() {
         modelCalls += 1;
@@ -1116,7 +1287,7 @@ test("a writing follow-up reuses only its immediately relevant retrieved evidenc
 test("an unrelated new research request does not receive stale research as context", async () => {
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-fresh-research-"));
   const researchContexts: string[] = [];
-  const agent = new MuseAgent(
+  const agent = createTestAgent(
     { generateText: async () => "unused" },
     new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
     undefined,
@@ -1140,7 +1311,7 @@ test("a writing request cannot reuse research after an unrelated conversational 
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-expired-research-"));
   const researchContexts: string[] = [];
   let researchCalls = 0;
-  const agent = new MuseAgent(
+  const agent = createTestAgent(
     { generateText: async () => "A concise reply." },
     new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
     undefined,
@@ -1167,7 +1338,7 @@ test("Muse summarizes supplied text without invoking external research", async (
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-supplied-text-"));
   const modelRequests: TextGenerationRequest[] = [];
   const researchQuestions: string[] = [];
-  const agent = new MuseAgent(
+  const agent = createTestAgent(
     {
       async generateText(request) {
         modelRequests.push(request);
@@ -1198,7 +1369,7 @@ test("Muse skips external research for a creative writing request", async () => 
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-creative-"));
   let researchCalls = 0;
   let writingPrompt = "";
-  const agent = new MuseAgent(
+  const agent = createTestAgent(
     {
       generateText: async (request) => {
         writingPrompt = request.systemPrompt;
@@ -1229,7 +1400,7 @@ test("Muse drafts a personal narrative without requiring web sources", async () 
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-personal-narrative-"));
   let researchCalls = 0;
   let writingPrompt = "";
-  const agent = new MuseAgent(
+  const agent = createTestAgent(
     {
       generateText: async (request) => {
         writingPrompt = request.systemPrompt;
@@ -1260,7 +1431,7 @@ test("Muse drafts a personal narrative without requiring web sources", async () 
 test("a message naming a website reaches research so the link can be read", async () => {
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-link-"));
   const researchQuestions: string[] = [];
-  const agent = new MuseAgent(
+  const agent = createTestAgent(
     {
       async generateText() {
         return "A plain-chat reply.";

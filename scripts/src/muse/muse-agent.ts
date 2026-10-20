@@ -22,6 +22,7 @@ import {
   writingNeedsResearch,
 } from "./writing-workflow.js";
 import {
+  explicitlyDeclinesImages,
   normalizeResponseFormatting,
   requestsEmoji,
   requestsImages,
@@ -44,7 +45,7 @@ const MUSE_SYSTEM_PROMPT =
   "For opinions, offer a balanced, reasoned perspective without pretending to have personal experiences. Use a consistent style: give the direct answer first, then a concise explanation; use short headings or bullets only when useful. " +
   "Honor the format the user asks for; do not force an essay, list, or report when they requested another format. " +
   "For researched claims, use retrieved evidence and state uncertainty or limitations clearly, but show citations or source links only when the user asks for them. " +
-  "When the user asks for an image to accompany an answer, use separately sourced online image results with source attribution; do not generate artwork unless the user explicitly asks for AI-generated art through the image-generation control. " +
+  "By default, for researched topics and research-based writing, Muse automatically places one relevant, sourced online image before the answer when a suitable result is available; honor explicit requests not to include one, follow source and license attribution, and never invent or generate the image. For other requests, only retrieve an image when asked. Do not generate artwork unless the user explicitly asks for AI-generated art through the image-generation control. " +
   "Offer a brief, specific follow-up only when it would genuinely help; do not add a boilerplate question to every answer. " +
   "Be clear about uncertainty. Never claim to have checked live information or taken an action unless you actually did so in this conversation. " +
   "Use concise Markdown; never use tables. Avoid decorative emoji unless the user explicitly asks for them; when asked, use appropriate emoji. Avoid repeated conclusions. " +
@@ -146,12 +147,20 @@ export type ResearchRunner = (
 export type ResearchImageFinder = (
   message: string,
   fallbackContext?: string,
+  maxResults?: number,
 ) => Promise<ResearchImage[]>;
 
-type RequestedImageSearch =
+type ImageSearchOutcome =
   | { kind: "results"; images: ResearchImage[] }
   | { kind: "error"; error: unknown }
-  | { kind: "topic-needed" };
+  | { kind: "topic-needed" }
+  | { kind: "no-topic" };
+
+type ImageAttachmentPlan = {
+  enabled: boolean;
+  explicitlyRequested: boolean;
+  maxImages: number;
+};
 
 function researchImageFallbackContext(result: ResearchResult | undefined): string {
   if (!result) return "";
@@ -173,7 +182,7 @@ function researchImageFallbackContext(result: ResearchResult | undefined): strin
     firstAnswerSentence,
   ]
     .filter(Boolean)
-    .join(" ");
+    .join("\n");
 }
 
 /** Optional task-aware providers: `research` backs planning, synthesis, and
@@ -194,8 +203,11 @@ export class MuseAgent {
     private readonly memories = new MemoryService(new JsonMemoryRepository()),
     private readonly sharedMemories?: MemoryService,
     researcher?: ResearchRunner,
-    private readonly imageFinder: ResearchImageFinder = (message, fallbackContext) =>
-      searchResearchImages(message, fetch, fallbackContext),
+    private readonly imageFinder: ResearchImageFinder = (
+      message,
+      fallbackContext,
+      maxResults,
+    ) => searchResearchImages(message, fetch, fallbackContext, maxResults),
     taskProviders?: MuseTaskProviders,
   ) {
     this.qualityProvider = taskProviders?.research ?? provider;
@@ -275,18 +287,34 @@ export class MuseAgent {
       }
     }
 
-    const requestedImageSearch = this.beginRequestedImageSearch(
-      content,
-      latestResearch,
-    );
-    const attachRequestedImages = (response: string) =>
-      this.includeRequestedImages(response, content, requestedImageSearch);
-
     const writingRevision = isWritingRevision(
       content,
       this.hasActiveWritingAssignment,
     );
     const wantsWriting = isWritingRequest(content) || writingRevision;
+    const researchWriting =
+      wantsWriting && writingNeedsResearch(content, writingRevision);
+    const explicitlyRequestedImages = requestsImages(content);
+    const automaticallyAttachResearchImage =
+      (wantsResearch || researchWriting) && !explicitlyDeclinesImages(content);
+    const imagePlan: ImageAttachmentPlan = {
+      enabled: explicitlyRequestedImages || automaticallyAttachResearchImage,
+      explicitlyRequested: explicitlyRequestedImages,
+      maxImages: explicitlyRequestedImages ? 3 : 1,
+    };
+    const pendingImageSearch = this.beginImageSearch(
+      content,
+      contextualResearch,
+      imagePlan,
+    );
+    const attachResearchImages = (response: string) =>
+      this.includeResearchImages(
+        response,
+        content,
+        pendingImageSearch,
+        imagePlan,
+      );
+
     const candidate = detectMemoryCandidate(content);
     if (candidate) await this.memories.remember(candidate);
 
@@ -325,7 +353,6 @@ export class MuseAgent {
       content: promptContent,
     };
     if (wantsWriting) {
-      const researchWriting = writingNeedsResearch(content, writingRevision);
       let evidence: ResearchResult | undefined;
       let researchUnavailable = false;
       if (researchWriting) {
@@ -346,7 +373,7 @@ export class MuseAgent {
             evidence = undefined;
             researchUnavailable = true;
           } else {
-            const reply = await attachRequestedImages(
+            const reply = await attachResearchImages(
               researchFailureReply(evidence),
             );
             this.conversation.push(
@@ -370,7 +397,7 @@ export class MuseAgent {
         evidence &&
         /\(unverified: no matching retrieved evidence\)/i.test(response)
       ) {
-        const reply = await attachRequestedImages(INSUFFICIENT_RESEARCH_REPLY);
+        const reply = await attachResearchImages(INSUFFICIENT_RESEARCH_REPLY);
         this.conversation.push(
           pendingMessage,
           { role: "assistant", content: reply },
@@ -382,7 +409,7 @@ export class MuseAgent {
         : "";
       const conversationalResponse =
         `${response.trim()}${researchNotice}\n\nWould you like me to adjust the format, tone, or length?`;
-      const finalResponse = await attachRequestedImages(conversationalResponse);
+      const finalResponse = await attachResearchImages(conversationalResponse);
       this.hasActiveWritingAssignment = true;
       if (!researchWriting && !contextualResearch) {
         this.latestResearch = undefined;
@@ -419,7 +446,7 @@ export class MuseAgent {
         conversationContext,
       );
       this.latestResearch = result;
-      const response = await attachRequestedImages(
+      const response = await attachResearchImages(
         formatResearchReply(result, Boolean(researchContext)),
       );
       this.conversation.push(pendingMessage, { role: "assistant", content: response });
@@ -430,7 +457,7 @@ export class MuseAgent {
       contextualResearch &&
       !hasReliableResearchEvidence(contextualResearch)
     ) {
-      const reply = await attachRequestedImages(
+      const reply = await attachResearchImages(
         researchFailureReply(contextualResearch),
       );
       this.conversation.push(
@@ -441,7 +468,7 @@ export class MuseAgent {
     }
 
     if (contextualResearch && requestsSources(content)) {
-      const response = await attachRequestedImages(
+      const response = await attachResearchImages(
         formatResearchReply({
           ...contextualResearch,
           question: content,
@@ -509,7 +536,7 @@ export class MuseAgent {
         promptMessage,
       ],
     }), [], { preserveEmoji: requestsEmoji(content) });
-    const finalResponse = await attachRequestedImages(response);
+    const finalResponse = await attachResearchImages(response);
 
     this.conversation.push(
       pendingMessage,
@@ -521,43 +548,51 @@ export class MuseAgent {
     return finalResponse;
   }
 
-  private beginRequestedImageSearch(
+  private beginImageSearch(
     request: string,
     research: ResearchResult | undefined,
-  ): Promise<RequestedImageSearch> | undefined {
-    if (!requestsImages(request)) return undefined;
+    plan: ImageAttachmentPlan,
+  ): Promise<ImageSearchOutcome> | undefined {
+    if (!plan.enabled) return undefined;
 
     const fallbackContext = researchImageFallbackContext(research);
     if (!imageSearchQuery(request, fallbackContext)) {
-      return Promise.resolve({ kind: "topic-needed" });
+      return Promise.resolve({
+        kind: plan.explicitlyRequested ? "topic-needed" : "no-topic",
+      });
     }
 
-    // Start image retrieval before the model/research work so both can overlap.
+    // Start sourced-image retrieval before research and writing so it overlaps
+    // the slower work instead of adding a sequential request to the response.
     try {
-      return this.imageFinder(request, fallbackContext)
-        .then((images): RequestedImageSearch => ({ kind: "results", images }))
-        .catch((error: unknown): RequestedImageSearch => ({ kind: "error", error }));
+      return this.imageFinder(request, fallbackContext, plan.maxImages)
+        .then((images): ImageSearchOutcome => ({ kind: "results", images }))
+        .catch((error: unknown): ImageSearchOutcome => ({ kind: "error", error }));
     } catch (error) {
       return Promise.resolve({ kind: "error", error });
     }
   }
 
-  private async includeRequestedImages(
+  private async includeResearchImages(
     response: string,
     request: string,
-    pendingSearch?: Promise<RequestedImageSearch>,
+    pendingSearch: Promise<ImageSearchOutcome> | undefined,
+    plan: ImageAttachmentPlan,
   ): Promise<string> {
-    if (!requestsImages(request)) return response;
+    if (!plan.enabled) return response;
 
-    // Chat-requested illustrations are sourced from existing online images;
-    // generated artwork remains a separate, explicit UI action.
     let outcome = await (
-      pendingSearch ?? this.beginRequestedImageSearch(request, this.latestResearch)
+      pendingSearch ?? this.beginImageSearch(request, this.latestResearch, plan)
     );
-    if (outcome?.kind === "topic-needed" && this.latestResearch) {
-      const contextualSearch = this.beginRequestedImageSearch(
-        request,
+    if (
+      outcome &&
+      (outcome.kind === "no-topic" || outcome.kind === "topic-needed") &&
+      this.latestResearch
+    ) {
+      const contextualSearch = this.beginImageSearch(
+        "",
         this.latestResearch,
+        plan,
       );
       if (contextualSearch) outcome = await contextualSearch;
     }
@@ -566,19 +601,28 @@ export class MuseAgent {
     }
     if (outcome.kind === "error") {
       console.error("Muse image search failed.", outcome.error);
-      return `${response}\n\nI couldn't retrieve image results just now.`;
+      return `Image note: I couldn't retrieve a sourced image right now.\n\n${response}`;
+    }
+    if (outcome.kind === "no-topic") {
+      return `Image note: I couldn't identify a specific topic for a sourced image.\n\n${response}`;
     }
     if (!outcome.images.length) {
-      return `${response}\n\nI couldn't find suitable image results for that request.`;
+      return `Image note: I couldn't find a suitable sourced image for this topic.\n\n${response}`;
     }
 
     const imageList = outcome.images
+      .slice(0, plan.maxImages)
       .map((image) => {
         const alt = image.title
           .replace(/[\[\]()\\\r\n]/g, "")
           .replace(/\s+/g, " ")
           .trim();
-        const source = (image.source ?? "Wikimedia Commons")
+        const fallbackSource = image.pageUrl.startsWith(
+          "https://commons.wikimedia.org/",
+        )
+          ? "Wikimedia Commons"
+          : "Openverse";
+        const source = (image.source ?? fallbackSource)
           .replace(/[\[\]()\\\r\n]/g, "")
           .replace(/\s+/g, " ")
           .trim();
@@ -605,7 +649,7 @@ export class MuseAgent {
         ].join("\n");
       })
       .join("\n\n");
-    return `${response}\n\n### Images\n\n${imageList}`;
+    return `### Images\n\n${imageList}\n\n${response.trim()}`;
   }
 
   listMemories(category?: MemoryCategory): Promise<MemoryRecord[]> {

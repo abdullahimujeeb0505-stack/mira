@@ -76,6 +76,17 @@ test("image search queries retain the subject and remove request wording", () =>
     imageSearchQuery("Add an image of a cat.", "What is pollination?"),
     "cat",
   );
+  assert.equal(
+    imageSearchQuery("What is the history of Donald Trump?"),
+    "Donald Trump",
+  );
+  assert.equal(
+    imageSearchQuery(
+      "What about his family?",
+      "What is the history of Donald Trump?\nDonald Trump biography",
+    ),
+    "Donald Trump family",
+  );
 });
 
 test("Commons image results retain attribution and reject non-Commons hosts", () => {
@@ -245,6 +256,43 @@ test("image search checks Openverse and Commons in parallel and returns vetted i
   assert.equal(results[1]?.title, "Monarch butterfly.jpg");
 });
 
+test("automatic one-image search returns as soon as a catalog finds a result", async () => {
+  let commonsStarted = false;
+  let commonsFinished = false;
+  const results = await searchResearchImages(
+    "What is the history of Donald Trump?",
+    async (input) => {
+      const url = new URL(String(input));
+      if (url.hostname === "commons.wikimedia.org") {
+        commonsStarted = true;
+        await new Promise((resolve) => setTimeout(resolve, 75));
+        commonsFinished = true;
+        return new Response(JSON.stringify({ query: { pages: [] } }), {
+          status: 200,
+        });
+      }
+      return new Response(
+        JSON.stringify({
+          results: [
+            {
+              ...OPENVERSE_RECORD,
+              title: "Donald Trump speaking at a public event",
+            },
+          ],
+        }),
+        { status: 200 },
+      );
+    },
+    "",
+    1,
+  );
+
+  assert.equal(commonsStarted, true);
+  assert.equal(commonsFinished, false);
+  assert.equal(results.length, 1);
+  assert.match(results[0]?.title ?? "", /Donald Trump/);
+});
+
 test("Openverse results remain available when Commons is unavailable", async () => {
   const results = await searchResearchImages(
     "Show me a picture of pollination",
@@ -292,6 +340,8 @@ test("Commons results remain available when Openverse is rate-limited", async ()
         { status: 200 },
       );
     },
+    "",
+    1,
   );
 
   assert.equal(results.length, 1);
