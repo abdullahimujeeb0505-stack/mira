@@ -205,7 +205,7 @@ test("Muse serves the chat page with same-origin security headers", async () =>
       assert.match(html, /id="attachment-menu" role="menu"[^>]*hidden/);
       assert.match(html, /Attach photos or files/);
       assert.match(html, /Generate an image/);
-      assert.match(html, /automatically looks for a relevant sourced image with research answers and research-backed articles/);
+      assert.match(html, /automatic research images have no source caption/);
       assert.match(html, /Generate an image only for new AI artwork/);
       assert.match(html, /id="attachment-files"/);
       assert.match(html, /id="voice-input" class="composer-icon"[^>]*aria-label="Dictate a message"/);
@@ -567,15 +567,15 @@ test("chat page and API work without an access code", async () => {
   });
 });
 
-test("chat API automatically places a sourced image before a topical research answer", async () => {
+test("chat API places a clean image before a topical research answer", async () => {
   const image: ResearchImage = {
     title: "Honeybee pollinating a flower",
     imageUrl:
       "https://api.openverse.org/v1/images/00000000-0000-0000-0000-000000000000/thumb/",
     pageUrl: "https://www.flickr.com/photos/example/1",
     creator: "Example photographer",
-    license: "CC BY-SA 4.0",
-    licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/",
+    license: "CC0 1.0",
+    licenseUrl: "https://creativecommons.org/publicdomain/zero/1.0/",
     source: "Flickr",
   };
   const imageRequests: string[] = [];
@@ -618,22 +618,19 @@ test("chat API automatically places a sourced image before a topical research an
       const response = await sendMessage(baseUrl, "What is pollination?");
       assert.equal(response.status, 200);
       const body = (await response.json()) as { reply: string };
-      assert.match(body.reply, /^### Images\n\n!\[Honeybee pollinating a flower\]/);
+      assert.match(body.reply, /^!\[Honeybee pollinating a flower\]\(https:\/\/api\.openverse\.org/);
       assert.ok(
         body.reply.indexOf("![Honeybee pollinating a flower]") <
           body.reply.indexOf("Pollination transfers pollen between flowers"),
       );
-      assert.match(body.reply, /\[Honeybee pollinating a flower — Flickr\]/);
-      assert.match(
-        body.reply,
-        /Example photographer; license: \[CC BY-SA 4\.0\]\(https:\/\/creativecommons\.org\/licenses\/by-sa\/4\.0\/\)/,
-      );
+      assert.doesNotMatch(body.reply, /Flickr|Example photographer|license:|www\.flickr\.com/);
       assert.deepEqual(imageRequests, ["What is pollination?"]);
     },
     undefined,
     {
       researchRunner: async () => researchResult,
-      researchImageFinder: async (message) => {
+      researchImageFinder: async (message, _context, _maxResults, attributionFreeOnly) => {
+        assert.equal(attributionFreeOnly, true);
         imageRequests.push(message);
         return [image];
       },

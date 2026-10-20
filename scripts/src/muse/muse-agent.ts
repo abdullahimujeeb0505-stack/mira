@@ -30,6 +30,7 @@ import {
 } from "./response-formatting.js";
 import {
   imageSearchQuery,
+  isAttributionFreeImage,
   searchResearchImages,
   type ResearchImage,
 } from "./research-images.js";
@@ -45,7 +46,7 @@ const MUSE_SYSTEM_PROMPT =
   "For opinions, offer a balanced, reasoned perspective without pretending to have personal experiences. Use a consistent style: give the direct answer first, then a concise explanation; use short headings or bullets only when useful. " +
   "Honor the format the user asks for; do not force an essay, list, or report when they requested another format. " +
   "For researched claims, use retrieved evidence and state uncertainty or limitations clearly, but show citations or source links only when the user asks for them. " +
-  "By default, for researched topics and research-based writing, Muse automatically places one relevant, sourced online image before the answer when a suitable result is available; honor explicit requests not to include one, follow source and license attribution, and never invent or generate the image. For other requests, only retrieve an image when asked. Do not generate artwork unless the user explicitly asks for AI-generated art through the image-generation control. " +
+  "By default, for researched topics and research-based writing, Muse places one relevant CC0, Public Domain Mark, or public-domain image before the answer when available, without a visible source caption. Honor explicit requests not to include one. For other requests, only retrieve an image when asked and show its available attribution. Never invent or generate an image; AI artwork is available only through the explicit image-generation control. " +
   "Offer a brief, specific follow-up only when it would genuinely help; do not add a boilerplate question to every answer. " +
   "Be clear about uncertainty. Never claim to have checked live information or taken an action unless you actually did so in this conversation. " +
   "Use concise Markdown; never use tables. Avoid decorative emoji unless the user explicitly asks for them; when asked, use appropriate emoji. Avoid repeated conclusions. " +
@@ -148,6 +149,7 @@ export type ResearchImageFinder = (
   message: string,
   fallbackContext?: string,
   maxResults?: number,
+  attributionFreeOnly?: boolean,
 ) => Promise<ResearchImage[]>;
 
 type ImageSearchOutcome =
@@ -159,6 +161,7 @@ type ImageSearchOutcome =
 type ImageAttachmentPlan = {
   enabled: boolean;
   explicitlyRequested: boolean;
+  cleanPresentation: boolean;
   maxImages: number;
 };
 
@@ -207,7 +210,15 @@ export class MuseAgent {
       message,
       fallbackContext,
       maxResults,
-    ) => searchResearchImages(message, fetch, fallbackContext, maxResults),
+      attributionFreeOnly,
+    ) =>
+      searchResearchImages(
+        message,
+        fetch,
+        fallbackContext,
+        maxResults,
+        attributionFreeOnly,
+      ),
     taskProviders?: MuseTaskProviders,
   ) {
     this.qualityProvider = taskProviders?.research ?? provider;
@@ -295,11 +306,16 @@ export class MuseAgent {
     const researchWriting =
       wantsWriting && writingNeedsResearch(content, writingRevision);
     const explicitlyRequestedImages = requestsImages(content);
+    const researchTurn = wantsResearch || researchWriting;
+    const cleanResearchImagePresentation =
+      researchTurn || Boolean(contextualResearch && explicitlyRequestedImages);
     const automaticallyAttachResearchImage =
-      (wantsResearch || researchWriting) && !explicitlyDeclinesImages(content);
+      researchTurn && !explicitlyDeclinesImages(content);
     const imagePlan: ImageAttachmentPlan = {
       enabled: explicitlyRequestedImages || automaticallyAttachResearchImage,
       explicitlyRequested: explicitlyRequestedImages,
+      cleanPresentation:
+        cleanResearchImagePresentation && !explicitlyDeclinesImages(content),
       maxImages: explicitlyRequestedImages ? 3 : 1,
     };
     const pendingImageSearch = this.beginImageSearch(
@@ -565,7 +581,12 @@ export class MuseAgent {
     // Start sourced-image retrieval before research and writing so it overlaps
     // the slower work instead of adding a sequential request to the response.
     try {
-      return this.imageFinder(request, fallbackContext, plan.maxImages)
+      return this.imageFinder(
+        request,
+        fallbackContext,
+        plan.maxImages,
+        plan.cleanPresentation,
+      )
         .then((images): ImageSearchOutcome => ({ kind: "results", images }))
         .catch((error: unknown): ImageSearchOutcome => ({ kind: "error", error }));
     } catch (error) {
@@ -597,26 +618,47 @@ export class MuseAgent {
       if (contextualSearch) outcome = await contextualSearch;
     }
     if (!outcome || outcome.kind === "topic-needed") {
+      if (plan.cleanPresentation) return response;
       return `${response}\n\nTell me which topic or research result you'd like illustrated, and I'll find a sourced image.`;
     }
     if (outcome.kind === "error") {
       console.error("Muse image search failed.", outcome.error);
-      return `Image note: I couldn't retrieve a sourced image right now.\n\n${response}`;
+      return plan.cleanPresentation
+        ? response
+        : `Image note: I couldn't retrieve a sourced image right now.\n\n${response}`;
     }
     if (outcome.kind === "no-topic") {
-      return `Image note: I couldn't identify a specific topic for a sourced image.\n\n${response}`;
-    }
-    if (!outcome.images.length) {
-      return `Image note: I couldn't find a suitable sourced image for this topic.\n\n${response}`;
+      return plan.cleanPresentation
+        ? response
+        : `Image note: I couldn't identify a specific topic for a sourced image.\n\n${response}`;
     }
 
-    const imageList = outcome.images
-      .slice(0, plan.maxImages)
+    const images = outcome.images
+      .filter(
+        (image) => !plan.cleanPresentation || isAttributionFreeImage(image),
+      )
+      .slice(0, plan.maxImages);
+    if (!images.length) {
+      return plan.cleanPresentation
+        ? response
+        : `Image note: I couldn't find a suitable sourced image for this topic.\n\n${response}`;
+    }
+
+    const altText = (image: ResearchImage) =>
+      image.title
+        .replace(/[\[\]()\\\r\n]/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+    if (plan.cleanPresentation) {
+      const cleanImages = images
+        .map((image) => `![${altText(image)}](${image.imageUrl})`)
+        .join("\n\n");
+      return `${cleanImages}\n\n${response.trim()}`;
+    }
+
+    const imageList = images
       .map((image) => {
-        const alt = image.title
-          .replace(/[\[\]()\\\r\n]/g, "")
-          .replace(/\s+/g, " ")
-          .trim();
+        const alt = altText(image);
         const fallbackSource = image.pageUrl.startsWith(
           "https://commons.wikimedia.org/",
         )

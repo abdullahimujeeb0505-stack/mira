@@ -481,7 +481,7 @@ test("research replies preserve emoji when they are requested", () => {
   assert.match(answer, /🚀/);
 });
 
-test("Muse adds attributed Commons images when requested to support research", async () => {
+test("Muse shows research images cleanly when explicitly requested", async () => {
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-images-"));
   const imageRequests: string[] = [];
   const image: ResearchImage = {
@@ -489,15 +489,17 @@ test("Muse adds attributed Commons images when requested to support research", a
     imageUrl: "https://upload.wikimedia.org/wikipedia/commons/1/1a/Monarch.jpg",
     pageUrl: "https://commons.wikimedia.org/wiki/File:Monarch.jpg",
     creator: "Photographer",
-    license: "CC BY-SA 4.0",
+    license: "CC0 1.0",
+    licenseUrl: "https://creativecommons.org/publicdomain/zero/1.0/",
   };
   const agent = createTestAgent(
     { generateText: async () => "unused" },
     new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
     undefined,
     async (question) => ({ ...researchResult, question }),
-    async (request, _fallbackContext, maxResults) => {
+    async (request, _fallbackContext, maxResults, attributionFreeOnly) => {
       assert.equal(maxResults, 3);
+      assert.equal(attributionFreeOnly, true);
       imageRequests.push(request);
       return [image];
     },
@@ -507,9 +509,8 @@ test("Muse adds attributed Commons images when requested to support research", a
     const answer = await agent.respond(
       "Research monarch butterflies and show me pictures to support the research.",
     );
-    assert.match(answer, /!\[Monarch butterfly\]\(https:\/\/upload\.wikimedia\.org/);
-    assert.match(answer, /\[Monarch butterfly — Wikimedia Commons\]/);
-    assert.match(answer, /Photographer; license: CC BY-SA 4\.0/);
+    assert.match(answer, /^!\[Monarch butterfly\]\(https:\/\/upload\.wikimedia\.org/);
+    assert.doesNotMatch(answer, /Wikimedia Commons|Photographer|license:/);
     assert.deepEqual(imageRequests, [
       "Research monarch butterflies and show me pictures to support the research.",
     ]);
@@ -518,7 +519,7 @@ test("Muse adds attributed Commons images when requested to support research", a
   }
 });
 
-test("research answers automatically put one relevant sourced image before the story", async () => {
+test("research answers automatically put one relevant clean image before the story", async () => {
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-auto-research-image-"));
   const question = "What is the history of Donald Trump?";
   const imageRequests: string[] = [];
@@ -528,8 +529,7 @@ test("research answers automatically put one relevant sourced image before the s
     imageUrl: "https://upload.wikimedia.org/wikipedia/commons/1/1a/Donald_Trump.jpg",
     pageUrl: "https://commons.wikimedia.org/wiki/File:Donald_Trump.jpg",
     creator: "Photographer",
-    license: "CC BY 4.0",
-    licenseUrl: "https://creativecommons.org/licenses/by/4.0/",
+    license: "Public domain",
     source: "Wikimedia Commons",
   };
   const result: ResearchResult = {
@@ -550,8 +550,9 @@ test("research answers automatically put one relevant sourced image before the s
       assert.equal(imageSearchStarted, true, "image retrieval should overlap research");
       return result;
     },
-    async (request, _fallbackContext, maxResults) => {
+    async (request, _fallbackContext, maxResults, attributionFreeOnly) => {
       assert.equal(maxResults, 1);
+      assert.equal(attributionFreeOnly, true);
       imageSearchStarted = true;
       imageRequests.push(request);
       assert.equal(imageSearchQuery(request), "Donald Trump");
@@ -561,28 +562,28 @@ test("research answers automatically put one relevant sourced image before the s
 
   try {
     const reply = await agent.respond(question);
-    assert.match(reply, /^### Images\n\n!\[Donald Trump portrait\]/);
+    assert.match(reply, /^!\[Donald Trump portrait\]\(https:\/\/upload\.wikimedia\.org/);
     assert.ok(
       reply.indexOf("![Donald Trump portrait]") <
         reply.indexOf("Donald Trump served as the 45th and 47th U.S. president"),
       "the image should appear before the research story",
     );
     assert.equal((reply.match(/!\[/g) ?? []).length, 1);
-    assert.match(reply, /\[Donald Trump portrait — Wikimedia Commons\]/);
-    assert.match(reply, /license: \[CC BY 4\.0\]/);
+    assert.doesNotMatch(reply, /Wikimedia Commons|Photographer|license:|commons\.wikimedia\.org\/wiki/);
     assert.deepEqual(imageRequests, [question]);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
 });
 
-test("research-based articles also get a sourced image before the draft", async () => {
+test("research-based articles also get a clean sourced image before the draft", async () => {
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-auto-writing-image-"));
   const question = "Write an article about the history of Donald Trump.";
   const image: ResearchImage = {
     title: "Donald Trump portrait",
     imageUrl: "https://upload.wikimedia.org/wikipedia/commons/1/1a/Donald_Trump.jpg",
     pageUrl: "https://commons.wikimedia.org/wiki/File:Donald_Trump.jpg",
+    license: "Public domain",
     source: "Wikimedia Commons",
   };
   let imageSearchCalls = 0;
@@ -600,8 +601,9 @@ test("research-based articles also get a sourced image before the draft", async 
         content: "Donald Trump served as the 45th and 47th U.S. president.",
       }],
     }),
-    async (_request, _fallbackContext, maxResults) => {
+    async (_request, _fallbackContext, maxResults, attributionFreeOnly) => {
       assert.equal(maxResults, 1);
+      assert.equal(attributionFreeOnly, true);
       imageSearchCalls += 1;
       return [image];
     },
@@ -609,15 +611,16 @@ test("research-based articles also get a sourced image before the draft", async 
 
   try {
     const reply = await agent.respond(question);
-    assert.match(reply, /^### Images\n\n!\[Donald Trump portrait\]/);
+    assert.match(reply, /^!\[Donald Trump portrait\]\(https:\/\/upload\.wikimedia\.org/);
     assert.ok(reply.indexOf("![Donald Trump portrait]") < reply.indexOf("Donald Trump served"));
+    assert.doesNotMatch(reply, /Wikimedia Commons|license:|commons\.wikimedia\.org\/wiki/);
     assert.equal(imageSearchCalls, 1);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
 });
 
-test("research answers disclose when no suitable sourced image is available", async () => {
+test("research answers silently omit an unavailable image", async () => {
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-no-image-result-"));
   const question = "What is the history of Donald Trump?";
   const agent = createTestAgent(
@@ -630,14 +633,30 @@ test("research answers disclose when no suitable sourced image is available", as
 
   try {
     const reply = await agent.respond(question);
-    assert.match(
-      reply,
-      /^Image note: I couldn't find a suitable sourced image for this topic\./,
-    );
-    assert.ok(
-      reply.indexOf("Image note:") <
-        reply.indexOf("The sources describe the mechanism"),
-    );
+    assert.doesNotMatch(reply, /Image note:|couldn't retrieve a sourced image/);
+    assert.match(reply, /The sources describe the mechanism/);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("research answers hide image-retrieval failures instead of adding a note", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "muse-agent-image-error-"));
+  const question = "What is the history of Donald Trump?";
+  const agent = createTestAgent(
+    { generateText: async () => "unused" },
+    new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
+    undefined,
+    async (requestedQuestion) => ({ ...researchResult, question: requestedQuestion }),
+    async () => {
+      throw new Error("catalog unavailable");
+    },
+  );
+
+  try {
+    const reply = await agent.respond(question);
+    assert.doesNotMatch(reply, /Image note: I couldn't retrieve a sourced image right now/);
+    assert.match(reply, /The sources describe the mechanism/);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
@@ -667,7 +686,7 @@ test("researchers can explicitly opt out of automatic sourced images", async () 
   }
 });
 
-test("definition requests for an accompanying image attach sourced online art", async () => {
+test("definition requests for an accompanying image attach clean CC0 art", async () => {
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-pollination-image-"));
   const imageRequests: string[] = [];
   let imageSearchStarted = false;
@@ -685,7 +704,8 @@ test("definition requests for an accompanying image attach sourced online art", 
     imageUrl: "https://upload.wikimedia.org/wikipedia/commons/1/1a/Pollination.jpg",
     pageUrl: "https://commons.wikimedia.org/wiki/File:Pollination.jpg",
     creator: "Photographer",
-    license: "CC BY-SA 4.0",
+    license: "CC0 1.0",
+    licenseUrl: "https://creativecommons.org/publicdomain/zero/1.0/",
   };
   const agent = createTestAgent(
     { generateText: async () => "unused" },
@@ -705,7 +725,9 @@ test("definition requests for an accompanying image attach sourced online art", 
         }],
       };
     },
-    async (request) => {
+    async (request, _fallbackContext, maxResults, attributionFreeOnly) => {
+      assert.equal(maxResults, 3);
+      assert.equal(attributionFreeOnly, true);
       imageSearchStarted = true;
       imageRequests.push(request);
       return pendingImageSearch;
@@ -730,7 +752,7 @@ test("definition requests for an accompanying image attach sourced online art", 
     const answer = await responsePromise;
     assert.match(answer, /Pollination transfers pollen between flowers/);
     assert.match(answer, /!\[Pollination by a bee\]\(https:\/\/upload\.wikimedia\.org/);
-    assert.match(answer, /\[Pollination by a bee — Wikimedia Commons\]/);
+    assert.doesNotMatch(answer, /Wikimedia Commons|Photographer|license:/);
     assert.deepEqual(imageRequests, [question]);
   } finally {
     if (timeout) clearTimeout(timeout);
@@ -749,7 +771,8 @@ test("generic image follow-ups reuse the latest research topic and keep its sour
     imageUrl: "https://upload.wikimedia.org/wikipedia/commons/1/1a/Pollination.jpg",
     pageUrl: "https://commons.wikimedia.org/wiki/File:Pollination.jpg",
     creator: "Photographer",
-    license: "CC BY-SA 4.0",
+    license: "CC0 1.0",
+    licenseUrl: "https://creativecommons.org/publicdomain/zero/1.0/",
   };
   const agent = createTestAgent(
     { generateText: async () => "Here is a sourced visual for the research." },
@@ -768,7 +791,8 @@ test("generic image follow-ups reuse the latest research topic and keep its sour
         }],
       };
     },
-    async (message, fallbackContext = "") => {
+    async (message, fallbackContext = "", _maxResults, attributionFreeOnly) => {
+      assert.equal(attributionFreeOnly, true);
       imageRequests.push({ message, context: fallbackContext });
       assert.match(imageSearchQuery(message, fallbackContext), /pollination/i);
       return [image];
@@ -780,6 +804,7 @@ test("generic image follow-ups reuse the latest research topic and keep its sour
     const reply = await agent.respond("Add an image to that.");
 
     assert.match(reply, /!\[Pollination by a bee\]\(https:\/\/upload\.wikimedia\.org/);
+    assert.doesNotMatch(reply, /Wikimedia Commons|Photographer|license:/);
     assert.equal(imageRequests.length, 2);
     assert.deepEqual(
       imageRequests.map(({ message }) => message),
@@ -804,7 +829,8 @@ test("a linked-page research request uses its fresh findings to find the accompa
     imageUrl: "https://upload.wikimedia.org/wikipedia/commons/1/1a/Pollination.jpg",
     pageUrl: "https://commons.wikimedia.org/wiki/File:Pollination.jpg",
     creator: "Photographer",
-    license: "CC BY-SA 4.0",
+    license: "CC0 1.0",
+    licenseUrl: "https://creativecommons.org/publicdomain/zero/1.0/",
   };
   const agent = createTestAgent(
     { generateText: async () => "unused" },
@@ -820,7 +846,8 @@ test("a linked-page research request uses its fresh findings to find the accompa
         content: "Pollination transfers pollen between flowers.",
       }],
     }),
-    async (message, fallbackContext = "") => {
+    async (message, fallbackContext = "", _maxResults, attributionFreeOnly) => {
+      assert.equal(attributionFreeOnly, true);
       imageRequests.push({ message, context: fallbackContext });
       assert.match(imageSearchQuery(message, fallbackContext), /pollination/i);
       return [image];
@@ -833,8 +860,42 @@ test("a linked-page research request uses its fresh findings to find the accompa
     );
 
     assert.match(reply, /!\[Pollination by a bee\]\(https:\/\/upload\.wikimedia\.org/);
+    assert.doesNotMatch(reply, /Wikimedia Commons|Photographer|license:/);
     assert.equal(imageRequests.length, 1);
     assert.match(imageRequests[0]?.context ?? "", /Pollination guide/i);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("explicit image requests outside research retain attribution", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "muse-agent-explicit-image-"));
+  const image: ResearchImage = {
+    title: "Monarch butterfly portrait",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/1/1a/Monarch.jpg",
+    pageUrl: "https://commons.wikimedia.org/wiki/File:Monarch.jpg",
+    creator: "Photographer",
+    license: "CC BY-SA 4.0",
+    licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/",
+    source: "Wikimedia Commons",
+  };
+  const agent = createTestAgent(
+    { generateText: async () => "Here is the picture." },
+    new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
+    undefined,
+    undefined,
+    async (_request, _fallbackContext, _maxResults, attributionFreeOnly) => {
+      assert.equal(attributionFreeOnly, false);
+      return [image];
+    },
+  );
+
+  try {
+    const reply = await agent.respond("Show me a picture of a monarch butterfly.");
+    assert.match(reply, /^### Images\n\n!\[Monarch butterfly portrait\]/);
+    assert.match(reply, /\[Monarch butterfly portrait — Wikimedia Commons\]/);
+    assert.match(reply, /Photographer; license: \[CC BY-SA 4\.0\]/);
+    assert.ok(reply.includes("https://commons.wikimedia.org/wiki/File:Monarch.jpg"));
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
@@ -1050,7 +1111,6 @@ test("a failed synthesis stops article generation and gives one concise next ste
       "Turn those findings into a concise, publishable article.",
     );
     const expected =
-      "Image note: I couldn't find a suitable sourced image for this topic.\n\n" +
       "I retrieved 3 readable sources, but couldn't synthesize a reliable answer. " +
       "Please try again shortly.";
 
