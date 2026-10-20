@@ -1,0 +1,116 @@
+{
+  "id": "2026-10-20T22-24-38-006Z-what-can-you-just-say-about-it-generally",
+  "question": "What can you just say about it generally",
+  "plan": {
+    "objective": "Provide a general overview and contextual background of the Photon platform (photon.codes) based on available developer resources and dashboard information.",
+    "taskType": "general",
+    "deliverable": "A concise general summary outlining what Photon (photon.codes) is, its target audience, and primary functions.",
+    "requiresCurrentInformation": false,
+    "sourcePreferences": [
+      "Official developer documentation",
+      "Primary platform portals"
+    ],
+    "questions": [
+      "What is Photon (photon.codes) and what are its primary features for developers?"
+    ],
+    "queries": [
+      "photon.codes AI agents developer platform",
+      "photon codes dashboard"
+    ],
+    "unresolvedQuestions": []
+  },
+  "answer": "### Overview of Photon (photon.codes)\n\nPhoton is a San Francisco-based startup and messaging platform designed for AI agents. [SRC-258c7044c7cb]\nFounded by Daniel Tian and Ryan Zhu, the platform provides an open-source framework and toolkit (such as Spectrum) that helps developers wire AI agents directly into everyday messaging channels like iMessage, WhatsApp, Telegram, and Slack. [SRC-258c7044c7cb]\nIts primary mission is summarized by its developer portal tagline: \"Bring your agents to millions of lives\" [SRC-8de2ed019f6a].\n\n### Target Audience and Purpose\n\n* **Developers and Startups:** Aimed at builders looking to bypass the friction of traditional user acquisition, such as getting users to download separate mobile applications or visit new browser tabs (unverified: no matching retrieved evidence).\n* **Conversational Distribution:** Focuses on meeting users where they already spend time, leveraging platforms that boast billions of active participants (e.g., WhatsApp and iMessage). [SRC-fd1bac6793da]\n\n### Primary Functions and Features\n\n* **Multi-Channel Messaging Infrastructure:** Manages identity, state, deliverability, and analytics across distinct communication layers [SRC-258c7044c7cb].\n* **Rich Interactive Capabilities:** Connects agents to native chat features like group chats, tapbacks, reply threads, rich media, polls, message effects, live location, and mini-apps (such as WhatsApp Flows or iMessage apps) [SRC-258c7044c7cb].\n* **Developer Portal:** Provides a centralized dashboard (`app.photon.codes`) featuring authentication via email or Google to help developers manage applications and agent deployments (unverified: no matching retrieved evidence).",
+  "followUpQuestions": [
+    "Spectrum framework details",
+    "Funding and investors"
+  ],
+  "sources": [
+    {
+      "title": "Photon — Dashboard",
+      "url": "https://app.photon.codes/sign-in?callbackURL=%2F",
+      "canonicalUrl": "https://app.photon.codes/sign-in?callbackURL=%2F",
+      "publisher": "Photon",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "Continue with Google Don't have an account? Sign up",
+        "Developer dashboard for building with Photon."
+      ],
+      "retrievedAt": "2026-10-20T22:24:35.078Z",
+      "content": "Photon — Dashboard \nWelcome to Photon\nBring your agents to millions of lives\n\nEmail \nPassword Forgot password? \n\nLogin \n\nor \n\nContinue with Google Don't have an account? Sign up \n\nTerms of Service and Privacy Policy\nDeveloper dashboard for building with Photon.",
+      "isUserProvided": true,
+      "sourceId": "SRC-8de2ed019f6a"
+    },
+    {
+      "title": "The Messaging Platform for AI Agents | Gradient Ventures",
+      "url": "https://www.gradient.com/blog/posts/photon-codes/",
+      "canonicalUrl": "https://www.gradient.com/blog/posts/photon-codes/",
+      "publisher": "Gradient Ventures",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Most AI models today sit within a new browser tab or custom mobile application but this has begun to change. OpenClaw, Poke, and Instinct have successively demonstrated the opportunity available by meeting the user where they exist already – messaging channels including iMessage, WhatsApp, SMS and Email. Managing identity, state, deliverability, and analytic",
+        "Messaging channels traditionally built for humans hold two key advantages as a deployment target for developers. The first is the acquisition and onboarding process that is available across a large set of users. WhatsApp has more than 3 billion users, and iMessage ships by default on more than 1 billion active iPhones. Acquiring users is as simple as having ",
+        "Photon has championed the developer in every step of their journey and have made the experience available wherever you may be building. We’re proud to support their mission and co-lead their $4.5 million seed round with A* alongside participation from Vercel, HongShan, Z Fellows, and more."
+      ],
+      "retrievedAt": "2026-10-20T22:24:34.854Z",
+      "content": "Investing in Photon\nThe Messaging Platform for AI Agents\nVig Sachidananda Darian Shirazi\nOctober 1, 2026\nMost AI models today sit within a new browser tab or custom mobile application but this has begun to change. OpenClaw, Poke, and Instinct have successively demonstrated the opportunity available by meeting the user where they exist already – messaging channels including iMessage, WhatsApp, SMS and Email. Managing identity, state, deliverability, and analytics across these distinct channels presents a new challenge to startups and enterprises. Daniel Tian and Ryan Zhu ran into this problem last year when building personal agents of their own and decided shortly after to start Photon . Photon now has more than 50,000 developers building on their platform with millions of messages relayed a day.\nMessaging channels traditionally built for humans hold two key advantages as a deployment target for developers. The first is the acquisition and onboarding process that is available across a large set of users. WhatsApp has more than 3 billion users, and iMessage ships by default on more than 1 billion active iPhones. Acquiring users is as simple as having them send a text and there is no need to teach users how to use the interface. Secondly, these channels have over the years added rich functionality that typically exceeds those presented by first party applications. Group chats let an agent join a conversation among several people. Tapbacks are a feedback mechanism and reply threads keep context pinned to the right message. Rich media, polls, message effects, and live location are native. iMessage apps and WhatsApp Flows render mini-apps inside a thread so an agent can present a user a custom UI instead of blocks of text. Lastly, payment rails are already in place. With Photon, developers can reach users across these channels while focusing on model development and the user experience rather than infrastructure.\nPhoton has championed the developer in every step of their journey and have made the experience available wherever you may be building. We’re proud to support their mission and co-lead their $4.5 million seed round with A* alongside participation from Vercel, HongShan, Z Fellows, and more.",
+      "isUserProvided": true,
+      "sourceId": "SRC-258c7044c7cb"
+    },
+    {
+      "title": "Gcore",
+      "url": "https://dashboard.photonengine.com/Account/SignUp",
+      "canonicalUrl": "https://dashboard.photonengine.com/Account/SignUp",
+      "publisher": "dashboard.photonengine.com",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "dashboard.photonengine.com is using security service for protection against online",
+        "attacks. This process is automatic. You will be redirected once the validation is complete"
+      ],
+      "retrievedAt": "2026-10-20T22:24:34.487Z",
+      "content": "Browser Validation Page\ndashboard.photonengine.com is using security service for protection against online\nattacks. This process is automatic. You will be redirected once the validation is complete\nReference ID\n5c16f3826b04246ed3b968cc3b486bea\nIP address\n172.166.151.118\nDate and time\n10/20/2026 10:24 PM UTC",
+      "isUserProvided": true,
+      "sourceId": "SRC-b03d1f7efed1"
+    },
+    {
+      "title": "Startuply.vc: Photon's 40,000 Developers Are Wiring AI Agents Into iMessage",
+      "url": "https://startuply.vc/article/photon-s-40-000-developers-are-wiring-ai-agents-into-imessage-1rohdr",
+      "canonicalUrl": "https://startuply.vc/article/photon-s-40-000-developers-are-wiring-ai-agents-into-imessage-1rohdr",
+      "publisher": "Startuply.vc",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Photon's 40,000 Developers Are Wiring AI Agents Into iMessage",
+        "The open-source framework, now with $4.5M in seed funding, aims to replace mobile apps with conversational AI in the channels people already use.",
+        "When a developer wants to build an AI agent that can talk to you in iMessage, the path is not straightforward. Apple does not offer an official bot API. The alternatives are a patchwork of sales-focused services, local automation bridges, or experimental protocols, each with its own compromises. Photon, a San Francisco-based startup, is betting that the fric",
+        "For founders Daniel Tian and Ryan Zhu, the insight came from their own experience building consumer apps as students. The hard part was never the code, but getting users to find and install yet another mobile application. Their solution, a toolkit called Spectrum, treats ubiquitous messaging interfaces as the new operating system. The company recently secure"
+      ],
+      "retrievedAt": "2026-10-20T22:24:34.733Z",
+      "content": "Photon's 40,000 Developers Are Wiring AI Agents Into iMessage\nThe open-source framework, now with $4.5M in seed funding, aims to replace mobile apps with conversational AI in the channels people already use.\nBy Pulse Raman\nAbout Photon\nPublished 2026-10-03T10:16:29.475Z\nWhen a developer wants to build an AI agent that can talk to you in iMessage, the path is not straightforward. Apple does not offer an official bot API. The alternatives are a patchwork of sales-focused services, local automation bridges, or experimental protocols, each with its own compromises. Photon, a San Francisco-based startup, is betting that the friction of distribution, not the creation of the AI itself, is the real bottleneck for the next wave of consumer applications. Its answer is an open-source framework that connects AI agents directly to the messaging platforms where billions of people already spend their time, from iMessage and WhatsApp to Telegram and Slack [photon.codes/blog/photon-vs-sendblue-choosing-an-imessage-api-for-ai-agents, retrieved 2026].\nFor founders Daniel Tian and Ryan Zhu, the insight came from their own experience building consumer apps as students. The hard part was never the code, but getting users to find and install yet another mobile application. Their solution, a toolkit called Spectrum, treats ubiquitous messaging interfaces as the new operating system. The company recently secured $4.5 million in a seed round co-led by Gradient and A* to scale this vision, with participation from Vercel, HongShan, and others [TechCrunch, October 2026].\nThe Wedge of Ubiquity\nPhoton's core bet is architectural. Instead of asking users to download an app, developers using Spectrum can build agents that live inside existing conversations. The company calls it the world's first iMessage App API for agents, supporting direct messages, group chats, rich media, and even SMS/RCS fallback [Photon, retrieved 2026]. This approach sidesteps the app-store discovery problem entirely, offering a frictionless entry point for AI-powered services in fintech, consumer AI, and even healthcare [TechCrunch, October 2026].\nThe traction suggests the wedge is working. Photon reports it has signed up over 40,000 developers to its platform [finance.yahoo.com, retrieved 2026]. Its systems now handle more than 10 million messages every day, and the company claims revenue grew tenfold in the four months between May and August of this year [Pomegra Startups, retrieved 2026] [Photon Blog]. While these are company-reported figures, the velocity points to significant developer interest in a new paradigm for AI interaction.\nAn Open-Source First Strategy\nA key element of Photon's growth is its commitment to open source. The founders first released the core technology as a public GitHub repository, and that free version reportedly still accounts for 98 percent of the company's usage [superpowerdaily.com, retrieved 2026]. This model has effectively turned its developer community into a massive,",
+      "isUserProvided": true,
+      "sourceId": "SRC-fd1bac6793da"
+    }
+  ],
+  "unresolvedQuestions": [],
+  "contradictions": [],
+  "completeness": "partial",
+  "limitations": [
+    "6 candidate pages failed or carried no readable text.",
+    "Only 4 of 6 selected sources fit in the synthesis evidence budget.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 14,
+    "retrievedCount": 8,
+    "failedCount": 6,
+    "rounds": 1,
+    "searches": 2
+  },
+  "archivedAt": "2026-10-20T22:24:38.006Z"
+}

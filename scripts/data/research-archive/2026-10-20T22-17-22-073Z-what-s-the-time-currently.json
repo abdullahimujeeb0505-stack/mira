@@ -1,0 +1,100 @@
+{
+  "id": "2026-10-20T22-17-22-073Z-what-s-the-time-currently",
+  "question": "What's the time currently",
+  "plan": {
+    "objective": "Determine the current time.",
+    "taskType": "current",
+    "deliverable": "The current time.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "time and date authorities",
+      "official time servers"
+    ],
+    "questions": [
+      "What is the current time?"
+    ],
+    "queries": [
+      "current time right now"
+    ],
+    "unresolvedQuestions": []
+  },
+  "answer": "Based on the retrieved sources, the current time varies by source and time zone: (unverified: no matching retrieved evidence).\n\n- **Time.is** shows the time in London, United Kingdom, as **23:17:19** on Tuesday, 20 October 2026 [SRC-0f900856009a].\nIt also lists world cities such as Tokyo (07:17), Beijing (06:17), Paris (00:17), and New York (18:17) [SRC-0f900856009a].\n- **Time.now** displays UTC time as **21:00:32** on Tuesday, October 20, 2026 [SRC-48fd5827585f].",
+  "followUpQuestions": [
+    "World time zones",
+    "Current date in other cities"
+  ],
+  "sources": [
+    {
+      "title": "Time.is - exact time, any time zone",
+      "url": "https://time.is/",
+      "canonicalUrl": "https://time.is/",
+      "publisher": "time.is",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "Sun: &uarr; 07:32 &darr; 17:59 (10h 28m) - More info - Make London time default - Remove from favorite locations",
+        "Amsterdam Antalya Baghdad Bangkok Barcelona Beijing Bogotá Boston Brussels Cairo Chicago Delhi Dhaka Dubai Dublin Guangzhou Helsinki Hong Kong Honolulu Istanbul Jakarta Karachi Kinshasa Kuala Lumpur Lagos Las Vegas Lima London Los Angeles Manila Mecca Mexico City Miami Milan Moscow Mumbai New York Osaka Oslo Paris Prague Rio de Janeiro Riyadh Rome Saint Pete",
+        "\"My mother had a saying: 'Kamala, you may be the first to do many things, but make sure you're not the last.\" Kamala Harris (born October 20, 1964)"
+      ],
+      "retrievedAt": "2026-10-20T22:17:19.510Z",
+      "content": "Time.is - exact time, any time zone\n×\nTime.is\nExact time now:\nTime in London, United Kingdom now:\n23:17:19\nTuesday, 20 October, 2026, week 43\nSun: &uarr; 07:32 &darr; 17:59 (10h 28m) - More info - Make London time default - Remove from favorite locations\nTokyo 07:17\nBeijing 06:17\nParis 00:17\nLondon 23:17\nNew York 18:17\nLos Angeles 15:17\nmore\nUTC\nGMT\nCET\nPacific Time\nMountain Time\nCentral Time\nEastern Time\nChina Standard Time\nIndia Standard Time\nAmsterdam Antalya Baghdad Bangkok Barcelona Beijing Bogotá Boston Brussels Cairo Chicago Delhi Dhaka Dubai Dublin Guangzhou Helsinki Hong Kong Honolulu Istanbul Jakarta Karachi Kinshasa Kuala Lumpur Lagos Las Vegas Lima London Los Angeles Manila Mecca Mexico City Miami Milan Moscow Mumbai New York Osaka Oslo Paris Prague Rio de Janeiro Riyadh Rome Saint Petersburg San Francisco Santiago Seoul Shanghai Shenzhen Stockholm Sydney São Paulo Taipei Tehran Tokyo Toronto Vienna Yangon\n\"My mother had a saying: 'Kamala, you may be the first to do many things, but make sure you're not the last.\" Kamala Harris (born October 20, 1964)",
+      "isUserProvided": true,
+      "sourceId": "SRC-0f900856009a"
+    },
+    {
+      "title": "Time Now — Exact Local Time & World Clock | Time.now",
+      "url": "https://time.now/",
+      "canonicalUrl": "https://time.now/",
+      "publisher": "Time.now",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Time.now shows the exact local time with seconds. Find the current time in any city, country or time zone, including its UTC offset and daylight-saving status.",
+        "Count down to holidays, birthdays and deadlines, or build your own countdown.",
+        "Convert between calendars, Unix timestamps and ISO 8601 formats.",
+        "Convert a time between any two time zones, from EST to IST."
+      ],
+      "retrievedAt": "2026-10-20T22:17:19.442Z",
+      "content": "Time Now: Live Local Time and World Clock\nTime.now shows the exact local time with seconds. Find the current time in any city, country or time zone, including its UTC offset and daylight-saving status.\n🌐\nUTC Time\nTue\n21:00\nWelcome to Time.now.\nLive current time\n21\n00\n32\nTuesday, October 20, 2026\nWeek 43\n24-hour 12-hour\nFullscreen ⛶\nCountdown & Reminder Utilities\nCount down to holidays, birthdays and deadlines, or build your own countdown.\nDate-Time Format Converters\nConvert between calendars, Unix timestamps and ISO 8601 formats.\nThai Year Converter\nTime Zone Converters\nConvert a time between any two time zones, from EST to IST.\nTimers\nRun several timers at once, interval timers for workouts, and more.\n⏱️ Online Stopwatch\nProfessional timing with millisecond accuracy and lap times for productivity.\nSet Timer ➡️\nSet Custom Alarm ➡️\nTime Now in Major Cities\nNew York City\n17:00\nLondon\n22:00\nTokyo\nWed\n06:00\nParis\n23:00\nSydney\n08:00\nDubai\n01:00\nSingapore\n05:00\nLos Angeles\n14:00\nChicago\n16:00\nHong Kong\nBeijing\nMoscow\n00:00\nView all →\nCurrent Time by Country\n🇺🇸 United States\n🇬🇧 United Kingdom\n🇯🇵 Japan\n🇫🇷 France\n🇦🇺 Australia\n🇨🇳 China\n🇩🇪 Germany\n🇮🇳 India\n02:30\n🇨🇦 Canada\n🇧🇷 Brazil\n18:00\n🇷🇺 Russia\n🇿🇦 South Africa\nView all countries →\nCurrent Time in Major World Time Zones\nEST\nPST\nGMT\nCET\nJST\nAEST\nIST\nCST\nUTC\nMST\n15:00\nEET\nWET\nView all time zones →\n🕌 Today's Prayer Times\nLondon , United Kingdom 🇬🇧\n🌌 Fajr\n05:37\n🌅 Sunrise\n07:32\n☀️ Dhuhr\n12:45\n🌤️ Asr\n15:25\n🌇 Maghrib\n17:58\n🌃 Isha\n19:28\nView All Prayer Times →\nQibla Finder\n🌅 Sunrise & Sunset\nDelhi\n🌅 06:25\n🌇 17:45\nDhaka\n🌅 05:58\n🌇 17:27\nLahore\n🌅 06:09\n🌇 17:24\nKarachi\n🌅 06:33\n🌇 17:59\nMumbai\n🌅 06:34\n🌇 18:11\n🌅 07:33\n🌇 17:56\nSunrise Times →\nSunset Times\nUpcoming Public Holidays\nCountdowns:\nHalloween · US Election Day · New Year 2027\nToday ,\nTuesday, October 20\nBijaya Dashami\nHoliday in: Nepal\nDussehra\nHoliday in: India\nMashujaa Day\nHoliday in: Kenya\nRevolution Day\nHoliday in: Guatemala\nTomorrow ,\nWednesday, October 21\nEkadashi (Dashain)\nPresident Ndadaye's Day\nHoliday in: Burundi\nInfo about Time Zones\nWhy the International Date Line Isn't a Straight Line on the Map\nAbout Daylight Savings Time (DST)\nThe History and Origins of Daylight Saving Time\nLearn about the Moon\nMoon seen during the day and how that happens\nAll about the Weather\nDressing Right When the Temperature Drops or Spikes\nAll Articles →\n⏱️ Time.now Full Screen Window Exit\n00:00:00",
+      "isUserProvided": true,
+      "sourceId": "SRC-48fd5827585f"
+    },
+    {
+      "title": "Live Clock Online — Real-Time Digital Clock with Seconds",
+      "url": "https://liveclock.io/",
+      "canonicalUrl": "https://liveclock.io/",
+      "publisher": "LiveClock Online",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "2 2 2 2 2 1 1 1 1 1 : 2 2 2 2 2 9 9 9 9 9 : 5 5 5 5 5 7 7 7 7 7 .340 GMT+8",
+        "Live Clock Online turns any modern browser into a clear, dependable time display. The clock opens immediately, follows the time on your device, and shows hours, minutes, and seconds without ads, account prompts, or unrelated information. Use it on a laptop, phone, tablet, projector, or spare monitor whenever your device's small status-bar clock is difficult ",
+        "A live clock is a digital clock that updates continuously in your browser so you can see the current time as it changes. Unlike a screenshot or a printed schedule, the displayed seconds keep moving and the date updates automatically at midnight. There is nothing to download or install: open the page and the clock is ready. The time comes from the system cloc",
+        "This simple format is useful because it makes time the primary content rather than a small detail in a crowded interface. The display can remain open beside your work, fill an entire monitor, or sit on a shared screen across a room. It is not a stopwatch, countdown timer, or official atomic-time source. It is a focused way to make your device's current time "
+      ],
+      "retrievedAt": "2026-10-20T22:17:19.517Z",
+      "content": "2 2 2 2 2 1 1 1 1 1 : 2 2 2 2 2 9 9 9 9 9 : 5 5 5 5 5 7 7 7 7 7 .340 GMT+8\nWednesday, August 26, 2026\n⛶ Full Screen\nHide Seconds Hide Date\nDigital\nMono\nClassic\nAnalog\nMore themes →\nLive Clock Online\nLive Clock Online turns any modern browser into a clear, dependable time display. The clock opens immediately, follows the time on your device, and shows hours, minutes, and seconds without ads, account prompts, or unrelated information. Use it on a laptop, phone, tablet, projector, or spare monitor whenever your device's small status-bar clock is difficult to see.\nWhat Is a Live Clock?\nA live clock is a digital clock that updates continuously in your browser so you can see the current time as it changes. Unlike a screenshot or a printed schedule, the displayed seconds keep moving and the date updates automatically at midnight. There is nothing to download or install: open the page and the clock is ready. The time comes from the system clock on your device, while the browser handles the visual update every second.\nThis simple format is useful because it makes time the primary content rather than a small detail in a crowded interface. The display can remain open beside your work, fill an entire monitor, or sit on a shared screen across a room. It is not a stopwatch, countdown timer, or official atomic-time source. It is a focused way to make your device's current time larger, clearer, and easier for several people to read at once.\nWhy Use an Online Live Clock Instead of Your Device Clock?\nBuilt-in clocks are convenient for quick checks, but they are usually confined to a small corner of the operating system. Their text may be difficult to read from a distance, seconds are often hidden, and they cannot become the visual focus of a presentation or classroom display. A browser-based clock removes those limits. It can use the full screen, stay visible on a second monitor, and present the same clean layout across desktop and mobile devices.\nAn online display is also easier to share as part of a routine. A teacher can open the same URL on a classroom computer, a producer can place it on a studio monitor, and a remote team can choose the same city timezone before a coordinated start. You can change typography and color without changing system settings, then return to a minimal white display when decoration would be distracting. The result is a flexible viewing tool rather than another permanent app to maintain.\nLive Clock Features\nEvery control is designed around one task: making the current time easy to see. Preferences are stored locally in your browser, so the clock can remember your choices on that device without requiring an account.\nReal-time seconds display: Hours, minutes, and seconds update continuously from your device clock. Hide the seconds when you want a calmer display, or open the dedicated seconds page when each tick matters.\nFull screen mode: Use the Full Screen control for a distraction-free clock that can be read across a room. Browser shor",
+      "isUserProvided": true,
+      "sourceId": "SRC-5b9f0fb870f2"
+    }
+  ],
+  "unresolvedQuestions": [],
+  "contradictions": [],
+  "completeness": "partial",
+  "limitations": [
+    "1 candidate pages failed or carried no readable text.",
+    "Only 3 of 6 selected sources fit in the synthesis evidence budget.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 8,
+    "retrievedCount": 7,
+    "failedCount": 1,
+    "rounds": 1,
+    "searches": 1
+  },
+  "archivedAt": "2026-10-20T22:17:22.074Z"
+}

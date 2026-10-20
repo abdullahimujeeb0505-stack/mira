@@ -1,0 +1,117 @@
+{
+  "id": "2026-10-20T22-13-41-344Z-what-s-a-super-computer",
+  "question": "What's a super computer",
+  "plan": {
+    "objective": "Provide a clear, comprehensive definition and explanation of what a supercomputer is, including its architecture, key performance metrics (FLOPS), and primary use cases.",
+    "taskType": "definition",
+    "deliverable": "A well-structured explanatory summary detailing supercomputers, how they differ from standard computers, and their modern applications.",
+    "requiresCurrentInformation": false,
+    "sourcePreferences": [
+      "academic",
+      "official",
+      "encyclopedic"
+    ],
+    "questions": [
+      "What is the definition of a supercomputer?",
+      "How are supercomputers measured in terms of performance?",
+      "What are the primary applications and use cases for supercomputers today?"
+    ],
+    "queries": [
+      "what is a supercomputer definition",
+      "how do supercomputers work FLOPS",
+      "supercomputer use cases applications"
+    ],
+    "unresolvedQuestions": [
+      "What specific hardware interconnects link supercomputer nodes together beyond standard network fabrics?"
+    ]
+  },
+  "answer": "A supercomputer is a computing system of exceptional power capable of performing huge volumes of operations per second, representing the pinnacle of computing performance [SRC-2e85d1690d1f].\nUnlike typical desktop PCs or servers, a supercomputer is often room-sized, packing millions of processor cores and achieving speeds millions of times faster than standard personal computers to tackle the world's most complex scientific problems [SRC-c49e2c3f33d6].\n\n### How Supercomputers Work\n- **Parallel Processing:** Instead of relying on a single processor to execute instructions sequentially, supercomputers use parallel processing, clusters, and massively parallel architectures to divide massive problems into smaller chunks and solve them simultaneously (unverified: no matching retrieved evidence).\n- **Processor Cores:** Modern supercomputers utilize immense hardware scaling; for example, the Frontier system at Oak Ridge National Laboratory features approximately 8,730,112 processor cores [SRC-c49e2c3f33d6].\n\n### Performance Metrics (FLOPS)\nSupercomputer performance is measured in **FLOPS** (Floating Point Operations Per Second), distinguishing them from ordinary computers [SRC-2e85d1690d1f].\n- Typical modern desktop computers or servers operate in **gigaflops** (GFLOPS) or **teraflops** (TFLOPS) [SRC-2e85d1690d1f].\n- Modern supercomputers reach scales of **petaflops** (PFLOPS) and **exaflops** (EFLOPS) [SRC-2e85d1690d1f].\nFor instance, Frontier set a performance record of 1.1 exaflops (1.1 million million million FLOPS) in 2022 [SRC-c49e2c3f33d6].\n\n### Primary Applications and Use Cases\nSupercomputers are deployed across industries requiring maximum computing power and big data analysis [SRC-2e85d1690d1f]:\n- **Scientific Research & Modeling:** Used for high-energy physics, astrophysics (such as black hole merger simulations), and origin-of-the-universe models [SRC-2e85d1690d1f].\n- **Weather and Climate Forecasting:** Meteorologists model oceans and the atmosphere, predicting hurricanes, cataclysms, and decades-long climate shifts [SRC-2e85d1690d1f].\n- **Biology, Medicine, and Drug Discovery:** Systems like Fugaku aid in molecular research and drug development [SRC-f5a5e6325858].\n- **National Security & Artificial Intelligence:** Systems like Summit support AI research and genomics [SRC-f5a5e6325858], while Sierra handles simulations for nuclear stockpile management [SRC-f5a5e6325858].\nOther systems like Sunway TaihuLight contribute to advanced manufacturing [SRC-f5a5e6325858] and Perlmutter supports astrophysics studies [SRC-f5a5e6325858].",
+  "followUpQuestions": [
+    "Exascale computing milestones",
+    "Parallel processing architectures"
+  ],
+  "sources": [
+    {
+      "title": "10 Best Uses Of Supercomputers - Notes Read",
+      "url": "https://notesread.com/uses-of-supercomputers/",
+      "canonicalUrl": "https://notesread.com/uses-of-supercomputers/",
+      "publisher": "Notes Read",
+      "author": "Abdullah Sam",
+      "publishedAt": "2025-03-03T17:32:51.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Discover the diverse uses of supercomputers in scientific research, weather forecasting, aerospace, healthcare, and finance. Explore how these powerful machines drive innovation and advancements. In today’s digital age, supercomputers represent the pinnacle of computing power and performance. They enable tasks beyond the capabilities of conventional computer",
+        "A supercomputer is a computing system of exceptional power, capable of performing huge volumes of operations per second. The performance of such systems is measured in FLOPS (Floating Point Operations Per Second). Modern supercomputers reach figures in petaflops (PFLOPS) and even exaflops (EFLOPS). For comparison, the performance of a typical modern desktop ",
+        "Uses Of Supercomputers;Main areas of application of supercomputers.",
+        "Supercomputers are used in industries that require maximum computing power and work with big data."
+      ],
+      "retrievedAt": "2026-10-20T22:13:37.039Z",
+      "content": "Discover the diverse uses of supercomputers in scientific research, weather forecasting, aerospace, healthcare, and finance. Explore how these powerful machines drive innovation and advancements. In today’s digital age, supercomputers represent the pinnacle of computing power and performance. They enable tasks beyond the capabilities of conventional computers and play a key role in science, industry, and technology.\nWhat is a supercomputer\nA supercomputer is a computing system of exceptional power, capable of performing huge volumes of operations per second. The performance of such systems is measured in FLOPS (Floating Point Operations Per Second). Modern supercomputers reach figures in petaflops (PFLOPS) and even exaflops (EFLOPS). For comparison, the performance of a typical modern desktop computer or server is measured only in gigaflops (GFLOPS) or teraflops (TFLOPS).\nUses Of Supercomputers;Main areas of application of supercomputers.\nSupercomputers are used in industries that require maximum computing power and work with big data.\nScientific research and modeling\nScientists use supercomputers for complex numerical calculations and simulations. For example, modeling processes in high-energy physics, studying new materials, calculations in astrophysics (events like the merger of black holes) require huge resources that only a supercomputer can provide. In the video, you can see a simulation of the origin of the universe using the Frontier supercomputer.\nWeather and climate forecasting\nMeteorologists and climate scientists use supercomputers to model the atmosphere and oceans. Calculating climate models for decades to come, predicting hurricanes and cataclysms—all of this requires processing colossal amounts of data in a short time.\nBiology and medicine\nIn bioinformatics, supercomputers are used to decipher genomes, model protein structures, and search for new drugs. The process of sorting through millions of molecular combinations (in developing drugs or vaccines) is accelerated by parallel computing.\nArtificial Intelligence and Big Data\nModern AI models (deep neural networks with billions of parameters) require huge resources for training. Supercomputers have become the basis for training such models – from speech and image recognition systems to large language models. Also, when analyzing Big Data, a supercomputer speeds up processing and finding patterns.\nIndustry and Engineering\nAircraft and car manufacturers, energy and oil and gas companies use supercomputers for engineering modeling and computational experiments. Aerodynamics of aircraft and cars, strength calculations of structures, simulation of nuclear reactors, search for mineral deposits – these tasks are solved faster and more accurately on super-powerful computing clusters.\nState security\nIn the defense sector, supercomputers are used for cryptanalysis (breaking complex codes), simulating nuclear explosions, and other national security tasks that require exclusive computing power",
+      "isUserProvided": true,
+      "sourceId": "SRC-2e85d1690d1f"
+    },
+    {
+      "title": "How do supercomputers work? - Explain that Stuff",
+      "url": "https://www.explainthatstuff.com/how-supercomputers-work.html",
+      "canonicalUrl": "https://www.explainthatstuff.com/how-supercomputers-work.html",
+      "publisher": "Explain that Stuff",
+      "publishedAt": "2012-02-17T00:00:00.000Z",
+      "updatedAt": "2023-03-28T00:00:00.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "How do supercomputers work? - Explain that Stuff",
+        "by Chris Woodford . Last updated: March 28, 2023.",
+        "smallest computer in the world was a gargantuan machine that filled a",
+        "computers could pack the same power into microchips as big as your"
+      ],
+      "retrievedAt": "2026-10-20T22:13:36.829Z",
+      "content": "How do supercomputers work? - Explain that Stuff\nHome\nA-Z index\nRandom article\nTimeline\nTeaching guide\nAbout us\nPrivacy & cookies\nYou are here:\nHome page >\nComputers >\nSupercomputers\nby Chris Woodford . Last updated: March 28, 2023.\nR oll back time a half-century or so and the\nsmallest computer in the world was a gargantuan machine that filled a\nroom. When transistors and\nintegrated circuits were developed,\ncomputers could pack the same power into microchips as big as your\nfingernail. So what if you build a room-sized computer today and fill\nit full of those same chips? What you get is a supercomputer &mdash;a\ncomputer that's millions of times faster than a desktop PC and\ncapable of crunching the world's most complex scientific problems.\nWhat makes supercomputers different from the machine you're using\nright now? Let's take a closer look!\nPhoto: This is\nFrontier , a scientific supercomputer based at Oak Ridge National Laboratory. It's currently the world's\nmost powerful machine, with some 8,730,112 processor cores, and it set a new performance record of\n1.1 exaflops (1.1 million million million flops) in 2022.\nPicture courtesy of Oak Ridge National Laboratory, US Department of Energy, published on Flickr in 2022\nunder a Creative Commons (CC BY 2.0) Licence .\nSponsored links\nContents\nWhat is a supercomputer?\nSerial and parallel processing\nWhy do supercomputers use parallel processing?\nMassively parallel computers\nClusters\nGrids\nHot stuff!\nWhat software do supercomputers run?\nWhat do supercomputers actually do?\nHow powerful are supercomputers?\nWho invented supercomputers? A supercomputer timeline\nFind out more\nBefore we make a start on that question, it helps\nif we understand what a computer is:\nit's a general-purpose machine that\ntakes in information (data) by a process called input, stores and\nprocesses it, and then generates some kind of output (result). A\nsupercomputer is not simply a fast or very large computer: it works\nin an entirely different way, typically using parallel processing\ninstead of the serial processing that an ordinary computer uses.\nInstead of doing one thing at a time, it does many things at once.\nWhat's the difference between serial and parallel? An ordinary computer does\none thing at a time, so it does things in a distinct series of\noperations; that's called serial processing . It's a bit like a\nperson sitting at a grocery store checkout, picking up items from the\nconveyor belt, running them through the scanner , and then passing\nthem on for you to pack in your bags. It doesn't matter how fast you\nload things onto the belt or how fast you pack them: the speed at\nwhich you check out your shopping is entirely determined by how fast\nthe operator can scan and process the items, which is always one at a\ntime. (Since computers first appeared, most have worked by simple, serial processing,\ninspired by a basic theoretical design called a Turing machine ,\noriginally conceived by Alan Turing .)\nA typical modern supercomputer works mu",
+      "isUserProvided": true,
+      "sourceId": "SRC-c49e2c3f33d6"
+    },
+    {
+      "title": "10 Examples of Supercomputer Transforming Modern Research",
+      "url": "https://examples-of.net/10-examples-of-supercomputer/",
+      "canonicalUrl": "https://examples-of.net/10-examples-of-supercomputer/",
+      "publisher": "Examples Of",
+      "author": "valentozer",
+      "publishedAt": "2025-10-14T21:54:59.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Home » Examples » 10 Examples of Supercomputer Transforming Modern Research",
+        "Supercomputers are the powerhouses of modern technology, pushing the boundaries of what we thought was possible. Have you ever wondered how scientists tackle complex problems like climate modeling or molecular research? These machines perform calculations at lightning speed, enabling breakthroughs that can change our world.",
+        "Supercomputers play a vital role in various fields, from scientific research to industry applications. These machines process vast amounts of data quickly and efficiently. Here’s a look at some notable examples:",
+        "Fugaku : Developed by RIKEN and Fujitsu in Japan, it ranks as one of the fastest supercomputers globally. It excels in applications like climate modeling and drug discovery."
+      ],
+      "retrievedAt": "2026-10-20T22:13:37.551Z",
+      "content": "Home » Examples » 10 Examples of Supercomputer Transforming Modern Research\nSupercomputers are the powerhouses of modern technology, pushing the boundaries of what we thought was possible. Have you ever wondered how scientists tackle complex problems like climate modeling or molecular research? These machines perform calculations at lightning speed, enabling breakthroughs that can change our world.\nTable of Contents\nToggle\nOverview Of Supercomputers\nSupercomputers play a vital role in various fields, from scientific research to industry applications. These machines process vast amounts of data quickly and efficiently. Here’s a look at some notable examples:\nFugaku : Developed by RIKEN and Fujitsu in Japan, it ranks as one of the fastest supercomputers globally. It excels in applications like climate modeling and drug discovery.\nSummit : Located at Oak Ridge National Laboratory, Summit performs over 200 petaflops. Its capabilities include artificial intelligence research and genomics.\nSierra : Operated by Lawrence Livermore National Laboratory, Sierra supports national security with simulations for nuclear stockpile management.\nSunway TaihuLight : This Chinese supercomputer focuses on weather forecasting and advanced manufacturing. It has impressive processing power of 93 petaflops.\nPerlmutter : Situated at the National Energy Research Scientific Computing Center, Perlmutter aids astrophysics studies through complex simulations.\nThese supercomputers showcase how powerful computing can solve real-world problems effectively. They push boundaries in research, helping humanity tackle challenges across different domains.\nExample 1: Fugaku\nFugaku stands out as one of the most powerful supercomputers in the world. Developed by RIKEN and Fujitsu, it plays a crucial role in advancing scientific research.\nSpecifications\nFugaku boasts impressive specifications that enhance its capabilities:\nArchitecture : Fujitsu A64FX processor\nPeak Performance : Over 442 petaflops\nMemory : 4.8 petabytes of high-performance memory\nNodes : Composed of 158,976 nodes\nThese features enable Fugaku to tackle complex computations efficiently.\nApplications\nFugaku serves various applications across multiple fields. It excels in:\nClimate Modeling : Simulating climate change scenarios.\nDrug Discovery : Accelerating pharmaceutical research through molecular simulations.\nArtificial Intelligence Research : Enhancing machine learning algorithms.\nSuch diverse applications underline Fugaku’s flexibility and importance in modern research efforts.\nExample 2: Summit\nSummit stands as one of the most powerful supercomputers in the world. Developed by IBM for Oak Ridge National Laboratory, it excels at handling complex scientific calculations.\nSee also Examples of Employment Agreements: Types and Key Components\nSummit features remarkable specifications that contribute to its performance:\nPeak Performance : Over 200 petaflops\nProcessors : 27,648 NVIDIA V100 GPUs and 22,841 IBM Power9 CPUs\nMemory :",
+      "isUserProvided": true,
+      "sourceId": "SRC-f5a5e6325858"
+    }
+  ],
+  "unresolvedQuestions": [
+    "What specific hardware interconnects link supercomputer nodes together beyond standard network fabrics?"
+  ],
+  "contradictions": [],
+  "completeness": "partial",
+  "limitations": [
+    "11 candidate pages failed or carried no readable text.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 3 of 5 selected sources fit in the synthesis evidence budget.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 5,
+    "failedCount": 11,
+    "rounds": 1,
+    "searches": 3
+  },
+  "archivedAt": "2026-10-20T22:13:41.344Z"
+}

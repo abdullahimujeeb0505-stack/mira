@@ -1,0 +1,132 @@
+{
+  "id": "2026-10-20T22-23-59-436Z-what-can-you-say-about-photonhq-photon-codes",
+  "question": "What can you say about photonhq (photon.codes)",
+  "plan": {
+    "objective": "Provide an overview, history, and technical analysis of PhotonHQ (photon.codes), a platform related to static analysis, decompilation, or developer tools.",
+    "taskType": "current",
+    "deliverable": "A comprehensive summary detailing what PhotonHQ is, its core features, technology stack, and current status.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "official documentation",
+      "developer blogs",
+      "technical forums",
+      "tech news"
+    ],
+    "questions": [
+      "What is PhotonHQ (photon.codes) and what purpose does it serve?",
+      "What are the main features and technologies associated with PhotonHQ?",
+      "What is the current operational status of photon.codes?"
+    ],
+    "queries": [
+      "site:photon.codes What can you say about photonhq (photon.codes)",
+      "photonhq photon codes",
+      "photon.codes tool",
+      "photonhq reverse engineering decompiler"
+    ],
+    "unresolvedQuestions": [
+      "What specific under-the-hood technologies power Photon (photon.codes)?",
+      "What exact messaging channels or frameworks are supported by the platform?"
+    ]
+  },
+  "answer": "### Overview of Photon (photon.codes)\n\nPhoton (accessed via `app.photon.codes`) is a developer dashboard and platform designed for building applications with AI agents (unverified: no matching retrieved evidence).\nIts stated purpose is to help developers \"bring your agents to millions of lives\" [SRC-8de2ed019f6a].\n\n### Main Features and Interface\n\n* **Developer Dashboard:** Provides a login interface (with options for email authentication or Google sign-in) to manage applications and agent deployments (unverified: no matching retrieved evidence).\n* **Agent Integration:** Tailored for developers building and deploying interactive AI agents to broader audiences (unverified: no matching retrieved evidence).\n\n### Operational Status\n\n* The platform operates an active sign-in and dashboard portal at ` (unverified: no matching retrieved evidence).\n* *Note on Retrieval:* Direct public-facing pages for `photon.codes` beyond the authentication portal were restricted from full retrieval due to size limits, and historical archive entries regarding funding rounds or specific communication channel integrations remain unverified by current live evidence (unverified: no matching retrieved evidence).",
+  "followUpQuestions": [
+    "Photon agent authentication setup",
+    "AI agent deployment channels"
+  ],
+  "sources": [
+    {
+      "title": "OpenBin — Free AI Decompiler & Online Reverse Engineering Platform",
+      "url": "https://openbin.ai/",
+      "canonicalUrl": "https://openbin.ai/",
+      "publisher": "OpenBin.ai · The Open Binary Project",
+      "author": "OpenBin",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "OpenBin — Free AI Decompiler & Online Reverse Engineering Platform",
+        "Free, open-source, collaborative AI platform for reverse engineering and decompilation — native binaries, APKs, npm/PyPI packages, PowerShell & shell scripts, in your browser. Bring your own LLM key."
+      ],
+      "retrievedAt": "2026-10-20T22:23:52.407Z",
+      "content": "OpenBin — Free AI Decompiler & Online Reverse Engineering Platform\nFree, open-source, collaborative AI platform for reverse engineering and decompilation — native binaries, APKs, npm/PyPI packages, PowerShell & shell scripts, in your browser. Bring your own LLM key.",
+      "isUserProvided": true,
+      "sourceId": "SRC-afc5179f48aa"
+    },
+    {
+      "title": "Photon — Dashboard",
+      "url": "https://app.photon.codes/sign-in?callbackURL=%2F",
+      "canonicalUrl": "https://app.photon.codes/sign-in?callbackURL=%2F",
+      "publisher": "Photon",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "Continue with Google Don't have an account? Sign up",
+        "Developer dashboard for building with Photon."
+      ],
+      "retrievedAt": "2026-10-20T22:23:53.766Z",
+      "content": "Photon — Dashboard \nWelcome to Photon\nBring your agents to millions of lives\n\nEmail \nPassword Forgot password? \n\nLogin \n\nor \n\nContinue with Google Don't have an account? Sign up \n\nTerms of Service and Privacy Policy\nDeveloper dashboard for building with Photon.",
+      "isUserProvided": true,
+      "sourceId": "SRC-8de2ed019f6a"
+    },
+    {
+      "title": "Reverse Engineer Anything — REA Guides & Interactive Examples",
+      "url": "https://reverseengineeranything.app/",
+      "canonicalUrl": "https://reverseengineeranything.app/",
+      "publisher": "REA",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "REA gives your agent the tools to inspect a program and explain",
+        "› Install REA and connect it to this coding agent using",
+        "me the setup plan for approval, then verify the",
+        "Approve the setup plan, then restart your agent."
+      ],
+      "retrievedAt": "2026-10-20T22:23:52.454Z",
+      "content": "Reverse engineering, with your coding agent\nFind out how software works.\nREA gives your agent the tools to inspect a program and explain\nwhat it does.\nSee how REA works ↓\nSetup guide\nShowcases →\nAlready know RE?\nSkip to analysis guides →\nWant to go deeper?\nRead the Blog →\nSet up REA\nCopy this into your coding agent:\n› Install REA and connect it to this coding agent using\nnpx rea-agents@latest setup . Show\nme the setup plan for approval, then verify the\ninstallation.\nOr run this in your terminal:\nnpx rea-agents@latest setup\nCopy\nApprove the setup plan, then restart your agent.\nFirst time, or missing Node.js or a\ncoding agent?\nFollow the step-by-step setup guide →\nWhat is reverse engineering?\nFinding out how software works by\nexamining the program itself.\nThe goal: understand a feature well enough to\nexplain it ,\nchange it or\nrebuild it.\nOne question:\nwhy does Calculator give 220 for\n200 + 10% ?\nBefore REA · You investigate it\nyourself\n01 Decode branches\n02 Trace calls\n03 Recover the rule\nOriginal x64 · selected instructions\n0x180124945: MOV EAX, dword ptr [R13 + 0x18]\n0x180124949: CMP EAX, 0x5c\n0x18012494c: JZ 0x180124aba\n0x180124952: CMP EAX, 0x5b\n0x180124955: JZ 0x180124aba\n0x18012495b: MOV EDX, 0x64\n0x180124960: LEA RCX, [RSP + 0x160]\n0x180124968: CALL 0x180122650\n0x18012496e: LEA RDX, [R13 + 0x160]\n0x180124975: LEA RCX, [RSP + 0x78]\n0x18012497a: CALL 0x180109720\n0x18012497f: MOV RSI, RAX\n0x180124982: MOV qword ptr [RSP + 0x28], RAX\n0x180124987: LEA RDX, [RSP + 0x160]\n0x18012498f: MOV RCX, RAX\n0x180124992: CALL 0x180123190\n; … value-copy instructions omitted …\n0x180124a14: MOV RDX, RDI\n0x180124a17: LEA RCX, [RSP + 0xf8]\n0x180124a1f: CALL 0x180109720\n0x180124a24: LEA R8, [RSP + 0x30]\n0x180124a29: MOV RDX, RAX\n0x180124a2c: LEA RCX, [RSP + 0xb8]\n0x180124a34: CALL 0x180123c10\nYou decode the instructions, follow the calls and reconstruct\nthe calculation.\nWith REA · You ask\nyour agent\nOne prompt.\nAsk your agent in plain English.\n› Use REA to inspect Windows Calculator. Why does\n200 + 10% give 220?\nExample answer · based on the findings\nAfter +, the % button takes\na percentage of the first number.\n10% of 200 = 20 ↓ 200 + 20 = 220\nREA supplies\nThe handler’s instructions, decompiled code and calls.\nYour agent explains\nWhich branch applies, what it calculates and how to rebuild\nit.\nSelected assembly from the installed Calculator DLL. The thoughts\nand reply illustrate the findings.\nContinue with the Calculator example ↓\nLet's try two examples.\nChange a game's speed, then return to Calculator and rebuild its %\nbutton.\nExample 01 · Chrome’s dinosaur game\nWhy does the dinosaur get faster?\nGoal\nRebuild the game with\nadjustable speed.\nWhy reverse engineer it?\nTo reproduce its acceleration, we need\nthe rule in the running game : how fast it\nstarts, how much it increases and when it stops.\nPlay the reconstruction\nPlay\nJump ↑\nRestart\nSpeed 6.0\nUse the\nrecovered acceleration rule\nOriginal rule: start at 6, then increase toward 13.\nMove the slider to set your own s",
+      "isUserProvided": true,
+      "sourceId": "SRC-cc07708e93ff"
+    },
+    {
+      "title": "Photon Developer Resources",
+      "url": "https://doc.photonengine.com/photon/current/resources",
+      "canonicalUrl": "https://doc.photonengine.com/photon/current/resources",
+      "publisher": "doc.photonengine.com",
+      "updatedAt": "2026-08-06T00:00:00.000Z",
+      "sourceType": "technical documentation",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Everything you need to build, launch, and operate your project with Photon — learning material, community channels, and account tools — collected in one place.",
+        "Browse all available Photon samples and demos across products in one gallery.",
+        "Ready-to-use examples and step-by-step tutorials for every Photon product.",
+        "Get the latest Photon SDKs for all supported engines and platforms."
+      ],
+      "retrievedAt": "2026-10-20T22:23:52.578Z",
+      "content": "Resources\nEverything you need to build, launch, and operate your project with Photon — learning material, community channels, and account tools — collected in one place.\nLearning Resources\nBrowse all available Photon samples and demos across products in one gallery.\nReady-to-use examples and step-by-step tutorials for every Photon product.\nGet the latest Photon SDKs for all supported engines and platforms.\nNews, release announcements, and technical deep dives from the Photon team.\nTutorial videos and talks on the official Photon Engine channel.\nCommunity & Support\nJoin the Photon Engine Discord to ask questions and connect with other developers.\nPremium development support for game teams, with private access to Photon engineers.\nPremium support and exclusive samples for enterprise and industrial use cases.\nAll support options at a glance, from free community help to enterprise operations support.\nGet in touch with the Photon team for anything else.\nAccount & Operations\nCreate and manage your Photon applications, plans, and account.\nCheck the live service status of Photon Cloud regions and services.\nPlans and pricing for Photon Cloud, from the free tier to enterprise.\nResources for AI Ingestion\nMachine-readable index of the Photon documentation for LLMs and AI assistants.\nMachine-readable overview of the Photon website for LLMs and AI assistants.\nLast updated on 06/08/2026\nBack to top",
+      "isUserProvided": true,
+      "sourceId": "SRC-b6fca638179b"
+    }
+  ],
+  "unresolvedQuestions": [
+    "What specific under-the-hood technologies power Photon (photon.codes)?",
+    "What exact messaging channels or frameworks are supported by the platform?"
+  ],
+  "contradictions": [],
+  "completeness": "partial",
+  "limitations": [
+    "Supplied link https://photon.codes/ was not readable: The page exceeded the configured size limit.",
+    "10 candidate pages failed or carried no readable text.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 4,
+    "failedCount": 12,
+    "rounds": 1,
+    "searches": 4
+  },
+  "archivedAt": "2026-10-20T22:23:59.437Z"
+}
