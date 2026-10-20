@@ -177,7 +177,7 @@ const CHAT_PAGE = `<!doctype html>
             } catch {
               url = null;
             }
-            if (match && url && url.protocol === "https:" && url.hostname === "upload.wikimedia.org") {
+            if (match && url && url.protocol === "https:" && (url.hostname === "upload.wikimedia.org" || url.hostname === "api.openverse.org")) {
               const image = document.createElement("img");
               image.src = url.href;
               image.alt = match[1];
@@ -1479,7 +1479,7 @@ function setSecurityHeaders(response: ServerResponse): void {
   response.setHeader("Cache-Control", "no-store");
   response.setHeader(
     "Content-Security-Policy",
-    "default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'self'; img-src https://upload.wikimedia.org blob:; form-action 'self'; base-uri 'none'; frame-ancestors 'none'",
+    "default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'self'; img-src https://upload.wikimedia.org https://api.openverse.org blob:; form-action 'self'; base-uri 'none'; frame-ancestors 'none'",
   );
   response.setHeader("Referrer-Policy", "no-referrer");
   response.setHeader("X-Content-Type-Options", "nosniff");

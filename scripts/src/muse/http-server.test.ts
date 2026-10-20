@@ -232,7 +232,7 @@ test("Muse serves the chat page with same-origin security headers", async () =>
       assert.match(html, /max-width: 100%; overflow-x: auto/);
       assert.match(
         response.headers.get("content-security-policy") ?? "",
-        /img-src https:\/\/upload\.wikimedia\.org/,
+        /img-src https:\/\/upload\.wikimedia\.org https:\/\/api\.openverse\.org/,
       );
       assert.doesNotMatch(html, /\.innerHTML\s*=/);
       assert.equal(response.headers.get("cache-control"), "no-store");
@@ -283,9 +283,11 @@ test("browser Markdown rendering handles sourced images and normalizes other Mar
           "const line = \"# not heading | ;\";",
           "```",
           "",
-          "[Official guide](https://example.org/guide)",
+          "[Official guide](https://example.org/guide) [Flickr source](https://www.flickr.com/photos/example/1) (by Example photographer; license: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/))",
           "",
           "![Butterfly](https://upload.wikimedia.org/wikipedia/commons/b/b0/Butterfly.jpg)",
+          "",
+          "![Flickr image](https://api.openverse.org/v1/images/00000000-0000-0000-0000-000000000000/thumb/)",
           "",
           "![Untrusted](https://example.com/image.jpg)",
         ].join("\n"),
@@ -293,7 +295,7 @@ test("browser Markdown rendering handles sourced images and normalizes other Mar
 
       assert.deepEqual(
         root.children.map((child) => child.tagName),
-        ["h2", "h3", "table", "pre", "p", "p", "p"],
+        ["h2", "h3", "table", "pre", "p", "p", "p", "p"],
       );
       const table = root.children[2];
       assert.ok(table);
@@ -313,10 +315,34 @@ test("browser Markdown rendering handles sourced images and normalizes other Mar
       );
       assert.equal(sourceLink?.textContent, "Official guide");
       assert.equal(sourceLink?.href, "https://example.org/guide");
+      const imageSourceLink = root.children[4]?.children.find(
+        (child) => child.textContent === "Flickr source",
+      );
+      assert.equal(
+        imageSourceLink?.href,
+        "https://www.flickr.com/photos/example/1",
+      );
+      const licenseLink = root.children[4]?.children.find(
+        (child) => child.textContent === "CC BY-SA 4.0",
+      );
+      assert.equal(
+        licenseLink?.href,
+        "https://creativecommons.org/licenses/by-sa/4.0/",
+      );
       const image = root.children[5]?.children.find((child) => child.tagName === "img");
       assert.equal(image?.src, "https://upload.wikimedia.org/wikipedia/commons/b/b0/Butterfly.jpg");
       assert.equal(image?.alt, "Butterfly");
-      assert.equal(root.children[6]?.children.some((child) => child.tagName === "img"), false);
+      const openverseImage = root.children[6]?.children.find(
+        (child) => child.tagName === "img",
+      );
+      assert.equal(
+        openverseImage?.src,
+        "https://api.openverse.org/v1/images/00000000-0000-0000-0000-000000000000/thumb/",
+      );
+      assert.equal(
+        root.children[7]?.children.some((child) => child.tagName === "img"),
+        false,
+      );
     },
   ));
 
@@ -515,23 +541,34 @@ test("chat page and API work without an access code", async () => {
 test("chat API attaches sourced online images to a topical explanation", async () => {
   const image: ResearchImage = {
     title: "Honeybee pollinating a flower",
-    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/7/7e/Honeybee-pollination.jpg",
-    pageUrl: "https://commons.wikimedia.org/wiki/File:Honeybee-pollination.jpg",
+    imageUrl:
+      "https://api.openverse.org/v1/images/00000000-0000-0000-0000-000000000000/thumb/",
+    pageUrl: "https://www.flickr.com/photos/example/1",
     creator: "Example photographer",
     license: "CC BY-SA 4.0",
+    licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/",
+    source: "Flickr",
   };
   const imageRequests: string[] = [];
 
   await withServer(
-    () => ({ generateText: async () => "Pollination transfers pollen between flowers." }),
+    () => ({
+      generateText: async () => "Pollination transfers pollen between flowers.",
+    }),
     async (baseUrl) => {
-      const response = await sendMessage(baseUrl, "Show me an image of pollination.");
+      const response = await sendMessage(
+        baseUrl,
+        "Show me an image of pollination.",
+      );
       assert.equal(response.status, 200);
       const body = (await response.json()) as { reply: string };
       assert.match(body.reply, /Pollination transfers pollen between flowers/);
       assert.match(body.reply, /!\[Honeybee pollinating a flower\]/);
-      assert.match(body.reply, /\[Honeybee pollinating a flower — Wikimedia Commons\]/);
-      assert.match(body.reply, /Example photographer; license: CC BY-SA 4\.0/);
+      assert.match(body.reply, /\[Honeybee pollinating a flower — Flickr\]/);
+      assert.match(
+        body.reply,
+        /Example photographer; license: \[CC BY-SA 4\.0\]\(https:\/\/creativecommons\.org\/licenses\/by-sa\/4\.0\/\)/,
+      );
       assert.deepEqual(imageRequests, ["Show me an image of pollination."]);
     },
     undefined,
