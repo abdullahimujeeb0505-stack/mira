@@ -443,6 +443,7 @@ test("each provider can power Muse research and a sourced writing assignment usi
               }),
               onProgress: () => {},
             }),
+          async () => [],
         );
 
         try {

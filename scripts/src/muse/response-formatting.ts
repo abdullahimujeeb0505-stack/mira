@@ -108,7 +108,7 @@ export function requestsEmoji(text: string): boolean {
 
 const IMAGE_TERMS = String.raw`(?:pictures?|images?|imgs?|photos?|illustrations?|diagrams?|visuals?)`;
 
-export function requestsImages(text: string): boolean {
+export function explicitlyDeclinesImages(text: string): boolean {
   const negativeRequest = new RegExp(
     String.raw`\b(?:don't|do not|never|without|no)\b[^.!?\n]{0,30}\b${IMAGE_TERMS}\b`,
     "i",
@@ -117,7 +117,11 @@ export function requestsImages(text: string): boolean {
     String.raw`\b(?:don't|do not|never|no need to|not necessary to)\b[^.!?\n]{0,40}\b(?:generate|create|draw|make|produce)\b[^.!?\n]{0,40}\b${IMAGE_TERMS}\b`,
     "i",
   );
-  if (negativeRequest.test(text) && !generationNegation.test(text)) return false;
+  return negativeRequest.test(text) && !generationNegation.test(text);
+}
+
+export function requestsImages(text: string): boolean {
+  if (explicitlyDeclinesImages(text)) return false;
 
   const requestPattern = new RegExp(
     [

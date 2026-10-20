@@ -13,6 +13,7 @@ import {
   type MuseHttpServerOptions,
 } from "./http-server.js";
 import type { ResearchImage } from "./research-images.js";
+import type { ResearchResult } from "./research-cli.js";
 import {
   CloudflareAIConfigurationError,
   type MuseMediaProvider,
@@ -29,6 +30,7 @@ async function withServer(
   const memoryDirectory = await mkdtemp(join(tmpdir(), "muse-http-test-"));
   const server = createMuseHttpServer({
     ...serverOptions,
+    researchImageFinder: serverOptions.researchImageFinder ?? (async () => []),
     sessionSecret: testSessionSecret,
     memoryDirectory,
     ...(sharedMemoryPath ? { sharedMemoryPath } : {}),
@@ -203,7 +205,7 @@ test("Muse serves the chat page with same-origin security headers", async () =>
       assert.match(html, /id="attachment-menu" role="menu"[^>]*hidden/);
       assert.match(html, /Attach photos or files/);
       assert.match(html, /Generate an image/);
-      assert.match(html, /sourced online image with a topic answer/);
+      assert.match(html, /automatically looks for a relevant sourced image with research answers and research-backed articles/);
       assert.match(html, /Generate an image only for new AI artwork/);
       assert.match(html, /id="attachment-files"/);
       assert.match(html, /id="voice-input" class="composer-icon"[^>]*aria-label="Dictate a message"/);
@@ -342,6 +344,33 @@ test("browser Markdown rendering handles sourced images and normalizes other Mar
       assert.equal(
         root.children[7]?.children.some((child) => child.tagName === "img"),
         false,
+      );
+
+      const imageFirstRoot = fakeElement("div");
+      (
+        sandbox as typeof sandbox & {
+          renderMarkdownForTest: (parent: FakeElement, text: string) => void;
+        }
+      ).renderMarkdownForTest(
+        imageFirstRoot,
+        [
+          "### Images",
+          "",
+          "![Donald Trump portrait](https://upload.wikimedia.org/wikipedia/commons/1/1a/Donald_Trump.jpg)",
+          "",
+          "[Donald Trump portrait — Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Donald_Trump.jpg)",
+          "",
+          "# The story",
+          "Donald Trump served as president.",
+        ].join("\n"),
+      );
+      assert.deepEqual(
+        imageFirstRoot.children.map((child) => child.tagName),
+        ["h2", "p", "p", "h2", "p"],
+      );
+      assert.equal(
+        imageFirstRoot.children[1]?.children.find((child) => child.tagName === "img")?.alt,
+        "Donald Trump portrait",
       );
     },
   ));
@@ -538,7 +567,7 @@ test("chat page and API work without an access code", async () => {
   });
 });
 
-test("chat API attaches sourced online images to a topical explanation", async () => {
+test("chat API automatically places a sourced image before a topical research answer", async () => {
   const image: ResearchImage = {
     title: "Honeybee pollinating a flower",
     imageUrl:
@@ -550,29 +579,60 @@ test("chat API attaches sourced online images to a topical explanation", async (
     source: "Flickr",
   };
   const imageRequests: string[] = [];
+  const researchResult: ResearchResult = {
+    question: "What is pollination?",
+    plan: {
+      objective: "Explain pollination.",
+      taskType: "general",
+      deliverable: "A concise factual answer.",
+      requiresCurrentInformation: false,
+      sourcePreferences: [],
+      questions: [],
+      queries: [],
+      unresolvedQuestions: [],
+    },
+    answer: "Pollination transfers pollen between flowers. [1]",
+    sources: [{
+      title: "Pollination guide",
+      url: "https://example.org/pollination",
+      retrievedAt: "2026-10-20T12:00:00.000Z",
+      content: "Pollination transfers pollen between flowers.",
+    }],
+    unresolvedQuestions: [],
+    contradictions: [],
+    completeness: "supported",
+    limitations: [],
+    archive: { markdownPath: "/archive/research.md", jsonPath: "/archive/research.json" },
+    retrieval: {
+      candidateCount: 1,
+      retrievedCount: 1,
+      failedCount: 0,
+      rounds: 1,
+      searches: 1,
+    },
+  };
 
   await withServer(
-    () => ({
-      generateText: async () => "Pollination transfers pollen between flowers.",
-    }),
+    () => ({ generateText: async () => "unused" }),
     async (baseUrl) => {
-      const response = await sendMessage(
-        baseUrl,
-        "Show me an image of pollination.",
-      );
+      const response = await sendMessage(baseUrl, "What is pollination?");
       assert.equal(response.status, 200);
       const body = (await response.json()) as { reply: string };
-      assert.match(body.reply, /Pollination transfers pollen between flowers/);
-      assert.match(body.reply, /!\[Honeybee pollinating a flower\]/);
+      assert.match(body.reply, /^### Images\n\n!\[Honeybee pollinating a flower\]/);
+      assert.ok(
+        body.reply.indexOf("![Honeybee pollinating a flower]") <
+          body.reply.indexOf("Pollination transfers pollen between flowers"),
+      );
       assert.match(body.reply, /\[Honeybee pollinating a flower — Flickr\]/);
       assert.match(
         body.reply,
         /Example photographer; license: \[CC BY-SA 4\.0\]\(https:\/\/creativecommons\.org\/licenses\/by-sa\/4\.0\/\)/,
       );
-      assert.deepEqual(imageRequests, ["Show me an image of pollination."]);
+      assert.deepEqual(imageRequests, ["What is pollination?"]);
     },
     undefined,
     {
+      researchRunner: async () => researchResult,
       researchImageFinder: async (message) => {
         imageRequests.push(message);
         return [image];

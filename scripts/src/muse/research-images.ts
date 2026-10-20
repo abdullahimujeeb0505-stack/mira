@@ -234,7 +234,9 @@ const IMAGE_QUERY_STOP_WORDS = new Set(
   offerings overview purpose supplied work works chat chats context contexts
   conversation conversations discussion discussions finding findings found former
   latter mention mentioned prior result sources thread threads thing things said
-  link linked official`.split(/\s+/),
+  link linked official article articles biography biographies career essay essays
+  history life profile story stories timeline write writing draft compose composed
+  he him his she her hers it its same`.split(/\s+/),
 );
 
 function cleanImageSearchQuery(message: string): string {
@@ -303,13 +305,42 @@ function cleanImageSearchQuery(message: string): string {
   return selected.join(" ");
 }
 
+const CONTEXTUAL_IMAGE_REFERENCE =
+  /\b(?:he|him|his|she|her|hers|they|them|their|it|its|this|that|these|those|same|previous|earlier|former|latter)\b/i;
+
+function combineImageSearchQueries(...queries: string[]): string {
+  const terms = queries.flatMap(
+    (query) => query.match(/[\p{L}\p{N}][\p{L}\p{N}+#.-]*/gu) ?? [],
+  );
+  const selected: string[] = [];
+  const seen = new Set<string>();
+  for (const term of terms) {
+    const normalized = term.toLowerCase();
+    if (IMAGE_QUERY_STOP_WORDS.has(normalized) || seen.has(normalized))
+      continue;
+    if (selected.length >= 12) break;
+    if ([...selected, term].join(" ").length > 160) break;
+    selected.push(term);
+    seen.add(normalized);
+  }
+  return selected.join(" ");
+}
+
 export function imageSearchQuery(
   message: string,
   fallbackContext = "",
 ): string {
-  return (
-    cleanImageSearchQuery(message) || cleanImageSearchQuery(fallbackContext)
-  );
+  const messageQuery = cleanImageSearchQuery(message);
+  if (!fallbackContext.trim()) return messageQuery;
+
+  const contextQuestion =
+    fallbackContext.split(/\r?\n/, 1)[0] ?? fallbackContext;
+  const contextQuery =
+    cleanImageSearchQuery(contextQuestion) ||
+    cleanImageSearchQuery(fallbackContext);
+  if (!messageQuery) return contextQuery;
+  if (!CONTEXTUAL_IMAGE_REFERENCE.test(message)) return messageQuery;
+  return combineImageSearchQueries(contextQuery, messageQuery);
 }
 
 async function searchOpenverseImages(
@@ -392,26 +423,71 @@ function uniqueImageResults(images: ResearchImage[]): ResearchImage[] {
 
 /**
  * Searches Openverse's public catalog with its commercial-use license filter
- * and Wikimedia Commons in parallel. Openverse supplies images from many public
- * collections; Commons remains a free fallback when the catalog is unavailable.
+ * and Wikimedia Commons in parallel. A one-image automatic search returns as
+ * soon as either catalog finds a match; explicit multi-image requests gather
+ * both catalogs. Openverse supplies images from many public collections, while
+ * Commons remains a free fallback when Openverse is unavailable.
  */
 export async function searchResearchImages(
   message: string,
   fetcher: typeof fetch = fetch,
   fallbackContext = "",
+  maxResults = 3,
 ): Promise<ResearchImage[]> {
   const query = imageSearchQuery(message, fallbackContext);
   if (!query) return [];
 
-  const outcomes = await Promise.allSettled([
+  const searches = [
     searchOpenverseImages(query, fetcher),
     searchCommonsImages(query, fetcher),
-  ]);
+  ];
+  const resultLimit = Number.isFinite(maxResults)
+    ? Math.max(1, Math.min(3, Math.floor(maxResults)))
+    : 3;
+
+  if (resultLimit === 1) {
+    const pending = searches.map((search, index) =>
+      search.then(
+        (images) => ({ index, images, failed: false as const }),
+        (error: unknown) => ({
+          index,
+          images: [] as ResearchImage[],
+          error,
+          failed: true as const,
+        }),
+      ),
+    );
+    const remaining = new Set(pending.map((_, index) => index));
+    const failures: string[] = [];
+
+    while (remaining.size > 0) {
+      const outcome = await Promise.race(
+        [...remaining].map((index) => pending[index]),
+      );
+      remaining.delete(outcome.index);
+      const uniqueImages = uniqueImageResults(outcome.images);
+      if (uniqueImages.length > 0) return uniqueImages.slice(0, resultLimit);
+      if (outcome.failed) {
+        failures.push(
+          outcome.error instanceof Error
+            ? outcome.error.message
+            : "unknown image search failure",
+        );
+      }
+    }
+
+    if (failures.length > 0) {
+      throw new Error(`Image search providers failed: ${failures.join(" ")}`);
+    }
+    return [];
+  }
+
+  const outcomes = await Promise.allSettled(searches);
   const images = outcomes.flatMap((outcome) =>
     outcome.status === "fulfilled" ? outcome.value : [],
   );
   const uniqueImages = uniqueImageResults(images);
-  if (uniqueImages.length > 0) return uniqueImages;
+  if (uniqueImages.length > 0) return uniqueImages.slice(0, resultLimit);
 
   const failures = outcomes
     .filter(

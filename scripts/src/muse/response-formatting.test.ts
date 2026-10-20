@@ -19,10 +19,11 @@ test("emoji are preserved when explicitly requested", () => {
   );
 });
 
-test("image results are only requested when the user asks for visuals", () => {
+test("explicit image requests are detected without treating casual mentions as requests", () => {
   assert.equal(requestsImages("Show me illustrations of photosynthesis."), true);
   assert.equal(requestsImages("Could I see a picture of a butterfly?"), true);
   assert.equal(requestsImages("Explain photosynthesis without pictures."), false);
+  assert.equal(requestsImages("What is the history of Donald Trump? No image, please."), false);
   assert.equal(
     requestsImages("Define pollination with additional img description."),
     true,
