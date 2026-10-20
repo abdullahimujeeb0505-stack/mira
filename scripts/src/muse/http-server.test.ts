@@ -72,6 +72,11 @@ type FakeElement = {
   alt?: string;
   loading?: string;
   referrerPolicy?: string;
+  hidden: boolean;
+  style: { height: string };
+  scrollHeight: number;
+  focused: boolean;
+  attributes: Record<string, string>;
   dataset: Record<string, string>;
   listeners: Record<string, (event: any) => void | Promise<void>>;
   append(...elements: FakeElement[]): void;
@@ -83,6 +88,9 @@ type FakeElement = {
   ): void;
   scrollIntoView(): void;
   focus(): void;
+  click(): void;
+  requestSubmit(): void;
+  contains(node: unknown): boolean;
 };
 
 function fakeElement(tagName: string): FakeElement {
@@ -92,6 +100,11 @@ function fakeElement(tagName: string): FakeElement {
     textContent: "",
     disabled: false,
     value: "",
+    hidden: false,
+    style: { height: "" },
+    scrollHeight: 0,
+    focused: false,
+    attributes: {},
     dataset: {},
     listeners: {},
     append(...elements) {
@@ -100,12 +113,23 @@ function fakeElement(tagName: string): FakeElement {
     replaceChildren(...elements) {
       this.children = [...elements];
     },
-    setAttribute() {},
+    setAttribute(name, value) {
+      this.attributes[name] = value;
+    },
     addEventListener(name, listener) {
       this.listeners[name] = listener;
     },
     scrollIntoView() {},
-    focus() {},
+    focus() {
+      this.focused = true;
+    },
+    click() {},
+    requestSubmit() {
+      void this.listeners.submit?.({ preventDefault() {} });
+    },
+    contains(node) {
+      return node === this || this.children.includes(node as FakeElement);
+    },
   };
 }
 
@@ -169,14 +193,26 @@ test("Muse serves the chat page with same-origin security headers", async () =>
       assert.ok(script);
       assert.doesNotThrow(() => new Script(script));
       assert.match(html, /Mira — conversational assistant by Muse/);
-      assert.match(html, /Mira · by Muse/);
+      assert.match(html, /Muse assistant/);
       assert.match(html, /Hi, I’m Mira, Muse’s assistant/);
       assert.match(html, /Message to Mira/);
-      assert.match(html, /What would you like to talk about\?/);
+      assert.match(html, /<h1>Mira<\/h1>/);
       assert.match(html, /chat, brainstorm, ask a question, or request web research/i);
+      assert.match(html, /id="attachment-menu-toggle"[^>]*aria-haspopup="menu"/);
+      assert.match(html, /id="attachment-menu" role="menu"[^>]*hidden/);
+      assert.match(html, /Attach photos or files/);
+      assert.match(html, /Generate an image/);
       assert.match(html, /id="attachment-files"/);
+      assert.match(html, /id="voice-input" class="composer-icon"[^>]*aria-label="Dictate a message"/);
+      assert.match(html, /aria-label="Send message"/);
+      assert.match(html, /#attachment-menu\[hidden\]/);
+      assert.match(html, /\.message\.you \{ align-self: flex-end/);
+      assert.doesNotMatch(html, />Use microphone</);
+      assert.doesNotMatch(html, />Create image</);
       assert.match(html, /SpeechRecognition/);
       assert.match(html, /speechSynthesis/);
+      assert.match(html, /Read Mira's response aloud/);
+      assert.match(html, /speak\.textContent = "🔊"/);
       assert.match(html, /api\/images\/generate/);
       assert.match(html, /URL\.createObjectURL/);
       assert.match(html, /Download image/);
@@ -215,6 +251,7 @@ test("browser Markdown rendering handles sourced images and normalizes other Mar
       const document = {
         querySelector: () => fakeElement("input"),
         createElement: (tagName: string) => fakeElement(tagName),
+        addEventListener() {},
         createTextNode: (text: string) => {
           const node = fakeElement("#text");
           node.textContent = text;
@@ -288,6 +325,8 @@ test("a duplicate browser submit while a follow-up is pending sends and renders 
       const html = await response.text();
       const script = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
       assert.ok(script);
+      const actionMenu = fakeElement("div");
+      actionMenu.hidden = true;
       const elements = new Map<string, FakeElement>([
         ["#chat-form", fakeElement("form")],
         ["#message", fakeElement("textarea")],
@@ -296,13 +335,19 @@ test("a duplicate browser submit while a follow-up is pending sends and renders 
         ["#status", fakeElement("p")],
         ["#attachment-files", fakeElement("input")],
         ["#attachment-list", fakeElement("div")],
+        ["#attachment-menu-toggle", fakeElement("button")],
+        ["#attachment-menu", actionMenu],
         ["#attach", fakeElement("button")],
         ["#voice-input", fakeElement("button")],
         ["#generate-image", fakeElement("button")],
       ]);
+      let documentClickHandler: ((event: { target: unknown }) => void) | undefined;
       const document = {
         querySelector: (selector: string) => elements.get(selector),
         createElement: (tagName: string) => fakeElement(tagName),
+        addEventListener(name: string, listener: (event: any) => void) {
+          if (name === "click") documentClickHandler = listener;
+        },
         createTextNode: (text: string) => {
           const node = fakeElement("#text");
           node.textContent = text;
@@ -331,8 +376,90 @@ test("a duplicate browser submit while a follow-up is pending sends and renders 
       };
       new Script(script).runInNewContext(sandbox);
 
-      const form = elements.get("#chat-form");
+      const toggle = elements.get("#attachment-menu-toggle");
+      const attach = elements.get("#attach");
+      const generateImage = elements.get("#generate-image");
       const input = elements.get("#message");
+      assert.ok(toggle && attach && generateImage && input);
+      assert.equal(actionMenu.hidden, true);
+      toggle.listeners.click?.({});
+      assert.equal(actionMenu.hidden, false);
+      assert.equal(toggle.attributes["aria-expanded"], "true");
+      assert.equal(attach.focused, true);
+      actionMenu.listeners.keydown?.({
+        key: "ArrowDown",
+        target: attach,
+        preventDefault() {},
+      });
+      assert.equal(generateImage.focused, true);
+      actionMenu.listeners.keydown?.({
+        key: "Escape",
+        target: generateImage,
+        preventDefault() {},
+      });
+      assert.equal(actionMenu.hidden, true);
+      assert.equal(toggle.attributes["aria-expanded"], "false");
+      assert.equal(toggle.focused, true);
+
+      toggle.listeners.click?.({});
+      actionMenu.listeners.keydown?.({
+        key: "ArrowDown",
+        target: attach,
+        preventDefault() {},
+      });
+      actionMenu.listeners.keydown?.({
+        key: "Tab",
+        target: generateImage,
+        shiftKey: false,
+        preventDefault() {},
+      });
+      assert.equal(actionMenu.hidden, true);
+      assert.equal(input.focused, true);
+
+      toggle.listeners.click?.({});
+      let shiftTabPrevented = false;
+      actionMenu.listeners.keydown?.({
+        key: "Tab",
+        target: attach,
+        shiftKey: true,
+        preventDefault() {
+          shiftTabPrevented = true;
+        },
+      });
+      assert.equal(shiftTabPrevented, true);
+      assert.equal(actionMenu.hidden, true);
+      assert.equal(toggle.focused, true);
+
+      toggle.listeners.click?.({});
+      documentClickHandler?.({ target: elements.get("#messages") });
+      assert.equal(actionMenu.hidden, true);
+
+      let enterSubmitted = 0;
+      const form = elements.get("#chat-form");
+      form!.requestSubmit = () => {
+        enterSubmitted += 1;
+      };
+      let enterPrevented = false;
+      input.listeners.keydown?.({
+        key: "Enter",
+        shiftKey: false,
+        isComposing: false,
+        preventDefault() {
+          enterPrevented = true;
+        },
+      });
+      assert.equal(enterSubmitted, 1);
+      assert.equal(enterPrevented, true);
+      input.listeners.keydown?.({
+        key: "Enter",
+        shiftKey: true,
+        isComposing: false,
+        preventDefault() {
+          throw new Error("Shift+Enter should insert a line break.");
+        },
+      });
+      assert.equal(enterSubmitted, 1);
+
       const messages = elements.get("#messages");
       const submit = form?.listeners.submit;
       assert.ok(input && messages && submit);
@@ -833,9 +960,17 @@ test("image generation returns a viewable image and enforces the hourly request 
   );
 });
 
-test("image tools report missing Cloudflare configuration without exposing internals", async () => {
+test("missing vision configuration does not block chat or invite image guesses", async () => {
+  const capturedConversations: string[] = [];
   await withServer(
-    () => ({ generateText: async () => "unused" }),
+    () => ({
+      generateText: async (request) => {
+        capturedConversations.push(
+          request.conversation.map((message) => message.content).join("\n"),
+        );
+        return "I could not inspect the image, so I will not guess what it shows.";
+      },
+    }),
     async (baseUrl) => {
       const originalError = console.error;
       console.error = () => undefined;
@@ -866,9 +1001,16 @@ test("image tools report missing Cloudflare configuration without exposing inter
           [attachment.id],
           cookie,
         );
-        assert.equal(chat.status, 503);
-        const chatBody = (await chat.json()) as { error: string };
-        assert.match(chatBody.error, /Image understanding is not configured/);
+        assert.equal(chat.status, 200);
+        const chatBody = (await chat.json()) as {
+          reply: string;
+          notices: string[];
+        };
+        assert.match(chatBody.reply, /could not inspect the image/i);
+        assert.match(chatBody.notices.join(" "), /could not inspect/i);
+        assert.match(chatBody.notices.join(" "), /not configured/i);
+        assert.match(capturedConversations[0] ?? "", /Do not infer or invent visual details/);
+        assert.match(capturedConversations[0] ?? "", /ask them to describe it or try again/);
         const retry = await sendMessageWithAttachments(
           baseUrl,
           "Describe this image.",
@@ -886,6 +1028,63 @@ test("image tools report missing Cloudflare configuration without exposing inter
         throw new CloudflareAIConfigurationError("Missing test configuration");
       },
     },
+  );
+});
+
+test("a failed vision request still replies with a notice and no invented image details", async () => {
+  const modelContext: string[] = [];
+  const systemPrompts: string[] = [];
+  const mediaProvider: MuseMediaProvider = {
+    generateImage: async () => ({
+      bytes: Buffer.from([0xff, 0xd8, 0xff, 0x01]),
+      mimeType: "image/jpeg",
+    }),
+    describeImage: async () => {
+      throw new Error("Cloudflare Workers AI vision models returned no description.");
+    },
+  };
+
+  await withServer(
+    () => ({
+      generateText: async (request) => {
+        systemPrompts.push(request.systemPrompt);
+        modelContext.push(request.conversation.map((message) => message.content).join("\n"));
+        return "I could not inspect the image, so I will not guess what it shows.";
+      },
+    }),
+    async (baseUrl) => {
+      const originalError = console.error;
+      console.error = () => undefined;
+      try {
+        const upload = await uploadAttachment(
+          baseUrl,
+          "unknown.png",
+          Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
+          "image/png",
+        );
+        assert.equal(upload.status, 201);
+        const cookie = getSessionCookie(upload);
+        const { attachment } = (await upload.json()) as { attachment: { id: string } };
+        const response = await sendMessageWithAttachments(
+          baseUrl,
+          "What is in the image?",
+          [attachment.id],
+          cookie,
+        );
+        assert.equal(response.status, 200);
+        const body = (await response.json()) as { reply: string; notices: string[] };
+        assert.match(body.reply, /will not guess/i);
+        assert.match(body.notices.join(" "), /could not inspect/i);
+        assert.match(body.notices.join(" "), /image analysis was unavailable/i);
+        assert.match(modelContext[0] ?? "", /Do not infer or invent visual details/);
+        assert.match(modelContext[0] ?? "", /ask them to describe it or try again/);
+        assert.match(systemPrompts[0] ?? "", /Never invent visual details/);
+      } finally {
+        console.error = originalError;
+      }
+    },
+    undefined,
+    { mediaProviderFactory: () => mediaProvider },
   );
 });
 
@@ -961,13 +1160,13 @@ test("image understanding enforces its per-hour Cloudflare request limit", async
             [attachment.id],
             cookie,
           );
-          assert.equal(response.status, index < 20 ? 200 : 429);
+          assert.equal(response.status, 200);
+          const body = (await response.json()) as { reply: string; notices?: string[] };
+          assert.equal(body.reply, "I looked at the image.");
           if (index === 20) {
-            assert.ok(Number(response.headers.get("retry-after")) > 0);
-            const body = (await response.json()) as { error: string };
-            assert.match(body.error, /image understanding.*hourly limit/i);
+            assert.match(body.notices?.join(" ") ?? "", /hourly image-analysis limit/i);
           } else {
-            await response.json();
+            assert.equal(body.notices, undefined);
           }
         }
       } finally {
