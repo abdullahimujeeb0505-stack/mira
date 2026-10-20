@@ -106,12 +106,31 @@ export function requestsEmoji(text: string): boolean {
   ).test(text.trim());
 }
 
+const IMAGE_TERMS = String.raw`(?:pictures?|images?|imgs?|photos?|illustrations?|diagrams?|visuals?)`;
+
 export function requestsImages(text: string): boolean {
-  if (/\b(?:don't|do not|never|without|no)\b[^.!?\n]{0,30}\b(?:pictures?|images?|photos?|illustrations?|diagrams?|visuals?)\b/i.test(text)) {
-    return false;
-  }
-  return /\b(?:show|find|include|add|send|provide|fetch|search for|look for|see|view|display|illustrate|back up|support)\b[^.!?\n]{0,80}\b(?:pictures?|images?|photos?|illustrations?|diagrams?|visuals?)\b|\b(?:I want|I'd like|I'd love|can I|could I)\b[^.!?\n]{0,50}\b(?:pictures?|images?|photos?|illustrations?|diagrams?|visuals?)\b|\bwith\s+(?:some\s+)?(?:pictures?|images?|photos?|illustrations?|diagrams?|visuals?)\b|\b(?:pictures?|images?|photos?|illustrations?|diagrams?|visuals?)\b[^.!?\n]{0,60}\b(?:please|to support|to back up|for my research)\b/i
-    .test(text);
+  const negativeRequest = new RegExp(
+    String.raw`\b(?:don't|do not|never|without|no)\b[^.!?\n]{0,30}\b${IMAGE_TERMS}\b`,
+    "i",
+  );
+  const generationNegation = new RegExp(
+    String.raw`\b(?:don't|do not|never|no need to|not necessary to)\b[^.!?\n]{0,40}\b(?:generate|create|draw|make|produce)\b[^.!?\n]{0,40}\b${IMAGE_TERMS}\b`,
+    "i",
+  );
+  if (negativeRequest.test(text) && !generationNegation.test(text)) return false;
+
+  const requestPattern = new RegExp(
+    [
+      String.raw`\b(?:show|find|include|add|attach|use|source|retrieve|send|provide|fetch|search for|look for|see|view|display|illustrate|back up|support)\b[^.!?\n]{0,80}\b${IMAGE_TERMS}\b`,
+      String.raw`\b(?:I want|I'd like|I'd love|can I|could I)\b[^.!?\n]{0,50}\b${IMAGE_TERMS}\b`,
+      String.raw`\bwith\b[^.!?\n]{0,48}\b${IMAGE_TERMS}\b(?!\s+(?:processing|editing|recognition|generation|analysis|compression|metadata|formats?|files?|uploads?|attachments?)\b)`,
+      String.raw`\b(?:online|existing|sourced|available)\b[^.!?\n]{0,40}\b${IMAGE_TERMS}\b`,
+      String.raw`\b${IMAGE_TERMS}\b[^.!?\n]{0,80}\b(?:attached|sourced|available|retrieved|found)\b[^.!?\n]{0,40}\b(?:online|on the web|from the web)\b`,
+      String.raw`\b${IMAGE_TERMS}\b[^.!?\n]{0,60}\b(?:please|to support|to back up|for my research)\b`,
+    ].join("|"),
+    "i",
+  );
+  return requestPattern.test(text);
 }
 
 export function normalizeResponseFormatting(

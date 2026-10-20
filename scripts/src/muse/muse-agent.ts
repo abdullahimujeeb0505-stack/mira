@@ -7,6 +7,7 @@ import { retrieveResearchContext } from "./research-context.js";
 import {
   extractWebsiteTargets,
   getCitedSources,
+  researchQuestionForWebsiteInput,
   runResearch,
   type ResearchResult,
 } from "./research-cli.js";
@@ -42,7 +43,7 @@ const MUSE_SYSTEM_PROMPT =
   "For opinions, offer a balanced, reasoned perspective without pretending to have personal experiences. Use a consistent style: give the direct answer first, then a concise explanation; use short headings or bullets only when useful. " +
   "Honor the format the user asks for; do not force an essay, list, or report when they requested another format. " +
   "For researched claims, use retrieved evidence and state uncertainty or limitations clearly, but show citations or source links only when the user asks for them. " +
-  "When the user asks for images, use the separately sourced image results; do not claim to generate original artwork. " +
+  "When the user asks for an image to accompany an answer, use separately sourced online image results with source attribution; do not generate artwork unless the user explicitly asks for AI-generated art through the image-generation control. " +
   "Offer a brief, specific follow-up only when it would genuinely help; do not add a boilerplate question to every answer. " +
   "Be clear about uncertainty. Never claim to have checked live information or taken an action unless you actually did so in this conversation. " +
   "Use concise Markdown; never use tables. Avoid decorative emoji unless the user explicitly asks for them; when asked, use appropriate emoji. Avoid repeated conclusions. " +
@@ -168,13 +169,15 @@ export class MuseAgent {
     const researchSearchBackends = createDefaultSearchBackends();
     this.researcher =
       researcher ??
-      ((question, archivedContext, conversationContext) =>
-        runResearch(question, extractWebsiteTargets(question), {
+      ((question, archivedContext, conversationContext) => {
+        const seedUrls = extractWebsiteTargets(question);
+        return runResearch(researchQuestionForWebsiteInput(question, seedUrls), seedUrls, {
           provider: researchProvider,
           searchBackends: researchSearchBackends,
           archivedContext,
           ...(conversationContext ? { conversationContext } : {}),
-        }));
+        });
+      });
   }
 
   get hasConversationHistory(): boolean {
@@ -492,6 +495,8 @@ export class MuseAgent {
   ): Promise<string> {
     if (!requestsImages(request)) return response;
 
+    // Chat-requested illustrations are sourced from existing online images;
+    // generated artwork remains a separate, explicit UI action.
     let images: ResearchImage[];
     try {
       images = await this.imageFinder(request);

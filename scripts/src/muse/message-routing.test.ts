@@ -168,6 +168,17 @@ test("a message naming a website triggers research regardless of phrasing", () =
   }
 });
 
+test("a greeting does not suppress an explicit request to read a linked page", () => {
+  for (const message of [
+    "Hey Mira, look up [photon.codes](http://photon.codes)",
+    "Hi, could you read https://photon.codes/guide?",
+  ]) {
+    assert.equal(shouldResearchMessage(message), true, message);
+  }
+  assert.equal(shouldResearchMessage("Hey!"), false);
+  assert.equal(shouldResearchMessage("Good evening 😊"), false);
+});
+
 test("inspection phrasing without a link still routes to research", () => {
   for (const message of [
     "look through the docs for me",

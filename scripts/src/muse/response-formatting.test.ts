@@ -23,6 +23,23 @@ test("image results are only requested when the user asks for visuals", () => {
   assert.equal(requestsImages("Show me illustrations of photosynthesis."), true);
   assert.equal(requestsImages("Could I see a picture of a butterfly?"), true);
   assert.equal(requestsImages("Explain photosynthesis without pictures."), false);
+  assert.equal(
+    requestsImages("Define pollination with additional img description."),
+    true,
+  );
+  assert.equal(requestsImages("Explain pollination with a relevant image."), true);
+  assert.equal(
+    requestsImages("Don't generate an image; attach existing images available online."),
+    true,
+  );
+  assert.equal(
+    requestsImages(
+      "Define pollination; it is not necessary the image is generated, it should be attached from ones available online.",
+    ),
+    true,
+  );
+  assert.equal(requestsImages("Don't generate an image."), false);
+  assert.equal(requestsImages("Describe the attached image."), false);
   assert.equal(requestsImages("I like looking at pictures."), false);
 });
 

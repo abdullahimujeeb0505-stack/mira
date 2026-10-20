@@ -500,6 +500,48 @@ test("Muse adds attributed Commons images when requested to support research", a
   }
 });
 
+test("definition requests for an accompanying image attach sourced online art", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "muse-agent-pollination-image-"));
+  const imageRequests: string[] = [];
+  const question = "Define pollination with additional img description.";
+  const image: ResearchImage = {
+    title: "Pollination by a bee",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/1/1a/Pollination.jpg",
+    pageUrl: "https://commons.wikimedia.org/wiki/File:Pollination.jpg",
+    creator: "Photographer",
+    license: "CC BY-SA 4.0",
+  };
+  const agent = new MuseAgent(
+    { generateText: async () => "unused" },
+    new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
+    undefined,
+    async (requestedQuestion) => ({
+      ...researchResult,
+      question: requestedQuestion,
+      answer: "Pollination transfers pollen between flowers. [1]",
+      sources: [{
+        ...researchResult.sources[0]!,
+        title: "Pollination guide",
+        content: "Pollination transfers pollen between flowers.",
+      }],
+    }),
+    async (request) => {
+      imageRequests.push(request);
+      return [image];
+    },
+  );
+
+  try {
+    const answer = await agent.respond(question);
+    assert.match(answer, /Pollination transfers pollen between flowers/);
+    assert.match(answer, /!\[Pollination by a bee\]\(https:\/\/upload\.wikimedia\.org/);
+    assert.match(answer, /\[Pollination by a bee — Wikimedia Commons\]/);
+    assert.deepEqual(imageRequests, [question]);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
 test("research replies omit unsupported lines without displaying citations", () => {
   const answer = formatResearchReply({
     ...researchResult,
@@ -1091,13 +1133,18 @@ test("a message naming a website reaches research so the link can be read", asyn
       "look through photon.codes for me",
       "Look throught photon.codes up for me",
       "check out https://photon.codes/pricing",
+      "Hey Mira, look up [photon.codes](http://photon.codes)",
     ]) {
       const answer = await agent.respond(message);
       assert.match(answer, /Photon is a framework/);
     }
-    assert.equal(researchQuestions.length, 3);
+    assert.equal(researchQuestions.length, 4);
     assert.equal(researchQuestions[0], "look through photon.codes for me");
     assert.equal(researchQuestions[2], "check out https://photon.codes/pricing");
+    assert.equal(
+      researchQuestions[3],
+      "Hey Mira, look up [photon.codes](http://photon.codes)",
+    );
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
