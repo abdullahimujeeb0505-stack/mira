@@ -4,6 +4,11 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Spectrum } from "spectrum-ts";
 import { imessage } from "spectrum-ts/providers/imessage";
+import {
+  CloudflareWorkersAIProvider,
+  type GeneratedImage,
+} from "./cloudflare-workers-ai.js";
+import type { ImageGenerator } from "./image-generation-command.js";
 import { JsonMemoryRepository } from "./memory/json-memory-repository.js";
 import { MemoryService } from "./memory/memory-service.js";
 import { MuseAgent } from "./muse-agent.js";
@@ -49,6 +54,8 @@ async function runPhoton2(): Promise<void> {
     projectId,
     (spaceKey) => createAgent(memoryDirectory, spaceKey, provider),
     (reply) => sendPhotonBetaReply(configuration, reply),
+    undefined,
+    createImageGenerator(),
   );
   const cursorPath =
     process.env.MUSE_PHOTON_CURSOR_PATH?.trim() ||
@@ -93,8 +100,10 @@ async function runSpectrum(): Promise<void> {
     projectSecret,
     providers: [imessage.config()],
   });
-  const handler = new PhotonMessageHandler((spaceKey) =>
-    createAgent(memoryDirectory, spaceKey, provider),
+  const handler = new PhotonMessageHandler(
+    (spaceKey) => createAgent(memoryDirectory, spaceKey, provider),
+    undefined,
+    createImageGenerator(),
   );
 
   const shutdown = () => {
@@ -132,6 +141,28 @@ function createAgent(
       new JsonMemoryRepository(path.join(memoryDirectory, `${filename}.json`)),
     ),
   );
+}
+
+function createImageGenerator(): ImageGenerator {
+  let provider: CloudflareWorkersAIProvider | undefined;
+  const generationTimestamps: number[] = [];
+  return async (prompt: string): Promise<GeneratedImage> => {
+    provider ??= new CloudflareWorkersAIProvider();
+    const now = Date.now();
+    while (
+      generationTimestamps.length > 0 &&
+      now - generationTimestamps[0]! >= 60 * 60 * 1_000
+    ) {
+      generationTimestamps.shift();
+    }
+    if (generationTimestamps.length >= 10) {
+      throw new Error(
+        "The hourly iMessage image-generation limit was reached.",
+      );
+    }
+    generationTimestamps.push(now);
+    return provider.generateImage(prompt);
+  };
 }
 
 void main().catch((error: unknown) => {

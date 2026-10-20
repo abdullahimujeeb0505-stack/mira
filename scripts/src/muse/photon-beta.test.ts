@@ -11,6 +11,11 @@ import {
   type PhotonBetaReply,
 } from "./photon-beta.js";
 import { sendPhotonBetaReply } from "./photon-beta-api.js";
+import {
+  IMAGE_GENERATION_SUCCESS_REPLY,
+  IMAGE_GENERATION_UNAVAILABLE_REPLY,
+  IMAGE_GENERATION_USAGE_REPLY,
+} from "./image-generation-command.js";
 import { PhotonCursorStore } from "./photon-cursor-store.js";
 import {
   defaultPhotonCursorPath,
@@ -22,15 +27,17 @@ import { selectMusePhotonTransport } from "./photon-transport-selection.js";
 const projectId = "pho_prj_test-project";
 const configuration = { projectId, apiKey: "photon-unit-test-key" };
 
-function incomingEvent(options: {
-  eventId?: string;
-  messageId?: string;
-  spaceId?: string;
-  senderId?: string;
-  text?: string;
-  project?: string;
-  platform?: string;
-} = {}) {
+function incomingEvent(
+  options: {
+    eventId?: string;
+    messageId?: string;
+    spaceId?: string;
+    senderId?: string;
+    text?: string;
+    project?: string;
+    platform?: string;
+  } = {},
+) {
   return {
     id: options.eventId ?? "pho_evt_message-one",
     type: "message.received",
@@ -94,15 +101,12 @@ test("Photon Beta websocket options use the documented project endpoint and bear
 });
 
 test("Photon acknowledges only expected webhook replies with the documented response shape", () => {
-  assert.deepEqual(
-    photonWebhookAcknowledgement("pho_evt_webhook"),
-    {
-      eventId: "pho_evt_webhook",
-      status: 200,
-      headers: { "content-type": "text/plain" },
-      body: Buffer.from("accepted").toString("base64"),
-    },
-  );
+  assert.deepEqual(photonWebhookAcknowledgement("pho_evt_webhook"), {
+    eventId: "pho_evt_webhook",
+    status: 200,
+    headers: { "content-type": "text/plain" },
+    body: Buffer.from("accepted").toString("base64"),
+  });
 });
 
 test("Photon parser selects plain-text inbound iMessage events and ignores other event kinds", () => {
@@ -121,27 +125,159 @@ test("Photon parser selects plain-text inbound iMessage events and ignores other
     undefined,
   );
   assert.equal(
-    parsePhotonBetaMessage(
-      incomingEvent({ platform: "telegram" }),
-      projectId,
-    ),
+    parsePhotonBetaMessage(incomingEvent({ platform: "telegram" }), projectId),
     undefined,
   );
   assert.equal(
-    parsePhotonBetaMessage(
-      incomingEvent({ text: "   " }),
-      projectId,
-    ),
+    parsePhotonBetaMessage(incomingEvent({ text: "   " }), projectId),
     undefined,
   );
   assert.throws(
-    () => parsePhotonBetaMessage(incomingEvent({ project: "other" }), projectId),
+    () =>
+      parsePhotonBetaMessage(incomingEvent({ project: "other" }), projectId),
     /unexpected project/,
   );
   assert.throws(
     () => parsePhotonBetaMessage({ type: "message.received" }, projectId),
     /event ID/,
   );
+});
+
+test("Photon routes explicit image commands to Cloudflare instead of the chat model", async () => {
+  let modelCalls = 0;
+  const prompts: string[] = [];
+  const replies: PhotonBetaReply[] = [];
+  const generatedImage = {
+    bytes: Buffer.from([0x89, 0x50, 0x4e, 0x47]),
+    mimeType: "image/png" as const,
+  };
+  const handler = new PhotonBetaMessageHandler(
+    projectId,
+    () => ({
+      hasConversationHistory: false,
+      async respond() {
+        modelCalls += 1;
+        return "This must not handle an image command.";
+      },
+    }),
+    async (reply) => {
+      replies.push(reply);
+    },
+    undefined,
+    async (prompt) => {
+      prompts.push(prompt);
+      return generatedImage;
+    },
+  );
+
+  assert.equal(
+    await handler.handle(
+      incomingEvent({
+        text: "Generate an image of a fox under the northern lights",
+      }),
+    ),
+    true,
+  );
+  assert.deepEqual(prompts, ["a fox under the northern lights"]);
+  assert.equal(modelCalls, 0);
+  assert.equal(replies[0]?.text, IMAGE_GENERATION_SUCCESS_REPLY);
+  assert.deepEqual(replies[0]?.image, generatedImage);
+});
+
+test("Photon does not send an image command without a prompt to either model", async () => {
+  let modelCalls = 0;
+  let imageCalls = 0;
+  const replies: PhotonBetaReply[] = [];
+  const handler = new PhotonBetaMessageHandler(
+    projectId,
+    () => ({
+      hasConversationHistory: false,
+      async respond() {
+        modelCalls += 1;
+        return "chat reply";
+      },
+    }),
+    async (reply) => {
+      replies.push(reply);
+    },
+    undefined,
+    async () => {
+      imageCalls += 1;
+      return { bytes: Buffer.from("image"), mimeType: "image/png" };
+    },
+  );
+
+  await handler.handle(incomingEvent({ text: "generate image" }));
+  assert.equal(modelCalls, 0);
+  assert.equal(imageCalls, 0);
+  assert.equal(replies[0]?.text, IMAGE_GENERATION_USAGE_REPLY);
+  assert.equal(replies[0]?.image, undefined);
+});
+
+test("Photon reports a Cloudflare image-generation failure without falling back to chat", async () => {
+  let modelCalls = 0;
+  const failures: string[] = [];
+  const replies: PhotonBetaReply[] = [];
+  const handler = new PhotonBetaMessageHandler(
+    projectId,
+    () => ({
+      hasConversationHistory: false,
+      async respond() {
+        modelCalls += 1;
+        return "This must not handle the failed image command.";
+      },
+    }),
+    async (reply) => {
+      replies.push(reply);
+    },
+    (failure) => failures.push(failure),
+    async () => {
+      throw new Error("private Cloudflare token");
+    },
+  );
+
+  await handler.handle(
+    incomingEvent({ text: "generate image: a glass greenhouse" }),
+  );
+  assert.equal(modelCalls, 0);
+  assert.equal(replies[0]?.text, IMAGE_GENERATION_UNAVAILABLE_REPLY);
+  assert.equal(replies[0]?.image, undefined);
+  assert.deepEqual(failures, [
+    "Muse could not generate an image for an incoming iMessage.",
+  ]);
+  assert.doesNotMatch(failures.join(" "), /private Cloudflare token/);
+});
+
+test("Photon keeps ordinary messages on the existing chat model path", async () => {
+  let modelCalls = 0;
+  let imageCalls = 0;
+  const replies: PhotonBetaReply[] = [];
+  const handler = new PhotonBetaMessageHandler(
+    projectId,
+    () => ({
+      hasConversationHistory: false,
+      async respond(text) {
+        modelCalls += 1;
+        return `chat:${text}`;
+      },
+    }),
+    async (reply) => {
+      replies.push(reply);
+    },
+    undefined,
+    async () => {
+      imageCalls += 1;
+      return { bytes: Buffer.from("image"), mimeType: "image/png" };
+    },
+  );
+
+  await handler.handle(
+    incomingEvent({ text: "How does image generation work?" }),
+  );
+  assert.equal(modelCalls, 1);
+  assert.equal(imageCalls, 0);
+  assert.equal(replies[0]?.text, "chat:How does image generation work?");
+  assert.equal(replies[0]?.image, undefined);
 });
 
 test("Photon replies isolate conversations and ignore duplicate event delivery", async () => {
@@ -256,9 +392,10 @@ test("Photon model errors produce a safe user reply without exposing exception d
   );
 
   assert.equal(await handler.handle(incomingEvent()), true);
-  assert.deepEqual(replies.map((reply) => reply.text), [
-    PHOTON_BETA_FAILURE_REPLY,
-  ]);
+  assert.deepEqual(
+    replies.map((reply) => reply.text),
+    [PHOTON_BETA_FAILURE_REPLY],
+  );
   assert.deepEqual(failures, ["Muse could not complete an incoming iMessage."]);
   assert.doesNotMatch(failures.join(" "), /private provider credential/);
 });
@@ -281,10 +418,49 @@ test("Photon reuses a generated reply when an outbound send must be retried", as
     },
   );
 
-  await assert.rejects(handler.handle(incomingEvent()), /temporary API failure/);
+  await assert.rejects(
+    handler.handle(incomingEvent()),
+    /temporary API failure/,
+  );
   assert.equal(await handler.handle(incomingEvent()), true);
   assert.equal(modelCalls, 1);
   assert.equal(sendAttempts, 2);
+});
+
+test("Photon reuses generated image bytes when an outbound attachment delivery is retried", async () => {
+  let generationCalls = 0;
+  let sendAttempts = 0;
+  const sentReplies: PhotonBetaReply[] = [];
+  const image = {
+    bytes: Buffer.from([0x89, 0x50, 0x4e, 0x47]),
+    mimeType: "image/png" as const,
+  };
+  const handler = new PhotonBetaMessageHandler(
+    projectId,
+    () => ({
+      hasConversationHistory: false,
+      async respond() {
+        return "unused";
+      },
+    }),
+    async (reply) => {
+      sendAttempts += 1;
+      if (sendAttempts === 1) throw new Error("temporary Photon failure");
+      sentReplies.push(reply);
+    },
+    undefined,
+    async () => {
+      generationCalls += 1;
+      return image;
+    },
+  );
+  const event = incomingEvent({ text: "generate image: a paper kite" });
+
+  await assert.rejects(handler.handle(event), /temporary Photon failure/);
+  assert.equal(await handler.handle(event), true);
+  assert.equal(generationCalls, 1);
+  assert.equal(sendAttempts, 2);
+  assert.deepEqual(sentReplies[0]?.image, image);
 });
 
 test("Photon retries failed message submission with a stable idempotency key and exact payload", async () => {
@@ -338,34 +514,178 @@ test("Photon retries failed message submission with a stable idempotency key and
   });
 });
 
+test("Photon uploads generated image bytes and sends an iMessage attachment reply", async () => {
+  const calls: Array<{ url: string; init?: RequestInit }> = [];
+  const sleeps: number[] = [];
+  const imageBytes = Buffer.from([
+    0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x01, 0x02,
+  ]);
+  const attachmentId = "pho_att_01arz3ndektsv4rrffq69g5fav";
+
+  await sendPhotonBetaReply(
+    configuration,
+    {
+      messageId: "pho_msg_image-request",
+      spaceId: "pho_spc_space",
+      senderId: "pho_usr_agent",
+      text: IMAGE_GENERATION_SUCCESS_REPLY,
+      image: { bytes: imageBytes, mimeType: "image/png" },
+    },
+    {
+      fetchImplementation: async (url, init) => {
+        calls.push({ url: String(url), init });
+        if (String(url).endsWith("/attachments")) {
+          if (calls.length === 1) {
+            return new Response("{}", {
+              status: 429,
+              headers: { "Retry-After": "0" },
+            });
+          }
+          return new Response(JSON.stringify({ id: attachmentId }), {
+            status: 201,
+            headers: { "content-type": "application/json" },
+          });
+        }
+        return new Response("{}", { status: 202 });
+      },
+      sleep: async (milliseconds) => {
+        sleeps.push(milliseconds);
+      },
+    },
+  );
+
+  assert.equal(calls.length, 3);
+  assert.deepEqual(sleeps, [0]);
+  assert.equal(
+    calls[0]?.url,
+    `https://api.photon.codes/v1/projects/${projectId}/attachments`,
+  );
+  assert.equal(calls[1]?.url, calls[0]?.url);
+  assert.equal(
+    calls[2]?.url,
+    `https://api.photon.codes/v1/projects/${projectId}/messages`,
+  );
+
+  const firstUploadHeaders = new Headers(calls[0]?.init?.headers);
+  const secondUploadHeaders = new Headers(calls[1]?.init?.headers);
+  assert.equal(
+    firstUploadHeaders.get("authorization"),
+    `Bearer ${configuration.apiKey}`,
+  );
+  assert.match(
+    firstUploadHeaders.get("content-type") ?? "",
+    /^multipart\/related;/,
+  );
+  assert.equal(
+    firstUploadHeaders.get("idempotency-key"),
+    "muse-image:pho_msg_image-request",
+  );
+  assert.equal(
+    secondUploadHeaders.get("idempotency-key"),
+    firstUploadHeaders.get("idempotency-key"),
+  );
+
+  const firstUploadBody = Buffer.from(calls[0]?.init?.body as Uint8Array);
+  const secondUploadBody = Buffer.from(calls[1]?.init?.body as Uint8Array);
+  assert.deepEqual(secondUploadBody, firstUploadBody);
+  assert.equal(
+    firstUploadHeaders.get("content-length"),
+    String(firstUploadBody.byteLength),
+  );
+  assert.notEqual(firstUploadBody.indexOf(imageBytes), -1);
+  const multipartText = firstUploadBody.toString("latin1");
+  assert.match(multipartText, /"contentType":"image\/png"/);
+  assert.match(
+    multipartText,
+    new RegExp(`"sizeBytes":${imageBytes.byteLength}`),
+  );
+  const boundary = firstUploadHeaders
+    .get("content-type")
+    ?.match(/boundary="?([^";]+)"?/)?.[1];
+  assert.ok(boundary);
+  assert.ok(multipartText.startsWith(`--${boundary}\r\n`));
+
+  assert.deepEqual(Object.fromEntries(new Headers(calls[2]?.init?.headers)), {
+    authorization: `Bearer ${configuration.apiKey}`,
+    "content-type": "application/json",
+    "idempotency-key": "muse-reply:pho_msg_image-request",
+  });
+  assert.deepEqual(JSON.parse(String(calls[2]?.init?.body)), {
+    spaceId: "pho_spc_space",
+    senderId: "pho_usr_agent",
+    parentMessageId: "pho_msg_image-request",
+    content: {
+      type: "group",
+      parts: [
+        { type: "text", format: "plain", text: IMAGE_GENERATION_SUCCESS_REPLY },
+        { type: "attachment", attachmentId },
+      ],
+    },
+  });
+});
+
+test("Photon rejects malformed generated-image uploads without sending a message", async () => {
+  let calls = 0;
+  await assert.rejects(
+    sendPhotonBetaReply(
+      configuration,
+      {
+        messageId: "pho_msg_image-request",
+        spaceId: "pho_spc_space",
+        senderId: "pho_usr_agent",
+        text: IMAGE_GENERATION_SUCCESS_REPLY,
+        image: { bytes: Buffer.alloc(0), mimeType: "image/png" },
+      },
+      {
+        fetchImplementation: async () => {
+          calls += 1;
+          return new Response("{}", { status: 202 });
+        },
+        sleep: async () => {},
+      },
+    ),
+    /generated image cannot be uploaded/i,
+  );
+  assert.equal(calls, 0);
+});
+
 test("Photon reports non-retryable API failures and exhausted rate limits safely", async () => {
   await assert.rejects(
-    sendPhotonBetaReply(configuration, {
-      messageId: "message",
-      spaceId: "space",
-      senderId: "sender",
-      text: "reply",
-    }, {
-      fetchImplementation: async () => new Response("private key", { status: 401 }),
-      sleep: async () => {},
-    }),
+    sendPhotonBetaReply(
+      configuration,
+      {
+        messageId: "message",
+        spaceId: "space",
+        senderId: "sender",
+        text: "reply",
+      },
+      {
+        fetchImplementation: async () =>
+          new Response("private key", { status: 401 }),
+        sleep: async () => {},
+      },
+    ),
     /credentials.*401/,
   );
 
   let attempts = 0;
   await assert.rejects(
-    sendPhotonBetaReply(configuration, {
-      messageId: "message",
-      spaceId: "space",
-      senderId: "sender",
-      text: "reply",
-    }, {
-      fetchImplementation: async () => {
-        attempts += 1;
-        return new Response("private key", { status: 429 });
+    sendPhotonBetaReply(
+      configuration,
+      {
+        messageId: "message",
+        spaceId: "space",
+        senderId: "sender",
+        text: "reply",
       },
-      sleep: async () => {},
-    }),
+      {
+        fetchImplementation: async () => {
+          attempts += 1;
+          return new Response("private key", { status: 429 });
+        },
+        sleep: async () => {},
+      },
+    ),
     /rate limit.*429/,
   );
   assert.equal(attempts, 3);
