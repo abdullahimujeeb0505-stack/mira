@@ -1,0 +1,50 @@
+{
+  "id": "2026-10-20T14-06-50-691Z-what-s-the-pricing",
+  "question": "What's the pricing",
+  "plan": {
+    "objective": "Identify the current pricing details for the specific product, service, or offering the user is interested in.",
+    "taskType": "current",
+    "deliverable": "A concise summary of the pricing structure, including any tiers, plans, discounts, and relevant conditions.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "Official vendor or provider website",
+      "Press releases or official announcements",
+      "Industry analyst reports",
+      "Reputable news outlets"
+    ],
+    "questions": [
+      "Could you specify which product, service, or company you would like pricing information for?"
+    ],
+    "queries": [
+      "\"[Product/Service]\" pricing official website",
+      "\"[Product/Service]\" pricing tiers",
+      "\"[Product/Service]\" subscription cost",
+      "\"[Product/Service]\" price list pdf",
+      "\"[Product/Service]\" latest pricing 2026"
+    ],
+    "unresolvedQuestions": [
+      "Could you specify which product, service, or company you would like pricing information for?"
+    ]
+  },
+  "answer": "I could not retrieve any readable web sources for this question, so I can't provide a source-grounded answer yet.\n\n- Web search access was blocked or challenged on every query, so no additional sources could be discovered. This can happen when a search provider refuses traffic from a cloud-hosted environment.\n- Search backend diagnostics: DuckDuckGo HTML blocked access: Web search endpoint returned a bot challenge (HTTP 202). DuckDuckGo Lite blocked access: Web search endpoint returned a bot challenge (HTTP 202).\n\nIf you have a specific page in mind, send its URL and I will read it directly.",
+  "followUpQuestions": [],
+  "sources": [],
+  "unresolvedQuestions": [
+    "Could you specify which product, service, or company you would like pricing information for?"
+  ],
+  "contradictions": [],
+  "completeness": "insufficient",
+  "limitations": [
+    "Web search access was blocked or challenged on 8 of 8 queries.",
+    "The configured search budget of 8 queries was exhausted.",
+    "The configured research round limit of 2 was reached."
+  ],
+  "retrieval": {
+    "candidateCount": 0,
+    "retrievedCount": 0,
+    "failedCount": 8,
+    "rounds": 2,
+    "searches": 8
+  },
+  "archivedAt": "2026-10-20T14:06:50.693Z"
+}

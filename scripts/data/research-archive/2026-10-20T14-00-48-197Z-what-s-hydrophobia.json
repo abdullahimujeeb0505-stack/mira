@@ -1,0 +1,109 @@
+{
+  "id": "2026-10-20T14-00-48-197Z-what-s-hydrophobia",
+  "question": "What's hydrophobia",
+  "plan": {
+    "objective": "Provide a clear, authoritative definition of hydrophobia, including its etymology and primary usage (especially in medical contexts such as rabies).",
+    "taskType": "definition",
+    "deliverable": "A concise definition with brief explanatory notes on origin and primary medical meaning.",
+    "requiresCurrentInformation": false,
+    "sourcePreferences": [
+      "Authoritative dictionaries (e.g., Oxford English Dictionary, Merriam-Webster)",
+      "Medical reference texts (e.g., WHO, CDC, Harrison's Principles of Internal Medicine)",
+      "Peer‑reviewed articles on rabies symptomatology",
+      "Encyclopedic sources (e.g., Britannica) for etymology"
+    ],
+    "questions": [
+      "What is the definition of hydrophobia, its linguistic origin, and its principal usage in medicine?"
+    ],
+    "queries": [
+      "hydrophobia definition dictionary",
+      "hydrophobia etymology origin",
+      "hydrophobia medical meaning rabies symptom",
+      "hydrophobia WHO definition",
+      "hydrophobia Britannica"
+    ],
+    "unresolvedQuestions": []
+  },
+  "answer": "Hydrophobia is a noun meaning an extreme dread or fear of water. [SRC-b33bad08a0a7]\nIn modern usage it most often refers to the symptom seen in rabies infection, where painful throat spasms make swallowing liquids impossible, leading the patient to avoid water [SRC-c7a1f60c4467].\nHistorically, the word was also used as another name for rabies itself [SRC-c7a1f60c4467].\n\nThe term comes from Greek hydrophobía ( hydro ‘water’ + phobia ‘fear’), recorded in Late Latin and first attested in English around 1540‑1550 [SRC-c7a1f60c4467].\n\nIn medical contexts, hydrophobia describes the characteristic fear of water that results from involuntary throat muscle spasms in rabies patients. [SRC-c7a1f60c4467]",
+  "followUpQuestions": [
+    "Rabies symptoms and treatment",
+    "Historical usage of the term hydrophobia"
+  ],
+  "sources": [
+    {
+      "title": "Rabies",
+      "url": "https://www.who.int/news-room/fact-sheets/detail/rabies",
+      "canonicalUrl": "https://www.who.int/news-room/fact-sheets/detail/rabies",
+      "publisher": "www.who.int",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Rabies is a serious public health problem mainly in Asia and Africa. It is a viral, zoonotic, neglected tropical disease that causes tens of thousands of deaths annually, with 40% being children under 15.",
+        "Dog bites and scratches cause 99% of the human rabies cases and can be prevented through dog vaccination and bite prevention.",
+        "Once the virus infects the central nervous system and clinical symptoms appear, rabies is fatal in 100% of cases.",
+        "However, rabies deaths are preventable with prompt post exposure prophylaxis (PEP) by stopping the virus from reaching the central nervous system. PEP consists of thorough wound washing, administration of a course of human rabies vaccine and, when indicated, rabies immunoglobulins (RIG) or monoclonal antibodies (RmAb)."
+      ],
+      "retrievedAt": "2026-10-20T14:00:45.810Z",
+      "content": "Key facts\nRabies is a serious public health problem mainly in Asia and Africa. It is a viral, zoonotic, neglected tropical disease that causes tens of thousands of deaths annually, with 40% being children under 15.\nDog bites and scratches cause 99% of the human rabies cases and can be prevented through dog vaccination and bite prevention.\nOnce the virus infects the central nervous system and clinical symptoms appear, rabies is fatal in 100% of cases.\nHowever, rabies deaths are preventable with prompt post exposure prophylaxis (PEP) by stopping the virus from reaching the central nervous system. PEP consists of thorough wound washing, administration of a course of human rabies vaccine and, when indicated, rabies immunoglobulins (RIG) or monoclonal antibodies (RmAb).\nIf a person is bitten or scratched by a potentially rabid animal, they should immediately and always wash the wound with water and soap for at least 15 minutes and seek medical attention.\nWHO and its global partners aim to end human deaths from dog-mediated rabies through a comprehensive One Health approach promoting mass dog vaccination, ensuring access to PEP, health worker training, improved surveillance, and bite prevention through community awareness.\nOverview\nDog-mediated rabies\nRabies is a vaccine-preventable, zoonotic, viral disease affecting the central nervous system. In up to 99% of the human rabies cases, dogs are responsible for virus transmission. Children between the age of 5 and 14 years are frequent victims.\nRabies infects mammals, including dogs, cats, livestock and wildlife.\nRabies spreads to people and animals via saliva, usually through bites , scratches, or direct contact with mucosa (e.g. eyes, mouth, or open wounds). Once clinical symptoms appear, rabies is virtually 100% fatal.\nThe global cost of rabies is estimated to be around US$ 8.6 billion per year including lost lives and livelihoods, medical care and associated costs, as well as uncalculated psychological trauma.\nRabies is present on all continents except Antarctica. According to the 2021 Global Health Estimates model, rabies causes 44 203 annual deaths. However, the exact number of global rabies deaths is uncertain as these are likely substantially underreported due to weak surveillance systems and under- and mis-diagnosis.\nRabies, a neglected tropical disease (NTD), predominantly affects marginalized populations. Although effective human vaccines, immunoglobulins and monoclonal antibodies exist for rabies, these are often inaccessible or unaffordable to those in need.\nAs of 2018, the average estimated cost of rabies post-exposure prophylaxis (PEP) was US was US$ 108 nbsp;108 (along with travel costs and loss of income), which can be a financial burden on those earning US$ 1&ndash;2 per person, daily. Over 29 million people worldwide receive human rabies vaccine annually.\nRabies from sources other than dogs\nIn the Americas, where dog-mediated rabies is mostly controlled, hematophagous (blood-feeding) ba",
+      "isUserProvided": true,
+      "sourceId": "SRC-6fd871657b41"
+    },
+    {
+      "title": "Why Does Rabies Cause Fear of Water? Hydrophobia Explained &raquo; ScienceABC",
+      "url": "https://www.scienceabc.com/humans/why-does-rabies-cause-fear-of-water",
+      "canonicalUrl": "https://www.scienceabc.com/humans/why-does-rabies-cause-fear-of-water",
+      "publisher": "ScienceABC",
+      "publishedAt": "2019-11-05T05:30:02.000Z",
+      "updatedAt": "2026-05-19T12:00:00.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Table of Contents (click to expand) A History Of Rabies",
+        "One symptom of rabies is a fear of water. This fear is caused by the patient’s inability to swallow liquids, as the muscles controlling that action undergo spasms that are painful due to the rabies virus.",
+        "Mouth open, saliva dripping, teeth bared, muscles tensed, and eyes red, a rabid dog terrorizes a sleepy town. The children are ushered inside their homes. Its madness is driving it to bite and tear into anyone who comes near it.",
+        "The cause for this behavior is the rabies virus. This small 5-gene, 12 kbp RNA virus causes “insanity” in its victims, all to enter another host. Humans infected with the rabies virus also show a human version of the rabid dog’s behavior: aggressive, hyper, and hydrophobic."
+      ],
+      "retrievedAt": "2026-10-20T14:00:45.857Z",
+      "content": "Table of Contents (click to expand) A History Of Rabies\nHow Does The Rabies Virus Cause Disease?\nWhat Causes The Hydrophobia In Rabies?\nIs There A Cure For The Rabies Virus?\nOne symptom of rabies is a fear of water. This fear is caused by the patient’s inability to swallow liquids, as the muscles controlling that action undergo spasms that are painful due to the rabies virus.\nMouth open, saliva dripping, teeth bared, muscles tensed, and eyes red, a rabid dog terrorizes a sleepy town. The children are ushered inside their homes. Its madness is driving it to bite and tear into anyone who comes near it.\nThe cause for this behavior is the rabies virus. This small 5-gene, 12 kbp RNA virus causes “insanity” in its victims, all to enter another host. Humans infected with the rabies virus also show a human version of the rabid dog’s behavior: aggressive, hyper, and hydrophobic.\nPopular media gets much wrong about diseases, but the fear of water or hydrophobia that rabies patients suffer from is a true symptom of the disease. It is a unique and perplexing symptom. What’s behind this behavior? How can such a microscope, not-even-alive organism, change a human’s behavior?\nA History Of Rabies\nAncient cultures were well aware of rabies. The Greeks knew it as Lyssa (rage) or hydrophobia (fear of water). The Romans gave us the name rabies, after the Latin word rabere, meaning rage. The frenzied rage has always stood out to us.\nA description of a dog with rabies in an ancient text. (Photo Credit: Wellcome Images/Wikimedia Commons) There was no cure or treatment for rabies until Louis Pasteur came onto the scene. Over a series of experiments, Pasteur managed to weaken the virulence of the virus until it was safe enough to function as a vaccine. On July 6th, 1885, Joseph Meister, a 9-year-old boy bitten by a rabid dog, was brought to Pasteur. Since then, getting vaccines for rabies has saved countless lives.\nRabies symptoms appear after a window of a few weeks. This is the incubation period. After this, flu-like symptoms appear. During this time, the virus has entered the body and will soon infect the neurons, the cells that make up the nervous system. The virus uses the neurons to travel to the spinal cord and the brain.\nOnce the virus reaches the brain, it begins to multiply.\nViruses multiply by hijacking the cellular machinery of the host cells to make more virus copies. Every cell has proteins, the so-called machinery, to make more DNA and proteins. The virus uses that machinery to make more copies of itself till, eventually, tens of thousands of new viruses break out of the cell, killing it in the process.\nThe rabies virus, replicating in the brain, infects neurons . The patient develops encephalitis, which is when the brain is inflamed. The later-stage symptoms that we associate with rabies—aggression, hyperactivity, and hydrophobia, appear now.\nThe above picture shows a stained neuron infected with the rabies virus. The light pink circles seen in the image ",
+      "isUserProvided": true,
+      "sourceId": "SRC-b33bad08a0a7"
+    },
+    {
+      "title": "HYDROPHOBIA Definition & Meaning | Dictionary.com",
+      "url": "https://www.dictionary.com/browse/hydrophobia",
+      "canonicalUrl": "https://www.dictionary.com/browse/hydrophobia",
+      "publisher": "www.dictionary.com",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "an extreme dread or fear of water, especially when associated with painful involuntary throat spasms from a rabies infection.",
+        "a fear of drinking fluids, esp that of a person with rabies, because of painful spasms when trying to swallow Compare aquaphobia",
+        "\"Collins English Dictionary — Complete & Unabridged\"",
+        "&copy; William Collins Sons & Co. Ltd. 1979, 1986"
+      ],
+      "retrievedAt": "2026-10-20T14:00:46.247Z",
+      "content": "hydrophobia\nAmerican\n[hahy-dr uh - foh -bee- uh ]\n/ ˌhaɪ drəˈfoʊ bi ə /\nnoun\nan extreme dread or fear of water, especially when associated with painful involuntary throat spasms from a rabies infection.\nrabies .\nBritish\n/ ˌhaɪdrəˈfəʊbɪə /\nanother name for rabies\na fear of drinking fluids, esp that of a person with rabies, because of painful spasms when trying to swallow Compare aquaphobia\n\"Collins English Dictionary — Complete & Unabridged\"\n2012 Digital Edition\n&copy; William Collins Sons & Co. Ltd. 1979, 1986\n&copy; HarperCollins Publishers 1998, 2000, 2003, 2005,\n2006, 2007, 2009, 2012\nScientific\n/ hī′drə-fō ′ bē-ə /\nAbnormal fear of water.\nWord History\nHydrophobia is an older term for the disease rabies, and it means “fear of water.” Because of this name, many people think that rabies makes one afraid of water. In fact, this is not the case (although rabies does cause mental confusion of other kinds). The name hydrophobia comes from the fact that animals and people with rabies get spasms in their throat muscles that are so painful that they cannot eat or drink, and so will refuse water in spite of being very thirsty.\nOther Word Forms\nhydrophobic\nadjective\nEtymology\nOrigin of\nFirst recorded in 1540–50; from Late Latin, from Greek hydrophobía; see origin at hydro- 1 , -phobia\nExplanation\nFoaming at the mouth? Terrified of drinking water? You're displaying all the signs of hydrophobia , a common symptom of rabies. Unfortunately by this point you're probably beyond curing. Or reading online definitions. Take hydro (meaning \"water\") and phobia (meaning \"fear\") and you have hydrophobia — a fear of water. This could be a purely psychological issue that started in the lake at summer camp, or it could be physically motivated by disease — such as rabies.\nKeep Reading on Vocabulary.com\nVocabulary lists containing hydrophobia\nElements of the Universe: Hydr, Hydro (\"Water\")\nLooking to grow your vocabulary? Check out this interactive, curated word list from our team of English language specialists at\nVocabulary.com – one of over 17,000 lists we've built to help learners worldwide!\n100 SAT Words Beginning with \"H\"\nInterested in learning more words like this one? Our team at Vocabulary.com has got you covered!\nYou can review flashcards, quiz yourself, practice spelling, and more – and it's all completely free to use!\nNever Fear: Phobia, Phobic\nWant to remember this word for good? Start your learning journey today with our library of interactive,\nthemed word lists built by the experts at Vocabulary.com – we'll help you make the most of your study time!\nExample Sentences\nExamples are provided to illustrate real-world usage of words in context. Any\nopinions expressed do not reflect the views of Dictionary.com.\nSee Examples For:\nInfectious diseases expert Katharine Cartwright, from Sheffield Teaching Hospitals, previously told the inquest how this was a manifestation of hydrophobia - the fear of water - which is a symptom found only with rabies.\nFrom\nBBC\n●\nMar. 4",
+      "isUserProvided": true,
+      "sourceId": "SRC-c7a1f60c4467"
+    }
+  ],
+  "unresolvedQuestions": [],
+  "contradictions": [],
+  "completeness": "supported",
+  "limitations": [
+    "9 candidate pages failed or carried no readable text.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 3 of 6 selected sources fit in the synthesis evidence budget."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 7,
+    "failedCount": 9,
+    "rounds": 1,
+    "searches": 5
+  },
+  "archivedAt": "2026-10-20T14:00:48.198Z"
+}
