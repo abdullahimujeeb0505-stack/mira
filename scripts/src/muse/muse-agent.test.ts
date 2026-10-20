@@ -9,7 +9,7 @@ import type {
 } from "./llm-provider.js";
 import { formatResearchReply, MuseAgent } from "./muse-agent.js";
 import type { ResearchResult } from "./research-cli.js";
-import type { ResearchImage } from "./research-images.js";
+import { imageSearchQuery, type ResearchImage } from "./research-images.js";
 import { JsonMemoryRepository } from "./memory/json-memory-repository.js";
 import { MemoryService } from "./memory/memory-service.js";
 
@@ -503,6 +503,15 @@ test("Muse adds attributed Commons images when requested to support research", a
 test("definition requests for an accompanying image attach sourced online art", async () => {
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-pollination-image-"));
   const imageRequests: string[] = [];
+  let imageSearchStarted = false;
+  let resolveImageSearch!: (images: ResearchImage[]) => void;
+  const pendingImageSearch = new Promise<ResearchImage[]>((resolve) => {
+    resolveImageSearch = resolve;
+  });
+  let signalResearchStarted!: () => void;
+  const researchStarted = new Promise<void>((resolve) => {
+    signalResearchStarted = resolve;
+  });
   const question = "Define pollination with additional img description.";
   const image: ResearchImage = {
     title: "Pollination by a bee",
@@ -515,9 +524,125 @@ test("definition requests for an accompanying image attach sourced online art", 
     { generateText: async () => "unused" },
     new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
     undefined,
-    async (requestedQuestion) => ({
+    async (requestedQuestion) => {
+      assert.equal(imageSearchStarted, true, "image retrieval should start alongside research");
+      signalResearchStarted();
+      return {
+        ...researchResult,
+        question: requestedQuestion,
+        answer: "Pollination transfers pollen between flowers. [1]",
+        sources: [{
+          ...researchResult.sources[0]!,
+          title: "Pollination guide",
+          content: "Pollination transfers pollen between flowers.",
+        }],
+      };
+    },
+    async (request) => {
+      imageSearchStarted = true;
+      imageRequests.push(request);
+      return pendingImageSearch;
+    },
+  );
+
+  let responsePromise: Promise<string> | undefined;
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+  try {
+    responsePromise = agent.respond(question);
+    const researchStartedBeforeImage = await Promise.race([
+      researchStarted.then(() => true),
+      responsePromise.then(() => false, () => false),
+      new Promise<boolean>((resolve) => {
+        timeout = setTimeout(() => resolve(false), 1_000);
+      }),
+    ]);
+    if (timeout) clearTimeout(timeout);
+    assert.equal(researchStartedBeforeImage, true, "research should proceed while image search is pending");
+
+    resolveImageSearch([image]);
+    const answer = await responsePromise;
+    assert.match(answer, /Pollination transfers pollen between flowers/);
+    assert.match(answer, /!\[Pollination by a bee\]\(https:\/\/upload\.wikimedia\.org/);
+    assert.match(answer, /\[Pollination by a bee — Wikimedia Commons\]/);
+    assert.deepEqual(imageRequests, [question]);
+  } finally {
+    if (timeout) clearTimeout(timeout);
+    resolveImageSearch([image]);
+    await responsePromise?.catch(() => undefined);
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("generic image follow-ups reuse the latest research topic and keep its sources available", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "muse-agent-image-followup-"));
+  const researchQuestions: string[] = [];
+  const imageRequests: Array<{ message: string; context: string }> = [];
+  const image: ResearchImage = {
+    title: "Pollination by a bee",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/1/1a/Pollination.jpg",
+    pageUrl: "https://commons.wikimedia.org/wiki/File:Pollination.jpg",
+    creator: "Photographer",
+    license: "CC BY-SA 4.0",
+  };
+  const agent = new MuseAgent(
+    { generateText: async () => "Here is a sourced visual for the research." },
+    new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
+    undefined,
+    async (question) => {
+      researchQuestions.push(question);
+      return {
+        ...researchResult,
+        question,
+        answer: "Pollination transfers pollen between flowers. [1]",
+        sources: [{
+          ...researchResult.sources[0]!,
+          title: "Pollination guide",
+          content: "Pollination transfers pollen between flowers.",
+        }],
+      };
+    },
+    async (message, fallbackContext = "") => {
+      imageRequests.push({ message, context: fallbackContext });
+      assert.match(imageSearchQuery(message, fallbackContext), /pollination/i);
+      return [image];
+    },
+  );
+
+  try {
+    await agent.respond("What is pollination?");
+    const reply = await agent.respond("Add an image to that.");
+
+    assert.match(reply, /!\[Pollination by a bee\]\(https:\/\/upload\.wikimedia\.org/);
+    assert.equal(imageRequests.length, 1);
+    assert.equal(imageRequests[0]?.message, "Add an image to that.");
+    assert.match(imageRequests[0]?.context ?? "", /pollination/i);
+    assert.deepEqual(researchQuestions, ["What is pollination?"]);
+
+    const sources = await agent.respond("Show me the sources");
+    assert.match(sources, /Sources:\n- \[Pollination guide\]/);
+    assert.deepEqual(researchQuestions, ["What is pollination?"]);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("a linked-page research request uses its fresh findings to find the accompanying image", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "muse-agent-page-image-"));
+  const imageRequests: Array<{ message: string; context: string }> = [];
+  const image: ResearchImage = {
+    title: "Pollination by a bee",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/1/1a/Pollination.jpg",
+    pageUrl: "https://commons.wikimedia.org/wiki/File:Pollination.jpg",
+    creator: "Photographer",
+    license: "CC BY-SA 4.0",
+  };
+  const agent = new MuseAgent(
+    { generateText: async () => "unused" },
+    new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
+    undefined,
+    async (question) => ({
       ...researchResult,
-      question: requestedQuestion,
+      question,
       answer: "Pollination transfers pollen between flowers. [1]",
       sources: [{
         ...researchResult.sources[0]!,
@@ -525,18 +650,44 @@ test("definition requests for an accompanying image attach sourced online art", 
         content: "Pollination transfers pollen between flowers.",
       }],
     }),
-    async (request) => {
-      imageRequests.push(request);
+    async (message, fallbackContext = "") => {
+      imageRequests.push({ message, context: fallbackContext });
+      assert.match(imageSearchQuery(message, fallbackContext), /pollination/i);
       return [image];
     },
   );
 
   try {
-    const answer = await agent.respond(question);
-    assert.match(answer, /Pollination transfers pollen between flowers/);
-    assert.match(answer, /!\[Pollination by a bee\]\(https:\/\/upload\.wikimedia\.org/);
-    assert.match(answer, /\[Pollination by a bee — Wikimedia Commons\]/);
-    assert.deepEqual(imageRequests, [question]);
+    const reply = await agent.respond(
+      "Read https://example.org/articles/pollination and attach an image.",
+    );
+
+    assert.match(reply, /!\[Pollination by a bee\]\(https:\/\/upload\.wikimedia\.org/);
+    assert.equal(imageRequests.length, 1);
+    assert.match(imageRequests[0]?.context ?? "", /Pollination guide/i);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("a topicless image request asks for context instead of searching irrelevant Commons terms", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "muse-agent-image-topic-needed-"));
+  let imageSearchCalls = 0;
+  const agent = new MuseAgent(
+    { generateText: async () => "I can help with that." },
+    new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
+    undefined,
+    undefined,
+    async () => {
+      imageSearchCalls += 1;
+      return [];
+    },
+  );
+
+  try {
+    const reply = await agent.respond("Add an image.");
+    assert.match(reply, /which topic or research result you'd like illustrated/i);
+    assert.equal(imageSearchCalls, 0);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }

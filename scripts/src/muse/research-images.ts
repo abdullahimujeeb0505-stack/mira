@@ -91,14 +91,35 @@ async function readBoundedResponse(
   return text + decoder.decode();
 }
 
-export function imageSearchQuery(message: string): string {
-  return message
+const IMAGE_QUERY_STOP_WORDS = new Set(
+  `a about above add after an and answer are as at attach attached available
+  back be been before being can caption check create created could define description
+  describe did display do does draw earlier existing explain fetch find for from
+  generate generated give helpful hey hi how i illustrate image images img imgs
+  include in into is it its just labelled labeled like look make me my need
+  necessary never not of on online one ones or our out page pages particular
+  photo photos picture pictures please previous produce provide read relevant related
+  research response results retrieve retrieved search see send show site sourced source
+  specific summarise summarize summary support supporting tell that the their them there
+  these they this those to topic up url use visual visuals want web website were what
+  when where which who why will with would you your concise details main notable
+  offerings overview purpose supplied work works chat chats context contexts
+  conversation conversations discussion discussions finding findings found former
+  latter mention mentioned prior result sources thread threads thing things said
+  link linked official`.split(/\s+/),
+);
+
+function cleanImageSearchQuery(message: string): string {
+  const cleaned = message
+    .replace(/\b(?:https?:\/\/|www\.)[^\s]+/gi, " ")
+    .replace(/\b(?:[a-z0-9-]+\.)+[a-z]{2,}(?:\/[^\s]*)?/gi, " ")
+    .replace(/^\s*(?:hey|hi|hello)(?:\s+mira)?[,!:\s]+/i, " ")
     .replace(
       /^\s*(?:(?:(?:can|could|would) you|(?:can|could|would) I)\s+)?(?:please\s+)?(?:(?:I'd|I would) like|I want)\s+(?:you to\s+)?/i,
       "",
     )
     .replace(
-      /^\s*(?:(?:can|could|would) (?:you|I)\s+)?(?:please\s+)?(?:find|show|give|send|include|add|provide|fetch|search for|look for|see|view)\s+(?:me\s+)?/i,
+      /^\s*(?:(?:can|could|would) (?:you|I)\s+)?(?:please\s+)?(?:find|show|give|send|include|add|attach|provide|fetch|search for|look for|see|view)\s+(?:me\s+)?/i,
       "",
     )
     .replace(/^(?:to\s+)?(?:see|view)\s+/i, "")
@@ -123,7 +144,7 @@ export function imageSearchQuery(message: string): string {
       " ",
     )
     .replace(
-      /\b(?:with|including|plus)\s+(?:(?:a|an|some|one|two|additional|relevant|related|accompanying|illustrative|helpful|appropriate|supporting|labeled|labelled)\s+)*(?:pictures?|images?|imgs?|photos?|illustrations?|diagrams?|visuals?)\b(?:\s+(?:description|caption|depiction)\b)?/gi,
+      /\b(?:with|including|plus)\s+(?:(?:a|an|some|one|two|additional|extra|relevant|related|accompanying|illustrative|helpful|appropriate|supporting|labeled|labelled)\s+)*(?:pictures?|images?|imgs?|photos?|illustrations?|diagrams?|visuals?)\b(?:\s+(?:description|caption|depiction)\b)?/gi,
       " ",
     )
     .replace(
@@ -139,17 +160,36 @@ export function imageSearchQuery(message: string): string {
       /\b(?:available\s+online|online|existing|sourced)\b[.!?]*\s*$/i,
       " ",
     )
-    .replace(/\b(?:a|an|the)\b/gi, " ")
     .replace(/\s+/g, " ")
     .replace(/^[\s,.:;-]+|[\s,.:;?!-]+$/g, "")
     .trim();
+
+  const terms = cleaned.match(/[\p{L}\p{N}][\p{L}\p{N}+#.-]*/gu) ?? [];
+  const selected: string[] = [];
+  for (const term of terms) {
+    if (IMAGE_QUERY_STOP_WORDS.has(term.toLowerCase())) continue;
+    if (selected.length >= 12) break;
+    if ([...selected, term].join(" ").length > 160) break;
+    selected.push(term);
+  }
+  return selected.join(" ");
+}
+
+export function imageSearchQuery(
+  message: string,
+  fallbackContext = "",
+): string {
+  return (
+    cleanImageSearchQuery(message) || cleanImageSearchQuery(fallbackContext)
+  );
 }
 
 export async function searchResearchImages(
   message: string,
   fetcher: typeof fetch = fetch,
+  fallbackContext = "",
 ): Promise<ResearchImage[]> {
-  const query = imageSearchQuery(message);
+  const query = imageSearchQuery(message, fallbackContext);
   if (!query) return [];
 
   const url = new URL("https://commons.wikimedia.org/w/api.php");

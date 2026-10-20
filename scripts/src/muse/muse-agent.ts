@@ -28,6 +28,7 @@ import {
   requestsSources,
 } from "./response-formatting.js";
 import {
+  imageSearchQuery,
   searchResearchImages,
   type ResearchImage,
 } from "./research-images.js";
@@ -122,6 +123,7 @@ function refersToLatestResearch(
 ): boolean {
   if (!result) return false;
   if (requestsSources(message)) return true;
+  if (requestsImages(message) && !imageSearchQuery(message)) return true;
   if (isContextualConfirmation(message)) return true;
   if (CONTEXTUAL_ENTITY_FOLLOW_UP.test(message)) return true;
   if (PRIOR_RESEARCH_REFERENCE.test(message)) return true;
@@ -141,7 +143,38 @@ export type ResearchRunner = (
   conversationContext?: string,
 ) => Promise<ResearchResult>;
 
-export type ResearchImageFinder = (message: string) => Promise<ResearchImage[]>;
+export type ResearchImageFinder = (
+  message: string,
+  fallbackContext?: string,
+) => Promise<ResearchImage[]>;
+
+type RequestedImageSearch =
+  | { kind: "results"; images: ResearchImage[] }
+  | { kind: "error"; error: unknown }
+  | { kind: "topic-needed" };
+
+function researchImageFallbackContext(result: ResearchResult | undefined): string {
+  if (!result) return "";
+
+  const genericPageObjective = /^read the supplied pages? and provide a concise overview/i
+    .test(result.question);
+  const firstAnswerSentence = result.answer
+    .replace(/\[(?:SRC-[A-Za-z0-9_-]+|\d+)\]/g, "")
+    .split(/(?<=[.!?])\s+/)[0]
+    ?.trim()
+    .slice(0, 240) ?? "";
+  const sourceTitles = result.sources
+    .slice(0, 3)
+    .map((source) => source.title)
+    .filter(Boolean);
+  return [
+    ...(genericPageObjective ? [] : [result.question]),
+    ...sourceTitles,
+    firstAnswerSentence,
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
 
 /** Optional task-aware providers: `research` backs planning, synthesis, and
  *  long-form deliverables; plain chat keeps using the constructor provider. */
@@ -161,7 +194,8 @@ export class MuseAgent {
     private readonly memories = new MemoryService(new JsonMemoryRepository()),
     private readonly sharedMemories?: MemoryService,
     researcher?: ResearchRunner,
-    private readonly imageFinder: ResearchImageFinder = searchResearchImages,
+    private readonly imageFinder: ResearchImageFinder = (message, fallbackContext) =>
+      searchResearchImages(message, fetch, fallbackContext),
     taskProviders?: MuseTaskProviders,
   ) {
     this.qualityProvider = taskProviders?.research ?? provider;
@@ -240,6 +274,14 @@ export class MuseAgent {
         return reply;
       }
     }
+
+    const requestedImageSearch = this.beginRequestedImageSearch(
+      content,
+      latestResearch,
+    );
+    const attachRequestedImages = (response: string) =>
+      this.includeRequestedImages(response, content, requestedImageSearch);
+
     const writingRevision = isWritingRevision(
       content,
       this.hasActiveWritingAssignment,
@@ -304,9 +346,8 @@ export class MuseAgent {
             evidence = undefined;
             researchUnavailable = true;
           } else {
-            const reply = await this.includeRequestedImages(
+            const reply = await attachRequestedImages(
               researchFailureReply(evidence),
-              content,
             );
             this.conversation.push(
               pendingMessage,
@@ -329,10 +370,7 @@ export class MuseAgent {
         evidence &&
         /\(unverified: no matching retrieved evidence\)/i.test(response)
       ) {
-        const reply = await this.includeRequestedImages(
-          INSUFFICIENT_RESEARCH_REPLY,
-          content,
-        );
+        const reply = await attachRequestedImages(INSUFFICIENT_RESEARCH_REPLY);
         this.conversation.push(
           pendingMessage,
           { role: "assistant", content: reply },
@@ -344,10 +382,7 @@ export class MuseAgent {
         : "";
       const conversationalResponse =
         `${response.trim()}${researchNotice}\n\nWould you like me to adjust the format, tone, or length?`;
-      const finalResponse = await this.includeRequestedImages(
-        conversationalResponse,
-        content,
-      );
+      const finalResponse = await attachRequestedImages(conversationalResponse);
       this.hasActiveWritingAssignment = true;
       if (!researchWriting && !contextualResearch) {
         this.latestResearch = undefined;
@@ -384,9 +419,8 @@ export class MuseAgent {
         conversationContext,
       );
       this.latestResearch = result;
-      const response = await this.includeRequestedImages(
+      const response = await attachRequestedImages(
         formatResearchReply(result, Boolean(researchContext)),
-        content,
       );
       this.conversation.push(pendingMessage, { role: "assistant", content: response });
       return response;
@@ -396,9 +430,8 @@ export class MuseAgent {
       contextualResearch &&
       !hasReliableResearchEvidence(contextualResearch)
     ) {
-      const reply = await this.includeRequestedImages(
+      const reply = await attachRequestedImages(
         researchFailureReply(contextualResearch),
-        content,
       );
       this.conversation.push(
         pendingMessage,
@@ -408,12 +441,11 @@ export class MuseAgent {
     }
 
     if (contextualResearch && requestsSources(content)) {
-      const response = await this.includeRequestedImages(
+      const response = await attachRequestedImages(
         formatResearchReply({
           ...contextualResearch,
           question: content,
         }),
-        content,
       );
       this.conversation.push(
         pendingMessage,
@@ -477,7 +509,7 @@ export class MuseAgent {
         promptMessage,
       ],
     }), [], { preserveEmoji: requestsEmoji(content) });
-    const finalResponse = await this.includeRequestedImages(response, content);
+    const finalResponse = await attachRequestedImages(response);
 
     this.conversation.push(
       pendingMessage,
@@ -489,26 +521,58 @@ export class MuseAgent {
     return finalResponse;
   }
 
+  private beginRequestedImageSearch(
+    request: string,
+    research: ResearchResult | undefined,
+  ): Promise<RequestedImageSearch> | undefined {
+    if (!requestsImages(request)) return undefined;
+
+    const fallbackContext = researchImageFallbackContext(research);
+    if (!imageSearchQuery(request, fallbackContext)) {
+      return Promise.resolve({ kind: "topic-needed" });
+    }
+
+    // Start image retrieval before the model/research work so both can overlap.
+    try {
+      return this.imageFinder(request, fallbackContext)
+        .then((images): RequestedImageSearch => ({ kind: "results", images }))
+        .catch((error: unknown): RequestedImageSearch => ({ kind: "error", error }));
+    } catch (error) {
+      return Promise.resolve({ kind: "error", error });
+    }
+  }
+
   private async includeRequestedImages(
     response: string,
     request: string,
+    pendingSearch?: Promise<RequestedImageSearch>,
   ): Promise<string> {
     if (!requestsImages(request)) return response;
 
     // Chat-requested illustrations are sourced from existing online images;
     // generated artwork remains a separate, explicit UI action.
-    let images: ResearchImage[];
-    try {
-      images = await this.imageFinder(request);
-    } catch (error) {
-      console.error("Muse image search failed.", error);
+    let outcome = await (
+      pendingSearch ?? this.beginRequestedImageSearch(request, this.latestResearch)
+    );
+    if (outcome?.kind === "topic-needed" && this.latestResearch) {
+      const contextualSearch = this.beginRequestedImageSearch(
+        request,
+        this.latestResearch,
+      );
+      if (contextualSearch) outcome = await contextualSearch;
+    }
+    if (!outcome || outcome.kind === "topic-needed") {
+      return `${response}\n\nTell me which topic or research result you'd like illustrated, and I'll find a sourced image.`;
+    }
+    if (outcome.kind === "error") {
+      console.error("Muse image search failed.", outcome.error);
       return `${response}\n\nI couldn't retrieve image results just now.`;
     }
-    if (!images.length) {
+    if (!outcome.images.length) {
       return `${response}\n\nI couldn't find suitable image results for that request.`;
     }
 
-    const imageList = images.map((image) => {
+    const imageList = outcome.images.map((image) => {
       const alt = image.title.replace(/[\[\]()\\\r\n]/g, "").replace(/\s+/g, " ").trim();
       const attribution = [
         image.creator
