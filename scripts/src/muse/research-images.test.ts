@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   imageSearchQuery,
+  isAttributionFreeImage,
   parseCommonsImageSearchResults,
   parseOpenverseImageSearchResults,
   searchResearchImages,
@@ -87,6 +88,18 @@ test("image search queries retain the subject and remove request wording", () =>
     ),
     "Donald Trump family",
   );
+});
+
+test("clean research image eligibility is limited to CC0 and public-domain licenses", () => {
+  assert.equal(isAttributionFreeImage({ license: "CC0 1.0" }), true);
+  assert.equal(
+    isAttributionFreeImage({ license: "Public Domain Mark 1.0" }),
+    true,
+  );
+  assert.equal(isAttributionFreeImage({ license: "Public domain" }), true);
+  assert.equal(isAttributionFreeImage({ license: "CC BY 4.0" }), false);
+  assert.equal(isAttributionFreeImage({ license: "CC BY-SA 4.0" }), false);
+  assert.equal(isAttributionFreeImage({}), false);
 });
 
 test("Commons image results retain attribution and reject non-Commons hosts", () => {
@@ -256,9 +269,10 @@ test("image search checks Openverse and Commons in parallel and returns vetted i
   assert.equal(results[1]?.title, "Monarch butterfly.jpg");
 });
 
-test("automatic one-image search returns as soon as a catalog finds a result", async () => {
+test("automatic clean-image search returns a CC0 match without waiting for Commons", async () => {
   let commonsStarted = false;
   let commonsFinished = false;
+  let openverseRequest: URL | undefined;
   const results = await searchResearchImages(
     "What is the history of Donald Trump?",
     async (input) => {
@@ -271,12 +285,16 @@ test("automatic one-image search returns as soon as a catalog finds a result", a
           status: 200,
         });
       }
+      openverseRequest = url;
       return new Response(
         JSON.stringify({
           results: [
             {
               ...OPENVERSE_RECORD,
               title: "Donald Trump speaking at a public event",
+              license: "cc0",
+              license_version: "1.0",
+              license_url: "https://creativecommons.org/publicdomain/zero/1.0/",
             },
           ],
         }),
@@ -285,12 +303,81 @@ test("automatic one-image search returns as soon as a catalog finds a result", a
     },
     "",
     1,
+    true,
   );
 
   assert.equal(commonsStarted, true);
   assert.equal(commonsFinished, false);
+  assert.equal(openverseRequest?.searchParams.get("license"), "cc0,pdm");
   assert.equal(results.length, 1);
+  assert.equal(results[0]?.license, "CC0 1.0");
+  assert.equal(isAttributionFreeImage(results[0]!), true);
   assert.match(results[0]?.title ?? "", /Donald Trump/);
+});
+
+test("clean image search filters attributed results and searches public-domain Commons files", async () => {
+  const requests: URL[] = [];
+  const results = await searchResearchImages(
+    "Monarch butterflies",
+    async (input) => {
+      const url = new URL(String(input));
+      requests.push(url);
+      if (url.hostname === "api.openverse.org") {
+        return new Response(JSON.stringify({ results: [OPENVERSE_RECORD] }), {
+          status: 200,
+        });
+      }
+      const search = url.searchParams.get("gsrsearch") ?? "";
+      const pages = search.includes("haswbstatement:P275=Q6938433")
+        ? [
+            {
+              title: "File:Monarch butterfly CC0.jpg",
+              imageinfo: [
+                {
+                  thumburl:
+                    "https://upload.wikimedia.org/wikipedia/commons/1/1a/Monarch_CC0.jpg",
+                  descriptionurl:
+                    "https://commons.wikimedia.org/wiki/File:Monarch_CC0.jpg",
+                  extmetadata: {
+                    LicenseShortName: { value: "CC0 1.0" },
+                  },
+                },
+              ],
+            },
+          ]
+        : [];
+      return new Response(JSON.stringify({ query: { pages } }), {
+        status: 200,
+      });
+    },
+    "",
+    1,
+    true,
+  );
+
+  assert.equal(results.length, 1);
+  assert.equal(results[0]?.title, "Monarch butterfly CC0.jpg");
+  assert.equal(isAttributionFreeImage(results[0]!), true);
+  assert.equal(
+    requests
+      .find((url) => url.hostname === "api.openverse.org")
+      ?.searchParams.get("license"),
+    "cc0,pdm",
+  );
+  assert.ok(
+    requests.some((url) =>
+      url.searchParams
+        .get("gsrsearch")
+        ?.includes("haswbstatement:P275=Q6938433"),
+    ),
+  );
+  assert.ok(
+    requests.some((url) =>
+      url.searchParams
+        .get("gsrsearch")
+        ?.includes("haswbstatement:P6216=Q19652"),
+    ),
+  );
 });
 
 test("Openverse results remain available when Commons is unavailable", async () => {

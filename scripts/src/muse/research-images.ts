@@ -10,6 +10,14 @@ export type ResearchImage = {
   source?: string;
 };
 
+export function isAttributionFreeImage(
+  image: Pick<ResearchImage, "license">,
+): boolean {
+  return /^(?:cc0|pdm|public[\s-]+domain(?:[\s-]+mark)?)(?:\b|$)/i.test(
+    image.license?.trim() ?? "",
+  );
+}
+
 function safeHttpsUrl(raw: unknown): string | undefined {
   if (typeof raw !== "string" || !raw) return undefined;
   const safe = safeHttpUrl(raw);
@@ -346,14 +354,17 @@ export function imageSearchQuery(
 async function searchOpenverseImages(
   query: string,
   fetcher: typeof fetch,
+  attributionFreeOnly = false,
 ): Promise<ResearchImage[]> {
   const url = new URL("https://api.openverse.org/v1/images/");
-  url.search = new URLSearchParams({
+  const searchParams = new URLSearchParams({
     q: query,
     page_size: "6",
     license_type: "commercial",
     mature: "false",
-  }).toString();
+  });
+  if (attributionFreeOnly) searchParams.set("license", "cc0,pdm");
+  url.search = searchParams.toString();
   const response = await fetcher(url, {
     headers: {
       "User-Agent": "MuseResearch/1.0 (open-licensed image lookup)",
@@ -374,12 +385,13 @@ async function searchOpenverseImages(
 async function searchCommonsImages(
   query: string,
   fetcher: typeof fetch,
+  licenseFilter = "",
 ): Promise<ResearchImage[]> {
   const url = new URL("https://commons.wikimedia.org/w/api.php");
   url.search = new URLSearchParams({
     action: "query",
     generator: "search",
-    gsrsearch: query,
+    gsrsearch: [query, licenseFilter].filter(Boolean).join(" "),
     gsrnamespace: "6",
     gsrwhat: "text",
     gsrlimit: "5",
@@ -422,25 +434,36 @@ function uniqueImageResults(images: ResearchImage[]): ResearchImage[] {
 }
 
 /**
- * Searches Openverse's public catalog with its commercial-use license filter
- * and Wikimedia Commons in parallel. A one-image automatic search returns as
- * soon as either catalog finds a match; explicit multi-image requests gather
- * both catalogs. Openverse supplies images from many public collections, while
- * Commons remains a free fallback when Openverse is unavailable.
+ * Searches Openverse and Wikimedia Commons in parallel. Attribution-free
+ * searches restrict results to CC0/public-domain works so they can be displayed
+ * without visible credit. A one-image search returns as soon as a catalog finds
+ * a match; explicit multi-image requests gather both catalogs.
  */
 export async function searchResearchImages(
   message: string,
   fetcher: typeof fetch = fetch,
   fallbackContext = "",
   maxResults = 3,
+  attributionFreeOnly = false,
 ): Promise<ResearchImage[]> {
   const query = imageSearchQuery(message, fallbackContext);
   if (!query) return [];
 
-  const searches = [
-    searchOpenverseImages(query, fetcher),
-    searchCommonsImages(query, fetcher),
-  ];
+  const rawSearches = attributionFreeOnly
+    ? [
+        searchOpenverseImages(query, fetcher, true),
+        searchCommonsImages(query, fetcher, "haswbstatement:P275=Q6938433"),
+        searchCommonsImages(query, fetcher, "haswbstatement:P6216=Q19652"),
+      ]
+    : [
+        searchOpenverseImages(query, fetcher),
+        searchCommonsImages(query, fetcher),
+      ];
+  const searches = rawSearches.map((search) =>
+    search.then((images) =>
+      attributionFreeOnly ? images.filter(isAttributionFreeImage) : images,
+    ),
+  );
   const resultLimit = Number.isFinite(maxResults)
     ? Math.max(1, Math.min(3, Math.floor(maxResults)))
     : 3;
