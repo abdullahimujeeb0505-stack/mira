@@ -1,0 +1,134 @@
+{
+  "id": "2026-10-20T22-38-22-227Z-who-made-the-flying-car-recently",
+  "question": "Who made the flying car recently",
+  "plan": {
+    "objective": "Identify the creators and companies behind recent flying car developments, prototypes, or successful test flights.",
+    "taskType": "current",
+    "deliverable": "A concise summary of recent flying car developers, their vehicle models, and the current status of their projects.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "reputable technology and automotive news outlets",
+      "official company announcements",
+      "aviation industry publications"
+    ],
+    "questions": [
+      "Which companies have recently tested or developed flying cars?",
+      "What are the names of the most recent flying car prototypes to achieve successful flights?",
+      "What is the regulatory or commercial status of recent flying car projects?"
+    ],
+    "queries": [
+      "flying car recently built tested 2023 2024",
+      "who made the latest flying car prototype",
+      "eVTOL flying car successful flight recent news"
+    ],
+    "unresolvedQuestions": [
+      "What specific regulatory approvals or certifications do companies like Alef Aeronautics require for commercial operation?",
+      "Are there other companies besides Alef Aeronautics actively testing road-capable flying cars rather than traditional eVTOL air taxis?"
+    ]
+  },
+  "answer": "The US startup Alef Aeronautics developed and recently tested a flying car prototype known as the Model Zero [SRC-405973c322a5].\n\n### Project Details\n- **Developer**: Alef Aeronautics (founded in 2015, led by CEO Jim Dukhovny) [SRC-405973c322a5].\n- **Vehicle Prototype**: Model Zero (with a commercial Model A vehicle also in development) [SRC-405973c322a5].\n- **Design & Performance**: Unlike traditional quadcopter drones or folding-wing designs, the Alef vehicle features a more conventional automotive design with rotor blades hidden inside the chassis [SRC-405973c322a5].\nIt is 100% electric, with a reported driving range of 320 kilometers and a flight range of approximately 160 kilometers [SRC-405973c322a5].\n- **Status**: Alef Aeronautics demonstrated a public flight test in California where the Model Zero prototype hopped over a parked car on a public road [SRC-405973c322a5].\nThe company has secured over 3,300 pre-orders for its Model A vehicle, reached a manufacturing agreement with PUCARA Aero and MYC, and anticipated entering production [SRC-405973c322a5].",
+  "followUpQuestions": [
+    "Alef Aeronautics pre-orders and production timeline",
+    "eVTOL industry developments and cargo operations"
+  ],
+  "sources": [
+    {
+      "title": "World’s first flying car hops over vehicle in public test | The Independent",
+      "url": "https://www.independent.co.uk/tech/flying-car-alef-aeronautics-range-test-b2705396.html",
+      "canonicalUrl": "https://www.independent.co.uk/tech/flying-car-alef-aeronautics-range-test-b2705396.html",
+      "publisher": "The Independent",
+      "publishedAt": "2025-02-26T20:07:48.000Z",
+      "updatedAt": "2025-02-26T20:07:48.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Become an Independent member to bookmark this article",
+        "Want to bookmark your favourite articles and stories to read or reference later? Start your Independent Membership today.",
+        "A US startup has demonstrated an airborne vehicle that it claims to be the world’s first flying car.",
+        "Alef Aeronautics released a video of its Model Zero prototype flying over a parked car on a public road in California , marking the first real-world test of the design concept."
+      ],
+      "retrievedAt": "2026-10-20T22:38:16.050Z",
+      "content": "Swipe for next article\nLeer en Español\nBecome an Independent member to bookmark this article\nWant to bookmark your favourite articles and stories to read or reference later? Start your Independent Membership today.\nJoin today\nAlready a member?\nLog in\nA US startup has demonstrated an airborne vehicle that it claims to be the world’s first flying car.\nAlef Aeronautics released a video of its Model Zero prototype flying over a parked car on a public road in California , marking the first real-world test of the design concept.\n“This drive and flight test represents an important proof of technology in a real-world city environment,” said Alef Aeronautics chief executive Jim Dukhovny.\n“We hope it will be a moment similar to the Wright Brothers’ Kitty Hawk video, proving to humanity that new transportation is possible.”\nMost “flying car” startups use a similar design to quadcopter drones , with external rotor blades setting them apart from current road-going cars. Others have adopted fold-down wings, which require a lot of space to take off.\nThe Alef Model Zero has a more conventional automotive design, which hides the rotor blades within the chassis of the car.\nThe startup said its 100 per cent electric car has a driving range of 320 kilometres and a flight range of around 160km.\nFounded in 2015 – the same year flying cars were envisioned in the 1989 sci-fi film Back to the Future Part II – Alef Aeronautics hopes to eventually produce a vehicle that is “affordable for most people, not just the rich”.\nThe company has already secured more than 3,300 pre-orders for its Model A vehicle, which is expected to enter production later this year.\nA manufacturing agreement to fulfil these orders has already been reached with PUCARA Aero and MYC, a joint venture that has produced aviation-grade parts for Airbus and Boeing.\nAlef's Model Zero flies over a parked car on a California road ( Alef Aeronautics )\nPrices for Alef’s Model A start at around $300,000 (£237,000), though a second flying car dubbed the Model Z is expected to cost around $35,000.\n“Designed to drive on the street, take off vertically when needed and fly overhead above traffic, we’re building the solution to the issues of modern congestion,” the company’s website states.\n“It fits into a regular driving lane and conforms to all traffic regulatory conditions. Alef flying car fits into a regular parking space and inside a regular-sized garage.”\nJoin our commenting forum\nJoin thought-provoking conversations, follow other Independent readers and see their replies\nComments",
+      "isUserProvided": true,
+      "sourceId": "SRC-405973c322a5"
+    },
+    {
+      "title": "Electric VTOL News&trade; - News on electric vertical takeoff & landing (eVTOL) aircraft",
+      "url": "https://evtol.news/news",
+      "canonicalUrl": "https://evtol.news/news",
+      "publisher": "evtol.news",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "Electric VTOL News&trade; - News on electric vertical takeoff & landing (eVTOL) aircraft",
+        "Q&A with Ascendance CEO Jean-Christophe Lambert",
+        "In a bumpy start to 2025, the European electric vertical takeoff and landing (eVTOL) industry was hit by high-profile insolvencies of the continent’s frontrunners in advanced air mobility (AAM) — Volocopter, rescued by Chinese-owned Diamond Aircraft, and Lilium, which met its untimely demise.",
+        "News from Oshkosh: EAS and EAA AirVenture 2025"
+      ],
+      "retrievedAt": "2026-10-20T22:38:17.827Z",
+      "content": "Electric VTOL News&trade; - News on electric vertical takeoff & landing (eVTOL) aircraft\nNews\nQ&A with Ascendance CEO Jean-Christophe Lambert\n02 Aug 2025 11:20 AM\n0\nIn a bumpy start to 2025, the European electric vertical takeoff and landing (eVTOL) industry was hit by high-profile insolvencies of the continent’s frontrunners in advanced air mobility (AAM) — Volocopter, rescued by Chinese-owned Diamond Aircraft, and Lilium, which met its untimely demise.\nRead more\nNews from Oshkosh: EAS and EAA AirVenture 2025\n22 Jul 2025 10:04 AM\nThis year’s 19th Electric Aircraft Symposium featured 40 speakers from across the advanced air mobility landscape from North America, Europe and Australia.\nElectric VTOL News, July/August 2025\n13 Jul 2025 12:29 AM\nHere’s our roundup of news on battery-electric, hybrid-electric and hydrogen-electric vertical takeoff and landing (eVTOL) aircraft from our Electric VTOL Newsletter.\nMightyFly Demos Autonomous Flight and Cargo Ops\n07 Jul 2025 01:30 PM\nMightyFly conducted a live flight demonstration for the US Air Force of its Cento autonomous, hybrid-electric vertical takeoff and landing (eVTOL) cargo on May 8.\neVTOL Leaders Mature\n07 Jul 2025 04:08 AM\nSince the last issue of Vertiflite, the leading electric vertical takeoff and landing (eVTOL) aircraft developers completed impressive demonstrations, partnerships and fundraising to continue their progress toward certification.\nQ&A With Buddy Denham, Joby Aviation\n06 Jul 2025 06:55 AM\nWith the recent increased visibility of Joby’s flight testing of its S4 electric vertical takeoff and landing (eVTOL) prototype, Vertiflite dug into the details with Denham.\nThe E-VTOL Flight Test Council: Five Years of Progress\n03 Jul 2025 06:34 AM\nVFS also boasts a long history of promoting professional development. Being an inclusive organization casting a broad net, VFS also sponsors an independent council focused on flight testing two nascent technologies: electric power and novel vertical takeoff and landing (VTOL) — which the council condenses to “verticraft” — configurations.\nAscent AeroSystems: Big Value, Small Package\n30 Jun 2025 11:30 AM\nAscent AeroSystems was acquired in April 2024 as a wholly owned subsidiary of Torrance, California-based Robinson Helicopter Company (RHC), but retains its influence and autonomy in producing uncrewed aircraft systems (UAS) of varying size, according to Peter Fuchs, cofounder and CEO of Ascent AeroSystems.\nVFS Downwash and Outwash Workshop\n29 Jun 2025 07:04 AM\nThe Vertical Flight Society held a two-hour Downwash and Outwash (DWOW) workshop on May 19 as part of Forum 81 (see “Forum 81 — Ideas Awaiting Orders,” Vertiflite, Jul/Aug 2025 ), organized by VFS Director of Strategy Mike Hirschberg.\nElectric CTOL/STOL News, Jul/Aug 2025\n29 Jun 2025 06:47 AM\nHere’s our roundup of recent news on battery-electric, hybridelectric and hydrogen-electric conventional takeoff and landing (eCTOL) and short takeoff and landing (eSTOL) aircraft for advanced air mobility (",
+      "isUserProvided": true,
+      "sourceId": "SRC-bc749d28de19"
+    },
+    {
+      "title": "Electric VTOL News&trade; - News on electric vertical takeoff & landing (eVTOL) aircraft",
+      "url": "https://www.evtol.news/news/category/vertiflite",
+      "canonicalUrl": "https://www.evtol.news/news/category/vertiflite",
+      "publisher": "www.evtol.news",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "Electric VTOL News&trade; - News on electric vertical takeoff & landing (eVTOL) aircraft",
+        "Q&A with Ascendance CEO Jean-Christophe Lambert",
+        "In a bumpy start to 2025, the European electric vertical takeoff and landing (eVTOL) industry was hit by high-profile insolvencies of the continent’s frontrunners in advanced air mobility (AAM) — Volocopter, rescued by Chinese-owned Diamond Aircraft, and Lilium, which met its untimely demise.",
+        "MightyFly Demos Autonomous Flight and Cargo Ops"
+      ],
+      "retrievedAt": "2026-10-20T22:38:19.073Z",
+      "content": "Electric VTOL News&trade; - News on electric vertical takeoff & landing (eVTOL) aircraft\nNews\nCategory Filtering: 'vertiflite'\nRemove Filter\nQ&A with Ascendance CEO Jean-Christophe Lambert\n02 Aug 2025 11:20 AM\n0\nIn a bumpy start to 2025, the European electric vertical takeoff and landing (eVTOL) industry was hit by high-profile insolvencies of the continent’s frontrunners in advanced air mobility (AAM) — Volocopter, rescued by Chinese-owned Diamond Aircraft, and Lilium, which met its untimely demise.\nRead more\nMightyFly Demos Autonomous Flight and Cargo Ops\n07 Jul 2025 01:30 PM\nMightyFly conducted a live flight demonstration for the US Air Force of its Cento autonomous, hybrid-electric vertical takeoff and landing (eVTOL) cargo on May 8.\neVTOL Leaders Mature\n07 Jul 2025 04:08 AM\nSince the last issue of Vertiflite, the leading electric vertical takeoff and landing (eVTOL) aircraft developers completed impressive demonstrations, partnerships and fundraising to continue their progress toward certification.\nQ&A With Buddy Denham, Joby Aviation\n06 Jul 2025 06:55 AM\nWith the recent increased visibility of Joby’s flight testing of its S4 electric vertical takeoff and landing (eVTOL) prototype, Vertiflite dug into the details with Denham.\nThe E-VTOL Flight Test Council: Five Years of Progress\n03 Jul 2025 06:34 AM\nVFS also boasts a long history of promoting professional development. Being an inclusive organization casting a broad net, VFS also sponsors an independent council focused on flight testing two nascent technologies: electric power and novel vertical takeoff and landing (VTOL) — which the council condenses to “verticraft” — configurations.\nAscent AeroSystems: Big Value, Small Package\n30 Jun 2025 11:30 AM\nAscent AeroSystems was acquired in April 2024 as a wholly owned subsidiary of Torrance, California-based Robinson Helicopter Company (RHC), but retains its influence and autonomy in producing uncrewed aircraft systems (UAS) of varying size, according to Peter Fuchs, cofounder and CEO of Ascent AeroSystems.\nVFS Downwash and Outwash Workshop\n29 Jun 2025 07:04 AM\nThe Vertical Flight Society held a two-hour Downwash and Outwash (DWOW) workshop on May 19 as part of Forum 81 (see “Forum 81 — Ideas Awaiting Orders,” Vertiflite, Jul/Aug 2025 ), organized by VFS Director of Strategy Mike Hirschberg.\nHydrogen Aviation: Pushing the Envelope\n23 Jun 2025 12:52 PM\n1\nThis is a slightly expanded version of the article published in the July/August 2025 issue of Vertiflite magazine. For more on the progress and challenges of hydrogen aviation, check out the VFS resource page at www.eVTOL.news/hydrogen .\nChinese eVTOL Aircraft Directory, Part 2\n19 Jun 2025 08:40 PM\nThe past several issues have covered numerous aspects and developments of electric vertical takeoff and landing (eVTOL) aircraft in China. Part 1 of this directory included larger eVTOL aircraft, either three or more passengers or cargo aircraft of 1 metric ton (2,200 lb) or more. Here, Part 2 covers sma",
+      "isUserProvided": true,
+      "sourceId": "SRC-bd7bc235dbb5"
+    },
+    {
+      "title": "Alef Flying Car",
+      "url": "https://alef.aero/",
+      "canonicalUrl": "https://alef.aero/",
+      "publisher": "alef.aero",
+      "author": "Alef Aeronautics Inc",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "Alef is designing and developing the world's first real flying car",
+        "Open to accredited and non-accredited investors",
+        "Designed to drive on the street, take off vertically and fly overhead above traffic.",
+        "Driven by redundancies and industry-leading software,"
+      ],
+      "retrievedAt": "2026-10-20T22:38:15.463Z",
+      "content": "Alef Flying Car \n\nPlease enable JavaScript to view this site\n\nAlef Flying Car\n\nAlef is designing and developing the world's first real flying car\n\nInvest Now \nOpen to accredited and non-accredited investors\n\nYour browser does not support the video tag.\n\nActual real video of Alef flying car test.\n\nDesigned to drive on the street, take off vertically and fly overhead above traffic.\n\nDriven by redundancies and industry-leading software, \nAlef will deliver a safe, affordable vehicle to transform \nyour everyday commute.",
+      "isUserProvided": true,
+      "sourceId": "SRC-2e4a88fc45bd"
+    }
+  ],
+  "unresolvedQuestions": [
+    "What specific regulatory approvals or certifications do companies like Alef Aeronautics require for commercial operation?",
+    "Are there other companies besides Alef Aeronautics actively testing road-capable flying cars rather than traditional eVTOL air taxis?"
+  ],
+  "contradictions": [],
+  "completeness": "supported",
+  "limitations": [
+    "9 candidate pages failed or carried no readable text.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 4 of 6 selected sources fit in the synthesis evidence budget."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 7,
+    "failedCount": 9,
+    "rounds": 1,
+    "searches": 3
+  },
+  "archivedAt": "2026-10-20T22:38:22.227Z"
+}
