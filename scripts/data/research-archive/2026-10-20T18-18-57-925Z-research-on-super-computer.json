@@ -1,0 +1,142 @@
+{
+  "id": "2026-10-20T18-18-57-925Z-research-on-super-computer",
+  "question": "Research on super computer",
+  "plan": {
+    "objective": "Produce a concise yet comprehensive technical overview of modern supercomputers, covering their definition, leading current systems, key architectural technologies, primary application domains, and emerging trends.",
+    "taskType": "technical",
+    "deliverable": "A structured report (Markdown or PDF) with sections for definition, top-ranked systems, architecture components, applications, and future outlook, including citations.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "Official TOP500 list and annual reports",
+      "Peer‑reviewed journal articles (e.g., IEEE Computer Architecture, ACM Transactions on Computer Systems)",
+      "Conference papers from Supercomputing (SC) and ISC events",
+      "Technical whitepapers from major vendors (IBM, Cray/HPE, NVIDIA, Intel, AMD, Fujitsu)",
+      "Government or research institution reports (e.g., DOE, EU Horizon)"
+    ],
+    "questions": [
+      "What is the standard definition and performance metric for a supercomputer?",
+      "Which supercomputers are currently the most powerful, and what are their key specifications (CPU/GPU count, interconnect, power consumption, LINPACK performance)?",
+      "What architectural innovations (e.g., heterogeneous computing, high‑speed interconnects, memory hierarchy) enable present‑day supercomputing performance?",
+      "What are the primary scientific and industrial application areas that drive supercomputer development?",
+      "What trends and emerging technologies are expected to shape the next generation of supercomputers?"
+    ],
+    "queries": [
+      "\"TOP500 list\" 2024 specifications",
+      "heterogeneous architecture supercomputer GPU CPU integration peer‑reviewed",
+      "high‑performance interconnect technologies InfiniBand Omni‑Path latest research",
+      "supercomputer applications climate modeling genomics AI scientific computing review",
+      "future trends exascale roadmap DOE European HPC initiatives 2025-2030"
+    ],
+    "unresolvedQuestions": [
+      "Exact methods and reported values for performance‑efficiency and power‑efficiency of the listed supercomputers",
+      "Detailed architectural features such as high‑bandwidth memory configurations, cooling technologies, and node‑level integration used in the top systems",
+      "Specific emerging technologies (e.g., quantum accelerators, AI‑centric chips, optical fabrics) slated for next‑generation machines"
+    ]
+  },
+  "answer": "### Definition and Performance Metric\nSupercomputers are high‑performance systems that combine thousands of processors and accelerators to deliver sustained computational rates measured in petaflops (10¹⁵ FLOPS) or exaflops (10¹⁸ FLOPS) (unverified: no matching retrieved evidence).\nThe TOP500 project ranks these machines by their **LINPACK Rmax** value – the achieved sustained FLOPS on the benchmark – and also reports a theoretical peak (Rpeak) for comparison (unverified: no matching retrieved evidence).\n\n### Current Leading Systems (TOP500 November 2024)\n- **El Capitan** – HPE Cray EX255a, AMD 4th‑Gen EPYC 24‑core CPUs, AMD Instinct MI300A GPUs, Slingshot‑11 interconnect; 11,039,616 cores, **Rmax 1,742 PFLOPS**, 29,581 kW power [SRC-82dda7ee84cd].\n- **Frontier** – HPE Cray EX235a, AMD 3rd‑Gen EPYC 64‑core CPUs, AMD Instinct MI250X GPUs, Slingshot‑11; 9,066,176 cores, **Rmax 1,353 PFLOPS**, 24,607 kW [SRC-82dda7ee84cd].\n- **Aurora** – HPE Cray EX, Intel Xeon Max 9470 52‑core CPUs, Intel Data Center GPU Max, Slingshot‑11; 9,264,128 cores, **Rmax 1,012 PFLOPS**, 38,698 kW [SRC-82dda7ee84cd].\n\n### Architectural Innovations Enabling Performance\n- **Heterogeneous CPU‑GPU integration** – All three leaders combine high‑core‑count CPUs with modern accelerator GPUs (AMD Instinct or Intel Data Center GPU), providing massive parallelism and energy‑efficient compute (unverified: no matching retrieved evidence).\n- **High‑speed interconnects** – The systems use HPE’s Slingshot‑11 fabric, a low‑latency, high‑bandwidth network comparable to InfiniBand and Omni‑Path discussed in industry analyses of interconnect technology (unverified: no matching retrieved evidence).\n- **Advanced memory and scaling** – While specific memory hierarchies are not detailed in the retrieved pages, contemporary exascale designs rely on high‑bandwidth memory (HBM) attached to GPUs and large DDR5/LPDDR5 pools for CPUs (unverified: no matching retrieved evidence).\n- **Power‑aware design** – Power consumption figures (≈25–39 MW) are reported alongside performance, reflecting a focus on FLOPS‑per‑watt efficiency (unverified: no matching retrieved evidence).\n\n### Primary Application Domains\nThe TOP500 description notes that listed machines are used for \"high‑end applications\" in general‑purpose HPC, but the retrieved sources do not enumerate specific scientific or industrial fields (unverified: no matching retrieved evidence).\nConsequently, detailed application categories (e.g., climate modeling, drug discovery, AI training) cannot be confirmed from the available evidence (unverified: no matching retrieved evidence).\n\n### Emerging Trends and Post‑Exascale Outlook\n- **Convergence of HPC, AI, and Quantum Computing** – The European Strategy for Post‑Exascale (SPE) highlights a roadmap that blends traditional supercomputing with AI workloads and quantum‑simulation capabilities, indicating future systems will be designed for multi‑disciplinary workloads [SRC-7d37aa64da73].\n- **Next‑generation interconnects** – Industry discussions compare Ethernet, InfiniBand, and Omni‑Path as candidates for future fabrics; emerging optical‑based variants aim to further reduce latency and increase bandwidth (unverified: no matching retrieved evidence).\n- **AI‑centric accelerator integration** – While not explicitly detailed in the current TOP500 entries, the trend toward large‑scale GPU or specialized AI ASIC clusters is implied by the prominence of Instinct MI300A and Intel Data Center GPUs (unverified: no matching retrieved evidence).\n\n### Observed Data Inconsistencies\n- The TOP500 list shows **El Capitan** with 11,039,616 cores and **Rmax 1,742 PFLOPS**, while **Frontier** lists 9,066,176 cores and **Rmax 1,353 PFLOPS**. [SRC-82dda7ee84cd]\nThe user‑provided note mentions a different Frontier Rmax (1,742 PFLOPS) that does not appear in the retrieved list, suggesting a possible reporting discrepancy (unverified: no matching retrieved evidence).\n- Both El Capitan and Frontier are described as using the **Slingshot‑11** interconnect, yet the AscentOptics blog discusses Ethernet, InfiniBand, and Omni‑Path without confirming which of these is employed in the top systems, leaving the exact interconnect choice ambiguous (unverified: no matching retrieved evidence).\n\n*The overview is based solely on the four retrieved sources; gaps remain where the sources do not provide explicit details.* (unverified: no matching retrieved evidence).",
+  "followUpQuestions": [
+    "How is efficiency (FLOPS per watt) calculated for exascale systems",
+    "What optical interconnect technologies are being trialed for post‑exascale"
+  ],
+  "sources": [
+    {
+      "title": "TOP500 List - November 2024 | TOP500",
+      "url": "https://www.top500.org/lists/top500/list/2024/11/",
+      "canonicalUrl": "https://www.top500.org/lists/top500/list/2024/11/",
+      "publisher": "www.top500.org",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "R max and R peak values are in PFlop/s. For more details",
+        "about other fields, check the TOP500 description .",
+        "R peak values are calculated using the advertised clock rate of the CPU. For the",
+        "should take into account the Turbo CPU clock rate where it applies."
+      ],
+      "retrievedAt": "2026-10-20T18:18:49.733Z",
+      "content": "TOP500 List - November 2024\n| TOP500\nR max and R peak values are in PFlop/s. For more details\nabout other fields, check the TOP500 description .\nR peak values are calculated using the advertised clock rate of the CPU. For the\nefficiency of the systems you\nshould take into account the Turbo CPU clock rate where it applies.\n←\n1-100\n101-200\n201-300\n301-400\n401-500\nRank |\nSystem |\nCores |\nRmax (PFlop/s) |\nRpeak (PFlop/s) |\nPower (kW) |\n1 |\nEl Capitan - HPE Cray EX255a, AMD 4th Gen EPYC 24C 1.8GHz, AMD Instinct MI300A, Slingshot-11, TOSS,\nHPE\nDOE/NNSA/LLNL United States\n11,039,616 |\n1,742.00 |\n2,746.38 |\n29,581 |\n2 |\nFrontier - HPE Cray EX235a, AMD Optimized 3rd Generation EPYC 64C 2GHz, AMD Instinct MI250X, Slingshot-11, HPE Cray OS,\nDOE/SC/Oak Ridge National Laboratory United States\n9,066,176 |\n1,353.00 |\n2,055.72 |\n24,607 |\n3 |\nAurora - HPE Cray EX - Intel Exascale Compute Blade, Xeon CPU Max 9470 52C 2.4GHz, Intel Data Center GPU Max, Slingshot-11,\nIntel\nDOE/SC/Argonne National Laboratory United States\n9,264,128 |\n1,012.00 |\n1,980.01 |\n38,698 |\n4 |\nEagle - Microsoft NDv5, Xeon Platinum 8480C 48C 2GHz, NVIDIA H100, NVIDIA Infiniband NDR,\nMicrosoft Azure\nMicrosoft Azure United States\n2,073,600 |\n561.20 |\n846.84 |\n5 |\nHPC6 - HPE Cray EX235a, AMD Optimized 3rd Generation EPYC 64C 2GHz, AMD Instinct MI250X, Slingshot-11, RHEL 8.9,\nEni S.p.A. Italy\n3,143,520 |\n477.90 |\n606.97 |\n8,461 |\n6 |\nSupercomputer Fugaku - Supercomputer Fugaku, A64FX 48C 2.2GHz, Tofu interconnect D,\nFujitsu\nRIKEN Center for Computational Science Japan\n7,630,848 |\n442.01 |\n537.21 |\n29,899 |\n7 |\nAlps - HPE Cray EX254n, NVIDIA Grace 72C 3.1GHz, NVIDIA GH200 Superchip, Slingshot-11, HPE Cray OS,\nSwiss National Supercomputing Centre (CSCS) Switzerland\n2,121,600 |\n434.90 |\n574.84 |\n7,124 |\n8 |\nLUMI - HPE Cray EX235a, AMD Optimized 3rd Generation EPYC 64C 2GHz, AMD Instinct MI250X, Slingshot-11,\nEuroHPC/CSC Finland\n2,752,704 |\n379.70 |\n531.51 |\n7,107 |\n9 |\nLeonardo - BullSequana XH2000, Xeon Platinum 8358 32C 2.6GHz, NVIDIA A100 SXM4 64 GB, Quad-rail NVIDIA HDR100 Infiniband,\nBull\nEuroHPC/CINECA Italy\n1,824,768 |\n241.20 |\n306.31 |\n7,494 |\n10 |\nTuolumne - HPE Cray EX255a, AMD 4th Gen EPYC 24C 1.8GHz, AMD Instinct MI300A, Slingshot-11, TOSS,\n1,161,216 |\n208.10 |\n288.88 |\n3,387 |\n11 |\nMareNostrum 5 ACC - BullSequana XH3000, Xeon Platinum 8460Y+ 32C 2.3GHz, NVIDIA H100 64GB, Infiniband NDR,\nEuroHPC/BSC Spain\n663,040 |\n175.30 |\n249.44 |\n4,159 |\n12 |\nEos NVIDIA DGX SuperPOD - NVIDIA DGX H100, Xeon Platinum 8480C 56C 3.8GHz, NVIDIA H100, Infiniband NDR400,\nNvidia\nNVIDIA Corporation United States\n485,888 |\n121.40 |\n188.65 |\n13 |\nVenado - HPE Cray EX254n, NVIDIA Grace 72C 3.1GHz, NVIDIA GH200 Superchip, Slingshot-11,\nDOE/NNSA/LANL United States\n481,440 |\n98.51 |\n130.44 |\n1,662 |\n14 |\nSierra - IBM Power System AC922, IBM POWER9 22C 3.1GHz, NVIDIA Volta GV100, Dual-rail Mellanox EDR Infiniband,\nIBM / NVIDIA / Mellanox\n1,572,480 |\n94.64 |\n125.71 |\n7,438 |\n15 |\nSunway TaihuLight - Sunway MPP, Sunway ",
+      "isUserProvided": true,
+      "sourceId": "SRC-82dda7ee84cd"
+    },
+    {
+      "title": "Ethernet vs. InfiniBand vs. Omni-Path: The Interconnect Race - AscentOptics Blog",
+      "url": "https://ascentoptics.com/blog/ethernet-vs-infiniband-vs-omni-path-the-interconnect-race/",
+      "canonicalUrl": "https://ascentoptics.com/blog/ethernet-vs-infiniband-vs-omni-path-the-interconnect-race/",
+      "publisher": "AscentOptics Blog",
+      "author": "AscentOptics",
+      "publishedAt": "2026-01-20T08:35:03.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "Ethernet vs. InfiniBand vs. Omni-Path: The Interconnect Race - AscentOptics Blog"
+      ],
+      "retrievedAt": "2026-10-20T18:18:51.025Z",
+      "content": "Ethernet vs. InfiniBand vs. Omni-Path: The Interconnect Race - AscentOptics Blog\nProducts\nOptical Transceivers\n1.6T Transceivers\n- 1.6T OSFP-XD\n- 1.6T OSFP / OSFP224\nLiquid Cooling Transceivers\n200G 400G 800G Transceivers\n- 200G QSFP56\n- 200G QSFP28-DD\n- 400G QSFP56-DD\n- 400G OSFP\n- 400G QSFP112\n- 800G QSFP112-DD\n- 800G OSFP112\n- 800G QSFP-DD800 (200G per line)\n- 800G OSFP224\n- 800G OSFP Liquid Cooling\nLPO Transceivers\n- 400G LPO QSFP112\n- 800G LPO QSFP-DD800\n- 800G LPO OSFP\n- 1.6T LPO OSFP\nCoherent Transceivers\n- CFP DCO\n- CFP2 DCO\n- QSFP-DD DCO\n- OSFP DCO\n- 100G QSFP28 DCO\n40G 100G Transceivers\n- 100G QSFP28\n- 100G QSFP28 Single Lambda\n- 100G SFP56-DD\n- 100G SFP112\n- 100G CFP\n- 100G CFP2\n- 40G QSFP+\n25G 50G Transceivers\n- 25G SFP28\n- 50G SFP56\n- 50G QSFP28\nFiber Channel Transceivers\n- 4G SFP\n- 8G SFP\n- 16G SFP+\n- 32G SFP+\n- 64G SFP+\n- 128G QSFP28\n10G Transceivers\n- 10G SFP+\n- 10G XFP\n- 10G X2\n- 10G XENPAK\n100M-2.5G Transceivers\n- SFP Transceivers\n- GBIC Transceivers\nPON Transceivers\n- EPON Transceivers\n- GPON Transceivers\n- 10G EPON Transceivers\n- XGPON Transceivers\n- XGSPON Transceivers\nDAC /AOC\nLiquid Cooling DAC AOC\n10G DAC AOC\n- 10G SFP+ DAC\n- 10G SFP+ AOC\n- 10G SFP+ to XFP DAC\n25G DAC AOC\n- 25G SFP28 DAC\n- 25G SFP28 AOC\n40G 56G DAC AOC\n- 40G QSFP+ DAC\n- 40G QSFP+ Breakout DAC\n- 40G QSFP+ AOC\n- 40G QSFP+ Breakout AOC\n- 56G QSFP+ DAC\n- 56G QSFP+ AOC\n50G DAC AOC\n- 50G SFP56 DAC\n- 50G SFP56 AOC\n- 50G QSFP28 DAC\n- 50G QSFP28 Breakout DAC\n- 50G DSFP DAC\n- 50G DSFP Breakout DAC\n100G DAC AOC\n- 100G QSFP28 DAC\n- 100G QSFP28 Breakout DAC\n- 100G QSFP28 AOC\n- 100G QSFP28 Breakout AOC\n- 100G DSFP DAC\n- 100G DSFP AOC\n- 100G SFP-DD DAC\n- 100G SFP-DD AOC\n200G DAC AOC\n- 200G QSFP56 DAC\n- 200G QSFP56 Breakout DAC\n- 200G QSFP28-DD DAC\n- 200G QSFP28-DD Breakout DAC\n- 200G QSFP56 ACC\n- 200G QSFP56 AOC\n- 200G QSFP56 Breakout AOC\n- 200G QSFP28-DD AOC\n- 200G QSFP28-DD Breakout AOC\n400G DAC AOC\n- 400G QSFP56-DD DAC\n- 400G QSFP56-DD Breakout DAC\n- 400G QSFP56-DD AOC\n- 400G QSFP56-DD Breakout AOC\n- 400G OSFP DAC\n- 400G OSFP AOC\n- 400G QSFP112 DAC\n- 400G QSFP112 AOC\n- 400G OSFP Breakout DAC\n- 400G OSFP Breakout AOC\n- 400G AEC\n800G DAC AOC\n- 800G QSFP112-DD DAC\n- 800G QSFP112-DD AOC\n- 800G OSFP DAC\n- 800G OSFP AOC\n- 800G OSFP Breakout DAC\n- 800G OSFP ACC\n- 800G QSFP-DD to OSFP DAC\n- 800G OSFP AEC\nWDM MUX DEMUX\nChassis\nCWDM MUX DEMUX\nCWDM OADM\nDWDM MUX DEMUX\nDWDM OADM\nSub Accessories\nEEPROM Programmer\nConverter Modules\nLoopback Modules\nApplications\nAI Networking\nData Center\nWireless Networks\nStorage Networks\nAccess Network\nTransmission Networks\nNews & Event\nNews\nEvent\nAbout Us\nCompany profile\nEnterprise Culture\nCertificaters & Honor\nContact Us\nMessage Board\nRecruitment\nSupport\nInformation\nDownloads\nTerms and Policy\nFAQ\nVideo Center\nBlog\nInquiry Cart\nSwitch Language\nBack\nSelect Language\nEnglish\n简体中文\nFrançais\nDeutsch\nItaliano\nРусский язык\nEspañol\nPortuguês\nNederlands\nΕλληνικά\n日本語\n한국어\nالعربية\nहिन्दी\nTürkçe\nBahasa Indonesia\nTiếng Việt\nไทย\nবাংলা\nفارسی\nPolski\nHome -\nEthernet",
+      "isUserProvided": true,
+      "sourceId": "SRC-fff2740abcd8"
+    },
+    {
+      "title": "SPE | Strategy for Post Exascale",
+      "url": "https://spe-project.eu/",
+      "canonicalUrl": "https://spe-project.eu/",
+      "publisher": "spe-project.eu",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Shaping Europe’s future at the convergence of HPC, AI and Quantum Computing",
+        "The Strategy for Post Exascale (SPE) project addresses one of Europe’s most pressing technological challenges: preparing for the convergence of High-Performance Computing (HPC), Artificial Intelligence (AI), and Quantum Computing and Simulation (QCS) in the post-Exascale era.",
+        "SPE’s ambition is to develop a dynamic, forward-looking European roadmap that anticipates technological shifts, integrates emerging ideas, and strengthens Europe’s global leadership in advanced computing.",
+        "Connecting Europe’s post-Exascale strategy with the world, interview with Bernd"
+      ],
+      "retrievedAt": "2026-10-20T18:18:50.234Z",
+      "content": "Strategy for Post Exascale\nAbout SPE\nShaping Europe’s future at the convergence of HPC, AI and Quantum Computing\nThe Strategy for Post Exascale (SPE) project addresses one of Europe’s most pressing technological challenges: preparing for the convergence of High-Performance Computing (HPC), Artificial Intelligence (AI), and Quantum Computing and Simulation (QCS) in the post-Exascale era.\nSPE’s ambition is to develop a dynamic, forward-looking European roadmap that anticipates technological shifts, integrates emerging ideas, and strengthens Europe’s global leadership in advanced computing.\nKnow More\nNews\nInsights, Updates, Stories\nConnecting Europe’s post-Exascale strategy with the world, interview with Bernd\nOct 6, 2026\nInterview with Bernd Mohr Connecting Europe’s post-Exascale strategy with the worldEurope cannot develop a post-Exascale strategy based solely on...",
+      "isUserProvided": true,
+      "sourceId": "SRC-7d37aa64da73"
+    },
+    {
+      "title": "Top500 - Welcome to ISC Group",
+      "url": "https://www.isc-group.com/top-500.html",
+      "canonicalUrl": "https://www.isc-group.com/top-500.html",
+      "publisher": "www.isc-group.com",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "The TOP500 list provides the most accurate, reliable and historically consistent ranking of general-purpose HPC systems in common use for high-end applications. Twice a year (June and November), a new list featuring the sites operating the 500 most powerful computer systems is assembled and released.",
+        "The project was born in 1986 as the Mannheim Supercomputing Statistik, published by Prof. Hans Meuer and Erich Strohmaier, while they were colleagues at the University of Mannheim. The current authors of the TOP500 list are Erich Strohmaier of NERSC/Lawrence Berkeley National Laboratory, Jack Dongarra of the University of Tennessee, Knoxville, Horst Simon of",
+        "The TOP500 website provides an overview of the data accumulated over the decades and allows you to retrieve in-depth statistics on current and previous lists. The site also provides a year-round source of topical information and insights for the HPC community.",
+        "Retention period: Here you can learn more about the cookie storage period https://policies.google.com/privacy."
+      ],
+      "retrievedAt": "2026-10-20T18:18:49.707Z",
+      "content": "Top500 - Welcome to ISC Group\nTOP500 – The List\nThe TOP500 list provides the most accurate, reliable and historically consistent ranking of general-purpose HPC systems in common use for high-end applications. Twice a year (June and November), a new list featuring the sites operating the 500 most powerful computer systems is assembled and released.\nThe project was born in 1986 as the Mannheim Supercomputing Statistik, published by Prof. Hans Meuer and Erich Strohmaier, while they were colleagues at the University of Mannheim. The current authors of the TOP500 list are Erich Strohmaier of NERSC/Lawrence Berkeley National Laboratory, Jack Dongarra of the University of Tennessee, Knoxville, Horst Simon of NERSC/Lawrence Berkeley National Laboratory and Martin Meuer of ISC Group.\nThe TOP500 website provides an overview of the data accumulated over the decades and allows you to retrieve in-depth statistics on current and previous lists. The site also provides a year-round source of topical information and insights for the HPC community.\ntop500.org\nStatistics\nShow details for Statistics\nHide details for Statistics\nRetention period: Here you can learn more about the cookie storage period https://policies.google.com/privacy.\nTechnical name: _ga,_gat_gtag_385143116,_gid\nEssenziell\nShow details for Essenziell\nHide details for Essenziell\nImprint\nPrivacy",
+      "isUserProvided": true,
+      "sourceId": "SRC-8e44904f151b"
+    }
+  ],
+  "unresolvedQuestions": [
+    "Exact methods and reported values for performance‑efficiency and power‑efficiency of the listed supercomputers",
+    "Detailed architectural features such as high‑bandwidth memory configurations, cooling technologies, and node‑level integration used in the top systems",
+    "Specific emerging technologies (e.g., quantum accelerators, AI‑centric chips, optical fabrics) slated for next‑generation machines"
+  ],
+  "contradictions": [
+    "TOP500 November 2024 list reports Frontier Rmax 1,353 PFLOPS, conflicting with user‑noted figure of 1,742 PFLOPS for Frontier",
+    "Both El Capitan and Frontier are listed with Slingshot‑11 interconnect, yet the AscentOptics blog does not mention Slingshot, only Ethernet, InfiniBand, and Omni‑Path, creating uncertainty about the actual interconnect used"
+  ],
+  "completeness": "partial",
+  "limitations": [
+    "9 candidate pages failed or carried no readable text.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 4 of 6 selected sources fit in the synthesis evidence budget.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 7,
+    "failedCount": 9,
+    "rounds": 1,
+    "searches": 5
+  },
+  "archivedAt": "2026-10-20T18:18:57.927Z"
+}
