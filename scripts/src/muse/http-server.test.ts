@@ -335,6 +335,8 @@ test("browser Markdown rendering handles sourced images and normalizes other Mar
       const image = root.children[5]?.children.find((child) => child.tagName === "img");
       assert.equal(image?.src, "https://upload.wikimedia.org/wikipedia/commons/b/b0/Butterfly.jpg");
       assert.equal(image?.alt, "Butterfly");
+      assert.equal(image?.loading, "eager");
+      assert.equal(image?.referrerPolicy, "no-referrer");
       const openverseImage = root.children[6]?.children.find(
         (child) => child.tagName === "img",
       );
@@ -373,6 +375,43 @@ test("browser Markdown rendering handles sourced images and normalizes other Mar
         imageFirstRoot.children[1]?.children.find((child) => child.tagName === "img")?.alt,
         "Donald Trump portrait",
       );
+
+      const longOutputRoot = fakeElement("div");
+      const longParagraph =
+        "This section summarizes the background, evidence, and key findings. ".repeat(
+          8,
+        );
+      const longOutput = [
+        "# Long report",
+        "",
+        ...Array.from(
+          { length: 24 },
+          (_, index) => `Background ${index + 1}. ${longParagraph}`,
+        ),
+        "",
+        "![Featured chart](https://upload.wikimedia.org/wikipedia/commons/1/1a/Featured.jpg)",
+        "",
+        ...Array.from(
+          { length: 24 },
+          (_, index) => `Finding ${index + 1}. ${longParagraph}`,
+        ),
+      ].join("\n\n");
+      assert.ok(longOutput.length > 10_000);
+      (
+        sandbox as typeof sandbox & {
+          renderMarkdownForTest: (parent: FakeElement, text: string) => void;
+        }
+      ).renderMarkdownForTest(longOutputRoot, longOutput);
+      const longOutputImage = longOutputRoot.children
+        .flatMap((child) => child.children)
+        .find((child) => child.tagName === "img");
+      assert.equal(
+        longOutputImage?.src,
+        "https://upload.wikimedia.org/wikipedia/commons/1/1a/Featured.jpg",
+      );
+      assert.equal(longOutputImage?.alt, "Featured chart");
+      assert.equal(longOutputImage?.loading, "eager");
+      assert.equal(longOutputImage?.referrerPolicy, "no-referrer");
     },
   ));
 

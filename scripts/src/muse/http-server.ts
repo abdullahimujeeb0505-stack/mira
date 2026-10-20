@@ -185,10 +185,11 @@ const CHAT_PAGE = `<!doctype html>
             }
             if (match && url && url.protocol === "https:" && (url.hostname === "upload.wikimedia.org" || url.hostname === "api.openverse.org")) {
               const image = document.createElement("img");
+              // Long replies can place images outside the active scroll area.
+              image.loading = "eager";
+              image.referrerPolicy = "no-referrer";
               image.src = url.href;
               image.alt = match[1];
-              image.loading = "lazy";
-              image.referrerPolicy = "no-referrer";
               parent.append(image);
             } else {
               parent.append(document.createTextNode(match ? match[1] : part));
