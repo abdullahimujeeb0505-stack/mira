@@ -1,3 +1,10 @@
+import { attachment, type ContentInput } from "spectrum-ts";
+import type { GeneratedImage } from "./cloudflare-workers-ai.js";
+import {
+  parseImageGenerationCommand,
+  runImageGenerationCommand,
+  type ImageGenerator,
+} from "./image-generation-command.js";
 import { shouldResearchMessage } from "./message-routing.js";
 import type { MuseAgent } from "./muse-agent.js";
 
@@ -11,7 +18,7 @@ export interface PhotonMessage {
   content: { type: string; text?: string };
   direction: "inbound" | "outbound";
   platform: string;
-  reply(content: string): Promise<unknown>;
+  reply(content: ContentInput): Promise<unknown>;
 }
 
 export const PHOTON_FAILURE_REPLY =
@@ -30,6 +37,7 @@ export class PhotonMessageHandler {
       spaceKey: string,
     ) => Pick<MuseAgent, "hasConversationHistory" | "respond">,
     private readonly reportFailure: (message: string) => void = console.error,
+    private readonly generateImage?: ImageGenerator,
   ) {}
 
   get conversationCount(): number {
@@ -59,7 +67,29 @@ export class PhotonMessageHandler {
 
     const activeConversation = conversation;
     const text = message.content.text.trim();
+    const imageCommand = parseImageGenerationCommand(text);
     const response = activeConversation.pending.then(async () => {
+      if (imageCommand) {
+        const generated = await space.responding(() =>
+          runImageGenerationCommand(
+            imageCommand,
+            this.generateImage,
+            this.reportFailure,
+          ),
+        );
+        if (generated.image) {
+          await message.reply(
+            attachment(generated.image.bytes, {
+              name: `mira-generated-image.${generated.image.mimeType.slice("image/".length)}`,
+              mimeType: generated.image.mimeType,
+            }),
+          );
+        } else {
+          await message.reply(generated.text);
+        }
+        return;
+      }
+
       let reply: string;
       try {
         const research = shouldResearchMessage(
@@ -67,9 +97,7 @@ export class PhotonMessageHandler {
           activeConversation.agent.hasConversationHistory,
         );
         const respond = () => activeConversation.agent.respond(text);
-        reply = research
-          ? await space.responding(respond)
-          : await respond();
+        reply = research ? await space.responding(respond) : await respond();
       } catch {
         this.reportFailure("Muse could not complete an incoming iMessage.");
         reply = PHOTON_FAILURE_REPLY;
