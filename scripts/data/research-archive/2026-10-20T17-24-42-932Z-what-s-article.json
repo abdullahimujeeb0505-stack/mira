@@ -1,0 +1,134 @@
+{
+  "id": "2026-10-20T17-24-42-932Z-what-s-article",
+  "question": "What's article",
+  "plan": {
+    "objective": "Provide clear, authoritative definitions of the term \"article\" across its primary contexts (grammar, law, publishing).",
+    "taskType": "definition",
+    "deliverable": "A concise, multi‑context definition of \"article\" with citations to primary, authoritative sources.",
+    "requiresCurrentInformation": false,
+    "sourcePreferences": [
+      "Merriam-Webster Dictionary",
+      "Oxford English Dictionary",
+      "The Chicago Manual of Style",
+      "Legal dictionaries (e.g., Black's Law Dictionary)",
+      "Official publishing style guides"
+    ],
+    "questions": [
+      "What is an article in the context of grammar?",
+      "What does \"article\" mean in legal terminology?",
+      "How is the term \"article\" defined in publishing and journalism?"
+    ],
+    "queries": [
+      "\"article\" definition grammar Merriam-Webster",
+      "\"article\" definition legal Black's Law Dictionary",
+      "\"article\" definition publishing style guide",
+      "\"article\" meaning Oxford English Dictionary",
+      "\"article\" definition Chicago Manual of Style"
+    ],
+    "unresolvedQuestions": [
+      "Exact definition of “article” in Black's Law Dictionary",
+      "Authoritative grammatical definition of “article” (e.g., from Merriam‑Webster or OED)"
+    ]
+  },
+  "answer": "**Grammar**\nThe retrieved sources did not contain a definition of “article” as a grammatical element (e.g., definite or indefinite determiner) (unverified: no matching retrieved evidence).\n\n**Law** [SRC-3638ee6ffe5e]\nThe Black’s Law Dictionary page (SRC-3638ee6ffe5e) was listed but its content excerpt did not include a definition of “article” in legal terminology, so no authoritative legal definition could be extracted (unverified: no matching retrieved evidence).\n\n**Publishing** [SRC-9de67e120de4]\nAn article (or piece) is a written work published in a print or electronic medium for the propagation of information, such as news, research results, academic analysis or debate. [SRC-30bc62705d8f]",
+  "followUpQuestions": [
+    "Differences between definite and indefinite articles",
+    "Typical structure of a scholarly article"
+  ],
+  "sources": [
+    {
+      "title": "ARTICLE - Black's Law Dictionary",
+      "url": "https://cekhukum.com/article-blacks-law-dictionary/",
+      "canonicalUrl": "https://cekhukum.com/article-blacks-law-dictionary/",
+      "publisher": "cekhukum.com",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [],
+      "retrievedAt": "2026-10-20T17:24:37.973Z",
+      "content": "A Black's Law Dictionary\nEditorial\nSitus Web\nOfficial tim editorial.\nBaca Juga\nFederal National Mortgage Association\nFederal Power Commission\nFederal pre emption\nPengertian Hukum Menurut Jhon Locke\nPengertian Hukum Menurut Roscoe Pound\nPengertian Hukum Menurut Thomas Aquinas\nPengertian Hukum Menurut Jhon Austin",
+      "isUserProvided": true,
+      "sourceId": "SRC-3638ee6ffe5e"
+    },
+    {
+      "title": "How to Format an Article for Academic Journal Submission (Step-by-Step Guide) | Academic Influence",
+      "url": "https://academicinfluence.com/how-to-format-articles",
+      "canonicalUrl": "https://academicinfluence.com/how-to-format-articles",
+      "publisher": "academicinfluence.com",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "How to Format an Article for Academic Journal Submission (Step-by-Step Guide)",
+        "This guide offers a clear, step-by-step approach to transforming a draft article into a polished, journal-ready submission that meets professional academic standards.",
+        "You’ll learn how to select the right journal, apply consistent article formatting, structure content effectively, handle citations and references correctly, and prepare figures, tables, and final files for peer review.",
+        "Designed to reduce desk rejections and review delays, this article provides practical tools, checklists, and formatting workflows that help you present your research with clarity, credibility, and confidence."
+      ],
+      "retrievedAt": "2026-10-20T17:24:34.633Z",
+      "content": "How to Format an Article for Academic Journal Submission (Step-by-Step Guide)\nBy Dr. Jed Macosko Reviewed By Jenn Finley\nUpdated: Nov 6, 2025\nQuick Overview\nThis guide offers a clear, step-by-step approach to transforming a draft article into a polished, journal-ready submission that meets professional academic standards.\nYou’ll learn how to select the right journal, apply consistent article formatting, structure content effectively, handle citations and references correctly, and prepare figures, tables, and final files for peer review.\nDesigned to reduce desk rejections and review delays, this article provides practical tools, checklists, and formatting workflows that help you present your research with clarity, credibility, and confidence.\nIntroduction\nIn academic publishing, outstanding research is only part of the equation—how you present that research can determine whether your paper advances to peer review or is filtered out early. Effective article formatting signals professionalism, makes your arguments easier to evaluate, and reduces the friction reviewers face when reading and assessing your work.\nWhy formatting matters: acceptance, speed, and credibility\nFormatting isn’t merely cosmetic. It shapes three high-impact outcomes:\nAcceptance likelihood: Submissions that ignore a journal’s formatting rules are often desk-rejected before peer review.\nReview time: A clean, well-structured article reduces reviewer cognitive load, shortening review cycles and speeding decisions.\nPerceived credibility: Consistent, professional presentation builds trust and indicates scholarly rigor.\nContent quality vs. presentation quality\nContent quality = your hypotheses, methods, results, and conclusions. Presentation quality = how those ideas are organized, formatted, and delivered to the reader. Even strong content can be undermined by sloppy formatting; conversely, clear presentation can significantly improve first impressions and make rigorous work easier to assess.\nWhat this guide will help you do\nThis guide provides a compact, step-by-step playbook for preparing an academic article for submission. You’ll learn how to:\nChoose the right target journal and interpret its author guidelines\nSelect the optimal writing environment (Word, LaTeX/Overleaf, Inkwell, or templates)\nFormat headings, citations, tables, and figures to journal standards\nRun a final submission-ready checklist that prevents desk rejection\nStart With Journal Selection (Before You Write a Word)\nMany formatting headaches evaporate if you choose your target journal before you start writing. Each journal enforces different journal submission requirements, citation styles, and file formats—so early selection lets you tailor structure, length, and visuals to the destination, not the other way around.\nWhy formatting decisions depend on the target journal\nA journal’s scope, audience, and technical expectations determine everything from whether you need a structured abstract to which image formats and",
+      "isUserProvided": true,
+      "sourceId": "SRC-9de67e120de4"
+    },
+    {
+      "title": "Oxford English Dictionary",
+      "url": "https://www.oed.com/?tl=true",
+      "canonicalUrl": "https://www.oed.com/",
+      "publisher": "www.oed.com",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "Read our collection of word stories detailing the etymology and semantic development of a wide range of words, including ‘dungarees’, ‘codswallop’, and ‘witch’.",
+        "Access our word lists and commentaries on an array of fascinating topics, from film-based coinages to Tex-Mex terms.",
+        "Explore our World Englishes hub and access our resources on the varieties of English spoken throughout the world by people of diverse cultural backgrounds.",
+        "Here you can find a series of commentaries on the History of English, charting the history of the English language from Old English to the present day."
+      ],
+      "retrievedAt": "2026-10-20T17:24:34.726Z",
+      "content": "Oxford English Dictionary\nSkip to main content\nWord stories\nRead our collection of word stories detailing the etymology and semantic development of a wide range of words, including ‘dungarees’, ‘codswallop’, and ‘witch’.\nWord lists\nAccess our word lists and commentaries on an array of fascinating topics, from film-based coinages to Tex-Mex terms.\nWorld Englishes\nExplore our World Englishes hub and access our resources on the varieties of English spoken throughout the world by people of diverse cultural backgrounds.\nHistory of English\nHere you can find a series of commentaries on the History of English, charting the history of the English language from Old English to the present day.\nSign in\nPersonal account\nAccess or purchase personal subscriptions\nGet our newsletter\nSave searches\nSet display preferences\nSign\nin\nRegister\nInstitutional access\nin through your\ninstitution\nin with\nlibrary\ncard\nusername\n/ password\nRecommend to your librarian\nInstitutional account management\nSign in as administrator on Oxford Academic\nWord of the Day\nSign up to receive the Oxford English Dictionary Word of the Day email every day.\nOur Privacy Policy sets out how Oxford University Press handles your personal information, and your rights to object to your personal information being used for marketing to you or being processed as part of our business activities.\nWe will only use your personal information for providing you with this service.",
+      "isUserProvided": true,
+      "sourceId": "SRC-4bce9b89b35d"
+    },
+    {
+      "title": "Article (publishing) - Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Article_(publishing)",
+      "canonicalUrl": "https://en.wikipedia.org/wiki/Article_(publishing)",
+      "publisher": "en.wikipedia.org",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "| This article has multiple issues. Please help improve it or discuss these issues on the talk page . ( Learn how and when to remove these messages )",
+        "| This article needs more citations . Please help improve this article by adding citations to reliable sources . Unsourced material may be challenged and removed . Find sources: \"Article\" publishing – news · newspapers · books · scholar · JSTOR ( December 2024 ) ( Learn how and when to remove this message )",
+        "| This article's lead section may be too short to adequately summarize the key points . Please consider expanding the lead to provide an accessible overview of all important aspects of the article. ( September 2025 ) ( Learn how and when to remove this message )",
+        "( Learn how and when to remove this message )"
+      ],
+      "retrievedAt": "2026-10-20T17:24:34.541Z",
+      "content": "From Wikipedia, the free encyclopedia\nPublished written work\n| This article has multiple issues. Please help improve it or discuss these issues on the talk page . ( Learn how and when to remove these messages )\n| This article needs more citations . Please help improve this article by adding citations to reliable sources . Unsourced material may be challenged and removed . Find sources: \"Article\" publishing – news · newspapers · books · scholar · JSTOR ( December 2024 ) ( Learn how and when to remove this message )\n|\n| This article's lead section may be too short to adequately summarize the key points . Please consider expanding the lead to provide an accessible overview of all important aspects of the article. ( September 2025 ) ( Learn how and when to remove this message )\n( Learn how and when to remove this message )\nAn article or piece is a written work published in a print or electronic medium for the propagation of information, such as news, research results, academic analysis or debate. Articles are published on paper and digitally.\nNews\nNews · Article ( Headline · Byline · Dateline · Report · Special report · Exclusive · Interview · Column · Editorial · Op-ed ) · Writing style ( Five Ws · Inverted pyramid ) · Index of journalism articles |\nJournalism portal\nCategory: Journalism\nThe front page of The New York Times for August 19, 1918\nA news article discusses current or recent news of either general interest (i.e. daily newspapers ) or of a specific topic (i.e. political or trade news magazines , club newsletters or technology news websites). [ 1 ] [ citation needed ]\nA news article can include accounts of eyewitnesses to the happening event. It can contain photographs, accounts, statistics, graphs, recollections, interviews, polls, debates on the topic, etc. Headlines can be used to focus the reader's attention on a particular (or main) part of the article. The writer can also give facts and detailed information following answers to general questions like who, what, when, where, why and how . [ citation needed ]\nQuoted references can also be helpful. References to people can also be made through the written accounts of interviews and debates confirming the factuality of the writer's information and the reliability of his source. The writer can use redirection to ensure that the reader keeps reading the article and to draw her attention to other articles. For example, phrases like \"Continued on page 3\" redirect the reader to a page where the article is continued. [ citation needed ]\nWhile a good conclusion is an important ingredient for newspaper articles, the immediacy of a deadline environment means that copy editing occasionally takes the form of deleting everything past an arbitrary point in the story corresponding to the dictates of available space on a page. Therefore, newspaper reporters are trained to write in inverted pyramid style, with all the most important information in the first paragraph or two. If the less vital details are",
+      "isUserProvided": true,
+      "sourceId": "SRC-30bc62705d8f"
+    }
+  ],
+  "unresolvedQuestions": [
+    "Exact definition of “article” in Black's Law Dictionary",
+    "Authoritative grammatical definition of “article” (e.g., from Merriam‑Webster or OED)"
+  ],
+  "contradictions": [
+    "The retrieved legal source (lawyersofpakistan.com) conflates \"article\" with \"section\" without providing a clear definition, which may conflict with Black's Law Dictionary's definition.",
+    "The publishing definition from Oxford Learners' Dictionaries describes an article solely as a piece of writing, while Wikipedia’s \"Article (publishing)\" page suggests broader categories (e.g., news, scholarly), indicating a potential inconsistency in scope."
+  ],
+  "completeness": "partial",
+  "limitations": [
+    "7 candidate pages failed or carried no readable text.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 4 of 6 selected sources fit in the synthesis evidence budget.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 9,
+    "failedCount": 7,
+    "rounds": 1,
+    "searches": 5
+  },
+  "archivedAt": "2026-10-20T17:24:42.935Z"
+}

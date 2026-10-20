@@ -1,0 +1,135 @@
+{
+  "id": "2026-10-20T17-41-10-200Z-research-on-super-computer-for-me",
+  "question": "Research on super computer for me",
+  "plan": {
+    "objective": "Provide a concise, up-to-date overview of supercomputers covering definition, architecture, major current systems, primary applications, and emerging trends.",
+    "taskType": "general",
+    "deliverable": "A short research summary (≈500‑800 words) with citations to authoritative sources.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "primary sources (e.g., TOP500 list, DOE/NSF reports)",
+      "official organization publications (e.g., IBM, Cray, NVIDIA)",
+      "peer‑reviewed journals on high‑performance computing",
+      "authoritative textbooks or conference proceedings (e.g., SC Conference)"
+    ],
+    "questions": [
+      "What defines a supercomputer and how does its architecture differ from conventional computers?",
+      "Which systems are currently leading the TOP500 rankings and what are their specifications?",
+      "What are the primary scientific, industrial, and societal applications of today’s supercomputers?",
+      "What technological trends are shaping the next generation of supercomputing (e.g., exascale, quantum‑accelerated, AI integration)?"
+    ],
+    "queries": [
+      "\"definition of supercomputer\"",
+      "\"history of supercomputers\"",
+      "\"TOP500 list 2024\"",
+      "\"applications of supercomputers in science and industry\"",
+      "\"exascale supercomputing future trends\""
+    ],
+    "unresolvedQuestions": [
+      "Exact hardware configurations (CPU/GPU models, core counts, memory sizes) of the current TOP500 leaders",
+      "Quantitative performance metrics (Rmax, Rpeak) for the latest systems"
+    ]
+  },
+  "answer": "Supercomputers are specialized machines built to perform complex calculations at speeds far beyond ordinary computers. [SRC-ac86da72d8c5]\nUnlike typical desktops that rely on a single or few CPUs, a supercomputer integrates **thousands of processors** working in parallel, often combined with accelerators such as GPUs, and is equipped with massive memory and high‑bandwidth interconnect fabrics to move data quickly across nodes. [SRC-ac86da72d8c5]\nThis architecture enables sustained performance measured in petaflops (10¹⁵ FLOPS) or exaflops (10¹⁸ FLOPS), whereas conventional computers handle tasks measured in gigaflops (10⁹ FLOPS) (unverified: no matching retrieved evidence).\n\nThe **TOP500** project tracks the world’s fastest systems by periodically publishing ranked lists (unverified: no matching retrieved evidence).\nThe site maintains a series of lists dating back to 1993 and the most recent release is the **June 2026** edition (unverified: no matching retrieved evidence).\nWhile the exact specifications of the current leaders (e.g., processor type, core count, peak FLOPS) are not detailed in the retrieved pages, the TOP500 rankings remain the authoritative reference for identifying the top‑performing supercomputers worldwide (unverified: no matching retrieved evidence).\n\n**Primary applications** of today’s supercomputers span scientific, industrial, and societal domains (unverified: no matching retrieved evidence).\nThey drive **weather forecasting** and climate modeling, enable large‑scale **scientific research** in physics, chemistry, and biology, and support **cryptography** and national security workloads (unverified: no matching retrieved evidence).\nIn addition, emerging hybrid workflows combine traditional simulation with **artificial‑intelligence (AI) model factories** to accelerate discovery in materials science, drug design, and complex system optimization [SRC-64e2dcb67abf].\n\n**Emerging technological trends** point toward the convergence of exascale performance, AI integration, and quantum acceleration (unverified: no matching retrieved evidence).\nExascale systems—capable of sustaining a quintillion operations per second—are being paired with AI pipelines that train and infer on massive data sets at the same scale (unverified: no matching retrieved evidence).\nA new class of **hybrid HPC‑AI‑quantum platforms** is prototyped in Europe, where CPUs, GPUs, and quantum processors are co‑scheduled to tackle problems such as strongly correlated quantum materials and combinatorial optimization [SRC-64e2dcb67abf].\nThese trends suggest that future supercomputers will be heterogeneous ecosystems, leveraging specialized accelerators, advanced interconnects, and sophisticated software stacks to deliver unprecedented simulation fidelity and decision‑making speed (unverified: no matching retrieved evidence).\n\nIn summary, supercomputers differ from conventional computers through massive parallelism, specialized accelerators, and high‑speed networking. [SRC-ac86da72d8c5]\nThe TOP500 list remains the primary source for current leaders, though detailed specs were not available in the retrieved sources (unverified: no matching retrieved evidence).\nTheir workloads cover climate, scientific research, cryptography, and increasingly AI‑driven discovery, while the next generation is shaped by exascale capability, AI integration, and quantum‑accelerated hybrid architectures (unverified: no matching retrieved evidence).",
+  "followUpQuestions": [
+    "Top supercomputer specifications and performance details",
+    "Implications of quantum‑accelerated HPC for industry"
+  ],
+  "sources": [
+    {
+      "title": "Home - | TOP500",
+      "url": "https://www.top500.org/",
+      "canonicalUrl": "https://www.top500.org/",
+      "publisher": "www.top500.org",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "A look back to supercomputing at the turn of the century",
+        "When I first attended the Supercomputing (SC) conferences back in the early 2000s as an IBMer working in High Performance Computing (HPC), it was obvious this conference was intended for serious computer science researchers and industries singularly focused on pushing the boundaries of computing. Linux was still in its infancy. I vividly remember having to r"
+      ],
+      "retrievedAt": "2026-10-20T17:41:05.458Z",
+      "content": "A look back to supercomputing at the turn of the century\nWhen I first attended the Supercomputing (SC) conferences back in the early 2000s as an IBMer working in High Performance Computing (HPC), it was obvious this conference was intended for serious computer science researchers and industries singularly focused on pushing the boundaries of computing. Linux was still in its infancy. I vividly remember having to re-compile kernels with newly released drivers every time there was a new server that came to market just so I could get the system to PXE boot over the network. But there was one …",
+      "isUserProvided": true,
+      "sourceId": "SRC-f7e7519ee95a"
+    },
+    {
+      "title": "The Future of Compute: Exascale AI Meets Quantum Hybrid Systems | Quantum + AI Insiders",
+      "url": "https://quantumaiinsiders.com/exascale-ai-quantum-hybrid-systems/",
+      "canonicalUrl": "https://quantumaiinsiders.com/exascale-ai-quantum-hybrid-systems/",
+      "publisher": "Commerce & Retail Media Insiders",
+      "publishedAt": "2026-06-22T14:03:50.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "As compute architectures converge, a new class of hybrid systems is emerging that couples exascale high performance computing, AI model factories, and quantum processors. These integrated platforms promise to expand the scale and scope of scientific simulation, optimization, and discovery beyond what any single paradigm can deliver.",
+        "Integrating Power: Exascale AI Factories Meet Quantum",
+        "Hybrid HPC-AI-quantum computing refers to workflows that combine traditional simulation engines, AI training and inference pipelines, and quantum subroutines. Exascale AI factories are large-scale, production-grade stacks for automated model training, validation, deployment, and continuous data ingestion at exaflop-class throughput. In practice, they provide",
+        "Quantum’s Contribution to Advanced Simulations"
+      ],
+      "retrievedAt": "2026-10-20T17:41:05.822Z",
+      "content": "As compute architectures converge, a new class of hybrid systems is emerging that couples exascale high performance computing, AI model factories, and quantum processors. These integrated platforms promise to expand the scale and scope of scientific simulation, optimization, and discovery beyond what any single paradigm can deliver.\nIntegrating Power: Exascale AI Factories Meet Quantum\nHybrid HPC-AI-quantum computing refers to workflows that combine traditional simulation engines, AI training and inference pipelines, and quantum subroutines. Exascale AI factories are large-scale, production-grade stacks for automated model training, validation, deployment, and continuous data ingestion at exaflop-class throughput. In practice, they provide the capacity to run massive ensembles of physics-informed models, surrogate networks, and reinforcement learners that can be paired with quantum processors for select workloads.\nQuantum’s Contribution to Advanced Simulations\nQuantum computing does not replace classical simulation. Instead it offers new algorithmic primitives for problems such as strongly correlated quantum systems, combinatorial optimization, and sampling. When integrated with AI and classical simulators, quantum routines can reduce sample complexity, refine Hamiltonian models, or propose high-quality candidate solutions for further classical refinement. Combined workflows enable tighter uncertainty quantification and faster iteration on models for materials, chemistry, and complex systems.\nGCS and ISC 2026: Pioneering Hybrid Frontiers\nGermany’s Supercomputing Centres play a leading role in prototyping these hybrid stacks, assembling the hardware, middleware, and orchestration needed to co-schedule CPUs, GPUs, and quantum backends. ISC 2026 will showcase practical demonstrations: end-to-end pipelines, porting patterns, and benchmarks that reveal where hybrid approaches deliver measurable advantage for real research problems.\nImplications for Quantum AI and Beyond\nFor the quantum AI community, integrated exascale-AI-quantum systems mean access to production-scale data, robust model factories, and the ability to insert quantum primitives where they yield the greatest marginal gain. Near term impacts include improved surrogate models, accelerated discovery cycles, and new hybrid algorithm patterns. Long term, standardized software stacks and shared benchmarks will determine which scientific domains benefit first and how industrial adoption follows.",
+      "isUserProvided": true,
+      "sourceId": "SRC-64e2dcb67abf"
+    },
+    {
+      "title": "Lists | TOP500",
+      "url": "https://www.top500.org/lists/",
+      "canonicalUrl": "https://www.top500.org/lists/",
+      "publisher": "www.top500.org",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "Call for Participation in the TOP500 / Green500 Lists"
+      ],
+      "retrievedAt": "2026-10-20T17:41:05.525Z",
+      "content": "Lists | TOP500 \n\nHome\n\nLists\n\nTOP500\n\nJune 2026\n\nNovember 2025\n\nJune 2025\n\nNovember 2024\n\nJune 2024\n\nNovember 2023\n\nJune 2023\n\nNovember 2022\n\nPress Release\n\nJune 2022\n\nNovember 2021\n\nJune 2021\n\nNovember 2020\n\nJune 2020\n\nPress Release\n\nNovember 2019\n\nJune 2019\n\nNovember 2018\n\nJune 2018\n\nHighlights - June 2018\n\nNovember 2017\n\nHighlights - November 2017\n\nJune 2017\n\nHighlights - June 2017\n\nNovember 2016\n\nHighlights - November 2016\n\nJune 2016\n\nHighlights - June 2016\n\nNovermber 2015\n\nHighlights - November 2015\n\nJune 2015\n\nHighlights - June 2015\n\nNovember 2014\n\nHighlights - November 2014\n\nJune 2014\n\nHighlights - June 2014\n\nNovember 2013\n\nHighlights - November 2013\n\nJune 2013\n\nHighlights - June 2013\n\nNovember 2012\n\nHighlights - November 2012\n\nJune 2012\n\nHighlights - June 2012\n\nNovember 2011\n\nHighlights - November 2011\n\nJune 2011\n\nHighlights - June 2011\n\nNovember 2010\n\nHighlights - November 2010\n\nJune 2010\n\nHighlights - June 2010\n\nNovember 2009\n\nHighlights - November 2009\n\nJune 2009\n\nHighlights - June 2009\n\nNovember 2008\n\nHighlights - November 2008\n\nJune 2008\n\nHighlights - June 2008\n\nNovember 2007\n\nHighlights - November 2007\n\nJune 2007\n\nHighlights - June 2007\n\nNovember 2006\n\nHighlights - November 2006\n\nJune 2006\n\nHighlights - June 2006\n\nNovember 2005\n\nHighlights - November 2005\n\nJune 2005\n\nHighlights - June 2005\n\nNovember 2004\n\nHighlights - November 2004\n\nJune 2004\n\nNovember 2003\n\nJune 2003\n\nNovember 2002\n\nJune 2002\n\nNovember 2001\n\nJune 2001\n\nNovember 2000\n\nJune 2000\n\nNovember 1999\n\nJune 1999\n\nNovember 1998\n\nJune 1998\n\nNovember 1997\n\nJune 1997\n\nNovember 1996\n\nJune 1996\n\nNovember 1995\n\nJune 1995\n\nNovember 1994\n\nJune 1994\n\nNovember 1993\n\nJune 1993\n\nHPCG\n\nHPCG - June 2026\n\nHPCG - November 2025\n\nHPCG - June 2025\n\nHPCG - November 2024\n\nHPCG - June 2024\n\nHPCG - November 2023\n\nHPCG - June 2023\n\nHPCG - November 2022\n\nHPCG- June 2022\n\nHPCG - November 2021\n\nHPCG - November 2020\n\nHPCG - June 2020\n\nHPCG - November 2019\n\nHPCG - June 2019\n\nHPCG - November 2018\n\nHPCG - June 2018\n\nHPCG - November 2017\n\nHPCG - June 2021\n\nGreen500\n\nJune 2026\n\nNovember 2025\n\nJune 2025\n\nNovember 2024\n\nJune 2024\n\nNovember 2023\n\nJune 2023\n\nNovember 2022\n\nJune 2022\n\nNovember 2021\n\nJune 2021\n\nNovember 2020\n\nJune 2020\n\nNovember 2019\n\nJune 2019\n\nNovember 2018\n\nJune 2018\n\nNovember 2017\n\nJune 2017\n\nNovember 2016\n\nJune 2016\n\nNovember 2015\n\nJune 2015\n\nNovember 2014\n\nJune 2014\n\nNovember 2013\n\nJune 2013\n\nStatistics\n\nSublist Generator\n\nList Statistics\n\nTreemaps\n\nDevelopment over Time\n\nEfficiency, Power, ...\n\nPerformance Development\n\nResources\n\nSubmit Results\n\nTOP500 Certificates\n\nTOP #1 Systems\n\nTimeline\n\nNews\n\nVideos\n\nFrequently Asked Questions\n\nTOP500 Logo Usage\n\nAbout\n\nCall for Participation in the TOP500 / Green500 Lists\n\nIntroduction and Objectives\n\nThe Linpack Benchmark\n\nTOP500 Description\n\nTOP500 Authors\n\nHans Werner Meuer (1936 - 2014†)\n\nErich Strohmaier\n\nJack Dongarra\n\nHorst Simon\n\nMartin Meuer\n\nMEDIA KIT\n\nHome &raquo; \n\nLists \n\nLists\n\nTOP500\n\nTOP500 Lists since 1993\n\nHPCG\n\nHPCG Lists since 2017",
+      "isUserProvided": true,
+      "sourceId": "SRC-327f5589945a"
+    },
+    {
+      "title": "Normal Computer vs. Supercomputer - What's the Difference? | This vs. That",
+      "url": "https://thisvsthat.io/normal-computer-vs-supercomputer",
+      "canonicalUrl": "https://thisvsthat.io/normal-computer-vs-supercomputer",
+      "publisher": "This vs. That",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "A normal computer is a general-purpose device that is designed for everyday tasks such as browsing the internet, word processing, and playing games. It typically has a moderate amount of processing power and memory, and is suitable for most consumer needs. On the other hand, a supercomputer is a highly specialized machine that is designed for performing comp",
+        "Attribute | Normal Computer | Supercomputer |",
+        "One of the most significant differences between a normal computer and a supercomputer is the processing power. Supercomputers are designed to handle complex calculations and data processing at incredibly high speeds. They are equipped with multiple processors working in parallel, allowing them to perform billions of calculations per second. In contrast, norm",
+        "Supercomputers are used for tasks such as weather forecasting, scientific research, and simulations that require massive amounts of computational power. Normal computers, on the other hand, are more suited for everyday tasks such as web browsing, word processing, and email."
+      ],
+      "retrievedAt": "2026-10-20T17:41:05.583Z",
+      "content": "Normal Computer vs. Supercomputer\nWhat's the Difference?\nA normal computer is a general-purpose device that is designed for everyday tasks such as browsing the internet, word processing, and playing games. It typically has a moderate amount of processing power and memory, and is suitable for most consumer needs. On the other hand, a supercomputer is a highly specialized machine that is designed for performing complex calculations and simulations at incredibly high speeds. Supercomputers have thousands of processors and can handle massive amounts of data, making them ideal for tasks such as weather forecasting, scientific research, and cryptography. While a normal computer is sufficient for most people's needs, a supercomputer is necessary for tackling the most demanding computational challenges.\nCopy This URL\nComparison\nAttribute | Normal Computer | Supercomputer |\nProcessing Power | Less | High |\nSpeed | Slower | Faster |\nMemory | Less | More |\nCost | Lower | Higher |\nSize | Smaller | Larger |\nFurther Detail\nProcessing Power\nOne of the most significant differences between a normal computer and a supercomputer is the processing power. Supercomputers are designed to handle complex calculations and data processing at incredibly high speeds. They are equipped with multiple processors working in parallel, allowing them to perform billions of calculations per second. In contrast, normal computers typically have a single processor and are not optimized for high-performance computing tasks.\nSupercomputers are used for tasks such as weather forecasting, scientific research, and simulations that require massive amounts of computational power. Normal computers, on the other hand, are more suited for everyday tasks such as web browsing, word processing, and email.\nMemory and Storage\nSupercomputers also have significantly more memory and storage capacity compared to normal computers. This allows them to process and store large amounts of data efficiently. Supercomputers often have terabytes or even petabytes of RAM, while normal computers typically have only a few gigabytes.\nAdditionally, supercomputers use high-speed storage systems such as solid-state drives (SSDs) or even custom-built storage solutions to ensure fast access to data. Normal computers, on the other hand, usually rely on traditional hard disk drives (HDDs) for storage, which are slower in comparison.\nSpecialized Hardware\nSupercomputers are equipped with specialized hardware components that are designed to maximize performance for specific tasks. This includes custom processors, high-speed interconnects, and accelerators such as GPUs (Graphics Processing Units) or FPGAs (Field-Programmable Gate Arrays). These components are optimized for parallel processing and can significantly speed up computations.\nNormal computers, on the other hand, have more general-purpose hardware that is suitable for a wide range of tasks. While they may have some specialized components such as dedicated graphics car",
+      "isUserProvided": true,
+      "sourceId": "SRC-ac86da72d8c5"
+    }
+  ],
+  "unresolvedQuestions": [
+    "Exact hardware configurations (CPU/GPU models, core counts, memory sizes) of the current TOP500 leaders",
+    "Quantitative performance metrics (Rmax, Rpeak) for the latest systems"
+  ],
+  "contradictions": [],
+  "completeness": "partial",
+  "limitations": [
+    "Web search access was blocked or challenged on 5 of 8 queries.",
+    "8 candidate pages failed or carried no readable text.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 4 of 6 selected sources fit in the synthesis evidence budget.",
+    "The configured search budget of 8 queries was exhausted.",
+    "The configured research round limit of 2 was reached.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 8,
+    "failedCount": 13,
+    "rounds": 2,
+    "searches": 8
+  },
+  "archivedAt": "2026-10-20T17:41:10.201Z"
+}

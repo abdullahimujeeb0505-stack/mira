@@ -1,0 +1,106 @@
+{
+  "id": "2026-10-20T17-30-06-904Z-what-s-education",
+  "question": "What's education",
+  "plan": {
+    "objective": "Provide a clear, concise definition of education, including its core components and commonly accepted scholarly perspectives.",
+    "taskType": "definition",
+    "deliverable": "A summarized definition of education with citations from authoritative sources.",
+    "requiresCurrentInformation": false,
+    "sourcePreferences": [
+      "UNESCO publications on education",
+      "OECD Education reports",
+      "Peer‑reviewed articles in education journals (e.g., Educational Research Review)",
+      "Standard academic textbooks on education theory",
+      "Official government education department definitions"
+    ],
+    "questions": [],
+    "queries": [
+      "\"definition of education\" UNESCO",
+      "\"what is education\" OECD definition",
+      "\"education\" scholarly definition peer‑reviewed",
+      "\"education\" core components academic textbook",
+      "\"education\" official government definition"
+    ],
+    "unresolvedQuestions": []
+  },
+  "answer": "**Definition** [SRC-fcb91dd30cf1]\nEducation is the process of acquiring knowledge, skills, values, and attitudes through various forms of learning. [SRC-fcb91dd30cf1]\nIt includes formal instruction in schools and universities as well as non‑formal and informal learning such as community engagement and self‑directed study. [SRC-fcb91dd30cf1]\n\n**Core Components**\n- **Knowledge and Skills**: Cognitive content and practical abilities that learners develop (unverified: no matching retrieved evidence).\n- **Values and Attitudes**: Norms, ethics, and dispositions shaped through education. [SRC-fcb91dd30cf1]\n- **Learning Contexts**:\n- *Formal*: Structured curricula in early years, schools, higher and further education institutions. [SRC-a890bf972f04]\n - *Non‑formal*: Organized programs outside the formal system (e.g., community courses) (unverified: no matching retrieved evidence).\n- *Informal*: Everyday experiences, self‑directed study, and social interaction (unverified: no matching retrieved evidence).\n\n**Scholarly Perspectives**\nEducation research treats the field as an integration of theory, research, and practice. [SRC-4e601ca72d2b]\nTextbooks such as the *Core Concepts in Higher Education* series emphasize critical inquiry, evidence‑based frameworks, and the need to address systemic challenges, reflecting a scholarly view that education is both a discipline of study and a professional practice. [SRC-4e601ca72d2b]",
+  "followUpQuestions": [
+    "UNESCO’s view of education as a human right",
+    "Differences between formal, non‑formal and informal learning"
+  ],
+  "sources": [
+    {
+      "title": "What is Education? Meaning, Definition.",
+      "url": "https://www.unesco.org/en/query-list/e/education",
+      "canonicalUrl": "https://www.unesco.org/en/query-list/e/education",
+      "publisher": "www.unesco.org",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Education is the process of acquiring knowledge, skills, values, and attitudes through various forms of learning. It encompasses formal instruction in schools and universities, as well as non-formal and informal such as community engagement and self-directed study.",
+        "Education transforms lives and is at the heart of UNESCO’s mission to build peace, eradicate poverty and drive sustainable development. It is a human right for all throughout life. UNESCO provides global and regional leadership in education, strengthens education systems worldwide and responds to contemporary global challenges through education with gender e"
+      ],
+      "retrievedAt": "2026-10-20T17:30:03.251Z",
+      "content": "Education is the process of acquiring knowledge, skills, values, and attitudes through various forms of learning. It encompasses formal instruction in schools and universities, as well as non-formal and informal such as community engagement and self-directed study.\nExplore further with UNESCO arrow_downward\nUNESCO and education\nEducation transforms lives and is at the heart of UNESCO’s mission to build peace, eradicate poverty and drive sustainable development. It is a human right for all throughout life. UNESCO provides global and regional leadership in education, strengthens education systems worldwide and responds to contemporary global challenges through education with gender equality as an underlying principle. Its work encompasses quality educational development from pre-school to higher education and beyond.\nLearn more\nThi/Shutterstock.com",
+      "isUserProvided": true,
+      "sourceId": "SRC-fcb91dd30cf1"
+    },
+    {
+      "title": "Department for Education - GOV.UK",
+      "url": "https://www.gov.uk/government/organisations/department-for-education",
+      "canonicalUrl": "https://www.gov.uk/government/organisations/department-for-education",
+      "publisher": "GOV.UK",
+      "sourceType": "government",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Early years and childcare: guidance for providers",
+        "More enriching activities for hundreds of thousands of children",
+        "More than 400 schools in disadvantaged communities to benefit from £22.5 million investment and tailored support to expand access to enrichment opportunities.",
+        "Breathing space for families as government eases school costs"
+      ],
+      "retrievedAt": "2026-10-20T17:30:03.169Z",
+      "content": "Department for Education\nSchools: statutory guidance\nGet into teaching\nSchool and college performance data\nGet information about schools\nEarly years and childcare: guidance for providers\nFeatured\n5 October 2026 — Press release\nMore enriching activities for hundreds of thousands of children\nMore than 400 schools in disadvantaged communities to benefit from £22.5 million investment and tailored support to expand access to enrichment opportunities.\n1 September 2026 — Press release\nBreathing space for families as government eases school costs\nFamilies to save up to £1,200 a year from free school meals, free breakfast clubs and cheaper uniforms.\n20 August 2026 — Press release\nMaths excellence as thousands achieve high grades at GCSE\nOver 6,000 more students achieve grade 7 and above in maths is largest ever uptick in maths standards.\n12 October 2026 — Guidance\nFunding for books and reading materials for secondary schools\nGuidance setting out information for secondary schools on funding for books and reading materials, as part of the National Year of Reading 2026.\nCampaign\nSpecial educational needs and disability support\nAsk your local authority about an education, health and care (EHC) plan and find out what other support is available.\nBecome a foster carer\nCould you foster? Find out what fostering could look like in your life.\nLatest from the Department for Education\nEnglish Baccalaureate: eligible qualifications\n20 October 2026\nGuidance\nSecondary accountability measures (including Progress 8 and Attainment 8)\nSchool organisation: local-authority-maintained schools\nStatutory guidance\nSee all latest documents\nSubscriptions\nGet emails\nWhat we do\nThe Department for Education is responsible for children’s services and education, including early years, schools, higher and further education policy in England.\nDfE is a ministerial department, supported by 13 agencies and public bodies .\nRead more about what we do\nFollow us\nDocuments\nServices\nSign in to your childcare account\nFind an apprenticeship\nSee all services\nGuidance and regulation\nKeeping children safe in education\n1 September 2026\nEarly years foundation stage (EYFS) statutory framework\nSee all guidance and regulation\nNews and communications\nSkills Minister Jacqui Smith speech at Parliamentary reception for WorldSkills UK\n19 October 2026\nSpeech\nEducation Secretary speech at CST Conference 2026\n15 October 2026\nSee all news and communications\nResearch and statistics\nInitial teacher training: trainee number census - 2026 to 2027\nOfficial statistics announcement\nFurther education workforce in England\nSee all research and statistics\nPolicy papers and consultations\nProposed outline content for T Levels in sport and social care\nConsultation outcome\nSchool exclusion reform\nOpen call for evidence\nSee all policy papers and consultations\nTransparency and freedom of information releases\nAdult skills fund (ASF) postcode files\nTransparency data\nNational Careers Service: course directory\n14 October 2026\nSee all tra",
+      "isUserProvided": true,
+      "sourceId": "SRC-a890bf972f04"
+    },
+    {
+      "title": "Core Concepts in Higher Education - Book Series - Routledge & CRC Press",
+      "url": "https://www.routledge.com/Core-Concepts-in-Higher-Education/book-series/CCHE",
+      "canonicalUrl": "https://www.routledge.com/Core-Concepts-in-Higher-Education/book-series/CCHE",
+      "publisher": "www.routledge.com",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Core Concepts in Higher Education is a textbook series for the education of new professionals, covering the core areas of study in the field of higher education and student affairs. This timely and dependable series provides the necessary tools to ensure practice is informed by theory and research. The books in this series invite students to think critically",
+        "Public Policy and Higher Education Reframing Strategies for Preparation, Access, and College Success",
+        "American Higher Education Issues and Institutions",
+        "Diversity and Inclusion on Campus Supporting Students of Color in Higher Education"
+      ],
+      "retrievedAt": "2026-10-20T17:30:04.498Z",
+      "content": "View All Book Series\nCore Concepts in Higher Education\nAbout the Book Series\nCore Concepts in Higher Education is a textbook series for the education of new professionals, covering the core areas of study in the field of higher education and student affairs. This timely and dependable series provides the necessary tools to ensure practice is informed by theory and research. The books in this series invite students to think critically about the field to discover what has been left out and what needs to be learned, and also provides frameworks and constructs for addressing challenges facing higher education. The Core Concepts in Higher Education series moves thought, action, and scholarship forward by valuing, reconstructing, and building on the foundations of the field. Through a rich combination of research, theory, and practice, this series aims to move the field into a new generation of scholarship to better prepare students for authentic leadership of our colleges, universities, and academic communities.\nSeries Titles\nAuthors\n12 Series Titles\nPer Page\n12\n24\n48\nSort\nPublication Date\nTitle (Asc)\nTitle (Desc)\nInclude Forthcoming Titles\nDisplay\nPublic Policy and Higher Education Reframing Strategies for Preparation, Access, and College Success\n3rd Edition\nOrganizational Theory in Higher Education\nAmerican Higher Education Issues and Institutions\n2nd Edition\nDiversity and Inclusion on Campus Supporting Students of Color in Higher Education\nA People’s History of American Higher Education\n1st Edition\nContemporary Issues in Higher Education\nUnderstanding Community Colleges\nQualitative Inquiry in Higher Education Organization and Policy Research\nLaw and Social Justice in Higher Education\nStudent Development Theory in Higher Education A Social Psychological Approach\nFundraising and Institutional Advancement Theory, Practice, and New Paradigms\nThe History of U.S. Higher Education - Methods for Understanding the Past\nBy Nathan J. Daun-Barnett, Edward P. St. John\nNovember 15, 2024\nPublic Policy and Higher Education, third edition, provides readers with the tools to examine how policies affect students’ access and success in college. Rather than arguing for a single approach, the authors use research-based evidence and consider political and historical values and beliefs to ...\nBy Kathleen Manning\nJune 13, 2024\nThe third edition of Organizational Theory in Higher Education is a comprehensive and accessible treatment of organizational theory and higher education administration. Through her presentation of both traditional and contemporary organizational theories, noted scholar Kathleen Manning offers a ...\nBy John R. Thelin\nDecember 13, 2022\nThe latest book in the Core Concepts in Higher Education series brings to life issues of governance, organization, teaching and learning, student life, faculty, finances, college sports, public policy, fundraising and innovations in higher education today. Written by renowned author John R. Thelin, ...\nBy Rachelle Winkle",
+      "isUserProvided": true,
+      "sourceId": "SRC-4e601ca72d2b"
+    }
+  ],
+  "unresolvedQuestions": [],
+  "contradictions": [],
+  "completeness": "partial",
+  "limitations": [
+    "Web search access was blocked or challenged on 1 of 5 queries.",
+    "11 candidate pages failed or carried no readable text.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 3 of 5 selected sources fit in the synthesis evidence budget.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 5,
+    "failedCount": 12,
+    "rounds": 1,
+    "searches": 5
+  },
+  "archivedAt": "2026-10-20T17:30:06.904Z"
+}

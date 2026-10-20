@@ -1,0 +1,103 @@
+{
+  "id": "2026-10-20T17-29-43-103Z-what-s-evolution",
+  "question": "What's evolution",
+  "plan": {
+    "objective": "Provide a clear, accurate definition of evolution, outlining its core principles such as genetic change over generations and natural selection.",
+    "taskType": "definition",
+    "deliverable": "A concise, well‑sourced summary describing what evolution is, suitable for a general audience.",
+    "requiresCurrentInformation": false,
+    "sourcePreferences": [
+      "Peer‑reviewed biology textbooks (e.g., Campbell Biology, Modern Evolutionary Biology)",
+      "Official publications from reputable scientific bodies (e.g., National Academy of Sciences, American Association for the Advancement of Science)",
+      "Authoritative online resources (e.g., Encyclopedia of Life, Smithsonian National Museum of Natural History, Evolution section of the National Geographic website",
+      "Primary research reviews in evolutionary biology journals (e.g., Evolution, Journal of Evolutionary Biology)"
+    ],
+    "questions": [],
+    "queries": [
+      "\"definition of evolution\" biology",
+      "\"mechanism of evolution\" natural selection genetic drift",
+      "\"evolution overview\" textbook",
+      "\"authoritative definition\" evolution National Academy of Sciences",
+      "\"evolutionary change\" generations genetics"
+    ],
+    "unresolvedQuestions": []
+  },
+  "answer": "Definition of Evolution: [SRC-7877a0768741]\nEvolution is the process by which biological populations undergo changes in their inherited traits over successive generations, driven by the gradual accumulation of genetic variations. [SRC-7877a0768741]\nThese changes can lead to the emergence of new traits or species. [SRC-7877a0768741]\n\nCore Principles: [SRC-7877a0768741]\n- Genetic variation arises through mutation, migration, and other mechanisms and provides the raw material for evolution. [SRC-4a51cb74998c]\n- Natural selection acts on this variation: individuals with traits better suited to their environment tend to survive and reproduce more, making those traits more common in the population. [SRC-7877a0768741]\n- Evolution requires a change in gene (allele) frequencies within a population over time; such changes are heritable and passed to the next generation. [SRC-4a51cb74998c]\n- Other mechanisms, such as genetic drift (random changes in small populations) and gene flow (movement of genes between populations), also contribute to evolutionary change. [SRC-4a51cb74998c]",
+  "followUpQuestions": [
+    "How does natural selection work in detail",
+    "Examples of evolution in real-world species"
+  ],
+  "sources": [
+    {
+      "title": "Evolution - Definition, Types, Advantages, Examples",
+      "url": "https://biologynotesonline.com/evolution-definition-types-advantages-examples/",
+      "canonicalUrl": "https://biologynotesonline.com/evolution-definition-types-advantages-examples/",
+      "publisher": "biologynotesonline.com",
+      "sourceType": "Markdown document",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "converted",
+      "evidenceSnippets": [
+        "title: \"Evolution - Definition, Types, Advantages, Examples\"",
+        "url: https://biologynotesonline.com/evolution-definition-types-advantages-examples/",
+        "Evolution &#8211; Definition, Types, Advantages, Examples",
+        "What is Evolution? Definition of Evolution Evolution is the process by which species change over time through the gradual accumulation of genetic variations, driven by mechanisms like natural selection, genetic drift, and mutation, leading to the development of new traits or species. Evolution Theory The theory of evolution explains how species change over t"
+      ],
+      "retrievedAt": "2026-10-20T17:29:40.193Z",
+      "content": "title: \"Evolution - Definition, Types, Advantages, Examples\"\ndescription: \"Get Free Biology Notes\"\nurl: https://biologynotesonline.com/evolution-definition-types-advantages-examples/\n \nEvolution &#8211; Definition, Types, Advantages, Examples\n\nWhat is Evolution? Definition of Evolution Evolution is the process by which species change over time through the gradual accumulation of genetic variations, driven by mechanisms like natural selection, genetic drift, and mutation, leading to the development of new traits or species. Evolution Theory The theory of evolution explains how species change over time through ... Read more\nWhat is Evolution?\n\n- Evolution is the process by which biological populations undergo changes in their inherited traits over successive generations. These changes, which occur through mechanisms such as natural selection and genetic drift, shape the characteristics of organisms and, over time, can lead to the emergence of new species. The core idea of evolution is that traits beneficial to an organism’s survival in its environment become more common in successive generations, while those less advantageous may decrease or disappear.\n\n- The theory of evolution by natural selection was developed independently by Charles Darwin and Alfred Russel Wallace in the mid-19th century. They proposed that organisms possess variations in traits, and those with traits better suited to the environment are more likely to survive and reproduce. Darwin’s book On the Origin of Species outlined these ideas in detail, emphasizing the role of competition for limited resources in shaping evolutionary outcomes. Key principles of this theory include overproduction of offspring, variation in traits, differential survival and reproduction, and the heritability of advantageous traits.\n\n- While Darwin’s work laid the foundation, modern evolutionary theory incorporates concepts from genetics, especially Mendelian inheritance. The discovery of DNA as the molecule responsible for genetic transmission, coupled with population genetics, allowed for a deeper understanding of how genetic variation is passed down and how evolution operates at the genetic level. Evolutionary changes are driven by several mechanisms, including natural selection, genetic drift, mutation, and gene flow. Together, these processes influence the genetic makeup of populations over time, leading to changes in traits and sometimes the formation of new species.\n\n- The study of evolution has revealed that all life on Earth shares a common ancestor, known as the last universal common ancestor (LUCA), which lived approximately 3.5–3.8 billion years ago. This shared ancestry is supported by both fossil evidence and molecular data. Fossils show a progression from simple, single-celled organisms to more complex multicellular life forms. Evolutionary processes like speciation, where new species form, and anagenesis, the gradual transformation of a single species, are central to understanding the bio",
+      "isUserProvided": true,
+      "sourceId": "SRC-7877a0768741"
+    },
+    {
+      "title": "Mechanisms of Evolution – Environmental Biology",
+      "url": "https://open.lib.umn.edu/environmentalbiology/chapter/mechanisms-of-evolution/",
+      "canonicalUrl": "https://open.lib.umn.edu/environmentalbiology/chapter/mechanisms-of-evolution/",
+      "publisher": "Environmental Biology",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Evolution is the process by which modern organisms have descended from ancient ancestors. Evolution is responsible for both the remarkable similarities we see across all life and the amazing diversity of that life — but exactly how does it work?",
+        "Fundamental to the process is genetic variation upon which selective forces can act in order for evolution to occur. This section examines the mechanisms of evolution focusing on:",
+        "Descent and the genetic differences that are heritable and passed on to the next generation;",
+        "Mutation, migration (gene flow), genetic drift, and natural selection as mechanisms of change;"
+      ],
+      "retrievedAt": "2026-10-20T17:29:40.671Z",
+      "content": "Mechanisms: the processes of evolution\nEvolution is the process by which modern organisms have descended from ancient ancestors. Evolution is responsible for both the remarkable similarities we see across all life and the amazing diversity of that life — but exactly how does it work?\nFundamental to the process is genetic variation upon which selective forces can act in order for evolution to occur. This section examines the mechanisms of evolution focusing on:\nDescent and the genetic differences that are heritable and passed on to the next generation;\nMutation, migration (gene flow), genetic drift, and natural selection as mechanisms of change;\nThe importance of genetic variation;\nThe random nature of genetic drift and the effects of a reduction in genetic variation;\nHow variation, differential reproduction, and heredity result in evolution by natural selection; and\nHow different species can affect each other’s evolution through coevolution.\nDescent with modification\nWe’ve defined evolution as descent with modification from a common ancestor, but exactly what has been modified? Evolution only occurs when there is a change in gene frequency within a population over time. These genetic differences are heritable and can be passed on to the next generation — which is what really matters in evolution: long term change.\nCompare these two examples of change in beetle populations. Which one is an example of evolution?\n1. Beetles on a diet\nImagine a year or two of drought in which there are few plants that these beetles can eat.\nAll the beetles have the same chances of survival and reproduction, but because of food restrictions, the beetles in the population are a little smaller than the preceding generation of beetles.\n2. Beetles of a different color\nMost of the beetles in the population (say 90%) have the genes for bright green coloration and a few of them (10%) have a gene that makes them more brown.\nSome number of generations later, things have changed: brown beetles are more common than they used to be and make up 70% of the population.\nWhich example illustrates descent with modification — a change in gene frequency over time?\nThe difference in weight in example 1 came about because of environmental influences — the low food supply — not because of a change in the frequency of genes. Therefore, example 1 is not evolution. Because the small body size in this population was not genetically determined, this generation of small-bodied beetles will produce beetles that will grow to normal size if they have a normal food supply.\nThe changing color in example 2 is definitely evolution: these two generations of the same population are genetically different. But how did it happen?\nMechanisms of change\nEach of these four processes is a basic mechanism of evolutionary change.\nMutation\nA mutation could cause parents with genes for bright green coloration to have offspring with a gene for brown coloration. That would make genes for brown coloration more frequent ",
+      "isUserProvided": true,
+      "sourceId": "SRC-4a51cb74998c"
+    },
+    {
+      "title": "Evolutionary genetics - Latest research and news | Nature",
+      "url": "https://www.nature.com/subjects/evolutionary-genetics?error=cookies_not_supported&code=291d7f12-d6df-4e1f-9712-70b9ec45a543",
+      "canonicalUrl": "https://www.nature.com/subjects/evolutionary-genetics?error=cookies_not_supported&code=291d7f12-d6df-4e1f-9712-70b9ec45a543",
+      "publisher": "Springer Nature",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "The px1 locus is linked to declining susceptibility to malaria drugs in Uganda",
+        "The emergence and spread of drug resistance threatens progress toward malaria control and elimination. We identified a rapidly spreading haplotype on chromosome 7 of Plasmodium falciparum that contains mutations and deletions in the px1 gene. This genomic locus is strongly associated with reduced susceptibility of P. falciparum to the primary first-line anti"
+      ],
+      "retrievedAt": "2026-10-20T17:29:40.222Z",
+      "content": "The px1 locus is linked to declining susceptibility to malaria drugs in Uganda\nThe emergence and spread of drug resistance threatens progress toward malaria control and elimination. We identified a rapidly spreading haplotype on chromosome 7 of Plasmodium falciparum that contains mutations and deletions in the px1 gene. This genomic locus is strongly associated with reduced susceptibility of P. falciparum to the primary first-line antimalarial drugs lumefantrine and dihydroartemisinin.\nNews & Views 19 Aug 2026\nNature Medicine\nVolume: 32, P: 3148-3149",
+      "isUserProvided": true,
+      "sourceId": "SRC-92c9e2a4f0eb"
+    }
+  ],
+  "unresolvedQuestions": [],
+  "contradictions": [],
+  "completeness": "supported",
+  "limitations": [
+    "10 candidate pages failed or carried no readable text.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 3 of 6 selected sources fit in the synthesis evidence budget."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 6,
+    "failedCount": 10,
+    "rounds": 1,
+    "searches": 5
+  },
+  "archivedAt": "2026-10-20T17:29:43.103Z"
+}

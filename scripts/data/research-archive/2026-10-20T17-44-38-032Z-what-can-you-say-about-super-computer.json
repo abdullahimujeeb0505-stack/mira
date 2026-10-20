@@ -1,0 +1,132 @@
+{
+  "id": "2026-10-20T17-44-38-032Z-what-can-you-say-about-super-computer",
+  "question": "What can you say about super computer",
+  "plan": {
+    "objective": "Provide a concise, up-to-date overview of supercomputers covering definition, architecture, leading systems, common applications, and emerging trends.",
+    "taskType": "general",
+    "deliverable": "A structured summary (≈300‑500 words) with key facts, recent rankings, and notable use cases.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "Official TOP500 list and reports",
+      "Government or agency publications (e.g., DOE, NSF, European HPC initiatives)",
+      "Peer‑reviewed journal articles on HPC architecture and applications",
+      "Authoritative industry white papers (e.g., IBM, Cray, NVIDIA)",
+      "Reputable technology news outlets for recent announcements"
+    ],
+    "questions": [
+      "Are you interested in a specific aspect of supercomputers (e.g., hardware architecture, performance benchmarks, scientific applications, energy efficiency, future exascale plans)?",
+      "Do you need information limited to the most current (2024) top‑ranking systems, or a broader historical perspective as well?"
+    ],
+    "queries": [
+      "TOP500 supercomputer list 2024 performance rankings",
+      "supercomputer architecture overview parallel processing GPU/CPU integration",
+      "scientific and industrial applications of modern supercomputers",
+      "energy efficiency and cooling technologies in exascale supercomputers",
+      "future trends and roadmaps for exascale and post‑exascale computing"
+    ],
+    "unresolvedQuestions": [
+      "Exact CPU/GPU models, interconnect types, and memory hierarchies of the 2024‑2026 top‑ranking supercomputers",
+      "Specific scientific and industrial use cases beyond the general categories mentioned",
+      "Energy‑efficiency metrics (e.g., Green500 rankings) and sustainability technologies in current systems",
+      "Global post‑exascale strategies outside the European SPE project"
+    ]
+  },
+  "answer": "Definition\nSupercomputers are specialized machines built to perform complex calculations at speeds far beyond ordinary computers (unverified: no matching retrieved evidence).\nThey integrate thousands of processors working in parallel, often combined with GPU accelerators, massive memory, and high‑bandwidth interconnect fabrics, delivering sustained performance measured in petaflops or exaflops (unverified: no matching retrieved evidence).\n\nArchitecture [SRC-9d8e50b98de8]\nModern high‑performance systems rely heavily on GPU acceleration. [SRC-9d8e50b98de8]\nGPUs employ stream multiprocessors and SIMD execution models that provide high parallel processing efficiency, while sophisticated interconnect networks and hierarchical memory subsystems move data rapidly across thousands of nodes. [SRC-9d8e50b98de8]\n\nLeading Systems\nThe authoritative ranking of the world’s fastest machines is the TOP500 list (unverified: no matching retrieved evidence).\nThe most recent 67th edition was published on 22 June 2026, continuing the bi‑annual series that tracks performance leaders worldwide (unverified: no matching retrieved evidence).\nSpecific system names and configurations are not detailed in the retrieved sources, but the list serves as the primary reference for identifying top‑ranking supercomputers (unverified: no matching retrieved evidence).\n\nCommon Applications\nCurrent supercomputing workloads increasingly converge HPC with artificial‑intelligence and quantum‑simulation tasks, as highlighted by Europe’s post‑exascale strategy. [SRC-7d37aa64da73]\nGPU‑accelerated platforms are applied to large‑scale climate modeling, molecular‑dynamics simulations, and other data‑intensive scientific and industrial problems (unverified: no matching retrieved evidence).\n\nEmerging Trends\n- **Post‑exascale roadmaps**: Initiatives such as the Strategy for Post Exascale (SPE) aim to shape Europe’s future HPC landscape by integrating AI and quantum computing capabilities. [SRC-7d37aa64da73]\n- **GPU‑centric designs**: Continued focus on GPU acceleration to improve parallel efficiency and address emerging AI workloads (unverified: no matching retrieved evidence).\n- **Rapid hardware turnover**: Frequent updates to the TOP500 list reflect fast‑moving advances in processor, interconnect, and memory technologies (unverified: no matching retrieved evidence).\n\nEnergy‑efficiency considerations and detailed specifications of the current top‑ranking systems are not covered in the available sources (unverified: no matching retrieved evidence).",
+  "followUpQuestions": [
+    "latest TOP500 system details",
+    "post‑exascale roadmap initiatives"
+  ],
+  "sources": [
+    {
+      "title": "Home - | TOP500",
+      "url": "https://www.top500.org/",
+      "canonicalUrl": "https://www.top500.org/",
+      "publisher": "www.top500.org",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "A look back to supercomputing at the turn of the century",
+        "When I first attended the Supercomputing (SC) conferences back in the early 2000s as an IBMer working in High Performance Computing (HPC), it was obvious this conference was intended for serious computer science researchers and industries singularly focused on pushing the boundaries of computing. Linux was still in its infancy. I vividly remember having to r"
+      ],
+      "retrievedAt": "2026-10-20T17:44:31.878Z",
+      "content": "A look back to supercomputing at the turn of the century\nWhen I first attended the Supercomputing (SC) conferences back in the early 2000s as an IBMer working in High Performance Computing (HPC), it was obvious this conference was intended for serious computer science researchers and industries singularly focused on pushing the boundaries of computing. Linux was still in its infancy. I vividly remember having to re-compile kernels with newly released drivers every time there was a new server that came to market just so I could get the system to PXE boot over the network. But there was one …",
+      "isUserProvided": true,
+      "sourceId": "SRC-f7e7519ee95a"
+    },
+    {
+      "title": "SPE | Strategy for Post Exascale",
+      "url": "https://spe-project.eu/",
+      "canonicalUrl": "https://spe-project.eu/",
+      "publisher": "spe-project.eu",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Shaping Europe’s future at the convergence of HPC, AI and Quantum Computing",
+        "The Strategy for Post Exascale (SPE) project addresses one of Europe’s most pressing technological challenges: preparing for the convergence of High-Performance Computing (HPC), Artificial Intelligence (AI), and Quantum Computing and Simulation (QCS) in the post-Exascale era.",
+        "SPE’s ambition is to develop a dynamic, forward-looking European roadmap that anticipates technological shifts, integrates emerging ideas, and strengthens Europe’s global leadership in advanced computing.",
+        "Connecting Europe’s post-Exascale strategy with the world, interview with Bernd"
+      ],
+      "retrievedAt": "2026-10-20T17:44:32.504Z",
+      "content": "Strategy for Post Exascale\nAbout SPE\nShaping Europe’s future at the convergence of HPC, AI and Quantum Computing\nThe Strategy for Post Exascale (SPE) project addresses one of Europe’s most pressing technological challenges: preparing for the convergence of High-Performance Computing (HPC), Artificial Intelligence (AI), and Quantum Computing and Simulation (QCS) in the post-Exascale era.\nSPE’s ambition is to develop a dynamic, forward-looking European roadmap that anticipates technological shifts, integrates emerging ideas, and strengthens Europe’s global leadership in advanced computing.\nKnow More\nNews\nInsights, Updates, Stories\nConnecting Europe’s post-Exascale strategy with the world, interview with Bernd\nOct 6, 2026\nInterview with Bernd Mohr Connecting Europe’s post-Exascale strategy with the worldEurope cannot develop a post-Exascale strategy based solely on...",
+      "isUserProvided": true,
+      "sourceId": "SRC-7d37aa64da73"
+    },
+    {
+      "title": "TOP500 | TOP500",
+      "url": "https://www.top500.org/lists/top500/",
+      "canonicalUrl": "https://www.top500.org/lists/top500/",
+      "publisher": "www.top500.org",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [],
+      "retrievedAt": "2026-10-20T17:44:32.309Z",
+      "content": "TOP500 | TOP500\nTOP500\nJune 2026\nThe\n67th TOP500 List\nwas published June 22, 2026\nin Hamburg, Germany.\nNovember 2025\n66th TOP500 List\nwas published Nov. 18, 2025\nin St. Louis, MO.\nJune 2025\n65th TOP500 List\nwas published June 14, 2025\nin Hamburg.\nNovember 2024\n64th TOP500 List\nwas published Nov. 19, 2024\nin Atlanta, GA.\nJune 2024\n63rd TOP500 List\nwas published June 1, 2024\nNovember 2023\n62nd TOP500 List\nwas published Nov. 14, 2023\nin Denver, CO.\nJune 2023\n61st TOP500 List\nwas published June 1, 2023\nNovember 2022\n60th TOP500 List\nwas published Nov. 15, 2022\nin Dallas, TX.\nJune 2022\n59th TOP500 List\nwas published June 1, 2022\nNovember 2021\n58th TOP500 List\nwas published Nov. 16, 2021\nJune 2021\n57th TOP500 List\nwas published June 28, 2021\nin Virtual.\nNovember 2020\n56th TOP500 List\nwas published Nov. 16, 2020\nJune 2020\n55th TOP500 List\nwas published June 22, 2020\nin Frankfurt, Germany.\nNovember 2019\n54th TOP500 List\nwas published Nov. 18, 2019\nJune 2019\n53rd TOP500 List\nwas published June 18, 2019\nNovember 2018\n52nd TOP500 List\nwas published Nov. 13, 2018\nJune 2018\n51st TOP500 List\nwas published June 25, 2018\nNovember 2017\n50th TOP500 List\nwas published Nov. 14, 2017\nJune 2017\n49th TOP500 List\nwas published June 20, 2017\nNovember 2016\n48th TOP500 List\nwas published Nov. 13, 2016\nin Salt Lake City, Utah.\nJune 2016\n47th TOP500 List\nwas published June 20, 2016\nNovember 2015\n46th TOP500 List\nwas published Nov. 17, 2015\nin Austin, TX.\nJune 2015\n45th TOP500 List\nwas published June 14, 2015\nNovember 2014\n44th TOP500 List\nwas published Nov. 18, 2014\nin New Orleans, LA.\nJune 2014\n43rd TOP500 List\nwas published June 23, 2014\nin Leipzig, Germany.\nNovember 2013\n42nd TOP500 List\nwas published Nov. 17, 2013\nJune 2013\n41st TOP500 List\nwas published June 17, 2013\nNovember 2012\n40th TOP500 List\nwas published Nov. 13, 2012\nJune 2012\n39th TOP500 List\nwas published June 18, 2012\nNovember 2011\n38th TOP500 List\nwas published Nov. 13, 2011\nin Seattle, WA.\nJune 2011\n37th TOP500 List\nwas published June 20, 2011\nNovember 2010\n36th TOP500 List\nwas published Nov. 16, 2010\nJune 2010\n35th TOP500 List\nwas published June 1, 2010\nNovember 2009\n34th TOP500 List\nwas published Nov. 16, 2009\nin Portland, Oregon.\nJune 2009\n33rd TOP500 List\nwas published June 23, 2009\nNovember 2008\n32nd TOP500 List\nwas published Nov. 18, 2008\nJune 2008\n31st TOP500 List\nwas published June 18, 2008\nin Dresden, Germany.\nNovember 2007\n30th TOP500 List\nwas published Nov. 20, 2007\nin Reno, Nevada.\nJune 2007\n29th TOP500 List\nwas published June 27, 2007\nNovember 2006\n28th TOP500 List\nwas published Nov. 15, 2006\nin Tampa, FL.\nJune 2006\n27th TOP500 List\nwas published June 27, 2006\nNovember 2005\n26th TOP500 List\nwas published Nov. 16, 2005\nJune 2005\n25th TOP500 List\nwas published June 22, 2005\nin Heidelberg, Germany.\nNovember 2004\n24th TOP500 List\nwas published Nov. 8, 2004\nin Pittsburgh, PA.\nJune 2004\n23rd TOP500 List\nwas published June 22, 2004\nNovember 2003\n22nd TOP500 List\nwas published Nov. 15, 2003\nin Phoenix,",
+      "isUserProvided": true,
+      "sourceId": "SRC-3ab953921d0e"
+    },
+    {
+      "title": "Architecture and parallel processing efficiency of GPU-accelerated supercomputers — Visual Explainer | Vectree",
+      "url": "https://vectree.io/c/supercomputer-hardware-architecture",
+      "canonicalUrl": "https://vectree.io/c/supercomputer-hardware-architecture",
+      "publisher": "vectree.io",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Architecture and parallel processing efficiency of GPU-accelerated supercomputers",
+        "Concepts semantically related to this schematic",
+        "Hardware architecture and warp scheduling in modern GPU processing units",
+        "Compare with Hardware architecture and warp scheduling in modern GPU processing units ?"
+      ],
+      "retrievedAt": "2026-10-20T17:44:31.812Z",
+      "content": "ETH Zurich\nArchitecture and parallel processing efficiency of GPU-accelerated supercomputers\nRead\nKeys\nQuiz\nDownload\nCopy\nShare\nEmbed\nPresent\nExit\nOne quick check that you're human\nThen the diagram answers.\nReset view\nClick any part of the diagram to read it, or\nask it a question\n/\nExplore Next\nConcepts semantically related to this schematic\nHardware architecture and warp scheduling in modern GPU processing units\nCompare with Hardware architecture and warp scheduling in modern GPU processing units ?\nCompare\nSupercomputing architectures and parallel processing techniques for numerical climate models.\nCompare with Supercomputing architectures and parallel processing techniques for numerical climate models. ?\nArchitecture of GPU stream multiprocessors and SIMD (Single Instruction, Multiple Data) execution models.\nCompare with Architecture of GPU stream multiprocessors and SIMD (Single Instruction, Multiple Data) execution models. ?\nParallel Computing\nCompare with Parallel Computing ?\nArchitecture of GPU acceleration in molecular dynamics simulations\nCompare with Architecture of GPU acceleration in molecular dynamics simulations ?\nHardware acceleration of 4x4 matrix multiplication in modern GPU pipelines\nCompare with Hardware acceleration of 4x4 matrix multiplication in modern GPU pipelines ?\nSelect a node above to explore its details\nExplore more →\nCite this diagram\nVectree. (2026). Architecture and parallel processing efficiency of GPU-accelerated supercomputers [Diagram]. Retrieved October 20, 2026, from https://vectree.io/c/supercomputer-hardware-architecture\nFree to use with attribution.\nDetails\nTap any part of the diagram to read it, or\nSend feedback\nExplore Architecture and parallel processing efficiency of GPU-accelerated supercomputers through an interactive visual diagram. Dive into Interconnect Fabric,\nKnowledge Graph Components\nInterconnect Fabric\nThe Interconnect Fabric is the ‘nervous system’ of a supercomputer. It links thousands of individual compute nodes into a cohesive unit. Modern supercomputers utilize technologies like InfiniBand or Cray Slingshot to achieve sub-microsecond latency and hundreds of gigabits per second in bandwidth. Efficiency here is dictated by network topology (e.g., DragonFly, Fat-Tree) which minimizes the ‘hops’ data must take between distant nodes.\nWithout a high-performance interconnect, the parallel processing power of individual GPUs would be wasted as they would spend most of their time waiting for data from other parts of the cluster, a phenomenon known as ‘communication overhead.’\nRelated Topic:\nNetwork Topology Optimization (Not yet mapped)\nCompute Node\nA Compute Node is the basic building block of a supercomputer rack. It typically consists of one or two high-core-count CPUs and multiple accelerators, usually 4 to 8 GPUs. The CPU acts as the conductor, managing I/O, OS tasks, and feeding data to the GPUs.\nThe efficiency of a compute node depends heavily on the ‘Host-to-Device’ bandwidth. Liquid cooli",
+      "isUserProvided": true,
+      "sourceId": "SRC-9d8e50b98de8"
+    }
+  ],
+  "unresolvedQuestions": [
+    "Exact CPU/GPU models, interconnect types, and memory hierarchies of the 2024‑2026 top‑ranking supercomputers",
+    "Specific scientific and industrial use cases beyond the general categories mentioned",
+    "Energy‑efficiency metrics (e.g., Green500 rankings) and sustainability technologies in current systems",
+    "Global post‑exascale strategies outside the European SPE project"
+  ],
+  "contradictions": [],
+  "completeness": "partial",
+  "limitations": [
+    "10 candidate pages failed or carried no readable text.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 4 of 6 selected sources fit in the synthesis evidence budget.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 6,
+    "failedCount": 10,
+    "rounds": 1,
+    "searches": 5
+  },
+  "archivedAt": "2026-10-20T17:44:38.041Z"
+}

@@ -1,0 +1,48 @@
+{
+  "id": "2026-10-20T17-46-50-714Z-research-on-computer",
+  "question": "Research on computer",
+  "plan": {
+    "objective": "Provide a concise, source‑grounded overview of computers, covering their definition, core components, major historical milestones, primary types, and notable recent developments.",
+    "taskType": "general",
+    "deliverable": "A brief, well‑structured summary with citations to authoritative sources.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "primary",
+      "authoritative",
+      "peer‑reviewed",
+      "official"
+    ],
+    "questions": [
+      "Research on computer"
+    ],
+    "queries": [
+      "computer definition site:ieee.org",
+      "history of computers overview site:wikipedia.org",
+      "computer components architecture article site:acm.org",
+      "types of computers personal server supercomputer site:cs.stanford.edu",
+      "latest trends in computer technology 2024 site:techcrunch.com"
+    ],
+    "unresolvedQuestions": [
+      "Research on computer"
+    ]
+  },
+  "answer": "I could not retrieve any readable web sources for this question, so I can't provide a source-grounded answer yet.\n\n- Web search access was blocked or challenged on every query, so no additional sources could be discovered. This can happen when a search provider refuses traffic from a cloud-hosted environment.\n- Search backend diagnostics: DuckDuckGo HTML blocked access: Web search endpoint denied access with HTTP 403. DuckDuckGo Lite blocked access: Web search endpoint denied access with HTTP 403.\n\nIf you have a specific page in mind, send its URL and I will read it directly.",
+  "followUpQuestions": [],
+  "sources": [],
+  "unresolvedQuestions": [
+    "Research on computer"
+  ],
+  "contradictions": [],
+  "completeness": "insufficient",
+  "limitations": [
+    "Web search access was blocked or challenged on 5 of 5 queries."
+  ],
+  "retrieval": {
+    "candidateCount": 0,
+    "retrievedCount": 0,
+    "failedCount": 5,
+    "rounds": 1,
+    "searches": 5
+  },
+  "archivedAt": "2026-10-20T17:46:50.715Z"
+}

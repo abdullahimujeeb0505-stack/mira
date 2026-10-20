@@ -1,0 +1,140 @@
+{
+  "id": "2026-10-20T17-54-53-993Z-research-on-super-intelligence",
+  "question": "Research on super intelligence",
+  "plan": {
+    "objective": "Compile a concise, source‑grounded overview of the current state of research on superintelligence, covering definitions, theoretical frameworks, safety and alignment challenges, and recent empirical or conceptual advances.",
+    "taskType": "scientific",
+    "deliverable": "A structured report (approx. 800‑1200 words) summarizing key findings, major research themes, and notable recent works on superintelligence, with inline citations and a bibliography of primary, peer‑reviewed, or official sources.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "peer‑reviewed journal articles",
+      "conference proceedings from major AI venues (e.g., NeurIPS, ICML, AAAI, IJCAI)",
+      "books and monographs by recognized experts (e.g., Nick Bostrom, Stuart Russell)",
+      "white papers or policy briefs from reputable institutions (e.g., OpenAI, DeepMind, Future of Humanity Institute, OECD)",
+      "government or intergovernmental reports on AI risk and governance"
+    ],
+    "questions": [
+      "Research on super intelligence"
+    ],
+    "queries": [
+      "superintelligence AI literature review 2023 site:arxiv.org",
+      "\"superintelligence\" safety and alignment recent papers",
+      "\"Nick Bostrom\" superintelligence PDF",
+      "AI alignment conference proceedings 2022-2024 superintelligence",
+      "government policy report superintelligence artificial intelligence"
+    ],
+    "unresolvedQuestions": [
+      "What are the most widely accepted formal definitions of superintelligence used by researchers?",
+      "Which theoretical frameworks beyond scalable oversight and the five‑property checklist dominate current research?",
+      "What concrete empirical work has been done to assess or benchmark superhuman AI performance beyond current LLMs?",
+      "What recent (2025‑2026) alignment methods have been proposed or tested for AI systems operating at superhuman levels?",
+      "Are there any consensus governance recommendations specifically addressing the transition to superintelligence?"
+    ]
+  },
+  "answer": "### Definitions\n- **Artificial Superintelligence (ASI)** is described as a *hypothetical* AI system that surpasses human intelligence across most domains, a concept that is currently far beyond existing AI capabilities[SRC-d5f59b2eac6d].\nThe same source defines **superalignment** as the process of supervising, controlling, and governing such an ASI[SRC-d5f59b2eac6d].\n- An alternative, more operational framing comes from Dario Amodei, who outlines five *enabling properties* that a system would need to exhibit to be considered a superintelligence: (1) smarter than top humans across most domains, (2) autonomous long‑horizon action, (3) use of digital tools, (4) coordination of many copies, and (5) operation at much higher speed than humans[SRC-e8c65cd49f53].\n\n### Theoretical Frameworks\n- The arXiv survey organizes the alignment problem around **scalable oversight paradigms**: *Sandwiching* (human oversight of AI‑generated sub‑tasks), *Self‑Enhancement* (AI improving its own oversight mechanisms), and *Weak‑to‑Strong Generalization* (leveraging simpler tasks to supervise more complex ones) (unverified: no matching retrieved evidence).\n- Amodei’s checklist serves as a pragmatic framework for assessing progress toward ASI, emphasizing hardware speed, tool use, and multi‑agent coordination as concrete milestones (unverified: no matching retrieved evidence).\n\n### Safety and Alignment Challenges\n- The survey highlights **limitations** of current oversight paradigms, noting both *possibility* and *impossibility* results that expose gaps in reliably supervising increasingly capable agents[SRC-d5f59b2eac6d].\n- Specific obstacles identified by Amodei include achieving properties #1 (superhuman performance), #2 (autonomous long‑horizon action), and #4 (coordination of many copies) (unverified: no matching retrieved evidence).\nThe essay also points out that discussions often omit challenges such as **robust generalization, abstraction, and world‑model development** (unverified: no matching retrieved evidence).\n- Governance considerations are framed as a blend of *technical alignment work*, *pragmatic regulation*, *geopolitical realism*, and *economic adaptation*—but the source does not present a unified policy consensus[SRC-e8c65cd49f53].\n\n### Recent Empirical / Conceptual Advances (2025‑2026)\n- The survey (updated June 2026) reviews recent work on **scalable oversight**, presenting the three paradigms above as the leading conceptual advances for supervising future ASI systems (unverified: no matching retrieved evidence).\n- The RSA article notes that **higher‑speed operation** (#5) is already observed in certain domains (e.g., real‑time learning), and that **digital‑tool use** (#3) is “well in progress,” indicating concrete empirical progress on two of the five properties (unverified: no matching retrieved evidence).\n\n### Governance & Policy Outlook\n- Amodei’s essay argues that the next few years constitute a “civilizational test,” calling for coordinated regulatory and geopolitical responses, but it stops short of enumerating specific, widely‑accepted policy proposals (unverified: no matching retrieved evidence).\n\n### Timeline Perspectives\n- The survey treats ASI as a *far‑future* hypothetical, emphasizing its distance from current systems[SRC-d5f59b2eac6d].\n- In contrast, the RSA checklist suggests that several enabling properties are already materializing, implying a **more near‑term trajectory** for superintelligence development (unverified: no matching retrieved evidence).\n\nOverall, the available evidence outlines a landscape where **formal definitions** and **theoretical frameworks** are emerging (scalable oversight, five‑property checklist), **alignment challenges** remain substantial, and **empirical progress** is limited to speed and tool‑use advantages (unverified: no matching retrieved evidence).\nGovernance discussions are present but lack a consensus roadmap (unverified: no matching retrieved evidence).",
+  "followUpQuestions": [
+    "What concrete benchmarks exist for measuring superhuman AI performance?",
+    "How are recent alignment methods (e.g., AI‑driven debate, interpretability tools) evaluated for ASI‑scale systems?"
+  ],
+  "sources": [
+    {
+      "title": "[2412.16468] The Road to Artificial SuperIntelligence: A Comprehensive Survey of Superalignment",
+      "url": "https://arxiv.org/abs/2412.16468",
+      "canonicalUrl": "https://arxiv.org/abs/2412.16468",
+      "publisher": "arXiv.org",
+      "sourceType": "research",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "[Submitted on 21 Dec 2024 ( v1 ), last revised 17 Jun 2026 (this version, v4)]",
+        "Title: The Road to Artificial SuperIntelligence: A Comprehensive Survey of Superalignment",
+        "Authors: HyunJin Kim , DongHyun Ryu , Xiaoyuan Yi , Jing Yao , Jianxun Lian , Muhua Huang , Shitong Duan , JinYeong Bak , Xing Xie",
+        "View a PDF of the paper titled The Road to Artificial SuperIntelligence: A Comprehensive Survey of Superalignment, by HyunJin Kim and 8 other authors"
+      ],
+      "retrievedAt": "2026-10-20T17:54:46.233Z",
+      "content": "[Submitted on 21 Dec 2024 ( v1 ), last revised 17 Jun 2026 (this version, v4)]\nTitle: The Road to Artificial SuperIntelligence: A Comprehensive Survey of Superalignment\nAuthors: HyunJin Kim , DongHyun Ryu , Xiaoyuan Yi , Jing Yao , Jianxun Lian , Muhua Huang , Shitong Duan , JinYeong Bak , Xing Xie\nView a PDF of the paper titled The Road to Artificial SuperIntelligence: A Comprehensive Survey of Superalignment, by HyunJin Kim and 8 other authors\nView PDF\nHTML (experimental)\nAbstract: The emergence of large language models (LLMs) has sparked discussion on Artificial Superintelligence (ASI), a hypothetical AI system that surpasses human intelligence. Although ASI remains hypothetical and far beyond current AI capabilities, discussing its potential and exploring its feasibility and potential risks is critical for the development of future AI systems. The idea of superalignment originates from scalable oversight, which studies how to supervise increasingly capable AI systems when direct human supervision becomes insufficient. In this paper, we focus on the superalignment problem: \"The process of supervising, controlling, and governing artificial superintelligence.\" We first review scalable oversight paradigms-Sandwiching, Self-Enhancement, and Weak-to-Strong Generalization -- then analyze the limitations of current paradigms through the lens of possibility and impossibility, discuss key challenges, and propose pathways for the safe and continual improvement of future AI systems.\nComments: |\n24 pages |\nSubjects: |\nMachine Learning (cs.LG) |\nCite as: |\narXiv:2412.16468 [cs.LG] |\n|\n(or\narXiv:2412.16468v4 [cs.LG] for this version)\nhttps://doi.org/10.48550/arXiv.2412.16468\nFocus to learn more\narXiv-issued DOI via DataCite\nSubmission history\nFrom: HyunJin Kim Mr [ view email ] [v1]\nSat, 21 Dec 2024 03:51:04 UTC (2,993 KB)\n[v2]\nTue, 24 Dec 2024 05:54:15 UTC (2,993 KB)\n[v3]\nWed, 25 Dec 2024 07:10:21 UTC (2,994 KB)\n[v4]\nWed, 17 Jun 2026 06:47:51 UTC (237 KB)\nFull-text links:\nAccess Paper:\nTeX Source\nview license\nAdditional Features\nAudio Summary\nCurrent browse context:\ncs.LG\n< prev\nnext >\nnew\nrecent\n| 2024-12\nChange to browse by:\ncs\nReferences & Citations\nSciX\nGoogle Scholar\nSemantic Scholar\nexport BibTeX citation\nLoading...\nBibTeX formatted citation\n&times;\nData provided by:\nBookmark\nBibliographic Tools\nBibliographic and Citation Tools\nBibliographic Explorer Toggle\nBibliographic Explorer ( What is the Explorer? )\nConnected Papers Toggle\nConnected Papers ( What is Connected Papers? )\nLitmaps Toggle\nLitmaps ( What is Litmaps? )\nscite.ai Toggle\nscite Smart Citations ( What are Smart Citations? )\nCode, Data, Media\nCode, Data and Media Associated with this Article\nalphaXiv Toggle\nalphaXiv ( What is alphaXiv? )\nLinks to Code Toggle\nCatalyzeX Code Finder for Papers ( What is CatalyzeX? )\nDagsHub Toggle\nDagsHub ( What is DagsHub? )\nGotitPub Toggle\nGotit.pub ( What is GotitPub? )\nHuggingface Toggle\nHugging Face ( What is Huggingface? )\nScienceCast Toggle\nScienceCast ",
+      "isUserProvided": true,
+      "sourceId": "SRC-d5f59b2eac6d"
+    },
+    {
+      "title": "SuperIntelligence - Robotics - Safety & Alignment",
+      "url": "https://s-rsa.com/index.php/agi",
+      "canonicalUrl": "https://s-rsa.com/index.php/agi",
+      "publisher": "s-rsa.com",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Dario Amodei, The Adolescence of Technology: Confronting and Overcoming the Risks of Powerful AI",
+        "Anthropic CEO Dario Amodei envisions a 'country of geniuses in a datacenter' with these five enabling properties:1) smarter than top humans across most domains, 2) able to act autonomously over long horizons, 3) use digital tools, 4) coordinate many copies, and 5) operate at much higher speed than humans. You could use these as a checlist to develop such a s"
+      ],
+      "retrievedAt": "2026-10-20T17:54:47.168Z",
+      "content": "Dario Amodei, The Adolescence of Technology: Confronting and Overcoming the Risks of Powerful AI\n5 May 2026\nAnthropic CEO Dario Amodei envisions a 'country of geniuses in a datacenter' with these five enabling properties:1) smarter than top humans across most domains, 2) able to act autonomously over long horizons, 3) use digital tools, 4) coordinate many copies, and 5) operate at much higher speed than humans. You could use these as a checlist to develop such a system, as Anthropic probably does. #5 is true in some domains (real-time learning being a counter-example), #3 is well in progress, and #1, #2, and #4 are still significant obstacles. He does not mention, e.g., robust generalization, abstraction, and world models. The essay discusses risks, governance, and economic implications. The essay’s overall thesis is: AI’s upside remains enormous, but humanity must treat the next few years as a civilizational test requiring technical alignment work, pragmatic regulation, geopolitical realism, economic adaptation, and moral seriousness.",
+      "isUserProvided": true,
+      "sourceId": "SRC-e8c65cd49f53"
+    },
+    {
+      "title": "Ads By Microsoft on DuckDuckGo Private Search - DuckDuckGo Help Pages",
+      "url": "https://duckduckgo.com/duckduckgo-help-pages/company/ads-by-microsoft-on-duckduckgo-private-search",
+      "canonicalUrl": "https://duckduckgo.com/duckduckgo-help-pages/company/ads-by-microsoft-on-duckduckgo-private-search",
+      "publisher": "duckduckgo.com",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Ads By Microsoft on DuckDuckGo Private Search",
+        "Viewing ads is privacy protected by DuckDuckGo",
+        "We partner with many different information sources to deliver DuckDuckGo Search (e.g., Microsoft for ads, Apple for maps, etc.). When you view search results (including ads), your searches cannot be tied back to you, either by us or our partners. How this works technically is we do not store any personal identifiers (e.g., IP address) with your search terms,",
+        "When you leave our site, you are subject to other sites' policies, including their data collection practices. For ads from Microsoft, you also pass through Microsoft Advertising's platform."
+      ],
+      "retrievedAt": "2026-10-20T17:54:46.836Z",
+      "content": "Ads By Microsoft on DuckDuckGo Private Search\nViewing ads is privacy protected by DuckDuckGo\nWe partner with many different information sources to deliver DuckDuckGo Search (e.g., Microsoft for ads, Apple for maps, etc.). When you view search results (including ads), your searches cannot be tied back to you, either by us or our partners. How this works technically is we do not store any personal identifiers (e.g., IP address) with your search terms, and we also proxy all requests to partners through us.\nWhen you leave our site, you are subject to other sites' policies, including their data collection practices. For ads from Microsoft, you also pass through Microsoft Advertising's platform.\nFor more info, check out the DuckDuckGo privacy policy .\nAd clicks are managed by Microsoft's ad network\nMicrosoft and DuckDuckGo have partnered to provide a search solution that delivers relevant advertisements to you while protecting your privacy. If you click on a Microsoft-provided ad, you will be redirected to the advertiser's landing page through Microsoft Advertising's platform. At that point, Microsoft Advertising will use your full IP address and user-agent string so that it can properly process the ad click and charge the advertiser.\nOther search engines associate your ad-click behavior with a profile on you, which can be used later to target ads to you on that search engine or around the Internet. By contrast, when you click on a Microsoft-provided ad that appears on DuckDuckGo, Microsoft Advertising does not associate your ad-click behavior with a user profile. It also does not store or share that information other than for accounting purposes.\nFor more info, check out the Microsoft privacy policy .\nThis page is composed by DuckDuckGo and Microsoft.",
+      "isUserProvided": true,
+      "sourceId": "SRC-eeee1a0b6dcb"
+    },
+    {
+      "title": "Archives | SuperIntelligence - Robotics - Safety & Alignment",
+      "url": "https://s-rsa.com/index.php/agi/issue/archive",
+      "canonicalUrl": "https://s-rsa.com/index.php/agi/issue/archive",
+      "publisher": "s-rsa.com",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Dario Amodei, The Adolescence of Technology: Confronting and Overcoming the Risks of Powerful AI",
+        "Anthropic CEO Dario Amodei envisions a 'country of geniuses in a datacenter' with these five enabling properties:1) smarter than top humans across most domains, 2) able to act autonomously over long horizons, 3) use digital tools, 4) coordinate many copies, and 5) operate at much higher speed than humans. You could use these as a checlist to develop such a s"
+      ],
+      "retrievedAt": "2026-10-20T17:54:46.795Z",
+      "content": "Dario Amodei, The Adolescence of Technology: Confronting and Overcoming the Risks of Powerful AI\n5 May 2026\nAnthropic CEO Dario Amodei envisions a 'country of geniuses in a datacenter' with these five enabling properties:1) smarter than top humans across most domains, 2) able to act autonomously over long horizons, 3) use digital tools, 4) coordinate many copies, and 5) operate at much higher speed than humans. You could use these as a checlist to develop such a system, as Anthropic probably does. #5 is true in some domains (real-time learning being a counter-example), #3 is well in progress, and #1, #2, and #4 are still significant obstacles. He does not mention, e.g., robust generalization, abstraction, and world models. The essay discusses risks, governance, and economic implications. The essay’s overall thesis is: AI’s upside remains enormous, but humanity must treat the next few years as a civilizational test requiring technical alignment work, pragmatic regulation, geopolitical realism, economic adaptation, and moral seriousness.",
+      "isUserProvided": true,
+      "sourceId": "SRC-8378c32a5896"
+    }
+  ],
+  "unresolvedQuestions": [
+    "What are the most widely accepted formal definitions of superintelligence used by researchers?",
+    "Which theoretical frameworks beyond scalable oversight and the five‑property checklist dominate current research?",
+    "What concrete empirical work has been done to assess or benchmark superhuman AI performance beyond current LLMs?",
+    "What recent (2025‑2026) alignment methods have been proposed or tested for AI systems operating at superhuman levels?",
+    "Are there any consensus governance recommendations specifically addressing the transition to superintelligence?"
+  ],
+  "contradictions": [
+    "The arXiv survey (2024‑2026) describes ASI as a far‑future hypothetical, while the RSA blog (2026) presents a checklist implying a relatively imminent path, with several properties already progressing.",
+    "The RSA article claims higher‑speed operation (#5) is true in some domains, yet the survey abstract does not mention any domain where superhuman speed has been achieved, suggesting a discrepancy in assessments of current progress."
+  ],
+  "completeness": "partial",
+  "limitations": [
+    "Web search access was blocked or challenged on 1 of 5 queries.",
+    "9 candidate pages failed or carried no readable text.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 4 of 6 selected sources fit in the synthesis evidence budget.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 7,
+    "failedCount": 10,
+    "rounds": 1,
+    "searches": 5
+  },
+  "archivedAt": "2026-10-20T17:54:53.994Z"
+}

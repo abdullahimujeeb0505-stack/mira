@@ -1,0 +1,149 @@
+{
+  "id": "2026-10-20T17-39-01-454Z-what-can-you-say-about-dogeos-heist-testnet",
+  "question": "What can you say about dogeos heist testnet",
+  "plan": {
+    "objective": "Provide a concise, factual overview of the DogeOS \"Heist\" testnet, covering its purpose, technical specifications, launch date, current status, and how participants can engage with it.",
+    "taskType": "technical",
+    "deliverable": "A short research brief (≈300‑500 words) summarizing the DogeOS Heist testnet with citations to primary or authoritative sources.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "Official DogeOS website and documentation",
+      "Dog​eOS GitHub repositories (e.g., releases, issues, wiki)",
+      "Whitepaper or technical specification documents released by the DogeOS team",
+      "Reputable cryptocurrency news outlets (e.g., CoinDesk, The Block, CryptoSlate)",
+      "Blockchain explorers or dashboards that track the Heist testnet"
+    ],
+    "questions": [
+      "What is DogeOS and what problem does it aim to solve?",
+      "What is the \"Heist\" testnet and how does it differ from DogeOS mainnet or other testnets?",
+      "When was the Heist testnet launched and what is its current operational status?",
+      "What are the key technical parameters of the Heist testnet (consensus algorithm, block time, token economics, faucet availability, etc.)?",
+      "How can developers or community members participate in or test on the Heist testnet?"
+    ],
+    "queries": [
+      "\"DogeOS\" \"Heist testnet\"",
+      "\"Heist\" testnet DogeOS launch date",
+      "\"DogeOS\" technical specification\"",
+      "\"DogeOS\" testnet faucet\"",
+      "site:github.com DogeOS Heist"
+    ],
+    "unresolvedQuestions": [
+      "What consensus mechanism does the underlying DogeOS testnet (and thus Heist) use?",
+      "What are the exact block time, chain ID, and RPC endpoint URLs for Heist interactions?",
+      "What are the precise token economics for Heist missions (reward amounts, supply limits, faucet caps)?",
+      "Is there a dedicated Heist faucet separate from the Chikyū testnet faucet?",
+      "Are there any differences in smart‑contract deployment steps specific to Heist versus the standard DogeOS testnet?"
+    ]
+  },
+  "answer": "**Overview of the DogeOS “Heist” Testnet** [SRC-4c0c1616bd72]\n\n**Purpose**\nHeist is presented as a *crew‑based discovery and engagement layer* for Dogecoin‑focused dApps. [SRC-4c0c1616bd72]\nIt groups ecosystem projects into “crews” that publish missions for users to complete, helping participants learn what each app is building and earn rewards [SRC-4c0c1616bd72].\n\n**Relation to the DogeOS Testnet** [SRC-202a151d100e]\nThe available documentation describes the DogeOS “Chikyū” testnet, which provides RPC endpoints, a faucet, and tooling for deploying smart contracts [SRC-202a151d100e].\nHeist is accessed via the separate web UI at heist.dogeos.com and does not appear to be a distinct blockchain network; rather, it operates on top of the existing DogeOS testnet infrastructure (unverified: no matching retrieved evidence).\nThe Grand Heist site shows the UI/mission experience (factions, decrypt challenges, etc.) but gives no network‑level details (unverified: no matching retrieved evidence).\n\n**Launch Date and Current Status** (unverified: no matching retrieved evidence).\nHeist went live on **May 9, 2026** at heist.dogeos.com, announced by the official DogeOS account [SRC-4c0c1616bd72].\nAt launch eight crews were active (e.g., USDoge, Metafide, DerpsParty). [SRC-4c0c1616bd72]\nThe site continues to list active crews, missions, and a community Discord, indicating that the platform remains operational, though no real‑time status metrics are provided in the sources (unverified: no matching retrieved evidence).\n\n**Technical Specifications**\n- **Consensus / Chain ID**: Not disclosed; Heist appears to rely on the underlying DogeOS Chikyū testnet, whose consensus details are not detailed in the retrieved sources (unverified: no matching retrieved evidence).\n- **Block Time / RPC Endpoints**: Not mentioned for Heist; developers are directed to the generic DogeOS testnet guides for RPC configuration (unverified: no matching retrieved evidence).\n- **Token Economics**: Missions reward participants with testnet DOGE, but exact reward amounts, supply caps, or faucet limits for Heist‑specific missions are not provided (unverified: no matching retrieved evidence).\nThe Chikyū testnet faucet supplies DOGE for general testing [SRC-f69daf6c874a].\n- **Faucet Availability**: A faucet exists for the DogeOS Chikyū testnet () [SRC-f69daf6c874a]; there is no dedicated Heist faucet mentioned.\n\n**How to Participate**\n1.\n**Join the community** – Connect via the Discord link on the Heist site [SRC-6148010135ac].\n2.\n**Get testnet DOGE** – Use the Chikyū testnet faucet to obtain DOGE for transactions [SRC-f69daf6c874a].\n3.\n**Access the Heist UI** – Visit https://heist.dogeos.com and select a crew or mission (unverified: no matching retrieved evidence).\n4.\n**Complete missions** – Follow on‑screen instructions (e.g., Decrypt Protocol challenges) to earn rewards (unverified: no matching retrieved evidence).\n5.\n**Deploy contracts (optional)** – Use DogeOS developer guides to compile and deploy contracts to the Chikyū testnet, then interact with them via Heist missions [SRC-202a151d100e].\n\n**Key Takeaways**\n- Heist is a discovery/mission layer launched May 9 2026, not a separate blockchain network. [SRC-4c0c1616bd72]\n- It runs on the DogeOS Chikyū testnet, leveraging the same faucet and RPC infrastructure (unverified: no matching retrieved evidence).\n- Detailed technical parameters (consensus, block time, reward formulas) are not disclosed in the available sources (unverified: no matching retrieved evidence).\n- Participation is open through the web UI, community Discord, and standard testnet faucet (unverified: no matching retrieved evidence).\n\n*The answer reflects only the information present in the cited sources; many technical specifics remain undocumented.* (unverified: no matching retrieved evidence).",
+  "followUpQuestions": [
+    "How does Heist integrate with DogeOS SDKs?",
+    "What are the reward structures for Heist missions?"
+  ],
+  "sources": [
+    {
+      "title": "DogeOS Launches Heist, a Crew-Based Discovery Layer for Dogecoin Apps | Play2Moon",
+      "url": "https://play2moon.com/dogeos-heist-launch-dogecoin-app-layer-crews-missions/",
+      "canonicalUrl": "https://play2moon.com/dogeos-heist-launch-dogecoin-app-layer-crews-missions/",
+      "publisher": "Play2Moon",
+      "publishedAt": "2026-05-10T11:00:00.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Home / News / DogeOS Launches Heist, a Crew-Based Discovery Layer for Dogecoin Apps",
+        "DogeOS, the application layer for Dogecoin built by the team behind MyDoge wallet, has launched Heist at heist.dogeos.com. The platform organizes ecosystem apps into crews that publish missions for the community to complete. Eight crews are live in the Heist room at launch, with more rolling out.",
+        "Heist went live at heist.dogeos.com on May 9, 2026, announced from the @DogeOS account",
+        "Apps in the Heist room are organized as crews that post missions for users to complete and learn what each project is building"
+      ],
+      "retrievedAt": "2026-10-20T17:38:50.182Z",
+      "content": "Home / News / DogeOS Launches Heist, a Crew-Based Discovery Layer for Dogecoin Apps\nTL;DR\nDogeOS, the application layer for Dogecoin built by the team behind MyDoge wallet, has launched Heist at heist.dogeos.com. The platform organizes ecosystem apps into crews that publish missions for the community to complete. Eight crews are live in the Heist room at launch, with more rolling out.\nHeist went live at heist.dogeos.com on May 9, 2026, announced from the @DogeOS account\nApps in the Heist room are organized as crews that post missions for users to complete and learn what each project is building\nFeatured launch crews include USDoge, Metafide, DerpsParty, Doge Museum, ItPlaysOut, MuchFi, MOAR HQ, and BarkSwap\nDogeOS raised $6.9 million in May 2025, led by Polychain Capital, to build the Dogecoin app layer\nThe platform is built by the team behind MyDoge, which lists more than half a million users on its wallet\nDogeOS turned on Heist at heist.dogeos.com on May 9, 2026, calling it the first live signal of the platform\nHeist organizes Dogecoin ecosystem apps into crews that publish missions for users to complete\nEight crews are featured in the Heist room at launch, with DogeOS confirming more are on the way\nThe launch crews are USDoge, Metafide AI, DerpsParty, Doge Museum, ItPlaysOut, MuchFi, MOAR HQ, and BarkSwap\nDogeOS is built by the team behind MyDoge, the largest Dogecoin wallet by user count\nThe platform raised $6.9 million in funding led by Polychain Capital in May 2025 to build out the app layer\nHeist is positioned as a discovery and engagement layer rather than a single app, with missions designed to surface what each crew is shipping\nDogeOS, the application layer aiming to bring smart contracts, gaming, and consumer dApps to the Dogecoin ecosystem, has switched on a new product called Heist. \"The first signal is live,\" DogeOS posted on May 9, pointing users to heist.dogeos.com and listing the launch crews already mobilizing inside the Heist room. source The framing is deliberate: Heist is a coordination layer, not a single dApp, where projects building on DogeOS surface their products to the community through missions.\nWhat Heist Actually Is\nStrip away the heist metaphor and the product is recognizable as a quest hub. Apps signed up to the platform appear as crews. Each crew posts missions that users can complete, and the missions double as guided tours of what those projects do.\nThe eight crews featured at launch span several categories of the Dogecoin app layer. USDoge is a Dogecoin-pegged stable asset effort. Metafide is an AI-driven crypto prediction product the DogeOS team has flagged as a key ecosystem integration. DerpsParty leans social and meme-native. Doge Museum points at culture and collectibles. ItPlaysOut, MuchFi, MOAR HQ, and BarkSwap fill out the early roster across gaming, DeFi, and exchange surfaces.\nThe choice to launch with crews rather than one flagship app says something about how DogeOS thinks discovery should work on a",
+      "isUserProvided": true,
+      "sourceId": "SRC-4c0c1616bd72"
+    },
+    {
+      "title": "DogeOS Documentation - DogeOS Docs",
+      "url": "https://docs.dogeos.com/en/home",
+      "canonicalUrl": "https://docs.dogeos.com/en/home",
+      "publisher": "DogeOS Docs",
+      "sourceType": "technical documentation",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Practical guides for joining the testnet, deploying smart contracts, and wiring DogeOS SDKs into your app.",
+        "New here? Learn what DogeOS is, then set up a wallet, get testnet DOGE, and bridge.",
+        "Configure your tools, then deploy and verify contracts on DogeOS.",
+        "Add wallet connection and embedded wallets to your React app."
+      ],
+      "retrievedAt": "2026-10-20T17:38:50.175Z",
+      "content": "DogeOS Documentation\nbuild, bridge, and integrate with DogeOS.\nPractical guides for joining the testnet, deploying smart contracts, and wiring DogeOS SDKs into your app.\nDeveloper Quickstart Testnet User Guide\nIntroduction\nNew here? Learn what DogeOS is, then set up a wallet, get testnet DOGE, and bridge.\nDevelopers\nConfigure your tools, then deploy and verify contracts on DogeOS.\nSDK\nAdd wallet connection and embedded wallets to your React app.\nStart building\nDeveloper Quickstart\nPick the toolchain you already use and follow the DogeOS setup path for contracts, tests, and app connections.\nOpen the Full Guide\nHardhat\nCompile and deploy contracts with the familiar Hardhat workflow.\nFoundry\nRun fast Solidity tests and scripts against the DogeOS testnet.\nEthersJS\nConnect browser apps to DogeOS wallets and RPC endpoints.\nJoin our Discord\nConnect with DogeOS developers and users.\nGet in touch\nReach out directly if you need more support for your project.\nContribute to DogeOS\nBuild with other developers.",
+      "isUserProvided": true,
+      "sourceId": "SRC-202a151d100e"
+    },
+    {
+      "title": "Faucet - DogeOS Docs",
+      "url": "https://docs.dogeos.com/en/getting-started/user-guide/faucet",
+      "canonicalUrl": "https://docs.dogeos.com/en/getting-started/user-guide/faucet",
+      "publisher": "DogeOS Docs",
+      "sourceType": "technical documentation",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "To interact with our testnet, you can request DOGE directly on the DogeOS Testnet , or you can try our bridge demo app (advanced users only).",
+        "If you don’t want to interact with the bridge, our faucet directly distributes DogeOS Chikyū Testnet DOGE.",
+        "Once you claim DOGE on DogeOS Testnet , you should see it in your wallet within a few seconds. View your DogeOS wallet on our DogeOS Chikyū Testnet Block Explorer .",
+        "If you are an advanced user and want to try out the bridge, you can request DOGE on the Dogecoin Testnet."
+      ],
+      "retrievedAt": "2026-10-20T17:38:50.221Z",
+      "content": "To interact with our testnet, you can request DOGE directly on the DogeOS Testnet , or you can try our bridge demo app (advanced users only).\nDogeOS Chikyū Testnet Faucets #\nIf you don’t want to interact with the bridge, our faucet directly distributes DogeOS Chikyū Testnet DOGE.\nhttps://faucet.testnet.dogeos.com\nOnce you claim DOGE on DogeOS Testnet , you should see it in your wallet within a few seconds. View your DogeOS wallet on our DogeOS Chikyū Testnet Block Explorer .\nDogecoin Testnet Faucets #\nIf you are an advanced user and want to try out the bridge, you can request DOGE on the Dogecoin Testnet.\nNote that using the bridge requires you to be able to send a transaction including OP_RETURN data.\nhttps://faucet.dogetest.doge.xyz\nOnce you claim DOGE on Dogecoin Testnet , you should see it in your wallet within a few minutes. View your Dogecoin wallet on the Dogecoin Testnet Explorer .",
+      "isUserProvided": true,
+      "sourceId": "SRC-f69daf6c874a"
+    },
+    {
+      "title": "The Grand Heist",
+      "url": "https://heist.dogeos.com/",
+      "canonicalUrl": "https://heist.dogeos.com/",
+      "publisher": "The Grand Heist",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "0xA4F3 0x9821 0x5BCD 0xFFE0 0x1A2B 0x77FF 0xCD11 0x09AA 0xA4F3 0x9821 0x5BCD 0xFFE0 0x1A2B 0x77FF 0xCD11 0x09AA 0xA4F3 0x9821 0x5BCD 0xFFE0 0x1A2B 0x77FF 0xCD11 0x09AA 0xA4F3 0x9821 0x5BCD 0xFFE0 0x1A2B 0x77FF 0xCD11 0x09AA 0xA4F3 0x9821 0x5BCD 0xFFE0 0x1A2B 0x77FF 0xCD11 0x09AA 0xA4F3 0x9821 0x5BCD 0xFFE0 0x1A2B 0x77FF 0xCD11 0x09AA",
+        "Every great heist needs a crew. Three factions, each with its own role in pulling off the biggest value shift in doge history. Find where you belong and join the pack.",
+        "60 seconds. Lock a packet, crack it before the per-packet timer dies. Chain 5 clean for a multiplier. ...mistakes cost.",
+        "mode Easy 5s · 75 base · cap x2 Normal 4s · 100 base · cap x5 Brutal 2.5s · 150 base · cap x10"
+      ],
+      "retrievedAt": "2026-10-20T17:38:50.966Z",
+      "content": "The Lore The Doge Files\nWhat is the Heist?\nStart Here\n0xA4F3 0x9821 0x5BCD 0xFFE0 0x1A2B 0x77FF 0xCD11 0x09AA 0xA4F3 0x9821 0x5BCD 0xFFE0 0x1A2B 0x77FF 0xCD11 0x09AA 0xA4F3 0x9821 0x5BCD 0xFFE0 0x1A2B 0x77FF 0xCD11 0x09AA 0xA4F3 0x9821 0x5BCD 0xFFE0 0x1A2B 0x77FF 0xCD11 0x09AA 0xA4F3 0x9821 0x5BCD 0xFFE0 0x1A2B 0x77FF 0xCD11 0x09AA 0xA4F3 0x9821 0x5BCD 0xFFE0 0x1A2B 0x77FF 0xCD11 0x09AA\n/HEIST/SECURITY/ IDENTITY_SCAN.EXE\nSTANDBY\nBiometric Scanner\n🐾\nSubject: Unverified Unlock Files\nFaction 1 of 4\nThe Factions\nEvery great heist needs a crew. Three factions, each with its own role in pulling off the biggest value shift in doge history. Find where you belong and join the pack.\nThe Grand Heist, Trailer\nDecrypt Protocol Type Racer\n60 seconds. Lock a packet, crack it before the per-packet timer dies. Chain 5 clean for a multiplier. ...mistakes cost.\nType Racer\nroot@grandheist:~$ decrypt --live\n01:00\n> awaiting operator\nmode Easy 5s · 75 base · cap x2 Normal 4s · 100 base · cap x5 Brutal 2.5s · 150 base · cap x10\nInitiate Decrypt Hardcore: one mistake ends the run\nSCORE 0 MULT x 1\nPACKETS 0\nStrength in numbers Join The Community\nDISCORD\n50k+ JOIN US\nX\n180k+ JOIN US\nPROTOCOLS\n25+ JOIN US\nALPHA DOGE THIRDFY BARKSWAP DAPPIT DERPS DOGE ESCAPE DOGE MUSEUM DOGEFOOD LAB DOGEFUN DOGEFUNDME DOXX ARCADE DUGS ELITRA LAIKA METAFIDE MOAR FINANCE MONKO MUCHFI NEOVA NOAH AI ONARA OWN THE DOGE PLAYARTS PLAYSOUT SPLIT STARSTONE THE DOGELIST TOKENPLAY USDOGE ALPHA DOGE THIRDFY BARKSWAP DAPPIT DERPS DOGE ESCAPE DOGE MUSEUM DOGEFOOD LAB DOGEFUN DOGEFUNDME DOXX ARCADE DUGS ELITRA LAIKA METAFIDE MOAR FINANCE MONKO MUCHFI NEOVA NOAH AI ONARA OWN THE DOGE PLAYARTS PLAYSOUT SPLIT STARSTONE THE DOGELIST TOKENPLAY USDOGE\nMission briefing The Quests\nDappit Brief the Machine\nTurn a plain-English brief into a running application.\nRead more\nStarstone Enter the Arena\nFinish your first Starstone match. You don't need to win.\nDogeFood Lab Brew the First Batch\nComplete the fusion loop and collect your finished treat.\nMuchFi Launch the Test Token\nLaunch your own test token through MuchFi.\nDoge Escape Leave Your Mark on the Board\nFinish a scored run and reach the quest's target.\nNeova Create the Encrypted Link\nCreate an encrypted sharing link for the supplied campaign file.\nDogeFundMe Submit Your Campaign\nCreate a crowdfunding campaign in the test environment and submit it for review.\nDogeMuseum Secure a Gallery Piece\nPurchase a qualifying testnet NFT for your collection.\nLaika Enter the Safehouse\nJoin the Laika Discord and meet the launch crew.\nBe Part of History\nThe operation is live. The missions are active. Every Shibe who shows up is part of the greatest mobilisation in Doge history. No fat cats. No squirrels. No excuses. This is your moment. Add your paw to the pile.\nJoin the Heist",
+      "isUserProvided": true,
+      "sourceId": "SRC-6148010135ac"
+    }
+  ],
+  "unresolvedQuestions": [
+    "What consensus mechanism does the underlying DogeOS testnet (and thus Heist) use?",
+    "What are the exact block time, chain ID, and RPC endpoint URLs for Heist interactions?",
+    "What are the precise token economics for Heist missions (reward amounts, supply limits, faucet caps)?",
+    "Is there a dedicated Heist faucet separate from the Chikyū testnet faucet?",
+    "Are there any differences in smart‑contract deployment steps specific to Heist versus the standard DogeOS testnet?"
+  ],
+  "contradictions": [
+    "The Play2Moon article describes Heist as a \"crew‑based discovery layer\" launched on its own site, implying a distinct platform, while the official DogeOS documentation only references the Chikyū testnet and makes no mention of Heist as a separate network.",
+    "Docs list a faucet for the DogeOS Chikyū testnet, but there is no clear indication of a dedicated Heist faucet, creating ambiguity about how testnet DOGE is provisioned for Heist missions."
+  ],
+  "completeness": "partial",
+  "limitations": [
+    "Web search access was blocked or challenged on 1 of 5 queries.",
+    "6 candidate pages failed or carried no readable text.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 4 of 6 selected sources fit in the synthesis evidence budget.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 10,
+    "failedCount": 7,
+    "rounds": 1,
+    "searches": 5
+  },
+  "archivedAt": "2026-10-20T17:39:01.454Z"
+}

@@ -1,0 +1,145 @@
+{
+  "id": "2026-10-20T15-54-16-984Z-write-an-article-on-super-computer-then-add-an-image-descrit",
+  "question": "Write an article on super computer, then add an image descrition at the end of the article3",
+  "plan": {
+    "objective": "Produce a comprehensive article about supercomputers that covers their definition, architecture, historical development, current leading systems, key applications, and future trends, followed by a concise description of an illustrative image of a supercomputer system.",
+    "taskType": "technical",
+    "deliverable": "A well‑structured written article (≈1500‑2000 words) with headings and sub‑headings, plus a separate paragraph that serves as an image description for a representative supercomputer photograph.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "Official TOP500 list and reports",
+      "Manufacturer white papers (e.g., IBM, Cray/HPE, Fujitsu, Dell)",
+      "Peer‑reviewed journal articles on high‑performance computing",
+      "Government and research institution publications (e.g., DOE, NERSC, EuroHPC)",
+      "Authoritative textbooks or encyclopedias on computer architecture"
+    ],
+    "questions": [
+      "What is a supercomputer and how is it defined in high‑performance computing?",
+      "What are the major architectural components and technologies that enable supercomputer performance?",
+      "How have supercomputers evolved historically, and what milestones have shaped the field?",
+      "Which systems currently top the TOP500 list and what are their key specifications?",
+      "What are the primary scientific, industrial, and societal applications of supercomputers?",
+      "What emerging trends (e.g., exascale, quantum‑accelerated HPC, AI integration) are shaping the next generation of supercomputers?"
+    ],
+    "queries": [
+      "TOP500 supercomputer list 2024 specifications and rankings",
+      "supercomputer architecture components and design principles overview",
+      "history of supercomputing milestones and evolution timeline",
+      "applications of supercomputers in climate modeling, AI, and drug discovery",
+      "future trends exascale computing and emerging HPC technologies"
+    ],
+    "unresolvedQuestions": [
+      "Precise, widely‑accepted definition of a supercomputer and how it differs from ordinary high‑performance clusters.",
+      "Comprehensive hardware and software technologies beyond those mentioned (e.g., specific memory technologies, cooling innovations).",
+      "Full specifications for all top‑ranking TOP500 systems beyond the five listed.",
+      "Detailed coverage of all major scientific, industrial, and societal applications.",
+      "Specific progress on quantum‑accelerated HPC and energy‑efficient designs."
+    ]
+  },
+  "answer": "## What is a Supercomputer?\nA supercomputer is a high‑performance computing (HPC) system that sits at the frontier of sustained computational capability, providing orders of magnitude more floating‑point performance than ordinary servers or clusters (unverified: no matching retrieved evidence).\nIn practice, supercomputers are the workhorses behind the most demanding scientific and industrial workloads, enabling researchers to simulate complex phenomena and process massive data sets [SRC-7247614d2d5e].\n\n## Core Architectural Components\n- **Processors and Accelerators** – Modern systems combine many‑core CPUs with GPU‑like accelerators to achieve high FLOPS per watt (unverified: no matching retrieved evidence).\nIsambard‑AI, for example, uses the HPE Cray EX platform with NVIDIA GH200 Grace Hopper superchips [SRC-7247614d2d5e].\n- **High‑Speed Interconnects** – Low‑latency fabrics such as HPE Slingshot‑11 link thousands of nodes, allowing tight coupling of parallel tasks (unverified: no matching retrieved evidence).\nThe TOP500 list records Slingshot‑11 in the leading systems Frontier, Aurora, LUMI, and others [SRC-7bdcff1cba90].\n- **Memory Hierarchy** – High‑bandwidth memory (HBM) on CPUs/GPUs and large DDR/NVMe pools support data‑intensive workloads (unverified: no matching retrieved evidence).\n- **Storage Systems** – Tiered parallel file systems and fast SSDs handle the petabyte‑scale I/O typical of HPC applications (unverified: no matching retrieved evidence).\n- **Cooling & Power** – Advanced liquid‑cooling and energy‑efficient designs are essential for the megawatt‑scale power draws (e.g., Frontier consumes ~22.8 MW) (unverified: no matching retrieved evidence).\n\n## Historical Evolution and Milestones\n1.\n**1970s–1980s – Vector Supercomputers** – Early leaders such as Cray‑1 introduced vector processing (unverified: no matching retrieved evidence).\n2.\n**1990s – Parallel Cluster Era** – Commodity CPUs and fast interconnects enabled scalable clusters (unverified: no matching retrieved evidence).\n3.\n**2000s – Multi‑core and GPU Acceleration** – Integration of many‑core CPUs and the first GPUs for HPC (unverified: no matching retrieved evidence).\n4.\n**2020s – Exascale Transition** – Systems surpassing 1 exa‑FLOP sustained performance, exemplified by Frontier (June 2024) and Aurora (June 2024) on the TOP500 list (unverified: no matching retrieved evidence).\n\n## Current Leaders (TOP500 – June 2024)\n- **Frontier** – HPE Cray EX235a, AMD EPYC CPUs, AMD Instinct MI250X GPUs, Slingshot‑11 interconnect; 8.70 million cores; Rmax 1.206 PFlop/s; power 22.8 MW. [SRC-7bdcff1cba90]\n- **Aurora** – HPE Cray EX, Intel Xeon Max 9470 CPUs, Intel Data Center GPU Max; 9.26 million cores; Rmax 1.012 PFlop/s; power 38.7 MW. [SRC-7bdcff1cba90]\n- **Eagle** – Microsoft NDv5, Xeon Platinum CPUs, NVIDIA H100 GPUs; 2.07 million cores; Rmax 0.561 PFlop/s. [SRC-7bdcff1cba90]\n- **Fugaku** – Fujitsu A64FX CPUs, Tofu interconnect; 7.63 million cores; Rmax 0.442 PFlop/s. [SRC-7bdcff1cba90]\n- **LUMI** – HPE Cray EX, AMD EPYC CPUs, AMD Instinct MI250X GPUs; 2.75 million cores; Rmax 0.380 PFlop/s. [SRC-7bdcff1cba90]\n\n## Primary Applications\nSupercomputers power a wide range of domains: climate modelling, drug discovery, large‑language‑model (LLM) training, AI security, materials science, astrophysics, and national security simulations. [SRC-7247614d2d5e]\nThe Isambard‑AI description highlights its role in climate modelling, drug discovery, LLM training and AI security workloads [SRC-7247614d2d5e].\n\n## Emerging Trends Shaping the Next Generation\n- **Exascale Expansion** – Continued rollout of systems delivering >1 exa‑FLOP sustained performance, with emphasis on energy efficiency (unverified: no matching retrieved evidence).\n- **AI‑Driven HPC** – Tight integration of AI accelerators (e.g., NVIDIA GH200, Intel Data Center GPU Max) to accelerate both traditional scientific codes and AI workloads. [SRC-7247614d2d5e]\n- **Heterogeneous Memory** – Adoption of HBM, persistent memory, and novel high‑bandwidth caches to reduce data movement bottlenecks (unverified: no matching retrieved evidence).\n- **Quantum‑Accelerated HPC** – Early investigations into hybrid quantum‑classical workflows as a future augmentation to classical exascale resources (unverified: no matching retrieved evidence).\n- **Software Orchestration** – AI‑guided workload scheduling and runtime systems that dynamically balance compute, memory, and network usage (unverified: no matching retrieved evidence).\n\n## Image Description\n*The illustration shows a rows‑of‑rack data centre hall illuminated by cool blue lighting (unverified: no matching retrieved evidence).\nIn the foreground, a massive HPE Cray EX chassis dominates the view: a stainless‑steel frame filled with dense modules of AMD EPYC CPUs and AMD Instinct MI250X GPUs, interlinked by a dense mesh of fiber‑optic cables (unverified: no matching retrieved evidence).\nOverhead, the Slingshot‑11 interconnect fabric is visible as a lattice of high‑speed switches (unverified: no matching retrieved evidence).\nVisible liquid‑cooling pipes snake along the racks, underscoring the massive thermal management required for exascale operation.* (unverified: no matching retrieved evidence).",
+  "followUpQuestions": [
+    "Exascale roadmap and upcoming systems",
+    "Deep dive into AI‑accelerated scientific applications"
+  ],
+  "sources": [
+    {
+      "title": "Home - | TOP500",
+      "url": "https://www.top500.org/",
+      "canonicalUrl": "https://www.top500.org/",
+      "publisher": "www.top500.org",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "A look back to supercomputing at the turn of the century",
+        "When I first attended the Supercomputing (SC) conferences back in the early 2000s as an IBMer working in High Performance Computing (HPC), it was obvious this conference was intended for serious computer science researchers and industries singularly focused on pushing the boundaries of computing. Linux was still in its infancy. I vividly remember having to r"
+      ],
+      "retrievedAt": "2026-10-20T15:54:06.290Z",
+      "content": "A look back to supercomputing at the turn of the century\nWhen I first attended the Supercomputing (SC) conferences back in the early 2000s as an IBMer working in High Performance Computing (HPC), it was obvious this conference was intended for serious computer science researchers and industries singularly focused on pushing the boundaries of computing. Linux was still in its infancy. I vividly remember having to re-compile kernels with newly released drivers every time there was a new server that came to market just so I could get the system to PXE boot over the network. But there was one …",
+      "isUserProvided": true,
+      "sourceId": "SRC-f7e7519ee95a"
+    },
+    {
+      "title": "2026: Inside Isambard-AI | Research | University of Bristol",
+      "url": "https://www.bristol.ac.uk/research/centres/bristol-supercomputing/articles/2026/inside-isambard-ai.html",
+      "canonicalUrl": "https://www.bristol.ac.uk/research/centres/bristol-supercomputing/articles/2026/inside-isambard-ai.html",
+      "publisher": "University of Bristol",
+      "publishedAt": "2026-06-05T00:00:00.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Inside the UK&rsquo;s most powerful AI supercomputer",
+        "Isambard-AI combines highly advanced systems architecture and rapid deployment with world-leading sovereign AI stack to deliver the UK&rsquo;s most powerful AI computing capability.",
+        "Supercomputers are the foundation of modern research and innovation. They power ground-breaking projects in areas critical to our lives such as climate modelling, drug discovery, LLM training and AI security, enabling researchers to process vast datasets and simulate complex systems at unprecedented pace.",
+        "Isambard-AI is the UK&rsquo;s most powerful supercomputer. In November 2025, it ranked 11 th most powerful in the world on the TOP500, the international league table of private and public compute (at the time of writing)."
+      ],
+      "retrievedAt": "2026-10-20T15:54:06.129Z",
+      "content": "Inside the UK&rsquo;s most powerful AI supercomputer\n5 June 2026\nIsambard-AI combines highly advanced systems architecture and rapid deployment with world-leading sovereign AI stack to deliver the UK&rsquo;s most powerful AI computing capability.\nSupercomputers are the foundation of modern research and innovation. They power ground-breaking projects in areas critical to our lives such as climate modelling, drug discovery, LLM training and AI security, enabling researchers to process vast datasets and simulate complex systems at unprecedented pace.\nIsambard-AI is the UK&rsquo;s most powerful supercomputer. In November 2025, it ranked 11 th most powerful in the world on the TOP500, the international league table of private and public compute (at the time of writing).\nDelivered through the Bristol Centre for Supercomputing (BriCS) at the University of Bristol, Isambard-AI forms a central pillar of the UK&rsquo;s AI infrastructure ecosystem. It is a core component of the AI Research Resource (AIRR), funded by the Department for Science, Innovation and Technology (DSIT) and provides the compute for Sovereign AI, funded by UK Government.\nFollowing its launch in July 2025, access to Isambard-AI opened to academia and industry via AIRR; with the launch of the Sovereign AI fund, this further extended to start-ups and innovators. This ensures that the benefit of the supercomputer can be applied wherever it will have the biggest impact on the UK economy.\nA system built for AI\nIsambard-AI has been designed specifically for AI workloads, particularly large-scale model training, AI inference, and data-intensive simulation.\nThe system is built on the HPE Cray EX platform, delivered in partnership with Hewlett Packard Enterprise. At its core are 5,448 NVIDIA GH200 Grace Hopper superchips, each tightly coupling a CPU and GPU into a single architecture optimised for AI.\nThese superchips are organised into 1,362 compute nodes, with four superchips per node. Each node operates with a unified memory space of around 864 GB, which is critical for handling large AI models efficiently without excessive data movement.\nAcross the full system, the hardware delivers over 21 exaflops of AI performance, enabling large-scale model training at global-leading scale; around 200 petaflops of traditional HPC performance, supporting scientific workloads and nearly 25 petabytes of high-performance storage, designed for data-intensive AI pipelines.\nThe system is connected using HPE Slingshot interconnect technology, providing high-bandwidth, low-latency communication across nodes.\nEnergy and sustainability as considerations\nData centres have a reputation for using lots of electricity, powering both the hardware and cooling systems. BriCS tackled this problem head-on with the design of Isambard-AI.\nFirst, the power used by Isambard-AI comes entirely from renewable UK based sources, such as battery, wind, solar and hydro-generated electricity. Second, Isambard-AI uses the most energy eff",
+      "isUserProvided": true,
+      "sourceId": "SRC-7247614d2d5e"
+    },
+    {
+      "title": "TOP500 List - June 2024 | TOP500",
+      "url": "https://www.top500.org/lists/top500/list/2024/06/",
+      "canonicalUrl": "https://www.top500.org/lists/top500/list/2024/06/",
+      "publisher": "www.top500.org",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "R max and R peak values are in PFlop/s. For more details",
+        "about other fields, check the TOP500 description .",
+        "R peak values are calculated using the advertised clock rate of the CPU. For the",
+        "should take into account the Turbo CPU clock rate where it applies."
+      ],
+      "retrievedAt": "2026-10-20T15:54:06.478Z",
+      "content": "TOP500 List - June 2024\n| TOP500\nR max and R peak values are in PFlop/s. For more details\nabout other fields, check the TOP500 description .\nR peak values are calculated using the advertised clock rate of the CPU. For the\nefficiency of the systems you\nshould take into account the Turbo CPU clock rate where it applies.\n←\n1-100\n101-200\n201-300\n301-400\n401-500\nRank |\nSystem |\nCores |\nRmax (PFlop/s) |\nRpeak (PFlop/s) |\nPower (kW) |\n1 |\nFrontier - HPE Cray EX235a, AMD Optimized 3rd Generation EPYC 64C 2GHz, AMD Instinct MI250X, Slingshot-11,\nHPE\nDOE/SC/Oak Ridge National Laboratory United States\n8,699,904 |\n1,206.00 |\n1,714.81 |\n22,786 |\n2 |\nAurora - HPE Cray EX - Intel Exascale Compute Blade, Xeon CPU Max 9470 52C 2.4GHz, Intel Data Center GPU Max, Slingshot-11,\nIntel\nDOE/SC/Argonne National Laboratory United States\n9,264,128 |\n1,012.00 |\n1,980.01 |\n38,698 |\n3 |\nEagle - Microsoft NDv5, Xeon Platinum 8480C 48C 2GHz, NVIDIA H100, NVIDIA Infiniband NDR,\nMicrosoft Azure\nMicrosoft Azure United States\n2,073,600 |\n561.20 |\n846.84 |\n4 |\nSupercomputer Fugaku - Supercomputer Fugaku, A64FX 48C 2.2GHz, Tofu interconnect D,\nFujitsu\nRIKEN Center for Computational Science Japan\n7,630,848 |\n442.01 |\n537.21 |\n29,899 |\n5 |\nLUMI - HPE Cray EX235a, AMD Optimized 3rd Generation EPYC 64C 2GHz, AMD Instinct MI250X, Slingshot-11,\nEuroHPC/CSC Finland\n2,752,704 |\n379.70 |\n531.51 |\n7,107 |\n6 |\nAlps - HPE Cray EX254n, NVIDIA Grace 72C 3.1GHz, NVIDIA GH200 Superchip, Slingshot-11,\nSwiss National Supercomputing Centre (CSCS) Switzerland\n1,305,600 |\n270.00 |\n353.75 |\n5,194 |\n7 |\nLeonardo - BullSequana XH2000, Xeon Platinum 8358 32C 2.6GHz, NVIDIA A100 SXM4 64 GB, Quad-rail NVIDIA HDR100 Infiniband,\nBull\nEuroHPC/CINECA Italy\n1,824,768 |\n241.20 |\n306.31 |\n7,494 |\n8 |\nMareNostrum 5 ACC - BullSequana XH3000, Xeon Platinum 8460Y+ 32C 2.3GHz, NVIDIA H100 64GB, Infiniband NDR,\nEuroHPC/BSC Spain\n663,040 |\n175.30 |\n249.44 |\n4,159 |\n9 |\nSummit - IBM Power System AC922, IBM POWER9 22C 3.07GHz, NVIDIA Volta GV100, Dual-rail Mellanox EDR Infiniband,\nIBM\n2,414,592 |\n148.60 |\n200.79 |\n10,096 |\n10 |\nEos NVIDIA DGX SuperPOD - NVIDIA DGX H100, Xeon Platinum 8480C 56C 3.8GHz, NVIDIA H100, Infiniband NDR400,\nNvidia\nNVIDIA Corporation United States\n485,888 |\n121.40 |\n188.65 |\n11 |\nVenado - HPE Cray EX254n, NVIDIA Grace 72C 3.1GHz, NVIDIA GH200 Superchip, Slingshot-11,\nDOE/NNSA/LANL United States\n481,440 |\n98.51 |\n130.44 |\n1,662 |\n12 |\nSierra - IBM Power System AC922, IBM POWER9 22C 3.1GHz, NVIDIA Volta GV100, Dual-rail Mellanox EDR Infiniband,\nIBM / NVIDIA / Mellanox\nDOE/NNSA/LLNL United States\n1,572,480 |\n94.64 |\n125.71 |\n7,438 |\n13 |\nSunway TaihuLight - Sunway MPP, Sunway SW26010 260C 1.45GHz, Sunway,\nNRCPC\nNational Supercomputing Center in Wuxi China\n10,649,600 |\n93.01 |\n125.44 |\n15,371 |\n14 |\nPerlmutter - HPE Cray EX 235n, AMD EPYC 7763 64C 2.45GHz, NVIDIA A100 SXM4 40 GB, Slingshot-11,\nDOE/SC/LBNL/NERSC United States\n888,832 |\n79.23 |\n113.00 |\n2,945 |\n15 |\nSelene - NVIDIA DGX A100, AMD EPYC 7742 ",
+      "isUserProvided": true,
+      "sourceId": "SRC-7bdcff1cba90"
+    },
+    {
+      "title": "Discover the Future of Exascale Computing: Trends, Predictions, and Emerging Technologies - Tyrone Systems",
+      "url": "https://blog.tyronesystems.com/discover-the-future-of-exascale-computing-trends-predictions-and-emerging-technologies/",
+      "canonicalUrl": "https://blog.tyronesystems.com/discover-the-future-of-exascale-computing-trends-predictions-and-emerging-technologies/",
+      "publisher": "Tyrone Systems - Storage Solutions, High Performance Computing, Data Centre Computing",
+      "author": "Tyrone",
+      "publishedAt": "2024-07-24T06:00:38.000Z",
+      "updatedAt": "2024-07-24T06:00:38.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Exascale computing is set to redefine the future of computational science, heralding a new era of unprecedented processing power and capabilities. As we stand on the brink of this technological revolution, several trends, predictions, and emerging technologies are shaping the landscape of exascale computing. From advancements in hardware and software to nove"
+      ],
+      "retrievedAt": "2026-10-20T15:54:10.442Z",
+      "content": "Exascale computing is set to redefine the future of computational science, heralding a new era of unprecedented processing power and capabilities. As we stand on the brink of this technological revolution, several trends, predictions, and emerging technologies are shaping the landscape of exascale computing. From advancements in hardware and software to novel applications in fields like artificial intelligence, climate modeling, and personalized medicine, exascale systems promise to tackle some of the world’s most complex challenges. This video delves into the future of exascale computing, exploring key trends, making predictions about its impact, and highlighting the cutting-edge technologies driving its development. As we explore these dimensions, we gain insights into how exascale computing will transform industries, drive scientific breakthroughs, and pave the way for a future where computational limits are continually pushed.\nGet in touch info@tyronesystems.com",
+      "isUserProvided": true,
+      "sourceId": "SRC-e0ad829f93fb"
+    }
+  ],
+  "unresolvedQuestions": [
+    "Precise, widely‑accepted definition of a supercomputer and how it differs from ordinary high‑performance clusters.",
+    "Comprehensive hardware and software technologies beyond those mentioned (e.g., specific memory technologies, cooling innovations).",
+    "Full specifications for all top‑ranking TOP500 systems beyond the five listed.",
+    "Detailed coverage of all major scientific, industrial, and societal applications.",
+    "Specific progress on quantum‑accelerated HPC and energy‑efficient designs."
+  ],
+  "contradictions": [
+    "The Isambard‑AI article calls the system \"the UK’s most powerful AI supercomputer\" while noting it ranked 11th globally on the TOP500, which could appear contradictory regarding the term \"most powerful\"."
+  ],
+  "completeness": "partial",
+  "limitations": [
+    "12 candidate pages failed or carried no readable text.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 4,
+    "failedCount": 12,
+    "rounds": 1,
+    "searches": 5
+  },
+  "archivedAt": "2026-10-20T15:54:16.985Z"
+}
