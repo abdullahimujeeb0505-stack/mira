@@ -19,6 +19,12 @@ import {
   type GeneratedImage,
   type MuseMediaProvider,
 } from "./cloudflare-workers-ai.js";
+import {
+  IMAGE_GENERATION_MAX_PROMPT_LENGTH,
+  IMAGE_GENERATION_PROMPT_TOO_LONG_REPLY,
+  IMAGE_GENERATION_USAGE_REPLY,
+  parseImageGenerationCommand,
+} from "./image-generation-command.js";
 import { createTaskAwareProviders } from "./provider-selection.js";
 import type { TextGenerationProvider } from "./llm-provider.js";
 
@@ -144,7 +150,7 @@ const CHAT_PAGE = `<!doctype html>
           </div>
         </div>
       </form>
-      <p id="composer-help" class="notice">Attach JPEG/PNG/WebP images (4 MB max) or TXT/Markdown/CSV files (512 KB max); up to three files per turn. PDFs and DOCX are not supported. Mira may place a relevant CC0, Public Domain Mark, or public-domain image before research answers and research-backed articles when one is available; automatic research images have no source caption. Explicit image requests outside research include attribution. Image lookup uses Openverse and Wikimedia Commons; choose + > Generate an image only for new AI artwork. Image generation and attachment understanding use quota-limited Cloudflare Workers AI. Image attachments are sent to Cloudflare for understanding; your message and text-file contents are sent to the configured chat model. Files stay in memory and are discarded after the next chat turn. Dictation support and privacy vary by browser; audio is not uploaded to Muse, but the browser may use its own remote speech service. Speech playback uses your device’s voices.</p>
+      <p id="composer-help" class="notice">Attach JPEG/PNG/WebP images (4 MB max) or TXT/Markdown/CSV files (512 KB max); up to three files per turn. PDFs and DOCX are not supported. Mira may place a relevant CC0, Public Domain Mark, or public-domain image before research answers and research-backed articles when one is available; automatic research images have no source caption. Explicit image requests outside research include attribution. Image lookup uses Openverse and Wikimedia Commons; choose + > Generate an image only for new AI artwork; you can also type “generate image: &lt;description&gt;”. Image generation and attachment understanding use quota-limited Cloudflare Workers AI. Image attachments are sent to Cloudflare for understanding; your message and text-file contents are sent to the configured chat model. Files stay in memory and are discarded after the next chat turn. Dictation support and privacy vary by browser; audio is not uploaded to Muse, but the browser may use its own remote speech service. Speech playback uses your device’s voices.</p>
       <p id="status" role="status" aria-live="polite"></p>
     </main>
     <script>
@@ -609,12 +615,20 @@ const CHAT_PAGE = `<!doctype html>
               attachmentIds: submittedAttachments.map((attachment) => attachment.id)
             })
           });
-          const result = await response.json();
-          if (!response.ok) throw new Error(result.error || "Mira could not reply.");
-          addMessage("muse", result.reply);
-          status.textContent = Array.isArray(result.notices)
-            ? result.notices.filter((notice) => typeof notice === "string").join(" ")
-            : "";
+          if (!response.ok) {
+            throw new Error(await readError(response, "Mira could not reply."));
+          }
+          const contentType = response.headers.get("content-type") || "";
+          if (contentType.startsWith("image/")) {
+            addGeneratedImage(await response.blob());
+            status.textContent = "Image ready. Use Download image to save it.";
+          } else {
+            const result = await response.json();
+            addMessage("muse", result.reply);
+            status.textContent = Array.isArray(result.notices)
+              ? result.notices.filter((notice) => typeof notice === "string").join(" ")
+              : "";
+          }
         } catch (error) {
           status.textContent = error instanceof Error ? error.message : "Mira could not reply.";
         } finally {
@@ -846,6 +860,70 @@ export function createMuseHttpServer(
     return 0;
   }
 
+  async function generateImageForPrompt(
+    prompt: string,
+  ): Promise<GeneratedImage> {
+    const provider = getMediaProvider();
+    const retryAfterSeconds = consumeHourlyLimit(
+      imageGenerationTimestamps,
+      MAX_IMAGE_GENERATIONS_PER_HOUR,
+    );
+    if (retryAfterSeconds > 0) {
+      throw new ImageGenerationRateLimitError(retryAfterSeconds);
+    }
+    const image = await provider.generateImage(prompt);
+    if (
+      image.bytes.length === 0 ||
+      image.bytes.length > 8 * 1_024 * 1_024 ||
+      !matchesImageSignature(image.bytes, image.mimeType)
+    ) {
+      throw new Error("Image provider returned invalid image data.");
+    }
+    return image;
+  }
+
+  function sendGeneratedImage(
+    response: ServerResponse,
+    image: GeneratedImage,
+  ): void {
+    response.statusCode = 200;
+    response.setHeader("Content-Type", image.mimeType);
+    response.setHeader("Content-Length", String(image.bytes.length));
+    response.setHeader(
+      "Content-Disposition",
+      'inline; filename="mira-generated-image"',
+    );
+    response.end(image.bytes);
+  }
+
+  function sendImageGenerationError(
+    response: ServerResponse,
+    error: unknown,
+  ): void {
+    if (error instanceof CloudflareAIConfigurationError) {
+      sendJson(response, 503, {
+        error:
+          "Image generation is not configured. Set MUSE_CLOUDFLARE_ACCOUNT_ID and MUSE_CLOUDFLARE_AI_TOKEN.",
+      });
+      return;
+    }
+    if (error instanceof ImageGenerationRateLimitError) {
+      response.setHeader("Retry-After", String(error.retryAfterSeconds));
+      sendJson(response, 429, {
+        error:
+          "This server has reached its hourly image-generation limit. Try again later.",
+      });
+      return;
+    }
+    console.error(
+      "Muse image generation failed:",
+      error instanceof Error ? error.message : "unknown error",
+    );
+    sendJson(response, 502, {
+      error: "Mira could not create an image. Check the server terminal.",
+    });
+  }
+
   return createServer((request, response) => {
     void handleRequest(request, response).catch(() => {
       if (!response.headersSent && !response.destroyed) {
@@ -951,6 +1029,32 @@ export function createMuseHttpServer(
         return;
       }
       attachmentIds = body.attachmentIds as string[];
+    }
+
+    const imageCommand = parseImageGenerationCommand(message);
+    if (imageCommand) {
+      const sessionId = readSessionId(request, sessionSecret);
+      const attachmentSession = sessionId ? sessions.get(sessionId) : undefined;
+      try {
+        if (imageCommand.kind === "missing-prompt") {
+          sendJson(response, 400, { error: IMAGE_GENERATION_USAGE_REPLY });
+        } else if (imageCommand.kind === "prompt-too-long") {
+          sendJson(response, 413, {
+            error: IMAGE_GENERATION_PROMPT_TOO_LONG_REPLY,
+          });
+        } else {
+          const image = await generateImageForPrompt(imageCommand.prompt);
+          sendGeneratedImage(response, image);
+        }
+      } catch (error) {
+        sendImageGenerationError(response, error);
+      } finally {
+        if (attachmentSession) {
+          discardSessionAttachments(attachmentSession, attachmentIds);
+          attachmentSession.lastUsedAt = Date.now();
+        }
+      }
+      return;
     }
 
     let session: MuseSession | undefined;
@@ -1203,69 +1307,39 @@ export function createMuseHttpServer(
       return;
     }
     const prompt = body.prompt.trim();
-    if (prompt.length > 1_000) {
+    if (prompt.length > IMAGE_GENERATION_MAX_PROMPT_LENGTH) {
       sendJson(response, 413, {
-        error: "Image prompts must be 1,000 characters or fewer.",
+        error: `Image prompts must be ${IMAGE_GENERATION_MAX_PROMPT_LENGTH.toLocaleString("en-US")} characters or fewer.`,
       });
       return;
     }
 
     try {
-      const provider = getMediaProvider();
-      const retryAfterSeconds = consumeHourlyLimit(
-        imageGenerationTimestamps,
-        MAX_IMAGE_GENERATIONS_PER_HOUR,
-      );
-      if (retryAfterSeconds > 0) {
-        response.setHeader("Retry-After", String(retryAfterSeconds));
-        sendJson(response, 429, {
-          error:
-            "This server has reached its hourly image-generation limit. Try again later.",
-        });
-        return;
-      }
-      const image: GeneratedImage = await provider.generateImage(prompt);
-      if (
-        image.bytes.length === 0 ||
-        image.bytes.length > 8 * 1_024 * 1_024 ||
-        !matchesImageSignature(image.bytes, image.mimeType)
-      ) {
-        throw new Error("Image provider returned invalid image data.");
-      }
-      response.statusCode = 200;
-      response.setHeader("Content-Type", image.mimeType);
-      response.setHeader("Content-Length", String(image.bytes.length));
-      response.setHeader(
-        "Content-Disposition",
-        'inline; filename="mira-generated-image"',
-      );
-      response.end(image.bytes);
+      const image = await generateImageForPrompt(prompt);
+      sendGeneratedImage(response, image);
     } catch (error) {
-      if (error instanceof CloudflareAIConfigurationError) {
-        sendJson(response, 503, {
-          error:
-            "Image generation is not configured. Set MUSE_CLOUDFLARE_ACCOUNT_ID and MUSE_CLOUDFLARE_AI_TOKEN.",
-        });
-        return;
-      }
-      console.error(
-        "Muse image generation failed:",
-        error instanceof Error ? error.message : "unknown error",
-      );
-      sendJson(response, 502, {
-        error: "Mira could not create an image. Check the server terminal.",
-      });
+      sendImageGenerationError(response, error);
     }
   }
 
-  function discardSessionAttachments(session: MuseSession): void {
-    for (const attachment of session.attachments.values()) {
+  function discardSessionAttachments(
+    session: MuseSession,
+    attachmentIds?: readonly string[],
+  ): void {
+    const attachments = attachmentIds
+      ? attachmentIds
+          .map((id) => session.attachments.get(id))
+          .filter((attachment): attachment is MuseAttachment =>
+            Boolean(attachment),
+          )
+      : [...session.attachments.values()];
+    for (const attachment of attachments) {
+      session.attachments.delete(attachment.id);
       storedAttachmentBytes = Math.max(
         0,
         storedAttachmentBytes - attachment.bytes.length,
       );
     }
-    session.attachments.clear();
   }
 
   async function createAttachmentContext(
@@ -1668,5 +1742,10 @@ class MissingSessionAttachmentError extends Error {}
 class CloudflareRateLimitError extends Error {
   constructor(readonly retryAfterSeconds: number) {
     super("Cloudflare image understanding rate limit exceeded.");
+  }
+}
+class ImageGenerationRateLimitError extends Error {
+  constructor(readonly retryAfterSeconds: number) {
+    super("Muse hourly image-generation limit exceeded.");
   }
 }
