@@ -3,8 +3,22 @@ import test from "node:test";
 import {
   imageSearchQuery,
   parseCommonsImageSearchResults,
+  parseOpenverseImageSearchResults,
   searchResearchImages,
 } from "./research-images.js";
+
+const OPENVERSE_RECORD = {
+  title: "Honeybee pollinating a flower",
+  thumbnail:
+    "https://api.openverse.org/v1/images/550e8400-e29b-41d4-a716-446655440000/thumb/",
+  foreign_landing_url: "https://www.flickr.com/photos/example/1",
+  creator: "Example photographer",
+  license: "by-sa",
+  license_version: "4.0",
+  license_url: "https://creativecommons.org/licenses/by-sa/4.0/",
+  source: "flickr",
+  mature: false,
+};
 
 test("image search queries retain the subject and remove request wording", () => {
   assert.equal(
@@ -111,15 +125,50 @@ test("Commons image results retain attribution and reject non-Commons hosts", ()
   ]);
 });
 
+test("Openverse images preserve source and linked license metadata", () => {
+  const results = parseOpenverseImageSearchResults(
+    JSON.stringify({
+      results: [
+        OPENVERSE_RECORD,
+        null,
+        "invalid record",
+        { ...OPENVERSE_RECORD, title: 7 },
+        { ...OPENVERSE_RECORD, thumbnail: "https://example.com/image.jpg" },
+        { ...OPENVERSE_RECORD, license: "by-nc-sa" },
+        {
+          ...OPENVERSE_RECORD,
+          license_url: "https://evilcreativecommons.org/licenses/by-sa/4.0/",
+        },
+        { ...OPENVERSE_RECORD, mature: true },
+      ],
+    }),
+  );
+
+  assert.deepEqual(results, [
+    {
+      title: "Honeybee pollinating a flower",
+      imageUrl: OPENVERSE_RECORD.thumbnail,
+      pageUrl: OPENVERSE_RECORD.foreign_landing_url,
+      creator: "Example photographer",
+      license: "CC BY-SA 4.0",
+      licenseUrl: OPENVERSE_RECORD.license_url,
+      source: "Flickr",
+    },
+  ]);
+});
+
 test("a context-only image follow-up searches the saved research topic without empty searches", async () => {
-  let requestUrl: URL | undefined;
+  const requestUrls = new Map<string, URL>();
   let requestCount = 0;
   const fetcher = async (input: Parameters<typeof fetch>[0]) => {
     requestCount += 1;
-    requestUrl = new URL(String(input));
-    return new Response(JSON.stringify({ query: { pages: [] } }), {
-      status: 200,
-    });
+    const url = new URL(String(input));
+    requestUrls.set(url.hostname, url);
+    const payload =
+      url.hostname === "api.openverse.org"
+        ? { results: [] }
+        : { query: { pages: [] } };
+    return new Response(JSON.stringify(payload), { status: 200 });
   };
 
   assert.deepEqual(
@@ -133,28 +182,107 @@ test("a context-only image follow-up searches the saved research topic without e
     fetcher,
     "What is pollination?",
   );
-  assert.equal(requestCount, 1);
-  assert.equal(requestUrl?.searchParams.get("gsrsearch"), "pollination");
+  assert.equal(requestUrls.size, 2);
+  assert.equal(
+    requestUrls.get("commons.wikimedia.org")?.searchParams.get("gsrsearch"),
+    "pollination",
+  );
+  assert.equal(
+    requestUrls.get("api.openverse.org")?.searchParams.get("q"),
+    "pollination",
+  );
 });
 
-test("image search calls Commons with the cleaned query and returns vetted images", async () => {
-  let requestUrl: URL | undefined;
+test("image search checks Openverse and Commons in parallel and returns vetted images", async () => {
+  const requestUrls = new Map<string, URL>();
   const results = await searchResearchImages(
     "Can you show me pictures of monarch butterflies?",
     async (input) => {
-      requestUrl = new URL(String(input));
+      const url = new URL(String(input));
+      requestUrls.set(url.hostname, url);
+      const payload =
+        url.hostname === "api.openverse.org"
+          ? { results: [OPENVERSE_RECORD] }
+          : {
+              query: {
+                pages: [
+                  {
+                    title: "File:Monarch butterfly.jpg",
+                    imageinfo: [
+                      {
+                        thumburl:
+                          "https://upload.wikimedia.org/wikipedia/commons/1/1a/Monarch.jpg",
+                        descriptionurl:
+                          "https://commons.wikimedia.org/wiki/File:Monarch_butterfly.jpg",
+                      },
+                    ],
+                  },
+                ],
+              },
+            };
+      return new Response(JSON.stringify(payload), { status: 200 });
+    },
+  );
+
+  assert.deepEqual([...requestUrls.keys()].sort(), [
+    "api.openverse.org",
+    "commons.wikimedia.org",
+  ]);
+  assert.equal(
+    requestUrls.get("api.openverse.org")?.searchParams.get("q"),
+    "monarch butterflies",
+  );
+  assert.equal(
+    requestUrls.get("api.openverse.org")?.searchParams.get("license_type"),
+    "commercial",
+  );
+  assert.equal(
+    requestUrls.get("commons.wikimedia.org")?.searchParams.get("gsrsearch"),
+    "monarch butterflies",
+  );
+  assert.equal(results.length, 2);
+  assert.equal(results[0]?.source, "Flickr");
+  assert.equal(results[1]?.title, "Monarch butterfly.jpg");
+});
+
+test("Openverse results remain available when Commons is unavailable", async () => {
+  const results = await searchResearchImages(
+    "Show me a picture of pollination",
+    async (input) => {
+      const url = new URL(String(input));
+      if (url.hostname === "commons.wikimedia.org") {
+        return new Response("temporarily unavailable", { status: 503 });
+      }
+      return new Response(JSON.stringify({ results: [OPENVERSE_RECORD] }), {
+        status: 200,
+      });
+    },
+  );
+
+  assert.equal(results.length, 1);
+  assert.equal(results[0]?.source, "Flickr");
+});
+
+test("Commons results remain available when Openverse is rate-limited", async () => {
+  const results = await searchResearchImages(
+    "Show me a picture of pollination",
+    async (input) => {
+      const url = new URL(String(input));
+      if (url.hostname === "api.openverse.org") {
+        return new Response("rate limited", { status: 429 });
+      }
       return new Response(
         JSON.stringify({
           query: {
             pages: [
               {
-                title: "File:Monarch butterfly.jpg",
+                title: "File:Pollination.jpg",
                 imageinfo: [
                   {
                     thumburl:
-                      "https://upload.wikimedia.org/wikipedia/commons/1/1a/Monarch.jpg",
+                      "https://upload.wikimedia.org/wikipedia/commons/1/1a/Pollination.jpg",
                     descriptionurl:
-                      "https://commons.wikimedia.org/wiki/File:Monarch_butterfly.jpg",
+                      "https://commons.wikimedia.org/wiki/File:Pollination.jpg",
                   },
                 ],
               },
@@ -166,11 +294,7 @@ test("image search calls Commons with the cleaned query and returns vetted image
     },
   );
 
-  assert.equal(requestUrl?.hostname, "commons.wikimedia.org");
-  assert.equal(
-    requestUrl?.searchParams.get("gsrsearch"),
-    "monarch butterflies",
-  );
   assert.equal(results.length, 1);
-  assert.equal(results[0]?.title, "Monarch butterfly.jpg");
+  assert.equal(results[0]?.title, "Pollination.jpg");
+  assert.equal(results[0]?.source, undefined);
 });

@@ -572,21 +572,39 @@ export class MuseAgent {
       return `${response}\n\nI couldn't find suitable image results for that request.`;
     }
 
-    const imageList = outcome.images.map((image) => {
-      const alt = image.title.replace(/[\[\]()\\\r\n]/g, "").replace(/\s+/g, " ").trim();
-      const attribution = [
-        image.creator
-          ? `by ${image.creator.replace(/[\[\]()\\\r\n]/g, "").replace(/\s+/g, " ").trim()}`
-          : "",
-        image.license
-          ? `license: ${image.license.replace(/[\[\]()\\\r\n]/g, "").replace(/\s+/g, " ").trim()}`
-          : "",
-      ].filter(Boolean).join("; ");
-      return [
-        `![${alt}](${image.imageUrl})`,
-        `[${alt} — Wikimedia Commons](${image.pageUrl})${attribution ? ` (${attribution})` : ""}`,
-      ].join("\n");
-    }).join("\n\n");
+    const imageList = outcome.images
+      .map((image) => {
+        const alt = image.title
+          .replace(/[\[\]()\\\r\n]/g, "")
+          .replace(/\s+/g, " ")
+          .trim();
+        const source = (image.source ?? "Wikimedia Commons")
+          .replace(/[\[\]()\\\r\n]/g, "")
+          .replace(/\s+/g, " ")
+          .trim();
+        const license = image.license
+          ?.replace(/[\[\]()\\\r\n]/g, "")
+          .replace(/\s+/g, " ")
+          .trim();
+        const attribution = [
+          image.creator
+            ? `by ${image.creator
+                .replace(/[\[\]()\\\r\n]/g, "")
+                .replace(/\s+/g, " ")
+                .trim()}`
+            : "",
+          license
+            ? `license: ${image.licenseUrl ? `[${license}](${image.licenseUrl})` : license}`
+            : "",
+        ]
+          .filter(Boolean)
+          .join("; ");
+        return [
+          `![${alt}](${image.imageUrl})`,
+          `[${alt} — ${source}](${image.pageUrl})${attribution ? ` (${attribution})` : ""}`,
+        ].join("\n");
+      })
+      .join("\n\n");
     return `${response}\n\n### Images\n\n${imageList}`;
   }
 

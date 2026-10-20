@@ -1,10 +1,28 @@
+import { safeHttpUrl } from "./safe-fetch.js";
+
 export type ResearchImage = {
   title: string;
   imageUrl: string;
   pageUrl: string;
   creator?: string;
   license?: string;
+  licenseUrl?: string;
+  source?: string;
 };
+
+function safeHttpsUrl(raw: unknown): string | undefined {
+  if (typeof raw !== "string" || !raw) return undefined;
+  const safe = safeHttpUrl(raw);
+  if (!safe) return undefined;
+  const url = new URL(safe);
+  return url.protocol === "https:" ? url.href : undefined;
+}
+
+function markdownSafeUrl(raw: string): string {
+  return raw.replace(/[()]/g, (character) =>
+    character === "(" ? "%28" : "%29",
+  );
+}
 
 type CommonsPage = {
   title?: string;
@@ -15,9 +33,10 @@ type CommonsPage = {
   }>;
 };
 
-function metadataText(value: string | undefined): string | undefined {
+function metadataText(value: unknown): string | undefined {
+  if (typeof value !== "string") return undefined;
   const text = value
-    ?.replace(/<[^>]*>/g, " ")
+    .replace(/<[^>]*>/g, " ")
     .replace(/&nbsp;/gi, " ")
     .replace(/&amp;/gi, "&")
     .replace(/&#039;|&apos;/gi, "'")
@@ -32,19 +51,16 @@ function safeCommonsImage(page: CommonsPage): ResearchImage | undefined {
   const info = page.imageinfo?.[0];
   if (!page.title || !info?.thumburl || !info.descriptionurl) return undefined;
 
-  let imageUrl: URL;
-  let pageUrl: URL;
-  try {
-    imageUrl = new URL(info.thumburl);
-    pageUrl = new URL(info.descriptionurl);
-  } catch {
-    return undefined;
-  }
+  const safeImageUrl = safeHttpsUrl(info.thumburl);
+  const safePageUrl = safeHttpsUrl(info.descriptionurl);
+  if (!safeImageUrl || !safePageUrl) return undefined;
+  const imageUrl = new URL(safeImageUrl);
+  const pageUrl = new URL(safePageUrl);
   if (
-    imageUrl.protocol !== "https:" ||
     imageUrl.hostname !== "upload.wikimedia.org" ||
-    pageUrl.protocol !== "https:" ||
-    pageUrl.hostname !== "commons.wikimedia.org"
+    imageUrl.port ||
+    pageUrl.hostname !== "commons.wikimedia.org" ||
+    pageUrl.port
   ) {
     return undefined;
   }
@@ -52,17 +68,129 @@ function safeCommonsImage(page: CommonsPage): ResearchImage | undefined {
   const metadata = info.extmetadata ?? {};
   const creator = metadataText(metadata.Artist?.value);
   const license = metadataText(metadata.LicenseShortName?.value);
+  const rawLicenseUrl = safeHttpsUrl(metadata.LicenseUrl?.value);
+  const licensePage = rawLicenseUrl ? new URL(rawLicenseUrl) : undefined;
+  const licenseUrl =
+    licensePage &&
+    !licensePage.port &&
+    /^(?:www\.)?creativecommons\.org$/i.test(licensePage.hostname)
+      ? rawLicenseUrl
+      : undefined;
   return {
     title: page.title.replace(/^File:/i, ""),
-    imageUrl: imageUrl.href.replace(/[()]/g, (character) =>
-      character === "(" ? "%28" : "%29",
-    ),
-    pageUrl: pageUrl.href.replace(/[()]/g, (character) =>
-      character === "(" ? "%28" : "%29",
-    ),
+    imageUrl: markdownSafeUrl(imageUrl.href),
+    pageUrl: markdownSafeUrl(pageUrl.href),
     ...(creator ? { creator } : {}),
     ...(license ? { license } : {}),
+    ...(licenseUrl ? { licenseUrl: markdownSafeUrl(licenseUrl) } : {}),
   };
+}
+
+type OpenverseImageRecord = {
+  title?: unknown;
+  thumbnail?: unknown;
+  foreign_landing_url?: unknown;
+  creator?: unknown;
+  license?: unknown;
+  license_version?: unknown;
+  license_url?: unknown;
+  source?: unknown;
+  provider?: unknown;
+  mature?: unknown;
+};
+
+const OPENVERSE_LICENSE_LABELS: Record<string, string> = {
+  by: "CC BY",
+  "by-sa": "CC BY-SA",
+  "by-nd": "CC BY-ND",
+  cc0: "CC0",
+  pdm: "Public Domain Mark",
+};
+const NONCOMMERCIAL_LICENSES = new Set(["by-nc", "by-nc-sa", "by-nc-nd"]);
+
+function licenseLabel(record: OpenverseImageRecord): string | undefined {
+  const code =
+    typeof record.license === "string"
+      ? record.license.trim().toLowerCase().replace(/^cc-/, "")
+      : undefined;
+  if (!code || NONCOMMERCIAL_LICENSES.has(code)) return undefined;
+  const baseLabel = OPENVERSE_LICENSE_LABELS[code];
+  if (!baseLabel) return undefined;
+  const version =
+    typeof record.license_version === "string" ||
+    typeof record.license_version === "number"
+      ? String(record.license_version).trim()
+      : "";
+  const versionSuffix = /^\d+(?:\.\d+)?$/.test(version)
+    ? ` ${version}`
+    : code === "cc0" || code === "pdm"
+      ? " 1.0"
+      : "";
+  return `${baseLabel}${versionSuffix}`;
+}
+
+function safeOpenverseImage(
+  record: OpenverseImageRecord,
+): ResearchImage | undefined {
+  const title = metadataText(record.title);
+  if (record.mature === true || !title) return undefined;
+
+  const imageUrl = safeHttpsUrl(record.thumbnail);
+  const pageUrl = safeHttpsUrl(record.foreign_landing_url);
+  const license = licenseLabel(record);
+  const rawLicenseUrl = safeHttpsUrl(record.license_url);
+  if (!imageUrl || !pageUrl || !license || !rawLicenseUrl) return undefined;
+
+  const thumbnail = new URL(imageUrl);
+  const licensePage = new URL(rawLicenseUrl);
+  if (
+    thumbnail.hostname !== "api.openverse.org" ||
+    thumbnail.port ||
+    !/^\/v1\/images\/[a-f0-9-]+\/thumb\/?$/i.test(thumbnail.pathname) ||
+    !/^(?:www\.)?creativecommons\.org$/i.test(licensePage.hostname) ||
+    licensePage.port
+  ) {
+    return undefined;
+  }
+
+  const creator = metadataText(record.creator);
+  const sourceText = metadataText(record.source ?? record.provider);
+  const source = sourceText
+    ?.replace(/[-_]+/g, " ")
+    .replace(/\b\p{L}/gu, (letter) => letter.toUpperCase())
+    .slice(0, 60);
+  return {
+    title,
+    imageUrl: thumbnail.href,
+    pageUrl: markdownSafeUrl(pageUrl),
+    license,
+    licenseUrl: markdownSafeUrl(licensePage.href),
+    ...(creator ? { creator } : {}),
+    ...(source ? { source } : {}),
+  };
+}
+
+function isOpenverseImageRecord(value: unknown): value is OpenverseImageRecord {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+export function parseOpenverseImageSearchResults(
+  json: string,
+): ResearchImage[] {
+  const data: unknown = JSON.parse(json);
+  if (
+    typeof data !== "object" ||
+    data === null ||
+    !("results" in data) ||
+    !Array.isArray(data.results)
+  ) {
+    return [];
+  }
+  return data.results
+    .filter(isOpenverseImageRecord)
+    .map(safeOpenverseImage)
+    .filter((image): image is ResearchImage => Boolean(image))
+    .slice(0, 5);
 }
 
 async function readBoundedResponse(
@@ -184,14 +312,38 @@ export function imageSearchQuery(
   );
 }
 
-export async function searchResearchImages(
-  message: string,
-  fetcher: typeof fetch = fetch,
-  fallbackContext = "",
+async function searchOpenverseImages(
+  query: string,
+  fetcher: typeof fetch,
 ): Promise<ResearchImage[]> {
-  const query = imageSearchQuery(message, fallbackContext);
-  if (!query) return [];
+  const url = new URL("https://api.openverse.org/v1/images/");
+  url.search = new URLSearchParams({
+    q: query,
+    page_size: "6",
+    license_type: "commercial",
+    mature: "false",
+  }).toString();
+  const response = await fetcher(url, {
+    headers: {
+      "User-Agent": "MuseResearch/1.0 (open-licensed image lookup)",
+      Accept: "application/json",
+    },
+    redirect: "error",
+    signal: AbortSignal.timeout(10_000),
+  });
+  if (!response.ok) {
+    await response.body?.cancel();
+    throw new Error(`Openverse image search returned HTTP ${response.status}.`);
+  }
+  return parseOpenverseImageSearchResults(
+    await readBoundedResponse(response, 512_000),
+  );
+}
 
+async function searchCommonsImages(
+  query: string,
+  fetcher: typeof fetch,
+): Promise<ResearchImage[]> {
   const url = new URL("https://commons.wikimedia.org/w/api.php");
   url.search = new URLSearchParams({
     action: "query",
@@ -220,10 +372,59 @@ export async function searchResearchImages(
       `Wikimedia Commons image search returned HTTP ${response.status}.`,
     );
   }
-
   return parseCommonsImageSearchResults(
     await readBoundedResponse(response, 256_000),
   );
+}
+
+function uniqueImageResults(images: ResearchImage[]): ResearchImage[] {
+  const seen = new Set<string>();
+  const results: ResearchImage[] = [];
+  for (const image of images) {
+    const key = image.pageUrl.replace(/\/$/, "").toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    results.push(image);
+    if (results.length >= 3) break;
+  }
+  return results;
+}
+
+/**
+ * Searches Openverse's public catalog with its commercial-use license filter
+ * and Wikimedia Commons in parallel. Openverse supplies images from many public
+ * collections; Commons remains a free fallback when the catalog is unavailable.
+ */
+export async function searchResearchImages(
+  message: string,
+  fetcher: typeof fetch = fetch,
+  fallbackContext = "",
+): Promise<ResearchImage[]> {
+  const query = imageSearchQuery(message, fallbackContext);
+  if (!query) return [];
+
+  const outcomes = await Promise.allSettled([
+    searchOpenverseImages(query, fetcher),
+    searchCommonsImages(query, fetcher),
+  ]);
+  const images = outcomes.flatMap((outcome) =>
+    outcome.status === "fulfilled" ? outcome.value : [],
+  );
+  const uniqueImages = uniqueImageResults(images);
+  if (uniqueImages.length > 0) return uniqueImages;
+
+  const failures = outcomes
+    .filter(
+      (outcome): outcome is PromiseRejectedResult =>
+        outcome.status === "rejected",
+    )
+    .map(({ reason }) =>
+      reason instanceof Error ? reason.message : "unknown image search failure",
+    );
+  if (failures.length > 0) {
+    throw new Error(`Image search providers failed: ${failures.join(" ")}`);
+  }
+  return [];
 }
 
 export function parseCommonsImageSearchResults(json: string): ResearchImage[] {
