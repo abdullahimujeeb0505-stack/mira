@@ -13,7 +13,11 @@ honors the requested format, avoids tables, and offers a follow-up only when use
 When explicitly requested, Muse finds relevant existing images in Wikimedia
 Commons and includes the image, its source page, creator attribution, and license
 when available. These accompanying visuals are sourced, not generated. The browser
-preview renders them; other clients may show them as links or previews.
+preview renders them; other clients may show them as links or previews. In iMessage,
+a leading explicit command such as `generate image: a red fox under the northern
+lights` sends the description directly to Cloudflare Workers AI and returns the
+result as an image attachment. Ordinary chat and research messages stay on their
+existing paths; research images are still sourced and are never AI-generated.
 
 The browser chat also offers explicit image generation, image understanding, text
 file attachments, microphone dictation, and speech playback. Image generation
@@ -78,6 +82,16 @@ Spectrum transport. That mode continues to require `SPECTRUM_PROJECT_ID` and
 `SPECTRUM_PROJECT_SECRET`; the default is Photon 2.0 Beta. The Beta transport
 does not require `PHOTON_AGENT_USER_ID`.
 
+To generate original artwork in iMessage, type a leading command such as
+`generate image: a red fox under the northern lights`, `create a picture of a
+paper-cut flower`, or `/imagine a quiet lake at dawn`. Muse sends only the
+following description to Cloudflare Workers AI; Photon delivers the result as an
+image attachment. Prompts are limited to 1,000 characters and each running
+Photon process allows up to 10 image-generation requests per hour. The command
+requires the Cloudflare secrets documented below. A command without a description
+returns usage guidance instead of invoking either model. Regular messages and
+research-image selection are unchanged.
+
 Research is bounded to two rounds, eight searches, 16 candidate pages, and six
 sources by default. `MUSE_RESEARCH_MAX_ROUNDS` (1–3),
 `MUSE_RESEARCH_MAX_SEARCHES` (1–12), `MUSE_RESEARCH_MAX_CANDIDATES` (1–24),
@@ -124,7 +138,9 @@ Each iMessage space has separate in-process conversation history and a
 separately hashed memory file under `scripts/data/muse-photon-spaces/` by
 default. The agent handles incoming plain-text iMessage events and sends
 asynchronous replies through the Photon Beta Messages API, linked to the
-incoming message. If Photon marks a WebSocket delivery as expecting a
+incoming message. Explicit image-generation commands upload the Cloudflare
+result to Photon and send it as an attachment; ordinary messages continue
+through the configured chat model. If Photon marks a WebSocket delivery as expecting a
 synchronous webhook response, Muse also submits the documented WebSocket
 `reply` acknowledgement after accepting its outbound message. Research uses
 public DuckDuckGo HTML/Lite search. Muse retrieves candidate pages itself and
@@ -256,7 +272,7 @@ not use Gemini or assumed browsing built into ordinary text-generation models.
 
 ### Browser multimodal controls
 
-- **Image generation:** Open the composer’s **+** menu and choose **Generate an image** only when you want original AI-created artwork. This uses Cloudflare Workers AI model `@cf/black-forest-labs/flux-1-schnell`; it is separate from requests for an image to accompany an explanation, which retrieve existing, attributed Wikimedia Commons images. Configure `MUSE_CLOUDFLARE_ACCOUNT_ID` (a 32-character Cloudflare account ID) and `MUSE_CLOUDFLARE_AI_TOKEN` in Codespaces Secrets or the deployment secret manager. Use a Cloudflare API token with Workers AI Read and Edit permissions (or Cloudflare's Workers AI REST API token template). Prompts are capped at 1,000 characters. Per server process, image generation is capped at 10 requests per hour and image understanding at 20 analyses per hour. The generated image is returned to the browser for viewing/downloading; Muse does not save it.
+- **Image generation:** Open the composer’s **+** menu and choose **Generate an image** only when you want original AI-created artwork. This uses Cloudflare Workers AI model `@cf/black-forest-labs/flux-1-schnell`; it is separate from requests for an image to accompany an explanation, which retrieve existing, attributed Wikimedia Commons images. Configure `MUSE_CLOUDFLARE_ACCOUNT_ID` (a 32-character Cloudflare account ID) and `MUSE_CLOUDFLARE_AI_TOKEN` in Codespaces Secrets or the deployment secret manager. Use a Cloudflare API token with Workers AI Read and Edit permissions (or Cloudflare's Workers AI REST API token template). Prompts are capped at 1,000 characters. The web server and each Photon process cap image generation at 10 requests per hour; the web server caps image understanding at 20 analyses per hour. The generated image is returned to the browser for viewing/downloading; Muse does not save it.
 - **Attachments:** JPEG, PNG, and WebP images up to 4 MB each, plus TXT, Markdown (`.md`/`.markdown`), and CSV files up to 512 KB each. A turn accepts at most three files and 8 MB total; temporary uploads across the server are capped at 32 MB. Text sent to the model is limited to 16,000 characters per file and 24,000 total. PDF and DOCX are not supported in this release. File bytes stay in process memory, are not written to disk, and are removed after the next chat turn, manual removal, session expiry, or server restart. Image analysis first calls Cloudflare LLaVA `@cf/llava-hf/llava-1.5-7b-hf` with the image bytes and a prompt, then tries Moondream `@cf/moondream/moondream3.1-9B-A2B` if LLaVA returns an empty/unexpected response or a retryable error. LLaVA is marked Beta by Cloudflare. If both models fail, image analysis is unconfigured, or Muse reaches its local analysis limit, chat still proceeds: the user sees an explicit notice and Mira is instructed not to guess what the image shows. Questions about an attached image use the vision/chat path rather than being auto-routed to web research; an explicit web-search request or URL still triggers research. Prompts, text-file content, and any successful vision context go to the configured chat provider (Groq by default). Attachments and image-analysis details are excluded from later conversation history and saved-memory extraction.
 - **Voice:** The microphone icon in the composer uses browser `SpeechRecognition` when available; availability, language, and privacy behavior vary, and some browsers send recognition audio to their own remote service. Audio is not uploaded to Muse. Typed chat remains available. A speaker icon on Mira’s replies uses the browser/device `speechSynthesis` voices; no speech API key is needed. The composer supports Enter to send, Shift+Enter for a line break, and keyboard navigation in the + menu.
 - **Quota:** Cloudflare Workers AI has a limited free allocation, not unlimited free usage. Requests can fail when account/model access or quota is unavailable, and Cloudflare may charge or require a paid plan beyond free usage. Check the current Cloudflare account limits and pricing before use. Muse does not automatically upgrade a plan or enable paid usage. Startup only checks whether the named secrets are present; it does not verify live Cloudflare access.

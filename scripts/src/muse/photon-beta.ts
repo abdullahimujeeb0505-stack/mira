@@ -1,4 +1,11 @@
+import type { GeneratedImage } from "./cloudflare-workers-ai.js";
 import type { MuseAgent } from "./muse-agent.js";
+import {
+  parseImageGenerationCommand,
+  runImageGenerationCommand,
+  type ImageGenerationResponse,
+  type ImageGenerator,
+} from "./image-generation-command.js";
 
 export interface PhotonBetaConfiguration {
   projectId: string;
@@ -49,11 +56,15 @@ export function parsePhotonBetaMessage(
 
   const message = value.data.object;
   if (!isRecord(message)) {
-    throw new Error("Photon delivered a message event without a message object.");
+    throw new Error(
+      "Photon delivered a message event without a message object.",
+    );
   }
   if (message.platform !== "imessage") return undefined;
   if (value.source !== "imessage.photon") {
-    throw new Error("Photon delivered an iMessage event with an invalid source.");
+    throw new Error(
+      "Photon delivered an iMessage event with an invalid source.",
+    );
   }
   if (message.status !== "received") {
     throw new Error("Photon delivered a message event with an invalid status.");
@@ -79,7 +90,9 @@ export function parsePhotonBetaMessage(
     typeof message.id !== "string" ||
     !message.id
   ) {
-    throw new Error("Photon delivered a message with an invalid sender or space.");
+    throw new Error(
+      "Photon delivered a message with an invalid sender or space.",
+    );
   }
 
   if (
@@ -106,10 +119,13 @@ export interface PhotonBetaReply {
   spaceId: string;
   senderId: string;
   text: string;
+  image?: GeneratedImage;
 }
 
 export const PHOTON_BETA_FAILURE_REPLY =
   "Sorry, I couldn't complete that response just now. Please try again.";
+
+const MAX_CACHED_REPLIES = 4;
 
 type Agent = Pick<MuseAgent, "hasConversationHistory" | "respond">;
 
@@ -122,13 +138,14 @@ export class PhotonBetaMessageHandler {
   private readonly conversations = new Map<string, Conversation>();
   private readonly inFlight = new Map<string, Promise<boolean>>();
   private readonly processed = new Set<string>();
-  private readonly responseCache = new Map<string, string>();
+  private readonly responseCache = new Map<string, ImageGenerationResponse>();
 
   constructor(
     private readonly projectId: string,
     private readonly createAgent: (spaceKey: string) => Agent,
     private readonly sendReply: (reply: PhotonBetaReply) => Promise<void>,
     private readonly reportFailure: (message: string) => void = console.error,
+    private readonly generateImage?: ImageGenerator,
   ) {}
 
   get conversationCount(): number {
@@ -159,6 +176,18 @@ export class PhotonBetaMessageHandler {
     }
   }
 
+  private cacheResponse(
+    eventId: string,
+    response: ImageGenerationResponse,
+  ): void {
+    this.responseCache.set(eventId, response);
+    while (this.responseCache.size > MAX_CACHED_REPLIES) {
+      const oldest = this.responseCache.keys().next().value;
+      if (oldest === undefined) break;
+      this.responseCache.delete(oldest);
+    }
+  }
+
   private async process(message: PhotonBetaMessage): Promise<boolean> {
     const spaceKey = `imessage:${message.spaceId}`;
     let conversation = this.conversations.get(spaceKey);
@@ -174,20 +203,31 @@ export class PhotonBetaMessageHandler {
     const response = activeConversation.pending.then(async () => {
       let reply = this.responseCache.get(message.eventId);
       if (!reply) {
-        try {
-          reply = await activeConversation.agent.respond(message.text);
-        } catch {
-          this.reportFailure("Muse could not complete an incoming iMessage.");
-          reply = PHOTON_BETA_FAILURE_REPLY;
+        const imageCommand = parseImageGenerationCommand(message.text);
+        if (imageCommand) {
+          reply = await runImageGenerationCommand(
+            imageCommand,
+            this.generateImage,
+            this.reportFailure,
+          );
+        } else {
+          try {
+            reply = {
+              text: await activeConversation.agent.respond(message.text),
+            };
+          } catch {
+            this.reportFailure("Muse could not complete an incoming iMessage.");
+            reply = { text: PHOTON_BETA_FAILURE_REPLY };
+          }
         }
-        this.responseCache.set(message.eventId, reply);
+        this.cacheResponse(message.eventId, reply);
       }
 
       await this.sendReply({
         messageId: message.messageId,
         spaceId: message.spaceId,
         senderId: message.senderId,
-        text: reply,
+        ...reply,
       });
     });
     activeConversation.pending = response.then(
