@@ -11,6 +11,7 @@ import { fileURLToPath } from "node:url";
 import { JsonMemoryRepository } from "./memory/json-memory-repository.js";
 import { MemoryService } from "./memory/memory-service.js";
 import { MuseAgent } from "./muse-agent.js";
+import type { ResearchImageFinder, ResearchRunner } from "./muse-agent.js";
 import {
   CloudflareAIConfigurationError,
   CloudflareAIRequestError,
@@ -20,7 +21,6 @@ import {
 } from "./cloudflare-workers-ai.js";
 import { createTaskAwareProviders } from "./provider-selection.js";
 import type { TextGenerationProvider } from "./llm-provider.js";
-import type { ResearchRunner } from "./muse-agent.js";
 
 const SESSION_COOKIE_NAME = "muse_session";
 const SESSION_TTL_MS = 8 * 60 * 60 * 1_000;
@@ -770,6 +770,7 @@ export interface MuseHttpServerOptions {
    *  neither factory is supplied). */
   researchProviderFactory?: () => TextGenerationProvider;
   researchRunner?: ResearchRunner;
+  researchImageFinder?: ResearchImageFinder;
   mediaProviderFactory?: () => MuseMediaProvider;
   maxActiveSessions?: number;
   sessionTtlMs?: number;
@@ -1403,7 +1404,7 @@ export function createMuseHttpServer(
             ),
             sharedMemories,
             options.researchRunner,
-            undefined,
+            options.researchImageFinder,
             {
               research: options.researchProviderFactory
                 ? options.researchProviderFactory()

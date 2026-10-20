@@ -12,6 +12,7 @@ import {
   createMuseHttpServer,
   type MuseHttpServerOptions,
 } from "./http-server.js";
+import type { ResearchImage } from "./research-images.js";
 import {
   CloudflareAIConfigurationError,
   type MuseMediaProvider,
@@ -509,6 +510,38 @@ test("chat page and API work without an access code", async () => {
     assert.deepEqual(await response.json(), { reply: "Muse reply" });
     assert.equal(providerCreations, 1);
   });
+});
+
+test("chat API attaches sourced online images to a topical explanation", async () => {
+  const image: ResearchImage = {
+    title: "Honeybee pollinating a flower",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/7/7e/Honeybee-pollination.jpg",
+    pageUrl: "https://commons.wikimedia.org/wiki/File:Honeybee-pollination.jpg",
+    creator: "Example photographer",
+    license: "CC BY-SA 4.0",
+  };
+  const imageRequests: string[] = [];
+
+  await withServer(
+    () => ({ generateText: async () => "Pollination transfers pollen between flowers." }),
+    async (baseUrl) => {
+      const response = await sendMessage(baseUrl, "Show me an image of pollination.");
+      assert.equal(response.status, 200);
+      const body = (await response.json()) as { reply: string };
+      assert.match(body.reply, /Pollination transfers pollen between flowers/);
+      assert.match(body.reply, /!\[Honeybee pollinating a flower\]/);
+      assert.match(body.reply, /\[Honeybee pollinating a flower — Wikimedia Commons\]/);
+      assert.match(body.reply, /Example photographer; license: CC BY-SA 4\.0/);
+      assert.deepEqual(imageRequests, ["Show me an image of pollination."]);
+    },
+    undefined,
+    {
+      researchImageFinder: async (message) => {
+        imageRequests.push(message);
+        return [image];
+      },
+    },
+  );
 });
 
 test("Muse keeps conversation histories isolated by signed browser session", async () => {

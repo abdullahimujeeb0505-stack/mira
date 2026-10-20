@@ -41,6 +41,27 @@ test("image search queries retain the subject and remove request wording", () =>
     ),
     "pollination",
   );
+  assert.equal(imageSearchQuery("Add an image to that."), "");
+  assert.equal(imageSearchQuery("Attach a picture to its research."), "");
+  assert.equal(
+    imageSearchQuery("Attach an image to my previous findings."),
+    "",
+  );
+  assert.equal(
+    imageSearchQuery(
+      "Read the supplied page at https://example.org/articles/pollination and attach an image.",
+      "Honeybee pollination",
+    ),
+    "Honeybee pollination",
+  );
+  assert.equal(
+    imageSearchQuery("Add an image to that.", "What is pollination?"),
+    "pollination",
+  );
+  assert.equal(
+    imageSearchQuery("Add an image of a cat.", "What is pollination?"),
+    "cat",
+  );
 });
 
 test("Commons image results retain attribution and reject non-Commons hosts", () => {
@@ -88,6 +109,32 @@ test("Commons image results retain attribution and reject non-Commons hosts", ()
       license: "CC BY-SA 4.0",
     },
   ]);
+});
+
+test("a context-only image follow-up searches the saved research topic without empty searches", async () => {
+  let requestUrl: URL | undefined;
+  let requestCount = 0;
+  const fetcher = async (input: Parameters<typeof fetch>[0]) => {
+    requestCount += 1;
+    requestUrl = new URL(String(input));
+    return new Response(JSON.stringify({ query: { pages: [] } }), {
+      status: 200,
+    });
+  };
+
+  assert.deepEqual(
+    await searchResearchImages("Add an image to that.", fetcher),
+    [],
+  );
+  assert.equal(requestCount, 0);
+
+  await searchResearchImages(
+    "Add an image to that.",
+    fetcher,
+    "What is pollination?",
+  );
+  assert.equal(requestCount, 1);
+  assert.equal(requestUrl?.searchParams.get("gsrsearch"), "pollination");
 });
 
 test("image search calls Commons with the cleaned query and returns vetted images", async () => {
