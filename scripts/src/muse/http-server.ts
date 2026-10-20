@@ -9,11 +9,18 @@ import {
   type Server,
   type ServerResponse,
 } from "node:http";
+import { Buffer } from "node:buffer";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { JsonMemoryRepository } from "./memory/json-memory-repository.js";
 import { MemoryService } from "./memory/memory-service.js";
 import { MuseAgent } from "./muse-agent.js";
+import {
+  CloudflareAIConfigurationError,
+  CloudflareWorkersAIProvider,
+  type GeneratedImage,
+  type MuseMediaProvider,
+} from "./cloudflare-workers-ai.js";
 import { createTaskAwareProviders } from "./provider-selection.js";
 import type { TextGenerationProvider } from "./llm-provider.js";
 import type { ResearchRunner } from "./muse-agent.js";
@@ -23,6 +30,15 @@ const SESSION_TTL_MS = 8 * 60 * 60 * 1_000;
 const MAX_ACTIVE_SESSIONS = 500;
 const MAX_REQUEST_BYTES = 16 * 1_024;
 const MAX_MESSAGE_LENGTH = 4_000;
+const MAX_IMAGE_ATTACHMENT_BYTES = 4 * 1_024 * 1_024;
+const MAX_TEXT_ATTACHMENT_BYTES = 512 * 1_024;
+const MAX_ATTACHMENT_TOTAL_BYTES = 8 * 1_024 * 1_024;
+const MAX_SERVER_ATTACHMENT_BYTES = 32 * 1_024 * 1_024;
+const MAX_ATTACHMENTS_PER_MESSAGE = 3;
+const MAX_ATTACHMENT_TEXT_CHARS = 16_000;
+const MAX_TOTAL_ATTACHMENT_TEXT_CHARS = 24_000;
+const MAX_IMAGE_GENERATIONS_PER_HOUR = 10;
+const MAX_IMAGE_ANALYSES_PER_HOUR = 20;
 const DEFAULT_MEMORY_DIRECTORY = fileURLToPath(
   new URL("../../data/muse-http-sessions/", import.meta.url),
 );
@@ -57,13 +73,21 @@ const CHAT_PAGE = `<!doctype html>
       .message.muse pre { max-width: 100%; overflow-x: auto; white-space: pre; }
       .message.muse code { overflow-wrap: anywhere; white-space: break-spaces; }
       .message.you { align-self: flex-end; background: #526de2; }
-      form { display: flex; gap: 10px; align-items: flex-end; margin-top: 4px; }
+      form { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+      .composer-row { display: flex; gap: 10px; align-items: flex-end; }
+      .composer-tools { display: flex; flex-wrap: wrap; gap: 8px; }
       textarea { flex: 1; min-height: 52px; max-height: 180px; resize: vertical; border: 1px solid #3b4354; border-radius: 14px; padding: 14px; color: inherit; background: #10131b; font: inherit; }
       textarea:focus { outline: 2px solid #91a9ff; outline-offset: 1px; }
-      button { min-height: 52px; border: 0; border-radius: 14px; padding: 0 20px; color: white; background: #526de2; font: inherit; font-weight: 700; cursor: pointer; }
+      button { min-height: 46px; border: 0; border-radius: 12px; padding: 0 16px; color: white; background: #526de2; font: inherit; font-weight: 700; cursor: pointer; }
+      .tool-button, .attachment-remove, .speak-button { min-height: 34px; padding: 0 12px; color: #d9e1ff; background: #30394c; font-size: 13px; }
+      .attachment-list { display: flex; flex-wrap: wrap; gap: 8px; }
+      .attachment-chip { display: inline-flex; gap: 8px; align-items: center; padding: 5px 7px 5px 11px; border: 1px solid #3b4354; border-radius: 999px; color: #dce2ee; font-size: 12px; }
+      .message-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+      .download-link { display: inline-block; padding: 8px 12px; border-radius: 8px; color: #d9e1ff; background: #30394c; font-size: 13px; text-decoration: none; }
+      .generated-image { display: block; max-width: min(100%, 680px); height: auto; border-radius: 10px; }
       button:disabled { cursor: wait; opacity: .65; }
       #status { min-height: 20px; margin: 10px 0 0; color: #a8afbe; font-size: 13px; }
-      @media (max-width: 520px) { body { padding: 0; } main { min-height: 100vh; border: 0; border-radius: 0; } form { align-items: stretch; flex-direction: column; } button { width: 100%; } }
+      @media (max-width: 520px) { body { padding: 0; } main { min-height: 100vh; border: 0; border-radius: 0; } .composer-row { align-items: stretch; flex-direction: column; } .composer-row button { width: 100%; } .composer-tools button { width: auto; flex: 1; } }
     </style>
   </head>
   <body>
@@ -74,11 +98,21 @@ const CHAT_PAGE = `<!doctype html>
       <section id="messages" aria-live="polite" aria-label="Conversation">
         <div class="message muse">Hi, I’m Mira, Muse’s assistant. What would you like to work through?</div>
       </section>
+      <div id="attachment-list" class="attachment-list" aria-label="Attachments"></div>
       <form id="chat-form">
-        <label for="message" class="visually-hidden">Message to Mira</label>
-        <textarea id="message" name="message" maxlength="4000" placeholder="Write a message…" required></textarea>
-        <button id="send" type="submit">Send</button>
+        <input id="attachment-files" class="visually-hidden" type="file" multiple accept="image/jpeg,image/png,image/webp,text/plain,text/markdown,text/csv,.jpg,.jpeg,.png,.webp,.txt,.md,.markdown,.csv">
+        <div class="composer-tools">
+          <button id="attach" class="tool-button" type="button">Attach file</button>
+          <button id="voice-input" class="tool-button" type="button" aria-label="Dictate a message">Use microphone</button>
+          <button id="generate-image" class="tool-button" type="button">Create image</button>
+        </div>
+        <div class="composer-row">
+          <label for="message" class="visually-hidden">Message to Mira</label>
+          <textarea id="message" name="message" maxlength="4000" placeholder="Write a message…" required></textarea>
+          <button id="send" type="submit">Send</button>
+        </div>
       </form>
+      <p class="notice">Attach JPEG/PNG/WebP images (4 MB max) or TXT/Markdown/CSV files (512 KB max); up to three files per turn. PDFs and DOCX are not supported. Image tools use quota-limited Cloudflare Workers AI. Image attachments are sent to Cloudflare for understanding; your message and text-file contents are sent to the configured chat model. Files stay in memory and are discarded after the next chat turn. Dictation support and privacy vary by browser; audio is not uploaded to Muse, but the browser may use its own remote speech service. Speech playback uses your device’s voices.</p>
       <p id="status" role="status"></p>
     </main>
     <script>
@@ -277,32 +311,209 @@ const CHAT_PAGE = `<!doctype html>
         }
       }
 
+      const attachmentFiles = document.querySelector("#attachment-files");
+      const attachmentList = document.querySelector("#attachment-list");
+      const attachButton = document.querySelector("#attach");
+      const voiceButton = document.querySelector("#voice-input");
+      const imageButton = document.querySelector("#generate-image");
+      const supportedExtensions = {
+        ".jpg": "image/jpeg",
+        ".jpeg": "image/jpeg",
+        ".png": "image/png",
+        ".webp": "image/webp",
+        ".txt": "text/plain",
+        ".md": "text/markdown",
+        ".markdown": "text/markdown",
+        ".csv": "text/csv"
+      };
+      let attachments = [];
+      let busy = false;
+
+      function setBusy(value) {
+        busy = value;
+        button.disabled = value;
+        attachButton.disabled = value;
+        imageButton.disabled = value;
+        voiceButton.disabled = value || !voiceRecognition;
+      }
+
+      function expectedMimeType(file) {
+        const name = file.name.toLowerCase();
+        const dot = name.lastIndexOf(".");
+        return dot < 0 ? "" : supportedExtensions[name.slice(dot)];
+      }
+
+      function formatFileSize(size) {
+        return size < 1024 * 1024
+          ? Math.max(1, Math.round(size / 1024)) + " KB"
+          : (size / (1024 * 1024)).toFixed(1) + " MB";
+      }
+
+      function renderAttachments() {
+        attachmentList.replaceChildren();
+        for (const attachment of attachments) {
+          const chip = document.createElement("span");
+          chip.className = "attachment-chip";
+          const label = document.createElement("span");
+          label.textContent = attachment.name + " · " + formatFileSize(attachment.size);
+          const remove = document.createElement("button");
+          remove.className = "attachment-remove";
+          remove.type = "button";
+          remove.textContent = "Remove";
+          remove.setAttribute("aria-label", "Remove " + attachment.name);
+          remove.dataset.attachmentId = attachment.id;
+          chip.append(label, remove);
+          attachmentList.append(chip);
+        }
+      }
+
+      attachmentList.addEventListener("click", async (event) => {
+        const target = event.target instanceof Element ? event.target : null;
+        const remove = target && target.closest("button[data-attachment-id]");
+        if (!remove || busy) return;
+        const id = remove.dataset.attachmentId;
+        if (!id) return;
+        remove.disabled = true;
+        try {
+          const response = await fetch("/api/attachments/" + encodeURIComponent(id), {
+            method: "DELETE"
+          });
+          if (!response.ok) {
+            const result = await response.json().catch(() => ({}));
+            throw new Error(result.error || "Could not remove that attachment.");
+          }
+          attachments = attachments.filter((attachment) => attachment.id !== id);
+          renderAttachments();
+          status.textContent = "Attachment removed.";
+        } catch (error) {
+          status.textContent = error instanceof Error ? error.message : "Could not remove that attachment.";
+          remove.disabled = false;
+        }
+      });
+
+      attachButton.addEventListener("click", () => attachmentFiles.click());
+      attachmentFiles.addEventListener("change", async () => {
+        const selectedFiles = Array.from(attachmentFiles.files || []);
+        attachmentFiles.value = "";
+        if (!selectedFiles.length || busy) return;
+        setBusy(true);
+        try {
+          for (const file of selectedFiles) {
+            if (attachments.length >= 3) {
+              throw new Error("You can attach up to three files per turn.");
+            }
+            const mimeType = expectedMimeType(file);
+            if (!mimeType) {
+              throw new Error("Attach JPEG, PNG, WebP, TXT, Markdown, CSV, or JSON files only.");
+            }
+            const isImage = mimeType.startsWith("image/");
+            const maxBytes = isImage ? 4 * 1024 * 1024 : 512 * 1024;
+            if (file.size > maxBytes) {
+              throw new Error(file.name + " is larger than the " + (isImage ? "4 MB image" : "512 KB text") + " limit.");
+            }
+            const response = await fetch("/api/attachments", {
+              method: "POST",
+              headers: {
+                "Content-Type": mimeType,
+                "X-Muse-File-Name": encodeURIComponent(file.name)
+              },
+              body: file
+            });
+            const result = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(result.error || "Could not upload " + file.name + ".");
+            attachments.push(result.attachment);
+            renderAttachments();
+          }
+          status.textContent = "Attachment ready. It will be discarded after your next message.";
+        } catch (error) {
+          status.textContent = error instanceof Error ? error.message : "Could not upload that file.";
+        } finally {
+          setBusy(false);
+        }
+      });
+
       function addMessage(kind, text) {
         const item = document.createElement("div");
         item.className = "message " + kind;
         if (kind === "muse") {
           renderMarkdown(item, text);
+          if ("speechSynthesis" in window && "SpeechSynthesisUtterance" in window && text.trim()) {
+            const actions = document.createElement("div");
+            actions.className = "message-actions";
+            const speak = document.createElement("button");
+            speak.className = "speak-button";
+            speak.type = "button";
+            speak.textContent = "Read aloud";
+            speak.addEventListener("click", () => {
+              const plainText = text
+                .replace(/\\x60{3}[\\s\\S]*?\\x60{3}/g, " code block omitted ")
+                .replace(/!\\[([^\\]]*)\\]\\([^)]+\\)/g, "$1")
+                .replace(/\\[([^\\]]+)\\]\\([^)]+\\)/g, "$1")
+                .replace(/[#*_>|]/g, " ").replaceAll(String.fromCharCode(96), " ");
+              window.speechSynthesis.cancel();
+              const utterance = new SpeechSynthesisUtterance(plainText);
+              utterance.lang = navigator.language || "en-US";
+              window.speechSynthesis.speak(utterance);
+            });
+            actions.append(speak);
+            item.append(actions);
+          }
         } else {
           item.textContent = text;
         }
         messages.append(item);
         item.scrollIntoView({ block: "nearest" });
       }
+
+      function addGeneratedImage(blob) {
+        const objectUrl = URL.createObjectURL(blob);
+        const item = document.createElement("div");
+        item.className = "message muse";
+        const image = document.createElement("img");
+        image.className = "generated-image";
+        image.src = objectUrl;
+        image.alt = "Image generated by Mira";
+        const actions = document.createElement("div");
+        actions.className = "message-actions";
+        const download = document.createElement("a");
+        download.className = "download-link";
+        download.href = objectUrl;
+        const extension = blob.type === "image/png" ? "png" : blob.type === "image/webp" ? "webp" : "jpg";
+        download.download = "mira-generated-image." + extension;
+        download.textContent = "Download image";
+        download.addEventListener("click", () => {
+          window.setTimeout(() => URL.revokeObjectURL(objectUrl), 60_000);
+        }, { once: true });
+        actions.append(download);
+        item.append(image, actions);
+        messages.append(item);
+        item.scrollIntoView({ block: "nearest" });
+      }
+
+      async function readError(response, fallback) {
+        const result = await response.json().catch(() => ({}));
+        return result.error || fallback;
+      }
+
       form.addEventListener("submit", async (event) => {
         event.preventDefault();
         const message = input.value.trim();
-        if (!message || button.disabled) return;
-        addMessage("you", message);
+        if (!message || busy) return;
+        const submittedAttachments = attachments.slice();
+        addMessage("you", message + (submittedAttachments.length
+          ? "\\n[Attached: " + submittedAttachments.map((file) => file.name).join(", ") + "]"
+          : ""));
         input.value = "";
-        button.disabled = true;
+        setBusy(true);
         status.textContent = "Mira is thinking…";
         try {
           const response = await fetch("/api/chat", {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ message })
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              message,
+              attachmentIds: submittedAttachments.map((attachment) => attachment.id)
+            })
           });
           const result = await response.json();
           if (!response.ok) throw new Error(result.error || "Mira could not reply.");
@@ -311,18 +522,112 @@ const CHAT_PAGE = `<!doctype html>
         } catch (error) {
           status.textContent = error instanceof Error ? error.message : "Mira could not reply.";
         } finally {
-          button.disabled = false;
+          attachments = [];
+          renderAttachments();
+          setBusy(false);
           input.focus();
         }
       });
+
+      imageButton.addEventListener("click", async () => {
+        const prompt = input.value.trim();
+        if (!prompt || busy) {
+          if (!prompt) status.textContent = "Describe the image you would like Mira to create.";
+          return;
+        }
+        if (prompt.length > 1000) {
+          status.textContent = "Image prompts must be 1,000 characters or fewer.";
+          return;
+        }
+        addMessage("you", "Create image: " + prompt);
+        input.value = "";
+        setBusy(true);
+        status.textContent = "Mira is creating your image…";
+        try {
+          const response = await fetch("/api/images/generate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt })
+          });
+          if (!response.ok) throw new Error(await readError(response, "Image generation failed."));
+          const blob = await response.blob();
+          addGeneratedImage(blob);
+          status.textContent = "Image ready. Use Download image to save it.";
+        } catch (error) {
+          status.textContent = error instanceof Error ? error.message : "Image generation failed.";
+        } finally {
+          setBusy(false);
+          input.focus();
+        }
+      });
+
+      let voiceRecognition = null;
+      let voiceBaseText = "";
+      let voiceFinalText = "";
+      const SpeechRecognitionConstructor = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRecognitionConstructor) {
+        voiceRecognition = new SpeechRecognitionConstructor();
+        voiceRecognition.lang = navigator.language || "en-US";
+        voiceRecognition.continuous = false;
+        voiceRecognition.interimResults = true;
+        voiceRecognition.onresult = (event) => {
+          let interimText = "";
+          for (let index = event.resultIndex; index < event.results.length; index += 1) {
+            const result = event.results[index];
+            if (result.isFinal) voiceFinalText += result[0].transcript;
+            else interimText += result[0].transcript;
+          }
+          input.value = [voiceBaseText, voiceFinalText, interimText]
+            .filter(Boolean)
+            .join(" ")
+            .trim();
+        };
+        voiceRecognition.onerror = (event) => {
+          status.textContent = event.error === "not-allowed"
+            ? "Microphone permission was denied. You can type your message instead."
+            : "Speech recognition was unavailable. You can type your message instead.";
+        };
+        voiceRecognition.onend = () => {
+          voiceButton.textContent = "Use microphone";
+          if (!busy) voiceButton.disabled = false;
+          if (status.textContent === "Listening…") status.textContent = "";
+        };
+        voiceButton.addEventListener("click", () => {
+          if (busy) return;
+          try {
+            voiceBaseText = input.value.trim();
+            voiceFinalText = "";
+            voiceButton.disabled = true;
+            voiceButton.textContent = "Listening…";
+            status.textContent = "Listening…";
+            voiceRecognition.start();
+          } catch {
+            voiceButton.disabled = false;
+            voiceButton.textContent = "Use microphone";
+            status.textContent = "Could not start speech recognition. You can type your message instead.";
+          }
+        });
+      } else {
+        voiceButton.disabled = true;
+        voiceButton.title = "Speech recognition is not supported in this browser. Type your message instead.";
+        voiceButton.textContent = "Mic unavailable";
+      }
     </script>
   </body>
 </html>`;
+
+interface MuseAttachment {
+  id: string;
+  name: string;
+  mimeType: string;
+  bytes: Buffer;
+}
 
 interface MuseSession {
   agent: MuseAgent;
   lastUsedAt: number;
   pending: Promise<void>;
+  attachments: Map<string, MuseAttachment>;
 }
 
 export interface MuseHttpServerOptions {
@@ -335,6 +640,7 @@ export interface MuseHttpServerOptions {
    *  neither factory is supplied). */
   researchProviderFactory?: () => TextGenerationProvider;
   researchRunner?: ResearchRunner;
+  mediaProviderFactory?: () => MuseMediaProvider;
   maxActiveSessions?: number;
   sessionTtlMs?: number;
 }
@@ -375,6 +681,38 @@ export function createMuseHttpServer(
   }
 
   const sessions = new Map<string, MuseSession>();
+  const imageGenerationTimestamps: number[] = [];
+  const imageAnalysisTimestamps: number[] = [];
+  let storedAttachmentBytes = 0;
+  let mediaProvider: MuseMediaProvider | undefined;
+
+  function getMediaProvider(): MuseMediaProvider {
+    if (!mediaProvider) {
+      mediaProvider = options.mediaProviderFactory
+        ? options.mediaProviderFactory()
+        : new CloudflareWorkersAIProvider();
+    }
+    return mediaProvider;
+  }
+
+  function consumeHourlyLimit(
+    timestamps: number[],
+    limit: number,
+    now = Date.now(),
+  ): number {
+    while (timestamps.length > 0 && now - timestamps[0]! >= 60 * 60 * 1_000) {
+      timestamps.shift();
+    }
+    if (timestamps.length >= limit) {
+      return Math.max(
+        1,
+        Math.ceil((60 * 60 * 1_000 - (now - timestamps[0]!)) / 1_000),
+      );
+    }
+    timestamps.push(now);
+    return 0;
+  }
+
   return createServer((request, response) => {
     void handleRequest(request, response).catch(() => {
       if (!response.headersSent && !response.destroyed) {
@@ -399,6 +737,19 @@ export function createMuseHttpServer(
 
     if (request.method === "GET" && pathname === "/api/healthz") {
       sendJson(response, 200, { status: "ok" });
+      return;
+    }
+
+    if (pathname === "/api/attachments") {
+      await handleAttachmentUpload(request, response);
+      return;
+    }
+    if (pathname.startsWith("/api/attachments/")) {
+      await handleAttachmentDelete(request, response, pathname);
+      return;
+    }
+    if (pathname === "/api/images/generate") {
+      await handleImageGeneration(request, response);
       return;
     }
 
@@ -448,6 +799,21 @@ export function createMuseHttpServer(
       });
       return;
     }
+    let attachmentIds: string[] = [];
+    if (body.attachmentIds !== undefined) {
+      if (
+        !Array.isArray(body.attachmentIds) ||
+        body.attachmentIds.length > MAX_ATTACHMENTS_PER_MESSAGE ||
+        body.attachmentIds.some(
+          (id) => typeof id !== "string" || !/^[a-f0-9]{32}$/.test(id),
+        ) ||
+        new Set(body.attachmentIds).size !== body.attachmentIds.length
+      ) {
+        sendJson(response, 400, { error: "The attachment list is invalid." });
+        return;
+      }
+      attachmentIds = body.attachmentIds as string[];
+    }
 
     let session: MuseSession | undefined;
     try {
@@ -467,14 +833,336 @@ export function createMuseHttpServer(
     }
 
     try {
-      const reply = await enqueueResponse(session, message);
+      const reply = await enqueueResponse(session, message, attachmentIds);
       sendJson(response, 200, { reply });
     } catch (error) {
-      console.error("Muse generation failed:", error);
+      console.error(
+        "Muse generation failed:",
+        error instanceof Error ? error.message : "unknown error",
+      );
+      if (error instanceof CloudflareAIConfigurationError) {
+        sendJson(response, 503, {
+          error:
+            "Image understanding is not configured. Set MUSE_CLOUDFLARE_ACCOUNT_ID and MUSE_CLOUDFLARE_AI_TOKEN.",
+        });
+      } else if (error instanceof CloudflareRateLimitError) {
+        response.setHeader("Retry-After", String(error.retryAfterSeconds));
+        sendJson(response, 429, {
+          error: "Image understanding has reached its hourly limit. Try again later.",
+        });
+      } else if (error instanceof MissingSessionAttachmentError) {
+        sendJson(response, 400, { error: "An attachment expired or was removed. Please upload it again." });
+      } else {
+        sendJson(response, 502, {
+          error: "Mira could not generate a reply. Check the server terminal.",
+        });
+      }
+    }
+  }
+
+  async function handleAttachmentUpload(
+    request: IncomingMessage,
+    response: ServerResponse,
+  ): Promise<void> {
+    if (request.method !== "POST") {
+      response.setHeader("Allow", "POST");
+      sendJson(response, 405, { error: "Use POST to upload an attachment." });
+      return;
+    }
+
+    const rawFileName = request.headers["x-muse-file-name"];
+    let name: string;
+    try {
+      name = decodeAttachmentName(
+        Array.isArray(rawFileName) ? rawFileName[0] ?? "" : rawFileName ?? "",
+      );
+    } catch {
+      sendJson(response, 400, { error: "The attachment filename is invalid." });
+      return;
+    }
+    const mimeType = getAttachmentMimeType(name);
+    if (!mimeType) {
+      sendJson(response, 415, {
+        error: "Attach JPEG, PNG, WebP, TXT, Markdown, or CSV files only.",
+      });
+      return;
+    }
+
+    let session: MuseSession | undefined;
+    try {
+      session = getSession(request, response);
+    } catch {
+      sendJson(response, 503, {
+        error: "Muse's chat provider is not configured. Set its API key and try again.",
+      });
+      return;
+    }
+    if (!session) {
+      sendJson(response, 503, {
+        error: "Muse has reached its active session limit. Try again later.",
+      });
+      return;
+    }
+    if (session.attachments.size >= MAX_ATTACHMENTS_PER_MESSAGE) {
+      sendJson(response, 413, { error: "You can attach up to three files per turn." });
+      return;
+    }
+
+    const maxBytes = mimeType.startsWith("image/")
+      ? MAX_IMAGE_ATTACHMENT_BYTES
+      : MAX_TEXT_ATTACHMENT_BYTES;
+    let bytes: Buffer;
+    try {
+      bytes = await readBoundedRequestBody(request, maxBytes);
+    } catch (error) {
+      sendJson(response, error instanceof RequestBodyTooLargeError ? 413 : 400, {
+        error:
+          error instanceof RequestBodyTooLargeError
+            ? `Attachments must be ${mimeType.startsWith("image/") ? "4 MB" : "512 KB"} or smaller.`
+            : "The attachment could not be read.",
+      });
+      return;
+    }
+    if (bytes.length === 0) {
+      sendJson(response, 400, { error: "The attachment is empty." });
+      return;
+    }
+    if (
+      mimeType.startsWith("image/") &&
+      !matchesImageSignature(bytes, mimeType)
+    ) {
+      sendJson(response, 415, { error: "The file content does not match its image type." });
+      return;
+    }
+    if (!mimeType.startsWith("image/")) {
+      try {
+        const text = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+        if (/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/.test(text)) {
+          throw new Error("Unsupported control characters.");
+        }
+      } catch {
+        sendJson(response, 415, { error: "Text attachments must be valid UTF-8 text." });
+        return;
+      }
+    }
+
+    const sessionBytes = [...session.attachments.values()].reduce(
+      (total, attachment) => total + attachment.bytes.length,
+      0,
+    );
+    if (sessionBytes + bytes.length > MAX_ATTACHMENT_TOTAL_BYTES) {
+      sendJson(response, 413, { error: "Attachments for one turn must total 8 MB or less." });
+      return;
+    }
+    if (storedAttachmentBytes + bytes.length > MAX_SERVER_ATTACHMENT_BYTES) {
+      sendJson(response, 503, { error: "Muse's temporary attachment capacity is full. Try again later." });
+      return;
+    }
+
+    const id = randomBytes(16).toString("hex");
+    session.attachments.set(id, { id, name, mimeType, bytes });
+    storedAttachmentBytes += bytes.length;
+    session.lastUsedAt = Date.now();
+    sendJson(response, 201, {
+      attachment: { id, name, mimeType, size: bytes.length },
+    });
+  }
+
+  async function handleAttachmentDelete(
+    request: IncomingMessage,
+    response: ServerResponse,
+    pathname: string,
+  ): Promise<void> {
+    if (request.method !== "DELETE") {
+      response.setHeader("Allow", "DELETE");
+      sendJson(response, 405, { error: "Use DELETE to remove an attachment." });
+      return;
+    }
+    const id = pathname.slice("/api/attachments/".length);
+    if (!/^[a-f0-9]{32}$/.test(id)) {
+      sendJson(response, 404, { error: "Attachment not found." });
+      return;
+    }
+    const sessionId = readSessionId(request, sessionSecret);
+    const session = sessionId ? sessions.get(sessionId) : undefined;
+    const attachment = session?.attachments.get(id);
+    if (!session || !attachment) {
+      sendJson(response, 404, { error: "Attachment not found." });
+      return;
+    }
+    session.attachments.delete(id);
+    storedAttachmentBytes = Math.max(0, storedAttachmentBytes - attachment.bytes.length);
+    session.lastUsedAt = Date.now();
+    sendJson(response, 200, { deleted: true });
+  }
+
+  async function handleImageGeneration(
+    request: IncomingMessage,
+    response: ServerResponse,
+  ): Promise<void> {
+    if (request.method !== "POST") {
+      response.setHeader("Allow", "POST");
+      sendJson(response, 405, { error: "Use POST to generate an image." });
+      return;
+    }
+    if (request.headers["content-type"]?.split(";")[0]?.trim() !== "application/json") {
+      sendJson(response, 415, { error: "Send the image prompt as JSON." });
+      return;
+    }
+
+    let body: unknown;
+    try {
+      body = await readJsonBody(request);
+    } catch (error) {
+      sendJson(
+        response,
+        error instanceof RequestBodyTooLargeError ? 413 : 400,
+        {
+          error:
+            error instanceof RequestBodyTooLargeError
+              ? "The request body is too large."
+              : "The request body must be valid JSON.",
+        },
+      );
+      return;
+    }
+    if (!isRecord(body) || typeof body.prompt !== "string" || !body.prompt.trim()) {
+      sendJson(response, 400, { error: "An image prompt is required." });
+      return;
+    }
+    const prompt = body.prompt.trim();
+    if (prompt.length > 1_000) {
+      sendJson(response, 413, { error: "Image prompts must be 1,000 characters or fewer." });
+      return;
+    }
+
+    try {
+      const provider = getMediaProvider();
+      const retryAfterSeconds = consumeHourlyLimit(
+        imageGenerationTimestamps,
+        MAX_IMAGE_GENERATIONS_PER_HOUR,
+      );
+      if (retryAfterSeconds > 0) {
+        response.setHeader("Retry-After", String(retryAfterSeconds));
+        sendJson(response, 429, {
+          error: "This server has reached its hourly image-generation limit. Try again later.",
+        });
+        return;
+      }
+      const image: GeneratedImage = await provider.generateImage(prompt);
+      if (
+        image.bytes.length === 0 ||
+        image.bytes.length > 8 * 1_024 * 1_024 ||
+        !matchesImageSignature(image.bytes, image.mimeType)
+      ) {
+        throw new Error("Image provider returned invalid image data.");
+      }
+      response.statusCode = 200;
+      response.setHeader("Content-Type", image.mimeType);
+      response.setHeader("Content-Length", String(image.bytes.length));
+      response.setHeader("Content-Disposition", "inline; filename=\"mira-generated-image\"");
+      response.end(image.bytes);
+    } catch (error) {
+      if (error instanceof CloudflareAIConfigurationError) {
+        sendJson(response, 503, {
+          error:
+            "Image generation is not configured. Set MUSE_CLOUDFLARE_ACCOUNT_ID and MUSE_CLOUDFLARE_AI_TOKEN.",
+        });
+        return;
+      }
+      console.error(
+        "Muse image generation failed:",
+        error instanceof Error ? error.message : "unknown error",
+      );
       sendJson(response, 502, {
-        error: "Mira could not generate a reply. Check the server terminal.",
+        error: "Mira could not create an image. Check the server terminal.",
       });
     }
+  }
+
+  function discardSessionAttachments(session: MuseSession): void {
+    for (const attachment of session.attachments.values()) {
+      storedAttachmentBytes = Math.max(
+        0,
+        storedAttachmentBytes - attachment.bytes.length,
+      );
+    }
+    session.attachments.clear();
+  }
+
+  async function createAttachmentContext(
+    attachments: MuseAttachment[],
+    question: string,
+  ): Promise<string> {
+    const sections: string[] = [];
+    let remainingTextChars = MAX_TOTAL_ATTACHMENT_TEXT_CHARS;
+    for (const attachment of attachments) {
+      if (attachment.mimeType.startsWith("image/")) {
+        const provider = getMediaProvider();
+        const retryAfterSeconds = consumeHourlyLimit(
+          imageAnalysisTimestamps,
+          MAX_IMAGE_ANALYSES_PER_HOUR,
+        );
+        if (retryAfterSeconds > 0) {
+          throw new CloudflareRateLimitError(retryAfterSeconds);
+        }
+        const description = await provider.describeImage(
+          attachment.bytes,
+          attachment.mimeType,
+          question,
+        );
+        sections.push(
+          `Image file "${attachment.name}" visual analysis (untrusted data):\n${description}`,
+        );
+        continue;
+      }
+      const text = attachment.bytes.toString("utf8");
+      const visibleText = text.slice(
+        0,
+        Math.min(MAX_ATTACHMENT_TEXT_CHARS, remainingTextChars),
+      );
+      remainingTextChars -= visibleText.length;
+      sections.push(
+        `Text file "${attachment.name}" (untrusted data):\n${visibleText}${visibleText.length < text.length ? "\n[Attachment text truncated to the safe context limit.]" : ""}`,
+      );
+    }
+    return sections.join("\n\n");
+  }
+
+  function enqueueResponse(
+    session: MuseSession,
+    message: string,
+    attachmentIds: string[],
+  ): Promise<string> {
+    const response = session.pending.then(async () => {
+      try {
+        const attachments = attachmentIds.map((id) => session.attachments.get(id));
+        if (attachments.some((attachment) => !attachment)) {
+          throw new MissingSessionAttachmentError();
+        }
+        const context = await createAttachmentContext(
+          attachments as MuseAttachment[],
+          message,
+        );
+        return await session.agent.respond(message, context);
+      } finally {
+        for (const id of attachmentIds) {
+          const attachment = session.attachments.get(id);
+          if (attachment) {
+            session.attachments.delete(id);
+            storedAttachmentBytes = Math.max(
+              0,
+              storedAttachmentBytes - attachment.bytes.length,
+            );
+          }
+        }
+      }
+    });
+    session.pending = response.then(
+      () => undefined,
+      () => undefined,
+    );
+    return response;
   }
 
   function getSession(
@@ -483,7 +1171,10 @@ export function createMuseHttpServer(
   ): MuseSession | undefined {
     const now = Date.now();
     for (const [id, session] of sessions) {
-      if (now - session.lastUsedAt > sessionTtlMs) sessions.delete(id);
+      if (now - session.lastUsedAt > sessionTtlMs) {
+        discardSessionAttachments(session);
+        sessions.delete(id);
+      }
     }
 
     const cookieSessionId = readSessionId(request, sessionSecret);
@@ -513,6 +1204,7 @@ export function createMuseHttpServer(
         })(),
         lastUsedAt: now,
         pending: Promise.resolve(),
+        attachments: new Map(),
       };
       sessions.set(id, session);
     }
@@ -521,15 +1213,6 @@ export function createMuseHttpServer(
     writeSessionCookie(request, response, id, sessionSecret, sessionTtlMs);
     return session;
   }
-}
-
-function enqueueResponse(session: MuseSession, message: string): Promise<string> {
-  const response = session.pending.then(() => session.agent.respond(message));
-  session.pending = response.then(
-    () => undefined,
-    () => undefined,
-  );
-  return response;
 }
 
 function readSessionId(
@@ -582,7 +1265,7 @@ function writeSessionCookie(
 
 function setSecurityHeaders(response: ServerResponse): void {
   response.setHeader("Cache-Control", "no-store");
-  response.setHeader("Content-Security-Policy", "default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'self'; img-src https://upload.wikimedia.org; form-action 'self'; base-uri 'none'; frame-ancestors 'none'");
+  response.setHeader("Content-Security-Policy", "default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'self'; img-src https://upload.wikimedia.org blob:; form-action 'self'; base-uri 'none'; frame-ancestors 'none'");
   response.setHeader("Referrer-Policy", "no-referrer");
   response.setHeader("X-Content-Type-Options", "nosniff");
   response.setHeader("X-Frame-Options", "DENY");
@@ -596,6 +1279,112 @@ function sendJson(
   response.statusCode = statusCode;
   response.setHeader("Content-Type", "application/json; charset=utf-8");
   response.end(JSON.stringify(body));
+}
+
+function decodeAttachmentName(rawName: string): string {
+  if (!rawName) throw new Error("Missing filename.");
+  const decodedName = decodeURIComponent(rawName);
+  const name = decodedName
+    .replace(/[\u0000-\u001f\u007f]/g, "")
+    .replace(/[\\/]/g, "_")
+    .trim()
+    .slice(0, 120);
+  if (!name || name === "." || name === "..") {
+    throw new Error("Invalid filename.");
+  }
+  return name;
+}
+
+function getAttachmentMimeType(name: string): string | undefined {
+  const extension = name.slice(name.lastIndexOf(".")).toLowerCase();
+  const types: Record<string, string> = {
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".png": "image/png",
+    ".webp": "image/webp",
+    ".txt": "text/plain",
+    ".md": "text/markdown",
+    ".markdown": "text/markdown",
+    ".csv": "text/csv",
+  };
+  return types[extension];
+}
+
+function matchesImageSignature(bytes: Uint8Array, mimeType: string): boolean {
+  if (mimeType === "image/jpeg") {
+    return bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff;
+  }
+  if (mimeType === "image/png") {
+    return (
+      bytes.length >= 8 &&
+      bytes[0] === 0x89 &&
+      bytes[1] === 0x50 &&
+      bytes[2] === 0x4e &&
+      bytes[3] === 0x47 &&
+      bytes[4] === 0x0d &&
+      bytes[5] === 0x0a &&
+      bytes[6] === 0x1a &&
+      bytes[7] === 0x0a
+    );
+  }
+  if (mimeType === "image/webp") {
+    return (
+      bytes.length >= 12 &&
+      Buffer.from(bytes.subarray(0, 4)).toString("ascii") === "RIFF" &&
+      Buffer.from(bytes.subarray(8, 12)).toString("ascii") === "WEBP"
+    );
+  }
+  return false;
+}
+
+async function readBoundedRequestBody(
+  request: IncomingMessage,
+  maxBytes: number,
+): Promise<Buffer> {
+  const declaredLength = Number(request.headers["content-length"] ?? 0);
+  if (declaredLength > maxBytes) {
+    request.resume();
+    throw new RequestBodyTooLargeError();
+  }
+
+  return new Promise((resolve, reject) => {
+    const chunks: Buffer[] = [];
+    let totalBytes = 0;
+    let settled = false;
+    const cleanup = () => {
+      request.off("data", onData);
+      request.off("end", onEnd);
+      request.off("error", onError);
+    };
+    const onData = (chunk: Buffer | string) => {
+      const buffer = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+      totalBytes += buffer.length;
+      if (totalBytes > maxBytes) {
+        settled = true;
+        cleanup();
+        request.resume();
+        reject(new RequestBodyTooLargeError());
+        return;
+      }
+      chunks.push(buffer);
+    };
+    const onEnd = () => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      resolve(Buffer.concat(chunks));
+    };
+    const onError = (error: Error) => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      reject(error);
+    };
+
+    request.on("data", onData);
+    request.once("end", onEnd);
+    request.once("error", onError);
+  });
 }
 
 async function readJsonBody(request: IncomingMessage): Promise<unknown> {
@@ -655,3 +1444,9 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 class RequestBodyTooLargeError extends Error {}
+class MissingSessionAttachmentError extends Error {}
+class CloudflareRateLimitError extends Error {
+  constructor(readonly retryAfterSeconds: number) {
+    super("Cloudflare image understanding rate limit exceeded.");
+  }
+}

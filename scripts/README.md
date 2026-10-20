@@ -15,6 +15,11 @@ and include the image, its source page, creator attribution, and license when
 available. The browser preview renders these sourced images; other clients may
 show them as links or previews.
 
+The browser chat also offers explicit image generation, image understanding, text
+file attachments, microphone dictation, and speech playback. Image generation
+and image understanding use optional Cloudflare Workers AI credentials; ordinary
+text chat remains on the configured provider (Groq by default).
+
 Muse also drafts complete general-purpose written deliverables, including
 articles, essays, literature reviews, technical tutorials, reports, study
 guides, outlines, and proposals. Factual work reuses the research pipeline;
@@ -217,7 +222,7 @@ Check the demo prerequisites without starting the server or contacting a model p
 pnpm --filter @workspace/scripts run muse-preflight
 ```
 
-The preflight prints only prerequisite names and readiness states; it never prints secret values. It checks that `SESSION_SECRET` is non-empty, the selected chat and research providers have usable credentials, any configured alternate providers are usable, and the local `tsx` command is installed. Both tasks default to Groq. `MUSE_CHAT_LLM_PROVIDER` and `MUSE_RESEARCH_LLM_PROVIDER` override each task's provider, while `MUSE_LLM_PROVIDER` pins both. A distinct configured provider may serve as an alternate; a Groq-only setup has no automatic fallback. Gemini has been removed, so `GEMINI_API_KEY`, `GEMINI_MODEL`, and `MUSE_GEMINI_SEARCH` are no longer used and can be removed from runtime secrets. Set active provider credentials in GitHub Codespaces Secrets or the runtime's secret manager, not in tracked files. Muse no longer requires a chat access code. **Security note:** the former `.replit` user-environment block contained committed credential-like values. Removing the block does not erase Git history; revoke or rotate those values, and remove any obsolete `MUSE_CHAT_ACCESS_TOKEN` from your secret manager. Its standalone tests can run with Node.js alone:
+The preflight prints only prerequisite names and readiness states; it never prints secret values. It checks that `SESSION_SECRET` is non-empty, the selected chat and research providers have usable credentials, any configured alternate providers are usable, and the local `tsx` command is installed. Missing Cloudflare image credentials produce a non-blocking warning because image tools are optional. Both chat tasks default to Groq. `MUSE_CHAT_LLM_PROVIDER` and `MUSE_RESEARCH_LLM_PROVIDER` override each task's provider, while `MUSE_LLM_PROVIDER` pins both. A distinct configured provider may serve as an alternate; a Groq-only setup has no automatic fallback. Gemini has been removed, so `GEMINI_API_KEY`, `GEMINI_MODEL`, and `MUSE_GEMINI_SEARCH` are no longer used and can be removed from runtime secrets. Set active provider credentials in GitHub Codespaces Secrets or the runtime's secret manager, not in tracked files. Muse no longer requires a chat access code. **Security note:** the former `.replit` user-environment block contained committed credential-like values. Removing the block does not erase Git history; revoke or rotate those values, and remove any obsolete `MUSE_CHAT_ACCESS_TOKEN` from your secret manager. Its standalone tests can run with Node.js alone:
 
 ```sh
 pnpm --filter @workspace/scripts run muse-preflight-test
@@ -248,6 +253,13 @@ Credentials are never logged. A `GROQ_MODEL` override is visible in the startup
 line, including an override that still points to a deprecated model. The
 `Muse web search:` line reports the DuckDuckGo HTML/Lite backends. Research does
 not use Gemini or assumed browsing built into ordinary text-generation models.
+
+### Browser multimodal controls
+
+- **Image generation:** The explicit **Create image** action uses Cloudflare Workers AI model `@cf/black-forest-labs/flux-1-schnell`. Configure `MUSE_CLOUDFLARE_ACCOUNT_ID` (a 32-character Cloudflare account ID) and `MUSE_CLOUDFLARE_AI_TOKEN` in Codespaces Secrets or the deployment secret manager. Use a Cloudflare API token with Workers AI Read and Edit permissions (or Cloudflare's Workers AI REST API token template). Prompts are capped at 1,000 characters. Per server process, image generation is capped at 10 requests per hour and image understanding at 20 analyses per hour. The generated image is returned to the browser for viewing/downloading; Muse does not save it.
+- **Attachments:** JPEG, PNG, and WebP images up to 4 MB each, plus TXT, Markdown (`.md`/`.markdown`), and CSV files up to 512 KB each. A turn accepts at most three files and 8 MB total; temporary uploads across the server are capped at 32 MB. Text sent to the model is limited to 16,000 characters per file and 24,000 total. PDF and DOCX are not supported in this release. File bytes stay in process memory, are not written to disk, and are removed after the next chat turn, manual removal, session expiry, or server restart. Image bytes are sent to Cloudflare's `@cf/moondream/moondream3.1-9B-A2B` vision model; prompts, text-file content, and the answer context go to the configured chat provider (Groq by default). Attachments and image-analysis details are excluded from later conversation history and saved-memory extraction.
+- **Voice:** Microphone dictation uses browser `SpeechRecognition` when available; availability, language, and privacy behavior vary, and some browsers send recognition audio to their own remote service. Audio is not uploaded to Muse. Typed chat remains available. **Read aloud** uses the browser/device `speechSynthesis` voices; no speech API key is needed.
+- **Quota:** Cloudflare Workers AI has a limited free allocation, not unlimited free usage. Requests can fail when account/model access or quota is unavailable, and Cloudflare may charge or require a paid plan beyond free usage. Check the current Cloudflare account limits and pricing before use. Muse does not automatically upgrade a plan or enable paid usage. Startup only checks whether the named secrets are present; it does not verify live Cloudflare access.
 
 Each browser session gets an independent `MuseAgent` and its own saved-memory file under `scripts/data/muse-http-sessions/`. Conversation history stays in that session's server memory and resets when the server restarts. The page sends messages only to this server; the server then sends them to the configured model provider.
 

@@ -115,6 +115,18 @@ export function inspectMuseReadiness(
     "Add a non-empty SESSION_SECRET to GitHub Codespaces Secrets or the runtime environment.",
   );
 
+  const cloudflareAccountId = (env.MUSE_CLOUDFLARE_ACCOUNT_ID ?? "").trim();
+  const cloudflareAiToken = (env.MUSE_CLOUDFLARE_AI_TOKEN ?? "").trim();
+  if (!cloudflareAccountId || !cloudflareAiToken) {
+    warnings.push(
+      "Image generation and image attachment understanding are optional and unavailable until both MUSE_CLOUDFLARE_ACCOUNT_ID and MUSE_CLOUDFLARE_AI_TOKEN are configured.",
+    );
+  } else if (!/^[a-f0-9]{32}$/i.test(cloudflareAccountId)) {
+    warnings.push(
+      "Cloudflare image tools are unavailable because MUSE_CLOUDFLARE_ACCOUNT_ID is not a valid 32-character account ID.",
+    );
+  }
+
   const requested = {
     chat: selectedProvider(env, "chat"),
     research: selectedProvider(env, "research"),

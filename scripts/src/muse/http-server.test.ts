@@ -8,7 +8,14 @@ import type {
   TextGenerationProvider,
   TextGenerationRequest,
 } from "./llm-provider.js";
-import { createMuseHttpServer } from "./http-server.js";
+import {
+  createMuseHttpServer,
+  type MuseHttpServerOptions,
+} from "./http-server.js";
+import {
+  CloudflareAIConfigurationError,
+  type MuseMediaProvider,
+} from "./cloudflare-workers-ai.js";
 
 const testSessionSecret = "muse-http-session-test-secret";
 
@@ -16,9 +23,11 @@ async function withServer(
   providerFactory: () => TextGenerationProvider,
   run: (baseUrl: string, memoryDirectory: string) => Promise<void>,
   sharedMemoryPath?: string,
+  serverOptions: Partial<MuseHttpServerOptions> = {},
 ): Promise<void> {
   const memoryDirectory = await mkdtemp(join(tmpdir(), "muse-http-test-"));
   const server = createMuseHttpServer({
+    ...serverOptions,
     sessionSecret: testSessionSecret,
     memoryDirectory,
     ...(sharedMemoryPath ? { sharedMemoryPath } : {}),
@@ -55,16 +64,22 @@ type FakeElement = {
   textContent: string;
   disabled: boolean;
   value: string;
+  className?: string;
+  type?: string;
+  title?: string;
   href?: string;
   src?: string;
   alt?: string;
   loading?: string;
   referrerPolicy?: string;
-  listeners: Record<string, (event: { preventDefault(): void }) => void | Promise<void>>;
+  dataset: Record<string, string>;
+  listeners: Record<string, (event: any) => void | Promise<void>>;
   append(...elements: FakeElement[]): void;
+  replaceChildren(...elements: FakeElement[]): void;
+  setAttribute(name: string, value: string): void;
   addEventListener(
     name: string,
-    listener: (event: { preventDefault(): void }) => void | Promise<void>,
+    listener: (event: any) => void | Promise<void>,
   ): void;
   scrollIntoView(): void;
   focus(): void;
@@ -77,10 +92,15 @@ function fakeElement(tagName: string): FakeElement {
     textContent: "",
     disabled: false,
     value: "",
+    dataset: {},
     listeners: {},
     append(...elements) {
       this.children.push(...elements);
     },
+    replaceChildren(...elements) {
+      this.children = [...elements];
+    },
+    setAttribute() {},
     addEventListener(name, listener) {
       this.listeners[name] = listener;
     },
@@ -104,6 +124,40 @@ async function sendMessage(
   });
 }
 
+async function uploadAttachment(
+  baseUrl: string,
+  name: string,
+  bytes: Uint8Array,
+  mimeType: string,
+  cookie?: string,
+): Promise<Response> {
+  return fetch(`${baseUrl}/api/attachments`, {
+    method: "POST",
+    headers: {
+      "Content-Type": mimeType,
+      "X-Muse-File-Name": encodeURIComponent(name),
+      ...(cookie ? { Cookie: cookie } : {}),
+    },
+    body: Buffer.from(bytes),
+  });
+}
+
+async function sendMessageWithAttachments(
+  baseUrl: string,
+  message: string,
+  attachmentIds: string[],
+  cookie: string,
+): Promise<Response> {
+  return fetch(`${baseUrl}/api/chat`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Cookie: cookie,
+    },
+    body: JSON.stringify({ message, attachmentIds }),
+  });
+}
+
 test("Muse serves the chat page with same-origin security headers", async () =>
   withServer(
     () => ({ generateText: async () => "unused" }),
@@ -120,6 +174,14 @@ test("Muse serves the chat page with same-origin security headers", async () =>
       assert.match(html, /Message to Mira/);
       assert.match(html, /What would you like to talk about\?/);
       assert.match(html, /chat, brainstorm, ask a question, or request web research/i);
+      assert.match(html, /id="attachment-files"/);
+      assert.match(html, /SpeechRecognition/);
+      assert.match(html, /speechSynthesis/);
+      assert.match(html, /api\/images\/generate/);
+      assert.match(html, /URL\.createObjectURL/);
+      assert.match(html, /Download image/);
+      assert.match(html, /quota-limited Cloudflare Workers AI/);
+      assert.match(html, /browser may use its own remote speech service/);
       assert.doesNotMatch(html, /Connect X|Web3 intern|authorizationUrl/i);
       assert.match(html, /function renderMarkdown/);
       assert.match(html, /document\.createElement\("table"\)/);
@@ -159,7 +221,7 @@ test("browser Markdown rendering handles sourced images and normalizes other Mar
           return node;
         },
       };
-      const sandbox = { document, URL };
+      const sandbox = { document, URL, window: {}, navigator: { language: "en" } };
       new Script(
         `${script}\nglobalThis.renderMarkdownForTest = renderMarkdown;`,
       ).runInNewContext(sandbox);
@@ -232,6 +294,11 @@ test("a duplicate browser submit while a follow-up is pending sends and renders 
         ["#send", fakeElement("button")],
         ["#messages", fakeElement("section")],
         ["#status", fakeElement("p")],
+        ["#attachment-files", fakeElement("input")],
+        ["#attachment-list", fakeElement("div")],
+        ["#attach", fakeElement("button")],
+        ["#voice-input", fakeElement("button")],
+        ["#generate-image", fakeElement("button")],
       ]);
       const document = {
         querySelector: (selector: string) => elements.get(selector),
@@ -250,6 +317,8 @@ test("a duplicate browser submit while a follow-up is pending sends and renders 
       const sandbox = {
         document,
         URL,
+        window: {},
+        navigator: { language: "en" },
         fetch: (_url: string) => {
           fetchCalls += 1;
           return new Promise<{
@@ -594,3 +663,319 @@ test("X endpoints are removed and publishing commands are ordinary chat messages
       });
     },
   ));
+
+test("text attachments are available for one turn and absent from later context", async () => {
+  const capturedConversations: string[][] = [];
+  await withServer(
+    () => ({
+      generateText: async (request) => {
+        capturedConversations.push(
+          request.conversation.map((message) => `${message.role}: ${message.content}`),
+        );
+        return "I read the attachment.";
+      },
+    }),
+    async (baseUrl, memoryDirectory) => {
+      const privateMarker = "PRIVATE-ATTACHMENT-MARKER";
+      const upload = await uploadAttachment(
+        baseUrl,
+        "launch-notes.md",
+        Buffer.from(
+          `Please remember that I prefer low-risk launches. ${privateMarker}`,
+          "utf8",
+        ),
+        "text/markdown",
+      );
+      assert.equal(upload.status, 201);
+      const cookie = getSessionCookie(upload);
+      const result = (await upload.json()) as {
+        attachment: { id: string; name: string; mimeType: string; size: number };
+      };
+      assert.equal(result.attachment.name, "launch-notes.md");
+      assert.equal(result.attachment.mimeType, "text/markdown");
+
+      const firstTurn = await sendMessageWithAttachments(
+        baseUrl,
+        "Thanks for reading this note.",
+        [result.attachment.id],
+        cookie,
+      );
+      assert.equal(firstTurn.status, 200);
+      assert.deepEqual(await firstTurn.json(), { reply: "I read the attachment." });
+      assert.ok(
+        capturedConversations[0]?.some(
+          (content) =>
+            content.includes('Text file "launch-notes.md"') &&
+            content.includes(privateMarker),
+        ),
+      );
+
+      const nextTurn = await sendMessage(baseUrl, "Please continue.", cookie);
+      assert.equal(nextTurn.status, 200);
+      assert.equal(
+        capturedConversations[1]?.join("\n").includes(privateMarker),
+        false,
+      );
+      const deleted = await fetch(
+        `${baseUrl}/api/attachments/${result.attachment.id}`,
+        { method: "DELETE", headers: { Cookie: cookie } },
+      );
+      assert.equal(deleted.status, 404);
+      assert.deepEqual(await readdir(memoryDirectory), []);
+    },
+  );
+});
+
+test("image attachments are analyzed with the current question and not retained in later turns", async () => {
+  const capturedConversations: string[][] = [];
+  const visionCalls: Array<{ mimeType: string; question: string }> = [];
+  const privateVisionMarker = "VISION-ONLY-MARKER";
+  const mediaProvider: MuseMediaProvider = {
+    generateImage: async () => ({
+      bytes: Buffer.from([0xff, 0xd8, 0xff, 0x01]),
+      mimeType: "image/jpeg",
+    }),
+    describeImage: async (_image, mimeType, question) => {
+      visionCalls.push({ mimeType, question });
+      return `A red bicycle. ${privateVisionMarker}`;
+    },
+  };
+
+  await withServer(
+    () => ({
+      generateText: async (request) => {
+        capturedConversations.push(
+          request.conversation.map((message) => `${message.role}: ${message.content}`),
+        );
+        return "I described what is visible.";
+      },
+    }),
+    async (baseUrl) => {
+      const png = Buffer.from([
+        0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00,
+      ]);
+      const upload = await uploadAttachment(
+        baseUrl,
+        "bike.png",
+        png,
+        "image/png",
+      );
+      assert.equal(upload.status, 201);
+      const cookie = getSessionCookie(upload);
+      const result = (await upload.json()) as {
+        attachment: { id: string; mimeType: string };
+      };
+
+      const firstTurn = await sendMessageWithAttachments(
+        baseUrl,
+        "Thanks for looking at this.",
+        [result.attachment.id],
+        cookie,
+      );
+      assert.equal(firstTurn.status, 200);
+      assert.equal(visionCalls.length, 1);
+      assert.deepEqual(visionCalls[0], {
+        mimeType: "image/png",
+        question: "Thanks for looking at this.",
+      });
+      assert.ok(capturedConversations[0]?.join("\n").includes(privateVisionMarker));
+
+      const nextTurn = await sendMessage(baseUrl, "Thanks for your help.", cookie);
+      assert.equal(nextTurn.status, 200);
+      assert.equal(
+        capturedConversations[1]?.join("\n").includes(privateVisionMarker),
+        false,
+      );
+    },
+    undefined,
+    { mediaProviderFactory: () => mediaProvider },
+  );
+});
+
+test("image generation returns a viewable image and enforces the hourly request cap", async () => {
+  const prompts: string[] = [];
+  const generatedBytes = Buffer.from([0xff, 0xd8, 0xff, 0x00, 0x01, 0x02]);
+  const mediaProvider: MuseMediaProvider = {
+    generateImage: async (prompt) => {
+      prompts.push(prompt);
+      return { bytes: generatedBytes, mimeType: "image/jpeg" };
+    },
+    describeImage: async () => "unused",
+  };
+
+  await withServer(
+    () => ({ generateText: async () => "unused" }),
+    async (baseUrl) => {
+      for (let index = 0; index < 10; index += 1) {
+        const response = await fetch(`${baseUrl}/api/images/generate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt: index === 0 ? "A blue bicycle" : `Image ${index}` }),
+        });
+        assert.equal(response.status, 200);
+        assert.equal(response.headers.get("content-type"), "image/jpeg");
+        assert.deepEqual(Buffer.from(await response.arrayBuffer()), generatedBytes);
+      }
+      const limited = await fetch(`${baseUrl}/api/images/generate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: "One more image" }),
+      });
+      assert.equal(limited.status, 429);
+      assert.ok(Number(limited.headers.get("retry-after")) > 0);
+      const limitedBody = (await limited.json()) as { error: string };
+      assert.match(limitedBody.error, /hourly image-generation limit/);
+      assert.equal(prompts.length, 10);
+      assert.equal(prompts[0], "A blue bicycle");
+    },
+    undefined,
+    { mediaProviderFactory: () => mediaProvider },
+  );
+});
+
+test("image tools report missing Cloudflare configuration without exposing internals", async () => {
+  await withServer(
+    () => ({ generateText: async () => "unused" }),
+    async (baseUrl) => {
+      const originalError = console.error;
+      console.error = () => undefined;
+      try {
+        const generation = await fetch(`${baseUrl}/api/images/generate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt: "A quiet garden" }),
+        });
+        assert.equal(generation.status, 503);
+        const generationBody = (await generation.json()) as { error: string };
+        assert.match(generationBody.error, /MUSE_CLOUDFLARE_ACCOUNT_ID/);
+
+        const upload = await uploadAttachment(
+          baseUrl,
+          "photo.jpg",
+          Buffer.from([0xff, 0xd8, 0xff, 0x02]),
+          "image/jpeg",
+        );
+        assert.equal(upload.status, 201);
+        const cookie = getSessionCookie(upload);
+        const { attachment } = (await upload.json()) as {
+          attachment: { id: string };
+        };
+        const chat = await sendMessageWithAttachments(
+          baseUrl,
+          "Describe this image.",
+          [attachment.id],
+          cookie,
+        );
+        assert.equal(chat.status, 503);
+        const chatBody = (await chat.json()) as { error: string };
+        assert.match(chatBody.error, /Image understanding is not configured/);
+        const retry = await sendMessageWithAttachments(
+          baseUrl,
+          "Describe this image.",
+          [attachment.id],
+          cookie,
+        );
+        assert.equal(retry.status, 400);
+      } finally {
+        console.error = originalError;
+      }
+    },
+    undefined,
+    {
+      mediaProviderFactory: () => {
+        throw new CloudflareAIConfigurationError("Missing test configuration");
+      },
+    },
+  );
+});
+
+test("attachment uploads reject unsupported types, spoofed image bytes, and oversized text", async () => {
+  await withServer(
+    () => ({ generateText: async () => "unused" }),
+    async (baseUrl) => {
+      const pdf = await uploadAttachment(
+        baseUrl,
+        "report.pdf",
+        Buffer.from("not supported"),
+        "application/pdf",
+      );
+      assert.equal(pdf.status, 415);
+
+      const spoofed = await uploadAttachment(
+        baseUrl,
+        "fake.png",
+        Buffer.from("this is not a PNG"),
+        "image/png",
+      );
+      assert.equal(spoofed.status, 415);
+
+      const oversized = await uploadAttachment(
+        baseUrl,
+        "large.txt",
+        Buffer.alloc(512 * 1024 + 1, 0x61),
+        "text/plain",
+      );
+      assert.equal(oversized.status, 413);
+      const oversizedBody = (await oversized.json()) as { error: string };
+      assert.match(oversizedBody.error, /512 KB/);
+    },
+  );
+});
+
+test("image understanding enforces its per-hour Cloudflare request limit", async () => {
+  let analysisCalls = 0;
+  const mediaProvider: MuseMediaProvider = {
+    generateImage: async () => ({
+      bytes: Buffer.from([0xff, 0xd8, 0xff, 0x01]),
+      mimeType: "image/jpeg",
+    }),
+    describeImage: async () => {
+      analysisCalls += 1;
+      return "A simple test image.";
+    },
+  };
+
+  await withServer(
+    () => ({ generateText: async () => "I looked at the image." }),
+    async (baseUrl) => {
+      let cookie: string | undefined;
+      const originalError = console.error;
+      console.error = () => undefined;
+      try {
+        for (let index = 0; index < 21; index += 1) {
+          const upload = await uploadAttachment(
+            baseUrl,
+            `rate-${index}.png`,
+            Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
+            "image/png",
+            cookie,
+          );
+          assert.equal(upload.status, 201);
+          cookie ??= getSessionCookie(upload);
+          const { attachment } = (await upload.json()) as {
+            attachment: { id: string };
+          };
+          const response = await sendMessageWithAttachments(
+            baseUrl,
+            "Thanks for looking at this.",
+            [attachment.id],
+            cookie,
+          );
+          assert.equal(response.status, index < 20 ? 200 : 429);
+          if (index === 20) {
+            assert.ok(Number(response.headers.get("retry-after")) > 0);
+            const body = (await response.json()) as { error: string };
+            assert.match(body.error, /image understanding.*hourly limit/i);
+          } else {
+            await response.json();
+          }
+        }
+      } finally {
+        console.error = originalError;
+      }
+      assert.equal(analysisCalls, 20);
+    },
+    undefined,
+    { mediaProviderFactory: () => mediaProvider },
+  );
+});
