@@ -483,15 +483,61 @@ async function retrievePage(
  */
 export function extractWebsiteTargets(input: string): string[] {
   const pattern = /(?:https?:\/\/)?(?:www\.)?[a-z0-9-]+(?:\.[a-z0-9-]+)+(?:\/[^\s"'<>]*)?/gi;
+  const markdownLinksResolved = input.replace(
+    /\[[^\]]+\]\(\s*(https?:\/\/[^)\s]+)(?:\s+[^)]*)?\)/gi,
+    "$1",
+  );
   const targets: string[] = [];
 
-  for (const match of input.match(pattern) ?? []) {
+  for (const match of markdownLinksResolved.match(pattern) ?? []) {
     const candidate = match.replace(/[),.;!?]+$/, "");
     const url = safeHttpUrl(/^https?:\/\//i.test(candidate) ? candidate : "https://" + candidate);
     if (url) targets.push(url);
   }
 
   return [...new Set(targets)];
+}
+
+const GENERIC_LINK_LOOKUP_WORDS = new Set(
+  [
+    "a", "about", "address", "an", "and", "at", "browse", "can", "check",
+    "analyze", "analyse", "content", "contents", "could", "describe", "details",
+    "did", "do", "does", "explain", "find", "for", "from", "give", "hello",
+    "hey", "hi", "how", "i", "info", "information", "inspect", "is", "it",
+    "link", "look", "me",
+    "mira", "of", "on", "open", "out", "page", "particular", "please",
+    "provided", "read", "research", "review", "say", "says", "site", "specific",
+    "summarise", "summarize", "summary", "tell", "that", "the", "this", "to",
+    "up", "url", "visit", "web", "website", "what", "which", "will", "with",
+    "would", "you",
+  ],
+);
+
+/**
+ * Give link-only requests a useful default research objective while preserving
+ * any specific question the user asked about the supplied page.
+ */
+export function researchQuestionForWebsiteInput(
+  input: string,
+  websiteTargets: string[] = extractWebsiteTargets(input),
+): string {
+  if (websiteTargets.length === 0) return input;
+
+  const withoutTargets = input
+    .replace(/\[[^\]]+\]\(\s*https?:\/\/[^)\s]+(?:\s+[^)]*)?\)/gi, " ")
+    .replace(
+      /(?:https?:\/\/)?(?:www\.)?[a-z0-9-]+(?:\.[a-z0-9-]+)+(?:\/[^\s"'<>]*)?/gi,
+      " ",
+    );
+  const remainingWords = withoutTargets.toLowerCase().match(/[\p{L}\p{N}']+/gu) ?? [];
+  const hasSpecificQuestion = remainingWords.some(
+    (word) => !GENERIC_LINK_LOOKUP_WORDS.has(word),
+  );
+
+  if (hasSpecificQuestion) return input;
+  return websiteTargets.length === 1
+    ? "Read the supplied page and provide a concise overview of its purpose, main offerings, how it works, and notable details."
+    : "Read the supplied pages and provide a concise overview of their purpose, main offerings, how they work, and notable details.";
 }
 
 /**
@@ -1785,14 +1831,7 @@ async function main(): Promise<void> {
   }
 
   const seedUrls = extractWebsiteTargets(input);
-  const withoutUrls = input
-    .replace(/(?:https?:\/\/)?(?:www\.)?[a-z0-9-]+(?:\.[a-z0-9-]+)+(?:\/[^\s"'<>]*)?/gi, " ")
-    .trim();
-
-  const question = seedUrls.length > 0 && withoutUrls.length === 0
-    ? "Research " + seedUrls.join(", ") +
-      ": explain what the website offers, how it works, and what independent sources say."
-    : input;
+  const question = researchQuestionForWebsiteInput(input, seedUrls);
 
   try {
     const result = await runResearch(question, seedUrls, {

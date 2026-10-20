@@ -202,6 +202,8 @@ test("Muse serves the chat page with same-origin security headers", async () =>
       assert.match(html, /id="attachment-menu" role="menu"[^>]*hidden/);
       assert.match(html, /Attach photos or files/);
       assert.match(html, /Generate an image/);
+      assert.match(html, /sourced online image with a topic answer/);
+      assert.match(html, /Generate an image only for new AI artwork/);
       assert.match(html, /id="attachment-files"/);
       assert.match(html, /id="voice-input" class="composer-icon"[^>]*aria-label="Dictate a message"/);
       assert.match(html, /aria-label="Send message"/);

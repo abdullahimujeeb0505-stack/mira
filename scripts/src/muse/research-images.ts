@@ -103,7 +103,31 @@ export function imageSearchQuery(message: string): string {
     )
     .replace(/^(?:to\s+)?(?:see|view)\s+/i, "")
     .replace(
-      /\b(?:pictures?|images?|photos?|illustrations?|diagrams?|visuals?)\b/gi,
+      /^\s*(?:please\s+)?(?:define|explain|describe|summari[sz]e|tell me about|teach me about|what is|what are)\s+/i,
+      "",
+    )
+    .replace(
+      /\b(?:don't|do not|never|no need to|not necessary to)\b[^.!?\n]{0,60}\b(?:generate|create|draw|make|produce)\b[^.!?\n]{0,40}\b(?:pictures?|images?|imgs?|photos?|illustrations?|diagrams?|visuals?)\b/gi,
+      " ",
+    )
+    .replace(
+      /\b(?:attach|attached|use|find|show|include|add|source|retrieve|provide|fetch|search for|look for)\b[^.!?\n]{0,80}\b(?:online|existing|sourced|available)\b[^.!?\n]{0,40}\b(?:pictures?|images?|imgs?|photos?|illustrations?|diagrams?|visuals?)\b/gi,
+      " ",
+    )
+    .replace(
+      /\b(?:pictures?|images?|imgs?|photos?|illustrations?|diagrams?|visuals?)\b[^.!?\n]{0,80}\b(?:attached|sourced|available|retrieved|found)\b[^.!?\n]{0,40}\b(?:online|on the web|from the web)\b/gi,
+      " ",
+    )
+    .replace(
+      /\b(?:(?:it is|it's)\s+)?(?:not necessary|not needed|not required)(?:\s+to)?\b/gi,
+      " ",
+    )
+    .replace(
+      /\b(?:with|including|plus)\s+(?:(?:a|an|some|one|two|additional|relevant|related|accompanying|illustrative|helpful|appropriate|supporting|labeled|labelled)\s+)*(?:pictures?|images?|imgs?|photos?|illustrations?|diagrams?|visuals?)\b(?:\s+(?:description|caption|depiction)\b)?/gi,
+      " ",
+    )
+    .replace(
+      /\b(?:pictures?|images?|imgs?|photos?|illustrations?|diagrams?|visuals?)\b/gi,
       " ",
     )
     .replace(
@@ -111,6 +135,10 @@ export function imageSearchQuery(message: string): string {
       " ",
     )
     .replace(/\b(?:related to|of|about)\b/gi, " ")
+    .replace(
+      /\b(?:available\s+online|online|existing|sourced)\b[.!?]*\s*$/i,
+      " ",
+    )
     .replace(/\b(?:a|an|the)\b/gi, " ")
     .replace(/\s+/g, " ")
     .replace(/^[\s,.:;-]+|[\s,.:;?!-]+$/g, "")

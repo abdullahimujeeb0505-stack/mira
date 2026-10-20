@@ -21,6 +21,26 @@ test("image search queries retain the subject and remove request wording", () =>
     imageSearchQuery("Please find a diagram of the water cycle."),
     "water cycle",
   );
+  assert.equal(
+    imageSearchQuery("Define pollination with additional img description."),
+    "pollination",
+  );
+  assert.equal(
+    imageSearchQuery("Explain pollination with a relevant image."),
+    "pollination",
+  );
+  assert.equal(
+    imageSearchQuery(
+      "Define pollination; don't generate an image, attach existing images available online.",
+    ),
+    "pollination",
+  );
+  assert.equal(
+    imageSearchQuery(
+      "Define pollination; it is not necessary the image is generated, it should be attached from ones available online.",
+    ),
+    "pollination",
+  );
 });
 
 test("Commons image results retain attribution and reject non-Commons hosts", () => {

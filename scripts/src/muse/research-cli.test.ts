@@ -11,6 +11,7 @@ import {
   extractResearchPageContent,
   extractWebsiteTargets,
   getCitedSources,
+  researchQuestionForWebsiteInput,
   isSafeResearchUrl,
   parseDuckDuckGoSearchResults,
   runResearch,
@@ -1295,6 +1296,21 @@ test("blocked search failures are recorded as limitations without breaking the r
   );
 });
 
+test("website lookup prompts get a useful default without losing specific questions", () => {
+  const genericPrompt =
+    "Read the supplied page and provide a concise overview of its purpose, main offerings, how it works, and notable details.";
+  assert.equal(
+    researchQuestionForWebsiteInput("Hey Mira, look up [photon.codes](http://photon.codes)"),
+    genericPrompt,
+  );
+  assert.equal(researchQuestionForWebsiteInput("http://photon.codes"), genericPrompt);
+  assert.equal(
+    researchQuestionForWebsiteInput("What does Photon say about privacy? [photon.codes](http://photon.codes)"),
+    "What does Photon say about privacy? [photon.codes](http://photon.codes)",
+  );
+  assert.equal(researchQuestionForWebsiteInput("Summarize pollination"), "Summarize pollination");
+});
+
 test("website targets are extracted from bare domains and full URLs alike", () => {
   assert.deepEqual(extractWebsiteTargets("look through photon.codes for me"), [
     "https://photon.codes/",
@@ -1302,6 +1318,14 @@ test("website targets are extracted from bare domains and full URLs alike", () =
   assert.deepEqual(extractWebsiteTargets("please read https://photon.codes/pricing"), [
     "https://photon.codes/pricing",
   ]);
+  assert.deepEqual(
+    extractWebsiteTargets("Hey, look up [photon.codes](http://photon.codes)."),
+    ["http://photon.codes/"],
+  );
+  assert.deepEqual(
+    extractWebsiteTargets("Read [photon.codes](http://docs.photon.codes/guide)."),
+    ["http://docs.photon.codes/guide"],
+  );
   assert.deepEqual(
     extractWebsiteTargets("Compare photon.codes, docs.photon.codes and https://example.org/guide."),
     ["https://photon.codes/", "https://docs.photon.codes/", "https://example.org/guide"],
