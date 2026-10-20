@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 const scriptsDirectory = fileURLToPath(new URL("../../", import.meta.url));
 const workspaceDirectory = resolve(scriptsDirectory, "..");
 const PROVIDER_KEYS = {
+  gemini: ["GEMINI_API_KEY"],
   groq: ["GROQ_API_KEY", "GROK_API_CODING_KEY"],
   openrouter: ["OPENROUTER_API_KEY"],
   agentrouter: ["AGENTROUTER_API_KEY"],
@@ -14,7 +15,7 @@ const VALID_PROVIDERS = new Set(Object.keys(PROVIDER_KEYS));
 function selectedProvider(env, task) {
   const taskOverride = env[`MUSE_${task.toUpperCase()}_LLM_PROVIDER`];
   const globalOverride = env.MUSE_LLM_PROVIDER;
-  const fallback = "groq";
+  const fallback = "gemini";
   return (
     (taskOverride ?? globalOverride ?? fallback).trim().toLowerCase() ||
     fallback
@@ -205,7 +206,7 @@ export function inspectMuseReadiness(
       addCheck(
         setting,
         false,
-        "Use groq, openrouter, or agentrouter for provider selection.",
+        "Use gemini, groq, openrouter, or agentrouter for provider selection.",
       );
       continue;
     }

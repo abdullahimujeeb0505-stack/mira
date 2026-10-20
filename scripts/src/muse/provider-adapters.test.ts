@@ -3,6 +3,7 @@ import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
+import { GeminiProvider } from "./gemini-provider.js";
 import { GroqProvider } from "./groq-provider.js";
 import { MuseAgent } from "./muse-agent.js";
 import { OpenRouterProvider } from "./openrouter-provider.js";
@@ -14,6 +15,7 @@ import { runResearch } from "./research-cli.js";
 import { JsonMemoryRepository } from "./memory/json-memory-repository.js";
 import { MemoryService } from "./memory/memory-service.js";
 
+const GEMINI_KEY = "gemini-unit-test-key";
 const GROQ_KEY = "groq-unit-test-key";
 const OPENROUTER_KEY = "openrouter-unit-test-key";
 
@@ -41,6 +43,20 @@ async function withEnvironment(
 function chatResponse(content: string, status = 200): Response {
   return new Response(
     JSON.stringify({ choices: [{ message: { role: "assistant", content } }] }),
+    { status, headers: { "Content-Type": "application/json" } },
+  );
+}
+
+function geminiResponse(content: string, status = 200): Response {
+  return new Response(
+    JSON.stringify({
+      candidates: [
+        {
+          content: { parts: [{ text: content }] },
+          finishReason: "STOP",
+        },
+      ],
+    }),
     { status, headers: { "Content-Type": "application/json" } },
   );
 }
@@ -181,6 +197,7 @@ test("OpenRouter builds an independent request against its documented endpoint",
 test("provider diagnostics report only the selected provider and model", async () =>
   withEnvironment(
     {
+      GEMINI_API_KEY: GEMINI_KEY,
       GROQ_API_KEY: GROQ_KEY,
       GROQ_MODEL: "llama-3.3-70b-versatile",
       OPENROUTER_API_KEY: OPENROUTER_KEY,
@@ -225,7 +242,20 @@ test("provider diagnostics report only the selected provider and model", async (
       );
       assert.doesNotMatch(
         agentRouterDiagnostic,
-        /groq-unit-test-key|openrouter-unit-test-key|agentrouter-unit-test-key/,
+        /gemini-unit-test-key|groq-unit-test-key|openrouter-unit-test-key|agentrouter-unit-test-key/,
+      );
+
+      process.env.MUSE_LLM_PROVIDER = "gemini";
+      const geminiDiagnostic = formatProviderDiagnostic(
+        createTextGenerationProvider(),
+      );
+      assert.equal(
+        geminiDiagnostic,
+        "Muse LLM provider: gemini (model: gemini-3.5-flash-lite).",
+      );
+      assert.doesNotMatch(
+        geminiDiagnostic,
+        /gemini-unit-test-key|groq-unit-test-key|openrouter-unit-test-key|agentrouter-unit-test-key/,
       );
     },
   ));
@@ -234,6 +264,7 @@ test("selected providers require only their own credentials and OpenRouter model
   withEnvironment(
     {
       MUSE_LLM_PROVIDER: "groq",
+      GEMINI_API_KEY: undefined,
       GROQ_API_KEY: undefined,
       GROK_API_CODING_KEY: undefined,
       OPENROUTER_API_KEY: OPENROUTER_KEY,
@@ -245,6 +276,14 @@ test("selected providers require only their own credentials and OpenRouter model
         () => createTextGenerationProvider(),
         /Missing GROQ_API_KEY.*GROK_API_CODING_KEY/,
       );
+
+      process.env.MUSE_LLM_PROVIDER = "gemini";
+      assert.throws(
+        () => createTextGenerationProvider(),
+        /Missing GEMINI_API_KEY/,
+      );
+      process.env.GEMINI_API_KEY = GEMINI_KEY;
+      assert.doesNotThrow(() => createTextGenerationProvider());
 
       process.env.MUSE_LLM_PROVIDER = "openrouter";
       assert.doesNotThrow(() => createTextGenerationProvider());
@@ -372,22 +411,25 @@ test("providers report timeouts, malformed responses, unsupported structures, an
   ));
 
 test("each provider can power Muse research and a sourced writing assignment using mocked HTTP", async () => {
-  for (const providerName of ["groq", "openrouter"] as const) {
+  for (const providerName of ["gemini", "groq", "openrouter"] as const) {
     const directory = await mkdtemp(join(tmpdir(), `muse-${providerName}-`));
     const requests: Array<Record<string, unknown>> = [];
     let modelCalls = 0;
     await withEnvironment(
       {
+        GEMINI_API_KEY: GEMINI_KEY,
         GROQ_API_KEY: GROQ_KEY,
         OPENROUTER_API_KEY: OPENROUTER_KEY,
         OPENROUTER_MODEL: "publisher/model",
       },
       async () => {
+        const respond = (text: string) =>
+          providerName === "gemini" ? geminiResponse(text) : chatResponse(text);
         const fetchImplementation: typeof fetch = async (_url, init) => {
           modelCalls += 1;
           requests.push(JSON.parse(String(init?.body)) as Record<string, unknown>);
           if (modelCalls === 1) {
-            return chatResponse(JSON.stringify({
+            return respond(JSON.stringify({
               objective: "Explain TypeScript narrowing.",
               taskType: "general",
               deliverable: "A sourced explanation.",
@@ -398,21 +440,23 @@ test("each provider can power Muse research and a sourced writing assignment usi
             }));
           }
           if (modelCalls === 2) {
-            return chatResponse(JSON.stringify({
+            return respond(JSON.stringify({
               answer: "The handbook explains control-flow narrowing [1].",
               unresolvedQuestions: [],
               contradictions: [],
               completeness: "supported",
             }));
           }
-          return chatResponse(
+          return respond(
             "# TypeScript Narrowing\n\nControl-flow analysis narrows union types [1].",
           );
         };
         const provider =
-          providerName === "groq"
-            ? new GroqProvider({ fetchImplementation })
-            : new OpenRouterProvider({ fetchImplementation, model: "publisher/model" });
+          providerName === "gemini"
+            ? new GeminiProvider({ fetchImplementation })
+            : providerName === "groq"
+              ? new GroqProvider({ fetchImplementation })
+              : new OpenRouterProvider({ fetchImplementation, model: "publisher/model" });
         const source = {
           title: "TypeScript Handbook: Narrowing",
           url: "https://www.typescriptlang.org/docs/handbook/2/narrowing.html",

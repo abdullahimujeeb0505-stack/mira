@@ -51,7 +51,7 @@ async function withEnvironment(
   }
 }
 
-test("task-aware selection defaults both tasks to Groq without a fallback", async () =>
+test("task-aware selection defaults both tasks to Gemini Flash Lite with optional Groq failover", async () =>
   await withEnvironment(
     {
       MUSE_CHAT_LLM_PROVIDER: undefined,
@@ -59,22 +59,24 @@ test("task-aware selection defaults both tasks to Groq without a fallback", asyn
       MUSE_LLM_PROVIDER: undefined,
     },
     () => {
-      const groq = fakeProvider("groq", "openai/gpt-oss-120b");
+      const gemini = fakeProvider("gemini", "gemini-3.5-flash-lite");
       const providers = createTaskAwareProviders({
-        factories: { groq: () => groq },
+        factories: { gemini: () => gemini },
       });
 
-      assert.equal(providers.chat.primaryProvider, groq);
-      assert.equal(providers.chat.provider, groq);
-      assert.equal(providers.chat.requested, "groq");
+      assert.equal(providers.chat.primaryProvider, gemini);
+      assert.equal(providers.chat.provider, gemini);
+      assert.equal(providers.chat.requested, "gemini");
       assert.equal(providers.chat.fallbackProvider, undefined);
-      assert.equal(providers.research.primaryProvider, groq);
-      assert.equal(providers.research.provider, groq);
-      assert.equal(providers.research.requested, "groq");
+      assert.match(providers.chat.fallbackUnavailableReason ?? "", /auth error/);
+      assert.equal(providers.research.primaryProvider, gemini);
+      assert.equal(providers.research.provider, gemini);
+      assert.equal(providers.research.requested, "gemini");
       assert.equal(providers.research.fallbackProvider, undefined);
+      assert.match(providers.research.fallbackUnavailableReason ?? "", /auth error/);
       assert.ok(
-        formatTaskProviderDiagnostics(providers).includes(
-          "Muse chat LLM fallback: none.",
+        formatTaskProviderDiagnostics(providers).some((line) =>
+          line.startsWith("Muse chat LLM: gemini (model: gemini-3.5-flash-lite)."),
         ),
       );
     },
@@ -104,26 +106,26 @@ test("task-specific providers can fall back to each other when they differ", asy
     },
   ));
 
-test("non-Groq primaries use Groq as their alternate when no task-specific alternate exists", async () =>
+test("Gemini primaries use Groq as their alternate when no task-specific alternate exists", async () =>
   await withEnvironment(
     {
-      MUSE_CHAT_LLM_PROVIDER: "agentrouter",
-      MUSE_RESEARCH_LLM_PROVIDER: "agentrouter",
+      MUSE_CHAT_LLM_PROVIDER: "gemini",
+      MUSE_RESEARCH_LLM_PROVIDER: "gemini",
       MUSE_LLM_PROVIDER: undefined,
     },
     () => {
-      const agentrouter = fakeProvider("agentrouter");
-      const groq = fakeProvider("groq");
+      const gemini = fakeProvider("gemini", "gemini-3.5-flash-lite");
+      const groq = fakeProvider("groq", "openai/gpt-oss-120b");
       const providers = createTaskAwareProviders({
         factories: {
-          agentrouter: () => agentrouter,
+          gemini: () => gemini,
           groq: () => groq,
         },
       });
 
-      assert.equal(providers.chat.primaryProvider, agentrouter);
+      assert.equal(providers.chat.primaryProvider, gemini);
       assert.equal(providers.chat.fallbackProvider, groq);
-      assert.equal(providers.research.primaryProvider, agentrouter);
+      assert.equal(providers.research.primaryProvider, gemini);
       assert.equal(providers.research.fallbackProvider, groq);
     },
   ));
@@ -149,6 +151,33 @@ test("MUSE_LLM_PROVIDER pins both tasks to one provider", async () =>
       assert.equal(providers.chat.fallbackProvider, groq);
       assert.equal(providers.research.primaryProvider, openrouter);
       assert.equal(providers.research.fallbackProvider, groq);
+    },
+  ));
+
+test("falls back to Groq at startup when the default Gemini key is missing", async () =>
+  await withEnvironment(
+    {
+      MUSE_CHAT_LLM_PROVIDER: undefined,
+      MUSE_RESEARCH_LLM_PROVIDER: undefined,
+      MUSE_LLM_PROVIDER: undefined,
+      GEMINI_API_KEY: undefined,
+    },
+    () => {
+      const groq = fakeProvider("groq", "openai/gpt-oss-120b");
+      const providers = createTaskAwareProviders({
+        factories: {
+          gemini: () => {
+            throw new Error("Missing GEMINI_API_KEY.");
+          },
+          groq: () => groq,
+        },
+      });
+
+      assert.equal(providers.chat.provider, groq);
+      assert.equal(providers.chat.primaryProvider, groq);
+      assert.equal(providers.chat.requested, "gemini");
+      assert.equal(providers.chat.used, "groq");
+      assert.match(providers.chat.fallbackReason ?? "", /GEMINI_API_KEY/);
     },
   ));
 
@@ -232,21 +261,21 @@ test("retries a Groq failure through a separately configured task provider", asy
   }
 });
 
-test("does not send provider safety refusals to a configured alternate", async () => {
+test("does not send Gemini policy-filtered responses to a configured alternate", async () => {
   let fallbackCalls = 0;
-  const groq = fakeProvider("groq", "test-model", async () => {
-    throw new Error("Provider safety block: request blocked.");
+  const gemini = fakeProvider("gemini", "gemini-3.5-flash-lite", async () => {
+    throw new Error("Gemini blocked the request because of SAFETY.");
   });
-  const openrouter = fakeProvider("openrouter", "test-model", async () => {
+  const groq = fakeProvider("groq", "openai/gpt-oss-120b", async () => {
     fallbackCalls += 1;
     return "should not run";
   });
   const providers = createTaskAwareProviders({
-    chatProvider: "groq",
-    researchProvider: "openrouter",
+    chatProvider: "gemini",
+    researchProvider: "groq",
     factories: {
+      gemini: () => gemini,
       groq: () => groq,
-      openrouter: () => openrouter,
     },
   });
 
@@ -255,7 +284,7 @@ test("does not send provider safety refusals to a configured alternate", async (
       systemPrompt: "Be concise.",
       conversation: [{ role: "user", content: "Hello." }],
     }),
-    /safety block/i,
+    /blocked the request.*SAFETY/i,
   );
   assert.equal(fallbackCalls, 0);
 });
@@ -282,24 +311,30 @@ test("selection fails loudly when no configured provider can be constructed", as
     },
   ));
 
-test("removed Gemini provider settings are rejected", async () =>
+test("Gemini is supported as the selected and default task provider", async () =>
   await withEnvironment(
     {
       MUSE_CHAT_LLM_PROVIDER: "gemini",
-      MUSE_RESEARCH_LLM_PROVIDER: "groq",
+      MUSE_RESEARCH_LLM_PROVIDER: "gemini",
       MUSE_LLM_PROVIDER: undefined,
     },
     () => {
-      assert.throws(
-        () =>
-          createTaskAwareProviders({
-            factories: { groq: () => fakeProvider("groq") },
-          }),
-        /No usable LLM provider for chat tasks/,
+      const gemini = fakeProvider("gemini", "gemini-3.5-flash-lite");
+      const providers = createTaskAwareProviders({
+        factories: { gemini: () => gemini },
+      });
+      assert.equal(providers.chat.primaryProvider, gemini);
+      assert.equal(providers.research.primaryProvider, gemini);
+      assert.equal(
+        createTextGenerationProvider({
+          provider: "gemini",
+          factories: { gemini: () => gemini },
+        }),
+        gemini,
       );
       assert.throws(
-        () => createTextGenerationProvider({ provider: "gemini" }),
-        /Choose "groq", "openrouter", or "agentrouter"/,
+        () => createTextGenerationProvider({ provider: "unknown" }),
+        /Choose "gemini", "groq", "openrouter", or "agentrouter"/,
       );
     },
   ));
@@ -322,12 +357,12 @@ test("does not silently replace an unsupported task provider with Groq", async (
     },
   ));
 
-test("single-provider selection keeps its Groq default and rejects unknown names", async () =>
+test("single-provider selection defaults to Gemini and rejects unknown names", async () =>
   await withEnvironment({ MUSE_LLM_PROVIDER: undefined }, () => {
-    const groq = fakeProvider("groq");
+    const gemini = fakeProvider("gemini", "gemini-3.5-flash-lite");
     assert.equal(
-      createTextGenerationProvider({ factories: { groq: () => groq } }),
-      groq,
+      createTextGenerationProvider({ factories: { gemini: () => gemini } }),
+      gemini,
     );
     assert.throws(
       () => createTextGenerationProvider({ provider: "unknown" }),
@@ -381,4 +416,20 @@ test("probeProviderConnection reports classified failures without exposing crede
   assert.match(failed, /provider detail: model not found/);
   assert.match(failed, /\[REDACTED\]/);
   assert.doesNotMatch(failed, /diagnostic-test-secret/);
+
+  const geminiSecret = "gemini-diagnostic-secret";
+  let geminiFailed = "";
+  await withEnvironment({ GEMINI_API_KEY: geminiSecret }, async () => {
+    geminiFailed = await probeProviderConnection(
+      "chat",
+      fakeProvider("gemini", "gemini-3.5-flash-lite", async () => {
+        throw new Error(
+          `Gemini request failed with HTTP 404: invalid model; key=${geminiSecret}`,
+        );
+      }),
+    );
+  });
+  assert.match(geminiFailed, /provider detail: invalid model/);
+  assert.match(geminiFailed, /\[REDACTED\]/);
+  assert.doesNotMatch(geminiFailed, /gemini-diagnostic-secret/);
 });

@@ -7,6 +7,7 @@
     "hello": "tsx ./src/hello.ts",
     "hello-server": "tsx ./src/hello-server.ts",
     "groq-api-test": "tsx ./src/groq-api-test.ts",
+    "gemini-api-test": "tsx ./src/gemini-api-test.ts",
     "muse": "tsx ./src/muse/cli.ts",
     "muse-photon": "tsx ./src/muse/photon-agent.ts",
     "muse-server": "tsx ./src/muse/http-server-cli.ts",

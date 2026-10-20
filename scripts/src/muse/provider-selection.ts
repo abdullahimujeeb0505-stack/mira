@@ -1,19 +1,26 @@
 import { AgentRouterProvider } from "./agentrouter-provider.js";
+import { GeminiProvider } from "./gemini-provider.js";
 import { GroqProvider } from "./groq-provider.js";
 import type { TextGenerationProvider } from "./llm-provider.js";
 import { OpenRouterProvider } from "./openrouter-provider.js";
 
-export type MuseProviderName = "groq" | "agentrouter" | "openrouter";
+export type MuseProviderName =
+  | "gemini"
+  | "groq"
+  | "agentrouter"
+  | "openrouter";
 
 export type MuseTaskName = "chat" | "research";
 
 const SUPPORTED_PROVIDERS = new Set<MuseProviderName>([
+  "gemini",
   "groq",
   "agentrouter",
   "openrouter",
 ]);
 
 export interface TextGenerationProviderFactories {
+  gemini?: () => TextGenerationProvider;
   groq?: () => TextGenerationProvider;
   agentrouter?: () => TextGenerationProvider;
   openrouter?: () => TextGenerationProvider;
@@ -25,9 +32,9 @@ export interface ProviderSelectionOptions {
 }
 
 export interface TaskProviderSelectionOptions {
-  /** Preferred provider for quick conversational turns. Default "groq". */
+  /** Preferred provider for quick conversational turns. Default "gemini". */
   chatProvider?: string;
-  /** Preferred provider for research, synthesis, and writing. Default "groq". */
+  /** Preferred provider for research, synthesis, and writing. Default "gemini". */
   researchProvider?: string;
   factories?: TextGenerationProviderFactories;
 }
@@ -70,6 +77,9 @@ function instantiateProvider(
   factories: TextGenerationProviderFactories | undefined,
 ): TextGenerationProvider {
   const name = provider.trim().toLowerCase();
+  if (name === "gemini") {
+    return (factories?.gemini ?? (() => new GeminiProvider()))();
+  }
   if (name === "groq") {
     return (factories?.groq ?? (() => new GroqProvider()))();
   }
@@ -80,7 +90,7 @@ function instantiateProvider(
     return (factories?.openrouter ?? (() => new OpenRouterProvider()))();
   }
   throw new Error(
-    `Unsupported MUSE_LLM_PROVIDER "${provider}". Choose "groq", "openrouter", or "agentrouter".`,
+    `Unsupported MUSE_LLM_PROVIDER "${provider}". Choose "gemini", "groq", "openrouter", or "agentrouter".`,
   );
 }
 
@@ -127,7 +137,7 @@ export function createTextGenerationProvider(
   options: ProviderSelectionOptions = {},
 ): TextGenerationProvider {
   const configuredProvider =
-    options.provider ?? process.env.MUSE_LLM_PROVIDER ?? "groq";
+    options.provider ?? process.env.MUSE_LLM_PROVIDER ?? "gemini";
   return instantiateProvider(configuredProvider, options.factories);
 }
 
@@ -163,6 +173,7 @@ function describeProviderFailureDetail(error: unknown): string | undefined {
   if (!detail || /^[.!?]+$/.test(detail)) return undefined;
 
   for (const name of [
+    "GEMINI_API_KEY",
     "GROQ_API_KEY",
     "GROK_API_CODING_KEY",
     "AGENTROUTER_API_KEY",
@@ -224,12 +235,12 @@ export function classifyProviderFailure(error: unknown): string {
 }
 
 /**
- * Resolve both chat and research with Groq as the default primary.
- * Task-specific overrides remain available through
+ * Resolve both chat and research with Gemini Flash Lite as the default
+ * primary. Task-specific overrides remain available through
  * `MUSE_CHAT_LLM_PROVIDER` and `MUSE_RESEARCH_LLM_PROVIDER`, while
  * `MUSE_LLM_PROVIDER` pins both tasks. When the tasks select different
- * providers, one may serve as the other's fallback; non-Groq primaries use
- * Groq as their default alternate.
+ * providers, one may serve as the other's fallback; when both tasks use the
+ * same non-Groq provider, Groq is the default alternate if configured.
  *
  * If a selected primary cannot be constructed, resolve directly to its
  * configured alternate. When both are available, operational request failures
@@ -243,19 +254,19 @@ export function createTaskAwareProviders(
       options.chatProvider ??
       process.env.MUSE_CHAT_LLM_PROVIDER ??
       process.env.MUSE_LLM_PROVIDER ??
-      "groq"
+      "gemini"
     )
       .trim()
-      .toLowerCase() || "groq";
+      .toLowerCase() || "gemini";
   const researchRequested =
     (
       options.researchProvider ??
       process.env.MUSE_RESEARCH_LLM_PROVIDER ??
       process.env.MUSE_LLM_PROVIDER ??
-      "groq"
+      "gemini"
     )
       .trim()
-      .toLowerCase() || "groq";
+      .toLowerCase() || "gemini";
 
   const chooseAlternate = (
     requested: string,
