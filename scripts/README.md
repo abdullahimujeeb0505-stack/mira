@@ -23,7 +23,7 @@ paths; research images are still sourced and are never AI-generated.
 The browser chat also offers explicit image generation, image understanding, text
 file attachments, microphone dictation, and speech playback. Image generation
 and image understanding use optional Cloudflare Workers AI credentials; ordinary
-text chat remains on the configured provider (Groq by default).
+text chat remains on the configured provider (Gemini Flash Lite by default).
 
 Muse also drafts complete general-purpose written deliverables, including
 articles, essays, literature reviews, technical tutorials, reports, study
@@ -46,8 +46,19 @@ project API key with `project:read` and `project:write`, then configure:
 
 - `PHOTON_PROJECT_ID` — Beta project ID (`pho_prj_...`).
 - `PHOTON_API_KEY` — project-scoped bearer key; keep it in a secret manager.
-- `MUSE_LLM_PROVIDER` — `groq` (default when unset or blank), `openrouter`, or
-  `agentrouter`; the value is trimmed and case-insensitive.
+- `MUSE_LLM_PROVIDER` — `gemini` (default when unset or blank), `groq`,
+  `openrouter`, or `agentrouter`; the value is trimmed and case-insensitive.
+
+For Gemini, set `GEMINI_API_KEY`. Muse uses the Google Gemini Developer API
+model `gemini-3.5-flash-lite` by default for chat, research, and writing. The
+runtime does not read a `GEMINI_MODEL` override. Google listed this model as
+free-tier eligible on 2026-10-19, but free-tier quotas are project-specific and
+must be checked in AI Studio; Google does not publish one fixed RPM/TPM/RPD
+allowance for every project. Google may use free-tier prompts and responses to improve its products, so
+avoid sending sensitive messages, text attachments, or Cloudflare-generated
+image descriptions unless that data use is acceptable. Raw uploaded image bytes
+go to Cloudflare vision, not Gemini. Muse's own research pipeline remains responsible
+for web retrieval; Gemini Search grounding is not enabled.
 
 For Groq, set `GROQ_API_KEY`; `GROK_API_CODING_KEY` remains supported for
 backward compatibility. `GROQ_MODEL` is optional and defaults to
@@ -68,15 +79,13 @@ For AgentRouter, set `AGENTROUTER_API_KEY`; `AGENTROUTER_MODEL` is an optional
 override. Provider credentials are isolated: only the selected adapter receives
 its own key.
 
-Gemini has been removed from Muse's model and search integrations. The
-`GEMINI_API_KEY`, `GEMINI_MODEL`, and `MUSE_GEMINI_SEARCH` settings are no longer
-used and can be removed from the runtime's secrets. Change any provider
-selection still set to `gemini` to `groq`, `openrouter`, or `agentrouter`, or
-clear it to use the Groq default. Chat and research default to Groq. When the two
-tasks are explicitly configured with different providers,
-the other task's provider can serve as the request-failure fallback; non-Groq
-primaries otherwise use Groq. A Groq-only setup has no automatic provider
-fallback.
+Chat and research default to Gemini. `MUSE_CHAT_LLM_PROVIDER` and
+`MUSE_RESEARCH_LLM_PROVIDER` can override tasks independently; setting
+`MUSE_LLM_PROVIDER` pins both. When the tasks use different configured
+providers, each may serve as the other's request-failure fallback. If both tasks
+use the same non-Groq provider, Groq is the default alternate when its
+credentials are configured. Safety-filter refusals are never routed to another
+provider. A Gemini-only setup without Groq credentials has no runtime failover.
 
 Set `MUSE_PHOTON_TRANSPORT=spectrum` only to explicitly run the legacy
 Spectrum transport. That mode continues to require `SPECTRUM_PROJECT_ID` and
@@ -156,8 +165,8 @@ connection are not pinned, so this is not a general-purpose URL-fetching service
 
 The new Photon listener requires a long-running Node.js host with outbound
 WebSocket access to `api.photon.codes` and HTTPS access to the Photon API,
-Groq/OpenRouter (whichever is selected), and the existing public research
-sources. No public webhook endpoint is required. Configure Photon credentials
+Gemini, Groq, OpenRouter, or AgentRouter (whichever providers are selected), and
+the existing public research sources. No public webhook endpoint is required. Configure Photon credentials
 and an iMessage line, start the command above, and send a message from the
 configured sender to verify a live interaction.
 
@@ -219,6 +228,19 @@ pnpm --filter @workspace/scripts run hello-server
 It listens on port `3000` by default. Set `PORT` to use a different port.
 Send an HTTP request to `/` and it responds with `Hello`.
 
+## Gemini API test
+
+With `GEMINI_API_KEY` configured, run:
+
+```sh
+pnpm --filter @workspace/scripts run gemini-api-test
+```
+
+This makes one small live request to the pinned `gemini-3.5-flash-lite` model
+and prints its response. It consumes the Google project's quota and is
+intentionally excluded from automated tests. Store the key in GitHub Codespaces
+Secrets or another secret manager; never put it in the repository.
+
 ## Groq API test
 
 With `GROQ_API_KEY` (or the legacy `GROK_API_CODING_KEY`) configured, run:
@@ -239,7 +261,7 @@ Check the demo prerequisites without starting the server or contacting a model p
 pnpm --filter @workspace/scripts run muse-preflight
 ```
 
-The preflight prints only prerequisite names and readiness states; it never prints secret values. It checks that `SESSION_SECRET` is non-empty, the selected chat and research providers have usable credentials, any configured alternate providers are usable, and the local `tsx` command is installed. Missing Cloudflare image credentials produce a non-blocking warning because image tools are optional. Both chat tasks default to Groq. `MUSE_CHAT_LLM_PROVIDER` and `MUSE_RESEARCH_LLM_PROVIDER` override each task's provider, while `MUSE_LLM_PROVIDER` pins both. A distinct configured provider may serve as an alternate; a Groq-only setup has no automatic fallback. Gemini has been removed, so `GEMINI_API_KEY`, `GEMINI_MODEL`, and `MUSE_GEMINI_SEARCH` are no longer used and can be removed from runtime secrets. Set active provider credentials in GitHub Codespaces Secrets or the runtime's secret manager, not in tracked files. Muse no longer requires a chat access code. **Security note:** the former `.replit` user-environment block contained committed credential-like values. Removing the block does not erase Git history; revoke or rotate those values, and remove any obsolete `MUSE_CHAT_ACCESS_TOKEN` from your secret manager. Its standalone tests can run with Node.js alone:
+The preflight prints only prerequisite names and readiness states; it never prints secret values. It checks that `SESSION_SECRET` is non-empty, the selected chat and research providers have usable credentials, any configured alternate providers are usable, and the local `tsx` command is installed. Missing Cloudflare image credentials produce a non-blocking warning because image tools are optional. Both chat tasks default to Gemini `gemini-3.5-flash-lite`; `GEMINI_API_KEY` is needed to use Gemini. `MUSE_CHAT_LLM_PROVIDER` and `MUSE_RESEARCH_LLM_PROVIDER` override each task's provider, while `MUSE_LLM_PROVIDER` pins both. If the Gemini key is missing but Groq is configured, Groq can take over at startup; with both configured, it may also serve as request-failure fallback. Without Groq credentials, Gemini remains the only provider and its key must be present. The model is pinned in code, so `GEMINI_MODEL` is not a runtime setting. The server's non-fatal startup probe makes a small request to each configured provider; set `MUSE_LLM_STARTUP_PROBE=0` to skip it. Set provider credentials in GitHub Codespaces Secrets or the runtime's secret manager, not in tracked files. Muse no longer requires a chat access code. **Security note:** the former `.replit` user-environment block contained committed credential-like values. Removing the block does not erase Git history; revoke or rotate those values, and remove any obsolete `MUSE_CHAT_ACCESS_TOKEN` from your secret manager. Its standalone tests can run with Node.js alone:
 
 ```sh
 pnpm --filter @workspace/scripts run muse-preflight-test
@@ -256,25 +278,24 @@ Codespaces port forwarding, the Replit workflow preview, e2b sandboxes) can
 reach it; set `MUSE_BIND_HOST=127.0.0.1` to restrict it to loopback when
 running on a shared machine.
 
-Open `http://localhost:3000` locally. In **GitHub Codespaces**, forward port `3000` and open the forwarded URL at path `/`. Or use the **Muse Chat Preview** workflow in Replit at port `3000` and path `/`. The server is task-aware: chat and research both default to **Groq** (`GROQ_API_KEY` or legacy `GROK_API_CODING_KEY`, model `openai/gpt-oss-120b`). `MUSE_CHAT_LLM_PROVIDER` and `MUSE_RESEARCH_LLM_PROVIDER` override each task's provider; `MUSE_LLM_PROVIDER` pins both tasks to `groq`, `openrouter` (`OPENROUTER_API_KEY` + `OPENROUTER_MODEL`), or `agentrouter` (`AGENTROUTER_API_KEY`). Eligible failures retry once only when an alternate provider is configured; with the default Groq-only setup, there is no automatic model fallback. Gemini has been removed, so `GEMINI_API_KEY`, `GEMINI_MODEL`, and `MUSE_GEMINI_SEARCH` are no longer used and may be removed from runtime secrets. Change any provider selection still set to `gemini` to `groq`, `openrouter`, or `agentrouter`, or clear it to use Groq. `SESSION_SECRET` is required to sign the browser's HTTP-only session cookie. No `MUSE_CHAT_ACCESS_TOKEN` or access-code entry is required to use the chat page.
+Open `http://localhost:3000` locally. In **GitHub Codespaces**, forward port `3000` and open the forwarded URL at path `/`. Or use the **Muse Chat Preview** workflow in Replit at port `3000` and path `/`. The task-aware server defaults chat and research to **Gemini** (`GEMINI_API_KEY`, model `gemini-3.5-flash-lite`). `MUSE_CHAT_LLM_PROVIDER` and `MUSE_RESEARCH_LLM_PROVIDER` override each task's provider; `MUSE_LLM_PROVIDER` pins both to `gemini`, `groq`, `openrouter` (`OPENROUTER_API_KEY` + `OPENROUTER_MODEL`), or `agentrouter` (`AGENTROUTER_API_KEY`). If Gemini is unavailable and Groq credentials are configured, Groq may take over at startup and is also the default request-failure alternate; with Gemini alone there is no automatic failover. The model ID is pinned in code (`GEMINI_MODEL` is not read). `SESSION_SECRET` is required to sign the browser's HTTP-only session cookie. No `MUSE_CHAT_ACCESS_TOKEN` or access-code entry is required to use the chat page.
 
 At startup, the server logs both primary providers and model identifiers
 (`Muse chat LLM: …` / `Muse research LLM: …`), any configured fallback models,
 and any startup fallback reason. It probes each distinct configured primary
 and runtime fallback directly with a minimal request (`Muse LLM probe (…): ok`
-or a classified failure such as `auth error`). HTTP failures include a short,
-redacted provider message, so model/endpoint errors (such as HTTP 404) are
-distinguishable from key or quota issues. Set `MUSE_LLM_STARTUP_PROBE=0` to skip
-the probe requests.
-Credentials are never logged. A `GROQ_MODEL` override is visible in the startup
-line, including an override that still points to a deprecated model. The
-`Muse web search:` line reports the DuckDuckGo HTML/Lite backends. Research does
-not use Gemini or assumed browsing built into ordinary text-generation models.
+or a classified failure such as `auth error`). HTTP status codes are reported;
+provider detail is included only when available and is redacted. Set
+`MUSE_LLM_STARTUP_PROBE=0` to skip these live probe requests.
+Credentials are never logged. The pinned Gemini model is shown in the startup
+line, as is any `GROQ_MODEL` override. The `Muse web search:` line reports the
+DuckDuckGo HTML/Lite backends. Research uses Muse's existing retrieval pipeline,
+not Gemini Search grounding or assumed browsing built into a model.
 
 ### Browser multimodal controls
 
 - **Image generation:** Open the composer’s **+** menu and choose **Generate an image**, or type an explicit leading command such as `generate image: a red fox under the northern lights` or `create a picture of a paper-cut flower`, only when you want original AI-created artwork. Typed image commands go directly to Cloudflare Workers AI, bypassing the chat model; the browser renders the resulting image with a download link. This is separate from requests for an image to accompany an explanation, which retrieve existing, attributed Wikimedia Commons images. Configure `MUSE_CLOUDFLARE_ACCOUNT_ID` (a 32-character Cloudflare account ID) and `MUSE_CLOUDFLARE_AI_TOKEN` in Codespaces Secrets or the deployment secret manager. Use a Cloudflare API token with Workers AI Read and Edit permissions (or Cloudflare's Workers AI REST API token template). Prompts are capped at 1,000 characters. The web server and each Photon process cap image generation at 10 requests per hour; the web server caps image understanding at 20 analyses per hour. Muse does not save generated images.
-- **Attachments:** JPEG, PNG, and WebP images up to 4 MB each, plus TXT, Markdown (`.md`/`.markdown`), and CSV files up to 512 KB each. A turn accepts at most three files and 8 MB total; temporary uploads across the server are capped at 32 MB. Text sent to the model is limited to 16,000 characters per file and 24,000 total. PDF and DOCX are not supported in this release. File bytes stay in process memory, are not written to disk, and are removed after the next chat turn, manual removal, session expiry, or server restart. Image analysis first calls Cloudflare LLaVA `@cf/llava-hf/llava-1.5-7b-hf` with the image bytes and a prompt, then tries Moondream `@cf/moondream/moondream3.1-9B-A2B` if LLaVA returns an empty/unexpected response or a retryable error. LLaVA is marked Beta by Cloudflare. If both models fail, image analysis is unconfigured, or Muse reaches its local analysis limit, chat still proceeds: the user sees an explicit notice and Mira is instructed not to guess what the image shows. Questions about an attached image use the vision/chat path rather than being auto-routed to web research; an explicit web-search request or URL still triggers research. Prompts, text-file content, and any successful vision context go to the configured chat provider (Groq by default). Attachments and image-analysis details are excluded from later conversation history and saved-memory extraction.
+- **Attachments:** JPEG, PNG, and WebP images up to 4 MB each, plus TXT, Markdown (`.md`/`.markdown`), and CSV files up to 512 KB each. A turn accepts at most three files and 8 MB total; temporary uploads across the server are capped at 32 MB. Text sent to the model is limited to 16,000 characters per file and 24,000 total. PDF and DOCX are not supported in this release. File bytes stay in process memory, are not written to disk, and are removed after the next chat turn, manual removal, session expiry, or server restart. Image analysis first calls Cloudflare LLaVA `@cf/llava-hf/llava-1.5-7b-hf` with the image bytes and a prompt, then tries Moondream `@cf/moondream/moondream3.1-9B-A2B` if LLaVA returns an empty/unexpected response or a retryable error. LLaVA is marked Beta by Cloudflare. If both models fail, image analysis is unconfigured, or Muse reaches its local analysis limit, chat still proceeds: the user sees an explicit notice and Mira is instructed not to guess what the image shows. Questions about an attached image use the vision/chat path rather than being auto-routed to web research; an explicit web-search request or URL still triggers research. Prompts, text-file content, and any successful vision context go to the configured chat provider (Gemini Flash Lite by default). Attachments and image-analysis details are excluded from later conversation history and saved-memory extraction.
 - **Voice:** The microphone icon in the composer uses browser `SpeechRecognition` when available; availability, language, and privacy behavior vary, and some browsers send recognition audio to their own remote service. Audio is not uploaded to Muse. Typed chat remains available. A speaker icon on Mira’s replies uses the browser/device `speechSynthesis` voices; no speech API key is needed. The composer supports Enter to send, Shift+Enter for a line break, and keyboard navigation in the + menu.
 - **Quota:** Cloudflare Workers AI has a limited free allocation, not unlimited free usage. Requests can fail when account/model access or quota is unavailable, and Cloudflare may charge or require a paid plan beyond free usage. Check the current Cloudflare account limits and pricing before use. Muse does not automatically upgrade a plan or enable paid usage. Startup only checks whether the named secrets are present; it does not verify live Cloudflare access.
 

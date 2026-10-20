@@ -192,21 +192,22 @@ Wallet safety (`tracking-validation.ts`): `assertSafeStoredText` rejects anythin
 
 ## 6. Providers
 
-One interface (`TextGenerationProvider`: optional `providerName`/`model` for diagnostics, plus `generateText({systemPrompt, conversation})`) and three implementations:
+One interface (`TextGenerationProvider`: optional `providerName`/`model` for diagnostics, plus `generateText({systemPrompt, conversation})`) and four implementations:
 
 | Provider | Endpoint | Shape | Model default | Auth env |
 |---|---|---|---|---|
-| `groq` (default) | `api.groq.com/openai/v1/chat/completions` | OpenAI chat | `openai/gpt-oss-120b` | `GROQ_API_KEY`, legacy `GROK_API_CODING_KEY` |
+| `gemini` (default) | `generativelanguage.googleapis.com/v1beta/models/{model}:generateContent` | Gemini `systemInstruction` / `contents` | `gemini-3.5-flash-lite` | `GEMINI_API_KEY` |
+| `groq` | `api.groq.com/openai/v1/chat/completions` | OpenAI chat | `openai/gpt-oss-120b` | `GROQ_API_KEY`, legacy `GROK_API_CODING_KEY` |
 | `openrouter` | `openrouter.ai/api/v1/chat/completions` | OpenAI chat | **none — `OPENROUTER_MODEL` required** | `OPENROUTER_API_KEY` |
 | `agentrouter` | `agentrouter.org/v1/responses` | OpenAI **Responses** | `gpt-5.6-sol` | `AGENTROUTER_API_KEY` |
 
-All three: 60s `AbortSignal.timeout`, injectable `fetch` (so tests never hit the network), and secret redaction in error messages.
+All four: 60s `AbortSignal.timeout`, injectable `fetch` (so tests never hit the network), and secret redaction in error messages.
 
 `openai-compatible-chat.ts` provides the shared `parseChatCompletionText` returning a **three-state** discriminated union — `text` / `empty` / `unsupported` — so "the provider returned 200 with nothing" is distinguishable from "the provider returned a shape we don't understand". `httpError` special-cases 401/403 ("rejected the configured credentials") and 429 ("rate limit reached"); `requestError` special-cases timeouts and redacts the key from the detail.
 
 The AgentRouter adapter has the most involved parser (`parseResponseText`): accepts top-level `output_text`, or walks `output[].content[]` collecting `output_text`/`text` parts and concatenating them — and returns `unsupported` if any item or part is malformed rather than silently skipping it. This is the fix requested in `attached_assets/Pasted-Continue-development-of-the-existing-Muse-project-Do-no…`, where a live HTTP 200 had been misreported as "no text output".
 
-`provider-selection.ts` trims and lowercases `MUSE_LLM_PROVIDER`, treats blank as `groq`, accepts injectable factories for tests, and names the three valid values in its error. `formatProviderDiagnostic` **throws** if a provider doesn't expose `providerName`/`model` — which is what makes the startup log line trustworthy. No provider is an automatic fallback for another.
+`provider-selection.ts` trims and lowercases `MUSE_LLM_PROVIDER`, treats blank as `gemini`, accepts injectable factories for tests, and names the four valid values in its error. `formatProviderDiagnostic` **throws** if a provider doesn't expose `providerName`/`model` — which is what makes the startup log line trustworthy. The task-aware server retries eligible Gemini failures through configured Groq credentials by default; separate task providers may serve as each other's fallback. Gemini uses the native `generateContent` endpoint, `systemInstruction`, and `contents` roles (`assistant` maps to `model`), and treats policy-filtered responses as non-failover errors.
 
 ---
 
@@ -338,7 +339,7 @@ Worth stating plainly, because it's unusual for a repo of this size and history:
 - **Concurrency control by serial queues**, not locks: `MuseAgent` per HTTP session, per Photon space, `OpportunityService`, `WatchService`, `OpportunityTrackingService`, `QuotePostDraftService`, `JsonReminderRepository`, and `SourceIngestionService`'s watch-update queue. Plus reentrancy guards (`inFlightSources`) and in-flight promise sharing (`PhotonBetaMessageHandler.inFlight`).
 - **Bounded everything.** Response bytes, page bytes, feed bytes, image-response bytes, request bodies, message length, memory length, note length, update ids/titles/text, candidates, searches, rounds, sources, evidence chars, archive scan count, context chars, cursor event ids, processed event ids, active sessions, retries, redirect hops, wallet references, delivery attempts, timeouts, and the pending-delivery queue.
 - **Degradation over failure.** Archive retrieval returns `""` on any error; planning falls back to a regex-derived plan; gap analysis falls back to `plan.questions.slice(1,4)`; synthesis failure returns a status message rather than throwing; scheduler ticks swallow storage errors; corrupt archive records are skipped individually.
-- **Deterministic tests.** 242 cases across 28 files, all with injected fake `fetch`, fake providers, fake Photon events, injectable `now()`, and `node:vm` for evaluating the inlined browser script. No test touches the network or a model. `groq-api-test.ts` is deliberately excluded from the suite. Ordering tiebreaks (`id.localeCompare`) make ranking reproducible.
+- **Deterministic tests.** Test cases use injected fake `fetch`, fake providers, fake Photon events, injectable `now()`, and `node:vm` for evaluating the inlined browser script. No automated test touches the network or a model. `groq-api-test.ts` and `gemini-api-test.ts` are deliberate live smoke tests excluded from the suite. Ordering tiebreaks (`id.localeCompare`) make ranking reproducible.
 - **Supply-chain defence** in `pnpm-workspace.yaml`: `minimumReleaseAge: 1440` with a documented, narrowly-scoped allowlist, an explicit override of `js-yaml` to `4.3.2` for a CVE, `@esbuild-kit/esm-loader` redirected to `tsx` because drizzle-kit pins a vulnerable esbuild, and non-linux-x64 native binaries stripped.
 - **The AgentRouter parser** distinguishes empty from unsupported, which is the correct fix for the reported "200 with no text" bug.
 - **The three-state provider result union** (`text`/`empty`/`unsupported`) instead of a nullable string.

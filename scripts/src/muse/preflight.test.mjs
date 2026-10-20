@@ -4,21 +4,23 @@ import { formatMuseReadiness, inspectMuseReadiness } from "./preflight.mjs";
 
 const validEnv = {
   SESSION_SECRET: "configured-session-secret",
+  GEMINI_API_KEY: "configured-gemini-key",
   GROK_API_CODING_KEY: "configured-provider-key",
   MUSE_CLOUDFLARE_ACCOUNT_ID: "a".repeat(32),
   MUSE_CLOUDFLARE_AI_TOKEN: "configured-cloudflare-token",
 };
 
-test("reports Groq readiness without exposing configured values", () => {
+test("reports default Gemini and configured Groq readiness without exposing values", () => {
   const report = inspectMuseReadiness(validEnv, true);
   const output = formatMuseReadiness(report);
 
   assert.equal(report.ready, true);
+  assert.match(output, /PASS: GEMINI_API_KEY/);
   assert.match(output, /PASS: GROK_API_CODING_KEY/);
   assert.doesNotMatch(output, /MUSE_CHAT_ACCESS_TOKEN/);
   assert.doesNotMatch(
     output,
-    /configured-session-secret|configured-provider-key/,
+    /configured-session-secret|configured-gemini-key|configured-provider-key/,
   );
 });
 
@@ -38,30 +40,40 @@ test("Cloudflare image secrets are optional and missing values only warn", () =>
   assert.doesNotMatch(output, /configured-cloudflare-token/);
 });
 
-test("defaults chat and research to Groq with no secondary provider", () => {
+test("defaults chat and research to Gemini with configured Groq fallback", () => {
+  const report = inspectMuseReadiness(validEnv, true);
+  const output = formatMuseReadiness(report);
+
+  assert.equal(report.ready, true);
+  for (const name of [
+    "chat LLM provider (gemini)",
+    "chat LLM fallback (groq)",
+    "research LLM provider (gemini)",
+    "research LLM fallback (groq)",
+    "GEMINI_API_KEY",
+  ]) {
+    assert.ok(report.checks.some((check) => check.name === name && check.ready), name);
+  }
+  assert.doesNotMatch(output, /no secondary provider configured/);
+});
+
+test("uses Groq at startup when the Gemini key is missing", () => {
   const report = inspectMuseReadiness(
-    {
-      ...validEnv,
-      GEMINI_API_KEY: "obsolete-gemini-key",
-    },
+    { ...validEnv, GEMINI_API_KEY: "" },
     true,
   );
   const output = formatMuseReadiness(report);
 
   assert.equal(report.ready, true);
+  assert.match(
+    output,
+    /chat task will use groq because the configured primary gemini is unavailable/,
+  );
   assert.ok(
     report.checks.some(
       ({ name, ready }) => name === "chat LLM provider (groq)" && ready,
     ),
   );
-  assert.ok(
-    report.checks.some(
-      ({ name, ready }) => name === "research LLM provider (groq)" && ready,
-    ),
-  );
-  assert.ok(!report.checks.some(({ name }) => name === "GEMINI_API_KEY"));
-  assert.match(output, /chat task has no secondary provider configured/);
-  assert.match(output, /research task has no secondary provider configured/);
 });
 
 test("distinct task providers are available as each other's fallback", () => {
@@ -113,29 +125,32 @@ test("uses Groq at startup when an OpenRouter primary cannot be constructed", ()
   );
 });
 
-test("a leftover Gemini key cannot substitute for missing Groq credentials", () => {
+test("Gemini runs as primary without requiring Groq credentials", () => {
   const report = inspectMuseReadiness(
     {
       ...validEnv,
       GROQ_API_KEY: "",
       GROK_API_CODING_KEY: "",
-      GEMINI_API_KEY: "obsolete-gemini-key",
     },
     true,
   );
+  const output = formatMuseReadiness(report);
 
-  assert.equal(report.ready, false);
+  assert.equal(report.ready, true);
   assert.ok(
     report.checks.some(
-      ({ name, ready }) => name === "chat LLM provider (groq)" && !ready,
+      ({ name, ready }) => name === "chat LLM provider (gemini)" && ready,
     ),
   );
   assert.ok(
     report.checks.some(
-      ({ name, ready }) => name === "research LLM provider (groq)" && !ready,
+      ({ name, ready }) => name === "research LLM provider (gemini)" && ready,
     ),
   );
-  assert.ok(!report.checks.some(({ name }) => name === "GEMINI_API_KEY"));
+  assert.ok(
+    report.checks.some(({ name, ready }) => name === "GEMINI_API_KEY" && ready),
+  );
+  assert.match(output, /no configured groq runtime fallback/);
 });
 
 test("prefers the canonical Groq credential when both variables are available", () => {
@@ -205,7 +220,7 @@ test("blocks an OpenRouter provider without its required model or usable Groq al
   );
 });
 
-test("uses Groq when the provider setting is blank", () => {
+test("uses Gemini when the provider setting is blank", () => {
   const report = inspectMuseReadiness(
     { ...validEnv, MUSE_LLM_PROVIDER: "  " },
     true,
@@ -214,7 +229,12 @@ test("uses Groq when the provider setting is blank", () => {
   assert.equal(report.ready, true);
   assert.ok(
     report.checks.some(
-      ({ name, ready }) => name === "GROK_API_CODING_KEY" && ready,
+      ({ name, ready }) => name === "GEMINI_API_KEY" && ready,
+    ),
+  );
+  assert.ok(
+    report.checks.some(
+      ({ name, ready }) => name === "chat LLM provider (gemini)" && ready,
     ),
   );
   assert.ok(!report.checks.some(({ name }) => name === "MUSE_LLM_PROVIDER"));
@@ -232,12 +252,13 @@ test("reports missing secrets and unavailable tsx without printing values", () =
 
   assert.equal(report.ready, false);
   assert.match(output, /BLOCKED: SESSION_SECRET/);
+  assert.match(output, /BLOCKED: GEMINI_API_KEY/);
   assert.match(output, /BLOCKED: GROQ_API_KEY or GROK_API_CODING_KEY/);
   assert.match(output, /BLOCKED: tsx/);
 });
 
-test("rejects removed Gemini and other unsupported provider names", () => {
-  const removedProviderReport = inspectMuseReadiness(
+test("accepts Gemini and rejects other unsupported provider names", () => {
+  const geminiReport = inspectMuseReadiness(
     { ...validEnv, MUSE_LLM_PROVIDER: "gemini" },
     true,
   );
@@ -254,11 +275,16 @@ test("rejects removed Gemini and other unsupported provider names", () => {
     },
     true,
   );
-  const output = [removedProviderReport, arbitraryProviderReport, taskOverrideReport]
+  const output = [geminiReport, arbitraryProviderReport, taskOverrideReport]
     .map(formatMuseReadiness)
     .join("\n");
 
-  assert.equal(removedProviderReport.ready, false);
+  assert.equal(geminiReport.ready, true);
+  assert.ok(
+    geminiReport.checks.some(
+      ({ name, ready }) => name === "chat LLM provider (gemini)" && ready,
+    ),
+  );
   assert.equal(arbitraryProviderReport.ready, false);
   assert.equal(taskOverrideReport.ready, false);
   assert.match(output, /BLOCKED: MUSE_LLM_PROVIDER/);
