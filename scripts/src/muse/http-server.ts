@@ -1,8 +1,4 @@
-import {
-  createHmac,
-  randomBytes,
-  timingSafeEqual,
-} from "node:crypto";
+import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 import {
   createServer,
   type IncomingMessage,
@@ -17,6 +13,7 @@ import { MemoryService } from "./memory/memory-service.js";
 import { MuseAgent } from "./muse-agent.js";
 import {
   CloudflareAIConfigurationError,
+  CloudflareAIRequestError,
   CloudflareWorkersAIProvider,
   type GeneratedImage,
   type MuseMediaProvider,
@@ -51,69 +48,104 @@ const CHAT_PAGE = `<!doctype html>
     <meta name="theme-color" content="#10131b">
     <title>Mira — conversational assistant by Muse</title>
     <style>
-      :root { color-scheme: dark; font-family: Inter, ui-sans-serif, system-ui, sans-serif; background: #10131b; color: #f4f5f7; }
+      :root { color-scheme: dark; font-family: Inter, ui-sans-serif, system-ui, sans-serif; background: #0d1017; color: #f4f5f7; }
       * { box-sizing: border-box; }
-      body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px; background: radial-gradient(ellipse at top, #222b3d 0, #10131b 54%); }
-      main { width: min(100%, 760px); min-height: min(780px, calc(100vh - 48px)); display: flex; flex-direction: column; padding: clamp(20px, 5vw, 40px); border: 1px solid #32394a; border-radius: 24px; background: #171b25; box-shadow: 0 24px 80px #0006; }
-      .eyebrow { color: #91a9ff; font-size: 12px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
-      h1 { margin: 12px 0 8px; font-size: clamp(30px, 6vw, 48px); letter-spacing: -.04em; }
-      .intro, .notice { color: #a8afbe; line-height: 1.6; }
-      .notice { margin: 0; font-size: 12px; }
+      body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 16px; background: radial-gradient(ellipse at top, #20283a 0, #0d1017 58%); }
+      main { width: min(100%, 920px); height: min(920px, calc(100vh - 32px)); min-height: min(600px, calc(100vh - 32px)); display: flex; flex-direction: column; overflow: hidden; padding: 0 clamp(16px, 4vw, 32px) 14px; border: 1px solid #303849; border-radius: 24px; background: #171b24; box-shadow: 0 24px 80px #0007; }
+      .chat-header { display: flex; align-items: center; gap: 13px; flex: 0 0 auto; padding: 18px 0 15px; border-bottom: 1px solid #2b3140; }
+      .assistant-avatar { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 50%; color: #fff; background: linear-gradient(145deg, #8798ff, #526de2); font-size: 17px; font-weight: 800; }
+      .eyebrow { color: #a4b2ff; font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+      h1 { margin: 2px 0 0; font-size: 17px; letter-spacing: -.01em; }
+      .intro { margin: 3px 0 0; color: #9ba4b5; font-size: 12px; line-height: 1.4; }
+      .notice { color: #8f99aa; line-height: 1.55; }
       .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-      #messages { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; padding: 22px 0; }
-      .message { max-width: 88%; min-width: 0; padding: 12px 15px; border-radius: 16px; line-height: 1.55; overflow-wrap: break-word; word-break: normal; white-space: pre-wrap; }
-      .message.muse { align-self: flex-start; background: #252c3a; }
+      #messages { flex: 1; min-height: 0; min-width: 0; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; overscroll-behavior: contain; padding: 22px 3px; scroll-behavior: smooth; }
+      .message { max-width: min(84%, 690px); min-width: 0; padding: 11px 15px; border-radius: 19px; line-height: 1.55; overflow-wrap: break-word; word-break: normal; white-space: pre-wrap; }
+      .message.muse { align-self: flex-start; border-bottom-left-radius: 6px; background: #282e3b; }
       .message.muse h1, .message.muse h2, .message.muse h3, .message.muse h4, .message.muse h5, .message.muse h6 { margin: .4em 0; line-height: 1.25; }
       .message.muse p { margin: .35em 0; }
       .message.muse ul, .message.muse ol { margin: .35em 0; padding-left: 1.5em; }
-      .message.muse a { color: #a9bbff; text-decoration: underline; text-underline-offset: 2px; }
+      .message.muse a { color: #b4c2ff; text-decoration: underline; text-underline-offset: 2px; }
       .message.muse img { display: block; max-width: min(100%, 680px); height: auto; margin: 10px 0; border-radius: 10px; }
       .message.muse table { border-collapse: collapse; table-layout: fixed; display: block; width: 100%; max-width: 100%; overflow-x: auto; white-space: normal; }
       .message.muse th, .message.muse td { border: 1px solid #4a5365; padding: 6px 9px; text-align: left; vertical-align: top; overflow-wrap: anywhere; word-break: normal; }
       .message.muse pre { max-width: 100%; overflow-x: auto; white-space: pre; }
       .message.muse code { overflow-wrap: anywhere; white-space: break-spaces; }
-      .message.you { align-self: flex-end; background: #526de2; }
-      form { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
-      .composer-row { display: flex; gap: 10px; align-items: flex-end; }
-      .composer-tools { display: flex; flex-wrap: wrap; gap: 8px; }
-      textarea { flex: 1; min-height: 52px; max-height: 180px; resize: vertical; border: 1px solid #3b4354; border-radius: 14px; padding: 14px; color: inherit; background: #10131b; font: inherit; }
-      textarea:focus { outline: 2px solid #91a9ff; outline-offset: 1px; }
-      button { min-height: 46px; border: 0; border-radius: 12px; padding: 0 16px; color: white; background: #526de2; font: inherit; font-weight: 700; cursor: pointer; }
-      .tool-button, .attachment-remove, .speak-button { min-height: 34px; padding: 0 12px; color: #d9e1ff; background: #30394c; font-size: 13px; }
+      .message.you { align-self: flex-end; border-bottom-right-radius: 6px; background: #4262dd; }
+      form { flex: 0 0 auto; display: flex; flex-direction: column; gap: 8px; margin-top: 2px; }
+      .composer-shell { display: grid; grid-template-columns: 44px minmax(0, 1fr); align-items: end; gap: 8px; }
+      .action-area { position: relative; }
+      button { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; border: 0; border-radius: 999px; padding: 0 14px; color: white; background: #526de2; font: inherit; font-weight: 700; cursor: pointer; touch-action: manipulation; }
+      button:focus-visible { outline: 2px solid #b8c3ff; outline-offset: 3px; }
+      .icon-button { width: 44px; height: 44px; padding: 0; color: #e3e7f3; background: #303747; font-size: 27px; font-weight: 400; }
+      .icon-button svg, .composer-icon svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+      #attachment-menu { position: absolute; z-index: 3; left: 0; bottom: calc(100% + 10px); width: max-content; min-width: 210px; display: flex; flex-direction: column; gap: 4px; padding: 7px; border: 1px solid #40485a; border-radius: 15px; background: #222835; box-shadow: 0 12px 35px #0008; }
+      #attachment-menu[hidden] { display: none; }
+      .menu-item { justify-content: flex-start; width: 100%; min-height: 44px; border-radius: 10px; padding: 0 12px; color: #edf0f7; background: transparent; font-size: 14px; text-align: left; }
+      .menu-item:hover, .menu-item:focus-visible { background: #343c4e; }
+      .composer-box { min-width: 0; display: flex; align-items: flex-end; gap: 2px; padding: 4px 5px 4px 14px; border: 1px solid #3b4353; border-radius: 24px; background: #10131b; }
+      .composer-box:focus-within { border-color: #8397ff; box-shadow: 0 0 0 1px #8397ff55; }
+      textarea { flex: 1; width: 100%; min-width: 0; min-height: 40px; max-height: 144px; overflow-y: auto; resize: none; border: 0; outline: 0; padding: 10px 2px; color: inherit; background: transparent; font: inherit; line-height: 1.45; }
+      textarea::placeholder { color: #858e9e; }
+      .composer-icon { flex: 0 0 auto; width: 40px; height: 40px; min-width: 40px; min-height: 40px; padding: 0; color: #b8c1d2; background: transparent; }
+      .composer-icon:hover { color: #fff; background: #252c39; }
+      .composer-icon.listening { color: #fff; background: #a54155; }
+      #send { flex: 0 0 auto; width: 40px; height: 40px; min-width: 40px; min-height: 40px; padding: 0; color: #fff; background: #526de2; }
+      #send svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
       .attachment-list { display: flex; flex-wrap: wrap; gap: 8px; }
-      .attachment-chip { display: inline-flex; gap: 8px; align-items: center; padding: 5px 7px 5px 11px; border: 1px solid #3b4354; border-radius: 999px; color: #dce2ee; font-size: 12px; }
+      .attachment-chip { display: inline-flex; gap: 8px; align-items: center; max-width: 100%; padding: 5px 7px 5px 11px; border: 1px solid #3b4354; border-radius: 999px; color: #dce2ee; font-size: 12px; }
+      .attachment-chip > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .attachment-remove { min-height: 30px; padding: 0 9px; color: #d9e1ff; background: #30394c; font-size: 12px; }
       .message-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+      .speak-button { width: 36px; min-width: 36px; min-height: 36px; height: 36px; padding: 0; color: #d9e1ff; background: #3a4355; font-size: 18px; }
       .download-link { display: inline-block; padding: 8px 12px; border-radius: 8px; color: #d9e1ff; background: #30394c; font-size: 13px; text-decoration: none; }
       .generated-image { display: block; max-width: min(100%, 680px); height: auto; border-radius: 10px; }
-      button:disabled { cursor: wait; opacity: .65; }
-      #status { min-height: 20px; margin: 10px 0 0; color: #a8afbe; font-size: 13px; }
-      @media (max-width: 520px) { body { padding: 0; } main { min-height: 100vh; border: 0; border-radius: 0; } .composer-row { align-items: stretch; flex-direction: column; } .composer-row button { width: 100%; } .composer-tools button { width: auto; flex: 1; } }
+      button:disabled { cursor: wait; opacity: .62; }
+      #status { min-height: 18px; margin: 8px 0 0; color: #b3bdcc; font-size: 12px; line-height: 1.4; }
+      @media (max-width: 600px) { body { display: block; padding: 0; background: #171b24; } main { width: 100%; height: 100vh; height: 100dvh; min-height: 0; border: 0; border-radius: 0; padding: max(10px, env(safe-area-inset-top)) 12px max(10px, env(safe-area-inset-bottom)); box-shadow: none; } .chat-header { padding-top: 8px; } #messages { padding-top: 18px; } .message { max-width: 91%; } .notice { font-size: 11px; } }
+      @media (prefers-reduced-motion: reduce) { #messages { scroll-behavior: auto; } }
     </style>
   </head>
   <body>
     <main>
-      <div class="eyebrow">Mira · by Muse</div>
-      <h1>What would you like to talk about?</h1>
-      <p class="intro">Chat, brainstorm, ask a question, or request web research with sources.</p>
-      <section id="messages" aria-live="polite" aria-label="Conversation">
+      <header class="chat-header">
+        <div class="assistant-avatar" aria-hidden="true">M</div>
+        <div>
+          <div class="eyebrow">Muse assistant</div>
+          <h1>Mira</h1>
+          <p class="intro">Chat, brainstorm, ask a question, or request web research with sources.</p>
+        </div>
+      </header>
+      <section id="messages" aria-live="polite" aria-label="Conversation" aria-relevant="additions">
         <div class="message muse">Hi, I’m Mira, Muse’s assistant. What would you like to work through?</div>
       </section>
-      <div id="attachment-list" class="attachment-list" aria-label="Attachments"></div>
+      <div id="attachment-list" class="attachment-list" aria-label="Pending attachments"></div>
       <form id="chat-form">
-        <input id="attachment-files" class="visually-hidden" type="file" multiple accept="image/jpeg,image/png,image/webp,text/plain,text/markdown,text/csv,.jpg,.jpeg,.png,.webp,.txt,.md,.markdown,.csv">
-        <div class="composer-tools">
-          <button id="attach" class="tool-button" type="button">Attach file</button>
-          <button id="voice-input" class="tool-button" type="button" aria-label="Dictate a message">Use microphone</button>
-          <button id="generate-image" class="tool-button" type="button">Create image</button>
-        </div>
-        <div class="composer-row">
-          <label for="message" class="visually-hidden">Message to Mira</label>
-          <textarea id="message" name="message" maxlength="4000" placeholder="Write a message…" required></textarea>
-          <button id="send" type="submit">Send</button>
+        <input id="attachment-files" class="visually-hidden" type="file" tabindex="-1" multiple accept="image/jpeg,image/png,image/webp,text/plain,text/markdown,text/csv,.jpg,.jpeg,.png,.webp,.txt,.md,.markdown,.csv">
+        <div class="composer-shell">
+          <div class="action-area">
+            <button id="attachment-menu-toggle" class="icon-button" type="button" aria-label="Open attachments and image actions" aria-haspopup="menu" aria-expanded="false" aria-controls="attachment-menu">
+              <span aria-hidden="true">+</span>
+            </button>
+            <div id="attachment-menu" role="menu" aria-label="Composer actions" hidden>
+              <button id="attach" class="menu-item" type="button" role="menuitem">Attach photos or files</button>
+              <button id="generate-image" class="menu-item" type="button" role="menuitem">Generate an image</button>
+            </div>
+          </div>
+          <div class="composer-box">
+            <label for="message" class="visually-hidden">Message to Mira</label>
+            <textarea id="message" name="message" rows="1" maxlength="4000" placeholder="Message Mira…" aria-describedby="composer-help" required></textarea>
+            <button id="voice-input" class="composer-icon" type="button" aria-label="Dictate a message" title="Dictate a message">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3Z"/><path d="M19 11a7 7 0 0 1-14 0M12 18v4m-4 0h8"/></svg>
+            </button>
+            <button id="send" type="submit" aria-label="Send message" title="Send message">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m-7 7 7-7 7 7"/></svg>
+            </button>
+          </div>
         </div>
       </form>
-      <p class="notice">Attach JPEG/PNG/WebP images (4 MB max) or TXT/Markdown/CSV files (512 KB max); up to three files per turn. PDFs and DOCX are not supported. Image tools use quota-limited Cloudflare Workers AI. Image attachments are sent to Cloudflare for understanding; your message and text-file contents are sent to the configured chat model. Files stay in memory and are discarded after the next chat turn. Dictation support and privacy vary by browser; audio is not uploaded to Muse, but the browser may use its own remote speech service. Speech playback uses your device’s voices.</p>
-      <p id="status" role="status"></p>
+      <p id="composer-help" class="notice">Attach JPEG/PNG/WebP images (4 MB max) or TXT/Markdown/CSV files (512 KB max); up to three files per turn. PDFs and DOCX are not supported. Image tools use quota-limited Cloudflare Workers AI. Image attachments are sent to Cloudflare for understanding; your message and text-file contents are sent to the configured chat model. Files stay in memory and are discarded after the next chat turn. Dictation support and privacy vary by browser; audio is not uploaded to Muse, but the browser may use its own remote speech service. Speech playback uses your device’s voices.</p>
+      <p id="status" role="status" aria-live="polite"></p>
     </main>
     <script>
       const form = document.querySelector("#chat-form");
@@ -313,6 +345,8 @@ const CHAT_PAGE = `<!doctype html>
 
       const attachmentFiles = document.querySelector("#attachment-files");
       const attachmentList = document.querySelector("#attachment-list");
+      const actionMenuToggle = document.querySelector("#attachment-menu-toggle");
+      const actionMenu = document.querySelector("#attachment-menu");
       const attachButton = document.querySelector("#attach");
       const voiceButton = document.querySelector("#voice-input");
       const imageButton = document.querySelector("#generate-image");
@@ -328,10 +362,63 @@ const CHAT_PAGE = `<!doctype html>
       };
       let attachments = [];
       let busy = false;
+      let actionMenuOpen = false;
+
+      function setActionMenuOpen(open, returnFocus = false) {
+        actionMenuOpen = open;
+        actionMenu.hidden = !open;
+        actionMenuToggle.setAttribute("aria-expanded", String(open));
+        if (open) attachButton.focus();
+        else if (returnFocus) actionMenuToggle.focus();
+      }
+
+      actionMenuToggle.addEventListener("click", () => {
+        if (busy) return;
+        setActionMenuOpen(!actionMenuOpen);
+      });
+      document.addEventListener("click", (event) => {
+        if (
+          actionMenuOpen &&
+          !actionMenu.contains(event.target) &&
+          !actionMenuToggle.contains(event.target)
+        ) {
+          setActionMenuOpen(false);
+        }
+      });
+      actionMenu.addEventListener("keydown", (event) => {
+        const menuItems = [attachButton, imageButton];
+        const activeIndex = menuItems.indexOf(event.target);
+        if (event.key === "Escape") {
+          event.preventDefault();
+          setActionMenuOpen(false, true);
+          return;
+        }
+        if (
+          event.key === "Tab" &&
+          ((!event.shiftKey && activeIndex === menuItems.length - 1) ||
+            (event.shiftKey && activeIndex === 0))
+        ) {
+          event.preventDefault();
+          setActionMenuOpen(false);
+          if (event.shiftKey) actionMenuToggle.focus();
+          else input.focus();
+          return;
+        }
+        if (["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) {
+          event.preventDefault();
+          const nextIndex = event.key === "Home"
+            ? 0
+            : event.key === "End"
+              ? menuItems.length - 1
+              : (activeIndex + (event.key === "ArrowDown" ? 1 : -1) + menuItems.length) % menuItems.length;
+          menuItems[nextIndex].focus();
+        }
+      });
 
       function setBusy(value) {
         busy = value;
         button.disabled = value;
+        actionMenuToggle.disabled = value;
         attachButton.disabled = value;
         imageButton.disabled = value;
         voiceButton.disabled = value || !voiceRecognition;
@@ -391,7 +478,10 @@ const CHAT_PAGE = `<!doctype html>
         }
       });
 
-      attachButton.addEventListener("click", () => attachmentFiles.click());
+      attachButton.addEventListener("click", () => {
+        setActionMenuOpen(false, true);
+        attachmentFiles.click();
+      });
       attachmentFiles.addEventListener("change", async () => {
         const selectedFiles = Array.from(attachmentFiles.files || []);
         attachmentFiles.value = "";
@@ -404,7 +494,7 @@ const CHAT_PAGE = `<!doctype html>
             }
             const mimeType = expectedMimeType(file);
             if (!mimeType) {
-              throw new Error("Attach JPEG, PNG, WebP, TXT, Markdown, CSV, or JSON files only.");
+              throw new Error("Attach JPEG, PNG, WebP, TXT, Markdown, or CSV files only.");
             }
             const isImage = mimeType.startsWith("image/");
             const maxBytes = isImage ? 4 * 1024 * 1024 : 512 * 1024;
@@ -443,7 +533,9 @@ const CHAT_PAGE = `<!doctype html>
             const speak = document.createElement("button");
             speak.className = "speak-button";
             speak.type = "button";
-            speak.textContent = "Read aloud";
+            speak.textContent = "🔊";
+            speak.setAttribute("aria-label", "Read Mira's response aloud");
+            speak.title = "Read aloud";
             speak.addEventListener("click", () => {
               const plainText = text
                 .replace(/\\x60{3}[\\s\\S]*?\\x60{3}/g, " code block omitted ")
@@ -499,11 +591,13 @@ const CHAT_PAGE = `<!doctype html>
         event.preventDefault();
         const message = input.value.trim();
         if (!message || busy) return;
+        setActionMenuOpen(false);
         const submittedAttachments = attachments.slice();
         addMessage("you", message + (submittedAttachments.length
           ? "\\n[Attached: " + submittedAttachments.map((file) => file.name).join(", ") + "]"
           : ""));
         input.value = "";
+        updateComposerHeight();
         setBusy(true);
         status.textContent = "Mira is thinking…";
         try {
@@ -518,7 +612,9 @@ const CHAT_PAGE = `<!doctype html>
           const result = await response.json();
           if (!response.ok) throw new Error(result.error || "Mira could not reply.");
           addMessage("muse", result.reply);
-          status.textContent = "";
+          status.textContent = Array.isArray(result.notices)
+            ? result.notices.filter((notice) => typeof notice === "string").join(" ")
+            : "";
         } catch (error) {
           status.textContent = error instanceof Error ? error.message : "Mira could not reply.";
         } finally {
@@ -530,6 +626,8 @@ const CHAT_PAGE = `<!doctype html>
       });
 
       imageButton.addEventListener("click", async () => {
+        setActionMenuOpen(false);
+        input.focus();
         const prompt = input.value.trim();
         if (!prompt || busy) {
           if (!prompt) status.textContent = "Describe the image you would like Mira to create.";
@@ -541,6 +639,7 @@ const CHAT_PAGE = `<!doctype html>
         }
         addMessage("you", "Create image: " + prompt);
         input.value = "";
+        updateComposerHeight();
         setBusy(true);
         status.textContent = "Mira is creating your image…";
         try {
@@ -561,9 +660,31 @@ const CHAT_PAGE = `<!doctype html>
         }
       });
 
+      function updateComposerHeight() {
+        input.style.height = "auto";
+        input.style.height = Math.min(input.scrollHeight, 144) + "px";
+      }
+
+      input.addEventListener("input", updateComposerHeight);
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" && !event.shiftKey && !event.isComposing) {
+          event.preventDefault();
+          form.requestSubmit();
+        }
+      });
+
       let voiceRecognition = null;
       let voiceBaseText = "";
       let voiceFinalText = "";
+      function setVoiceButtonListening(listening) {
+        voiceButton.className = listening ? "composer-icon listening" : "composer-icon";
+        voiceButton.setAttribute(
+          "aria-label",
+          listening ? "Listening for your message" : "Dictate a message",
+        );
+        voiceButton.title = listening ? "Listening…" : "Dictate a message";
+      }
+
       const SpeechRecognitionConstructor = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (SpeechRecognitionConstructor) {
         voiceRecognition = new SpeechRecognitionConstructor();
@@ -581,6 +702,7 @@ const CHAT_PAGE = `<!doctype html>
             .filter(Boolean)
             .join(" ")
             .trim();
+          updateComposerHeight();
         };
         voiceRecognition.onerror = (event) => {
           status.textContent = event.error === "not-allowed"
@@ -588,8 +710,8 @@ const CHAT_PAGE = `<!doctype html>
             : "Speech recognition was unavailable. You can type your message instead.";
         };
         voiceRecognition.onend = () => {
-          voiceButton.textContent = "Use microphone";
-          if (!busy) voiceButton.disabled = false;
+          setVoiceButtonListening(false);
+          voiceButton.disabled = busy;
           if (status.textContent === "Listening…") status.textContent = "";
         };
         voiceButton.addEventListener("click", () => {
@@ -598,19 +720,22 @@ const CHAT_PAGE = `<!doctype html>
             voiceBaseText = input.value.trim();
             voiceFinalText = "";
             voiceButton.disabled = true;
-            voiceButton.textContent = "Listening…";
+            setVoiceButtonListening(true);
             status.textContent = "Listening…";
             voiceRecognition.start();
           } catch {
             voiceButton.disabled = false;
-            voiceButton.textContent = "Use microphone";
+            setVoiceButtonListening(false);
             status.textContent = "Could not start speech recognition. You can type your message instead.";
           }
         });
       } else {
         voiceButton.disabled = true;
         voiceButton.title = "Speech recognition is not supported in this browser. Type your message instead.";
-        voiceButton.textContent = "Mic unavailable";
+        voiceButton.setAttribute(
+          "aria-label",
+          "Speech recognition is not supported in this browser",
+        );
       }
     </script>
   </body>
@@ -621,6 +746,11 @@ interface MuseAttachment {
   name: string;
   mimeType: string;
   bytes: Buffer;
+}
+
+interface AttachmentContextResult {
+  context: string;
+  notices: string[];
 }
 
 interface MuseSession {
@@ -651,7 +781,9 @@ export function createMuseHttpServer(
   const sessionSecret =
     options.sessionSecret ?? process.env.SESSION_SECRET ?? "";
   if (!sessionSecret.trim()) {
-    throw new Error("SESSION_SECRET is required to start the Muse HTTP server.");
+    throw new Error(
+      "SESSION_SECRET is required to start the Muse HTTP server.",
+    );
   }
   const memoryDirectory =
     options.memoryDirectory ??
@@ -716,7 +848,9 @@ export function createMuseHttpServer(
   return createServer((request, response) => {
     void handleRequest(request, response).catch(() => {
       if (!response.headersSent && !response.destroyed) {
-        sendJson(response, 500, { error: "Muse could not handle this request." });
+        sendJson(response, 500, {
+          error: "Muse could not handle this request.",
+        });
       }
     });
   });
@@ -762,7 +896,10 @@ export function createMuseHttpServer(
       sendJson(response, 405, { error: "Use POST to send a chat message." });
       return;
     }
-    if (request.headers["content-type"]?.split(";")[0]?.trim() !== "application/json") {
+    if (
+      request.headers["content-type"]?.split(";")[0]?.trim() !==
+      "application/json"
+    ) {
       sendJson(response, 415, { error: "Send the message as JSON." });
       return;
     }
@@ -833,8 +970,11 @@ export function createMuseHttpServer(
     }
 
     try {
-      const reply = await enqueueResponse(session, message, attachmentIds);
-      sendJson(response, 200, { reply });
+      const result = await enqueueResponse(session, message, attachmentIds);
+      sendJson(response, 200, {
+        reply: result.reply,
+        ...(result.notices.length ? { notices: result.notices } : {}),
+      });
     } catch (error) {
       console.error(
         "Muse generation failed:",
@@ -848,10 +988,14 @@ export function createMuseHttpServer(
       } else if (error instanceof CloudflareRateLimitError) {
         response.setHeader("Retry-After", String(error.retryAfterSeconds));
         sendJson(response, 429, {
-          error: "Image understanding has reached its hourly limit. Try again later.",
+          error:
+            "Image understanding has reached its hourly limit. Try again later.",
         });
       } else if (error instanceof MissingSessionAttachmentError) {
-        sendJson(response, 400, { error: "An attachment expired or was removed. Please upload it again." });
+        sendJson(response, 400, {
+          error:
+            "An attachment expired or was removed. Please upload it again.",
+        });
       } else {
         sendJson(response, 502, {
           error: "Mira could not generate a reply. Check the server terminal.",
@@ -874,7 +1018,9 @@ export function createMuseHttpServer(
     let name: string;
     try {
       name = decodeAttachmentName(
-        Array.isArray(rawFileName) ? rawFileName[0] ?? "" : rawFileName ?? "",
+        Array.isArray(rawFileName)
+          ? (rawFileName[0] ?? "")
+          : (rawFileName ?? ""),
       );
     } catch {
       sendJson(response, 400, { error: "The attachment filename is invalid." });
@@ -893,7 +1039,8 @@ export function createMuseHttpServer(
       session = getSession(request, response);
     } catch {
       sendJson(response, 503, {
-        error: "Muse's chat provider is not configured. Set its API key and try again.",
+        error:
+          "Muse's chat provider is not configured. Set its API key and try again.",
       });
       return;
     }
@@ -904,7 +1051,9 @@ export function createMuseHttpServer(
       return;
     }
     if (session.attachments.size >= MAX_ATTACHMENTS_PER_MESSAGE) {
-      sendJson(response, 413, { error: "You can attach up to three files per turn." });
+      sendJson(response, 413, {
+        error: "You can attach up to three files per turn.",
+      });
       return;
     }
 
@@ -915,12 +1064,16 @@ export function createMuseHttpServer(
     try {
       bytes = await readBoundedRequestBody(request, maxBytes);
     } catch (error) {
-      sendJson(response, error instanceof RequestBodyTooLargeError ? 413 : 400, {
-        error:
-          error instanceof RequestBodyTooLargeError
-            ? `Attachments must be ${mimeType.startsWith("image/") ? "4 MB" : "512 KB"} or smaller.`
-            : "The attachment could not be read.",
-      });
+      sendJson(
+        response,
+        error instanceof RequestBodyTooLargeError ? 413 : 400,
+        {
+          error:
+            error instanceof RequestBodyTooLargeError
+              ? `Attachments must be ${mimeType.startsWith("image/") ? "4 MB" : "512 KB"} or smaller.`
+              : "The attachment could not be read.",
+        },
+      );
       return;
     }
     if (bytes.length === 0) {
@@ -931,7 +1084,9 @@ export function createMuseHttpServer(
       mimeType.startsWith("image/") &&
       !matchesImageSignature(bytes, mimeType)
     ) {
-      sendJson(response, 415, { error: "The file content does not match its image type." });
+      sendJson(response, 415, {
+        error: "The file content does not match its image type.",
+      });
       return;
     }
     if (!mimeType.startsWith("image/")) {
@@ -941,7 +1096,9 @@ export function createMuseHttpServer(
           throw new Error("Unsupported control characters.");
         }
       } catch {
-        sendJson(response, 415, { error: "Text attachments must be valid UTF-8 text." });
+        sendJson(response, 415, {
+          error: "Text attachments must be valid UTF-8 text.",
+        });
         return;
       }
     }
@@ -951,11 +1108,15 @@ export function createMuseHttpServer(
       0,
     );
     if (sessionBytes + bytes.length > MAX_ATTACHMENT_TOTAL_BYTES) {
-      sendJson(response, 413, { error: "Attachments for one turn must total 8 MB or less." });
+      sendJson(response, 413, {
+        error: "Attachments for one turn must total 8 MB or less.",
+      });
       return;
     }
     if (storedAttachmentBytes + bytes.length > MAX_SERVER_ATTACHMENT_BYTES) {
-      sendJson(response, 503, { error: "Muse's temporary attachment capacity is full. Try again later." });
+      sendJson(response, 503, {
+        error: "Muse's temporary attachment capacity is full. Try again later.",
+      });
       return;
     }
 
@@ -991,7 +1152,10 @@ export function createMuseHttpServer(
       return;
     }
     session.attachments.delete(id);
-    storedAttachmentBytes = Math.max(0, storedAttachmentBytes - attachment.bytes.length);
+    storedAttachmentBytes = Math.max(
+      0,
+      storedAttachmentBytes - attachment.bytes.length,
+    );
     session.lastUsedAt = Date.now();
     sendJson(response, 200, { deleted: true });
   }
@@ -1005,7 +1169,10 @@ export function createMuseHttpServer(
       sendJson(response, 405, { error: "Use POST to generate an image." });
       return;
     }
-    if (request.headers["content-type"]?.split(";")[0]?.trim() !== "application/json") {
+    if (
+      request.headers["content-type"]?.split(";")[0]?.trim() !==
+      "application/json"
+    ) {
       sendJson(response, 415, { error: "Send the image prompt as JSON." });
       return;
     }
@@ -1026,13 +1193,19 @@ export function createMuseHttpServer(
       );
       return;
     }
-    if (!isRecord(body) || typeof body.prompt !== "string" || !body.prompt.trim()) {
+    if (
+      !isRecord(body) ||
+      typeof body.prompt !== "string" ||
+      !body.prompt.trim()
+    ) {
       sendJson(response, 400, { error: "An image prompt is required." });
       return;
     }
     const prompt = body.prompt.trim();
     if (prompt.length > 1_000) {
-      sendJson(response, 413, { error: "Image prompts must be 1,000 characters or fewer." });
+      sendJson(response, 413, {
+        error: "Image prompts must be 1,000 characters or fewer.",
+      });
       return;
     }
 
@@ -1045,7 +1218,8 @@ export function createMuseHttpServer(
       if (retryAfterSeconds > 0) {
         response.setHeader("Retry-After", String(retryAfterSeconds));
         sendJson(response, 429, {
-          error: "This server has reached its hourly image-generation limit. Try again later.",
+          error:
+            "This server has reached its hourly image-generation limit. Try again later.",
         });
         return;
       }
@@ -1060,7 +1234,10 @@ export function createMuseHttpServer(
       response.statusCode = 200;
       response.setHeader("Content-Type", image.mimeType);
       response.setHeader("Content-Length", String(image.bytes.length));
-      response.setHeader("Content-Disposition", "inline; filename=\"mira-generated-image\"");
+      response.setHeader(
+        "Content-Disposition",
+        'inline; filename="mira-generated-image"',
+      );
       response.end(image.bytes);
     } catch (error) {
       if (error instanceof CloudflareAIConfigurationError) {
@@ -1093,27 +1270,50 @@ export function createMuseHttpServer(
   async function createAttachmentContext(
     attachments: MuseAttachment[],
     question: string,
-  ): Promise<string> {
+  ): Promise<AttachmentContextResult> {
     const sections: string[] = [];
+    const notices: string[] = [];
     let remainingTextChars = MAX_TOTAL_ATTACHMENT_TEXT_CHARS;
     for (const attachment of attachments) {
       if (attachment.mimeType.startsWith("image/")) {
-        const provider = getMediaProvider();
-        const retryAfterSeconds = consumeHourlyLimit(
-          imageAnalysisTimestamps,
-          MAX_IMAGE_ANALYSES_PER_HOUR,
-        );
-        if (retryAfterSeconds > 0) {
-          throw new CloudflareRateLimitError(retryAfterSeconds);
+        try {
+          const provider = getMediaProvider();
+          const retryAfterSeconds = consumeHourlyLimit(
+            imageAnalysisTimestamps,
+            MAX_IMAGE_ANALYSES_PER_HOUR,
+          );
+          if (retryAfterSeconds > 0) {
+            throw new CloudflareRateLimitError(retryAfterSeconds);
+          }
+          const description = await provider.describeImage(
+            attachment.bytes,
+            attachment.mimeType,
+            question,
+          );
+          sections.push(
+            `Image file "${attachment.name}" visual analysis (untrusted data):\n${description}`,
+          );
+        } catch (error) {
+          console.error(
+            "Muse image attachment analysis failed:",
+            error instanceof Error ? error.message : "unknown error",
+          );
+          const reason =
+            error instanceof CloudflareAIConfigurationError
+              ? "Cloudflare image analysis is not configured"
+              : error instanceof CloudflareRateLimitError
+                ? "Muse's hourly image-analysis limit has been reached"
+                : error instanceof CloudflareAIRequestError &&
+                    error.status === 429
+                  ? "Cloudflare Workers AI rate-limited the image-analysis request"
+                  : "image analysis was unavailable";
+          notices.push(
+            `Mira could not inspect "${attachment.name}" because ${reason}. She has been told not to guess what it shows.`,
+          );
+          sections.push(
+            `Image file "${attachment.name}" could not be inspected because ${reason}. Do not infer or invent visual details. Tell the user you could not inspect the image and ask them to describe it or try again.`,
+          );
         }
-        const description = await provider.describeImage(
-          attachment.bytes,
-          attachment.mimeType,
-          question,
-        );
-        sections.push(
-          `Image file "${attachment.name}" visual analysis (untrusted data):\n${description}`,
-        );
         continue;
       }
       const text = attachment.bytes.toString("utf8");
@@ -1126,25 +1326,36 @@ export function createMuseHttpServer(
         `Text file "${attachment.name}" (untrusted data):\n${visibleText}${visibleText.length < text.length ? "\n[Attachment text truncated to the safe context limit.]" : ""}`,
       );
     }
-    return sections.join("\n\n");
+    return { context: sections.join("\n\n"), notices };
   }
 
   function enqueueResponse(
     session: MuseSession,
     message: string,
     attachmentIds: string[],
-  ): Promise<string> {
+  ): Promise<{ reply: string; notices: string[] }> {
     const response = session.pending.then(async () => {
       try {
-        const attachments = attachmentIds.map((id) => session.attachments.get(id));
+        const attachments = attachmentIds.map((id) =>
+          session.attachments.get(id),
+        );
         if (attachments.some((attachment) => !attachment)) {
           throw new MissingSessionAttachmentError();
         }
-        const context = await createAttachmentContext(
-          attachments as MuseAttachment[],
+        const resolvedAttachments = attachments as MuseAttachment[];
+        const attachmentContext = await createAttachmentContext(
+          resolvedAttachments,
           message,
         );
-        return await session.agent.respond(message, context);
+        const hasImageAttachment = resolvedAttachments.some((attachment) =>
+          attachment.mimeType.startsWith("image/"),
+        );
+        const reply = await session.agent.respond(
+          message,
+          attachmentContext.context,
+          hasImageAttachment,
+        );
+        return { reply, notices: attachmentContext.notices };
       } finally {
         for (const id of attachmentIds) {
           const attachment = session.attachments.get(id);
@@ -1265,7 +1476,10 @@ function writeSessionCookie(
 
 function setSecurityHeaders(response: ServerResponse): void {
   response.setHeader("Cache-Control", "no-store");
-  response.setHeader("Content-Security-Policy", "default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'self'; img-src https://upload.wikimedia.org blob:; form-action 'self'; base-uri 'none'; frame-ancestors 'none'");
+  response.setHeader(
+    "Content-Security-Policy",
+    "default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'self'; img-src https://upload.wikimedia.org blob:; form-action 'self'; base-uri 'none'; frame-ancestors 'none'",
+  );
   response.setHeader("Referrer-Policy", "no-referrer");
   response.setHeader("X-Content-Type-Options", "nosniff");
   response.setHeader("X-Frame-Options", "DENY");
@@ -1312,7 +1526,12 @@ function getAttachmentMimeType(name: string): string | undefined {
 
 function matchesImageSignature(bytes: Uint8Array, mimeType: string): boolean {
   if (mimeType === "image/jpeg") {
-    return bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff;
+    return (
+      bytes.length >= 3 &&
+      bytes[0] === 0xff &&
+      bytes[1] === 0xd8 &&
+      bytes[2] === 0xff
+    );
   }
   if (mimeType === "image/png") {
     return (

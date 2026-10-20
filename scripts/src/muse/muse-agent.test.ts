@@ -96,6 +96,46 @@ test("Mira identifies as Muse's assistant without delegating identity to the mod
   }
 });
 
+test("attached-image questions stay in chat unless the user explicitly requests research", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "muse-agent-image-routing-"));
+  const researchQuestions: string[] = [];
+  let modelCalls = 0;
+  const agent = new MuseAgent(
+    {
+      async generateText() {
+        modelCalls += 1;
+        return "The image analysis says it shows a red bicycle.";
+      },
+    },
+    new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
+    undefined,
+    async (question) => {
+      researchQuestions.push(question);
+      return { ...researchResult, question };
+    },
+  );
+  const imageContext =
+    'Image file "bike.png" visual analysis (untrusted data):\nA red bicycle.';
+
+  try {
+    assert.match(
+      await agent.respond("What is in the image?", imageContext, true),
+      /red bicycle/,
+    );
+    assert.deepEqual(researchQuestions, []);
+    assert.equal(modelCalls, 1);
+
+    await agent.respond(
+      "Search the web for details about this bicycle model.",
+      imageContext,
+      true,
+    );
+    assert.deepEqual(researchQuestions, ["Search the web for details about this bicycle model."]);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
 test("Muse handles casual messages without web research and researches factual questions", async () => {
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-test-"));
   let modelCalls = 0;

@@ -219,6 +219,28 @@ test("questions about the assistant itself are chat, not research", () => {
   }
 });
 
+test("attached-image questions stay with vision unless the user explicitly asks for research", () => {
+  for (const message of [
+    "What is in the image?",
+    "What does this chart show?",
+    "Look at this photo and describe it.",
+  ]) {
+    assert.equal(shouldResearchMessage(message, false, true), false, message);
+  }
+  assert.equal(
+    shouldResearchMessage("Search the web for what this image depicts.", false, true),
+    true,
+  );
+  assert.equal(
+    shouldResearchMessage("What is the current exchange rate shown here?", false, true),
+    true,
+  );
+  assert.equal(
+    shouldResearchMessage("Read https://example.org/image-context", false, true),
+    true,
+  );
+});
+
 test("ordinary what/which questions still route to research", () => {
   for (
     const message of [

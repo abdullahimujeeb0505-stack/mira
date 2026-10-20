@@ -125,6 +125,7 @@ export function isContextualConfirmation(message: string): boolean {
 export function shouldResearchMessage(
   message: string,
   hasConversationHistory = false,
+  hasImageAttachment = false,
 ): boolean {
   const content = message.trim();
   const normalizedContent = content.normalize("NFKC").replace(/[’‘]/g, "'");
@@ -149,6 +150,7 @@ export function shouldResearchMessage(
     return true;
   }
   if (containsWebTarget(content)) return true;
+  if (hasImageAttachment) return false;
   if (INSPECTION_REQUEST.test(content)) return true;
   if (
     SUBJECTIVE_CONVERSATION_REQUEST.test(normalizedContent) &&
