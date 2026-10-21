@@ -87,10 +87,44 @@ use the same non-Groq provider, Groq is the default alternate when its
 credentials are configured. Safety-filter refusals are never routed to another
 provider. A Gemini-only setup without Groq credentials has no runtime failover.
 
-Set `MUSE_PHOTON_TRANSPORT=spectrum` only to explicitly run the legacy
-Spectrum transport. That mode continues to require `SPECTRUM_PROJECT_ID` and
-`SPECTRUM_PROJECT_SECRET`; the default is Photon 2.0 Beta. The Beta transport
-does not require `PHOTON_AGENT_USER_ID`.
+### Stable Spectrum iMessage transport
+
+To use Spectrum instead of the default Photon 2.0 Beta transport:
+
+1. Create or select a **stable Spectrum** project, enable its iMessage provider,
+   and configure an iMessage line in the project. Follow the official
+   [Spectrum project setup](https://photon.codes/docs/spectrum-ts/getting-started)
+   and [iMessage provider setup](https://photon.codes/docs/spectrum-ts/providers/imessage).
+2. Add these runtime environment variables in GitHub Codespaces Secrets or
+   another secret manager. Do not put credential values in tracked files.
+   - `SPECTRUM_PROJECT_ID` — the stable Spectrum project ID.
+   - `SPECTRUM_PROJECT_SECRET` — the stable Spectrum project secret.
+   - `GEMINI_API_KEY` — required for the default Gemini chat, research, and
+     writing provider (`gemini-3.5-flash-lite`).
+3. Set `MUSE_PHOTON_TRANSPORT=spectrum`. Spectrum credentials are read only
+   from `SPECTRUM_PROJECT_ID` and `SPECTRUM_PROJECT_SECRET`; the Beta variables
+   `PHOTON_PROJECT_ID` and `PHOTON_API_KEY` are not used by this path. The
+   default remains Photon 2.0 Beta when `MUSE_PHOTON_TRANSPORT` is unset.
+4. From the repository root, start the listener:
+
+   ```sh
+   MUSE_PHOTON_TRANSPORT=spectrum pnpm --filter @workspace/scripts run muse-photon
+   ```
+
+Expected terminal logs for a successful message:
+
+```text
+Spectrum connected
+received message from <handle>
+Spectrum reply sent to <handle>
+```
+
+A failed send logs `Spectrum reply failed for <handle>: <error message>`. The
+receive log contains no message body, and the Spectrum project secret is never
+logged. The Spectrum path uses `spectrum-ts` with `Spectrum({ projectId,
+projectSecret, providers: [imessage.config()] })`, consumes `app.messages`,
+and sends replies with `space.send(...)`. The Photon 2.0 Beta transport and its
+configuration are unchanged; it does not require `PHOTON_AGENT_USER_ID`.
 
 To generate original artwork in iMessage, type a leading command such as
 `generate image: a red fox under the northern lights`, `create a picture of a
@@ -193,8 +227,8 @@ before the next endpoint is tried. Diagnostics distinguish search-provider
 blocks, unreadable supplied links, and pages that returned no readable text.
 
 Automated tests use deterministic model responses and fake Photon events; they
-do not call a live model, search service, or messaging API. A real Photon
-message/reply has not been verified.
+do not call a live model, search service, or messaging API. A live iMessage
+message/reply through either Spectrum or Photon 2.0 Beta has not been verified.
 
 ## Research CLI
 

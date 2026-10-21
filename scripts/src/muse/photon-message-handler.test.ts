@@ -9,7 +9,11 @@ import {
 } from "./photon-message-handler.js";
 import { IMAGE_GENERATION_USAGE_REPLY } from "./image-generation-command.js";
 
-function makeSpace(id: string, onTyping: () => void = () => {}): PhotonSpace {
+function makeSpace(
+  id: string,
+  onTyping: () => void = () => {},
+  onSend: (content: ContentInput) => Promise<unknown> = async () => undefined,
+): PhotonSpace {
   return {
     __platform: "imessage",
     id,
@@ -17,19 +21,21 @@ function makeSpace(id: string, onTyping: () => void = () => {}): PhotonSpace {
       onTyping();
       return handler();
     },
+    async send(content: ContentInput): Promise<unknown> {
+      return onSend(content);
+    },
   };
 }
 
 function makeMessage(
   content: { type: string; text?: string },
   options: { direction?: "inbound" | "outbound"; platform?: string } = {},
-  reply: (content: ContentInput) => Promise<unknown> = async () => undefined,
 ): PhotonMessage {
   return {
     content,
     direction: options.direction ?? "inbound",
     platform: options.platform ?? "imessage",
-    reply,
+    sender: { id: "test-handle" },
   };
 }
 
@@ -53,7 +59,7 @@ test("Photon ignores outbound, non-iMessage, non-text, and empty events", async 
   assert.equal(handler.conversationCount, 0);
 });
 
-test("Photon isolates follow-up context by space and uses the matching message reply", async () => {
+test("Photon isolates follow-up context by space and sends through the matching Spectrum space", async () => {
   const calls = new Map<string, string[]>();
   const replies: string[] = [];
   let typingSignals = 0;
@@ -70,18 +76,16 @@ test("Photon isolates follow-up context by space and uses the matching message r
       },
     };
   });
+  const sendReply = async (reply: ContentInput): Promise<unknown> => {
+    assert.equal(typeof reply, "string");
+    if (typeof reply === "string") replies.push(reply);
+    return undefined;
+  };
 
-  const firstSpace = makeSpace("alice", () => typingSignals++);
-  const secondSpace = makeSpace("bob", () => typingSignals++);
+  const firstSpace = makeSpace("alice", () => typingSignals++, sendReply);
+  const secondSpace = makeSpace("bob", () => typingSignals++, sendReply);
   const send = (space: PhotonSpace, text: string) =>
-    handler.handle(
-      space,
-      makeMessage({ type: "text", text }, {}, async (reply) => {
-        assert.equal(typeof reply, "string");
-        if (typeof reply === "string") replies.push(reply);
-        return undefined;
-      }),
-    );
+    handler.handle(space, makeMessage({ type: "text", text }));
 
   await send(firstSpace, "What is a compiler?");
   await send(secondSpace, "Hello");
@@ -101,7 +105,7 @@ test("Photon isolates follow-up context by space and uses the matching message r
   assert.equal(typingSignals, 1);
 });
 
-test("legacy Spectrum transport sends explicit image commands as image attachments", async () => {
+test("Spectrum transport sends explicit image commands as image attachments", async () => {
   let modelCalls = 0;
   const prompts: string[] = [];
   let sentContent: ContentInput | undefined;
@@ -127,15 +131,11 @@ test("legacy Spectrum transport sends explicit image commands as image attachmen
 
   assert.equal(
     await handler.handle(
-      makeSpace("image", () => typingSignals++),
-      makeMessage(
-        { type: "text", text: "generate image: a glass greenhouse" },
-        {},
-        async (content) => {
-          sentContent = content;
-          return undefined;
-        },
-      ),
+      makeSpace("image", () => typingSignals++, async (content) => {
+        sentContent = content;
+        return undefined;
+      }),
+      makeMessage({ type: "text", text: "generate image: a glass greenhouse" }),
     ),
     true,
   );
@@ -155,7 +155,7 @@ test("legacy Spectrum transport sends explicit image commands as image attachmen
   assert.deepEqual(await built.read(), image.bytes);
 });
 
-test("legacy Spectrum transport asks for a prompt without calling a model", async () => {
+test("Spectrum transport asks for an image prompt without calling a model", async () => {
   let modelCalls = 0;
   let sentReply: ContentInput | undefined;
   const handler = new PhotonMessageHandler(() => ({
@@ -167,15 +167,11 @@ test("legacy Spectrum transport asks for a prompt without calling a model", asyn
   }));
 
   await handler.handle(
-    makeSpace("missing-prompt"),
-    makeMessage(
-      { type: "text", text: "generate image" },
-      {},
-      async (content) => {
-        sentReply = content;
-        return undefined;
-      },
-    ),
+    makeSpace("missing-prompt", undefined, async (content) => {
+      sentReply = content;
+      return undefined;
+    }),
+    makeMessage({ type: "text", text: "generate image" }),
   );
 
   assert.equal(modelCalls, 0);
@@ -196,16 +192,12 @@ test("Photon reports failures safely and sends a generic reply without exception
   );
 
   await handler.handle(
-    makeSpace("failure"),
-    makeMessage(
-      { type: "text", text: "What is a compiler?" },
-      {},
-      async (reply) => {
-        assert.equal(typeof reply, "string");
-        if (typeof reply === "string") replies.push(reply);
-        return undefined;
-      },
-    ),
+    makeSpace("failure", undefined, async (reply) => {
+      assert.equal(typeof reply, "string");
+      if (typeof reply === "string") replies.push(reply);
+      return undefined;
+    }),
+    makeMessage({ type: "text", text: "What is a compiler?" }),
   );
 
   assert.deepEqual(replies, [PHOTON_FAILURE_REPLY]);
@@ -213,5 +205,25 @@ test("Photon reports failures safely and sends a generic reply without exception
   assert.equal(
     failures.join(" ").includes("private provider credential"),
     false,
+  );
+});
+
+test("Spectrum space.send failures propagate for transport-level error logging", async () => {
+  const sendError = new Error("Spectrum delivery rejected");
+  const handler = new PhotonMessageHandler(() => ({
+    hasConversationHistory: false,
+    async respond() {
+      return "answer";
+    },
+  }));
+
+  await assert.rejects(
+    handler.handle(
+      makeSpace("send-error", undefined, async () => {
+        throw sendError;
+      }),
+      makeMessage({ type: "text", text: "Hello" }),
+    ),
+    (error) => error === sendError,
   );
 });

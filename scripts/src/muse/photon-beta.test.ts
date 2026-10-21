@@ -709,7 +709,7 @@ test("Photon cursor state persists safely and rejects malformed cursor files", a
   }
 });
 
-test("Photon selects Beta by default and keeps Spectrum as an explicit legacy option", () => {
+test("Photon selects Beta by default and preserves explicit Spectrum selection", () => {
   assert.equal(selectMusePhotonTransport(undefined), "photon2");
   assert.equal(selectMusePhotonTransport(" spectrum "), "spectrum");
   assert.throws(

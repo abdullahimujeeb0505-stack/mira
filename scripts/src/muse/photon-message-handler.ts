@@ -12,13 +12,14 @@ export interface PhotonSpace {
   readonly __platform: string;
   readonly id: string;
   responding<T>(handler: () => T | Promise<T>): Promise<T>;
+  send(content: ContentInput): Promise<unknown>;
 }
 
 export interface PhotonMessage {
   content: { type: string; text?: string };
   direction: "inbound" | "outbound";
   platform: string;
-  reply(content: ContentInput): Promise<unknown>;
+  sender?: { id?: string } | undefined;
 }
 
 export const PHOTON_FAILURE_REPLY =
@@ -78,14 +79,14 @@ export class PhotonMessageHandler {
           ),
         );
         if (generated.image) {
-          await message.reply(
+          await space.send(
             attachment(generated.image.bytes, {
               name: `mira-generated-image.${generated.image.mimeType.slice("image/".length)}`,
               mimeType: generated.image.mimeType,
             }),
           );
         } else {
-          await message.reply(generated.text);
+          await space.send(generated.text);
         }
         return;
       }
@@ -103,7 +104,7 @@ export class PhotonMessageHandler {
         reply = PHOTON_FAILURE_REPLY;
       }
 
-      await message.reply(reply);
+      await space.send(reply);
     });
     activeConversation.pending = response.then(
       () => undefined,
