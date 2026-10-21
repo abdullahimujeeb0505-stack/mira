@@ -1,0 +1,105 @@
+{
+  "id": "2026-10-20T22-52-01-514Z-how-you-doing-bro",
+  "question": "How you doing bro",
+  "plan": {
+    "objective": "How you doing bro",
+    "taskType": "general",
+    "deliverable": "A direct answer with supporting evidence and limitations.",
+    "requiresCurrentInformation": false,
+    "sourcePreferences": [
+      "primary sources",
+      "authoritative references",
+      "independent corroboration"
+    ],
+    "questions": [
+      "How you doing bro"
+    ],
+    "queries": [
+      "How you doing bro",
+      "How you doing bro authoritative sources",
+      "How you doing bro evidence and limitations"
+    ],
+    "unresolvedQuestions": []
+  },
+  "answer": "I am doing well, thank you (unverified: no matching retrieved evidence).\nRegarding your greeting, informal gaming contexts such as devlogs on itch.io use phrases like \"What're you doing bro?\", but the provided live sources do not contain direct conversational replies to your greeting (unverified: no matching retrieved evidence).",
+  "followUpQuestions": [
+    "particle model limitations",
+    "authoritative sources"
+  ],
+  "sources": [
+    {
+      "title": "The Particle Model and Its Limitations | Edexcel | LearningBro",
+      "url": "https://learningbro.com/courses/edexcel-gcse-chemistry-states-separation/lessons/particle-model-limitations",
+      "canonicalUrl": "https://learningbro.com/courses/edexcel-gcse-chemistry-states-separation/lessons/particle-model-limitations",
+      "publisher": "learningbro.com",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "Skip to content LearningBro Courses Learning Paths Subjects Practice Blog About Pricing For Students For Schools",
+        "Blog Grade Coach Synoptic Tutor Examiner Mode Practice Questions Learning Paths Subjects AQA Courses OCR Courses Edexcel Courses FSCE 11+ Courses About Privacy Cookies Sub-processors Accessibility Trust & Compliance Terms Contact FAQ For Teachers For Parents Request a Course Sitemap",
+        "LearningBro is an independent educational platform. Not affiliated with, endorsed by, or approved by AQA, Pearson Edexcel, OCR, the LNAT Consortium, the UCAT Consortium, IELTS, or any other examination board. All trademarks are the property of their respective owners.",
+        "The Particle Model and Its Limitations | Edexcel | LearningBro"
+      ],
+      "retrievedAt": "2026-10-20T22:51:59.744Z",
+      "content": "Skip to content LearningBro Courses Learning Paths Subjects Practice Blog About Pricing For Students For Schools \n\nEN Log In Get Started \nOpen menu \n\n© 2026 LearningBro. All rights reserved.\nBlog Grade Coach Synoptic Tutor Examiner Mode Practice Questions Learning Paths Subjects AQA Courses OCR Courses Edexcel Courses FSCE 11+ Courses About Privacy Cookies Sub-processors Accessibility Trust & Compliance Terms Contact FAQ For Teachers For Parents Request a Course Sitemap \n\nLearningBro is an independent educational platform. Not affiliated with, endorsed by, or approved by AQA, Pearson Edexcel, OCR, the LNAT Consortium, the UCAT Consortium, IELTS, or any other examination board. All trademarks are the property of their respective owners.\n\nThe Particle Model and Its Limitations | Edexcel | LearningBro \n\nCourses › Edexcel GCSE Chemistry — States of Matter and Separating Techniques › The Particle Model and Its Limitations You are viewing a free preview of this lesson.\nSubscribe to unlock all 10 lessons in this course and every other course on LearningBro.\nView Pricing Create Account \n\nThe Particle Model and Its Limitations\n\nThe Particle Model and Its Limitations\n\nThis lesson covers how the particle model is used to explain the properties of the three states of matter, but also why the model has important limitations, as required by the Edexcel GCSE Chemistry specification (1CH0, Topic 1). You also need to be able to predict the state of a substance from melting and boiling point data, and understand how simple and giant structures affect melting points.\n\nUsing the Particle Model to Explain Properties\n\nThe particle model represents particles as small, solid spheres. Despite its simplicity, it is remarkably useful for explaining many observations.\n\nWhy Gases Are Compressible\n\nGas particles are far apart with large gaps between them. When pressure is applied, the particles can be forced closer together, so the volume of the gas decreases. In contrast, solid and liquid particles are already close together, so they cannot be compressed significantly.\n\nWhy Liquids Flow\n\nIn a liquid, the forces between particles are weaker than in a solid, so particles can slide past each other. This allows the liquid to flow and take the shape of its container.\n\nWhy Solids Have a Fixed Shape\n\nSolid particles are held in fixed positions by strong forces of attraction. They can vibrate but cannot change their position relative to their neighbours, so the solid retains its shape.\n\nWhy Heating Increases Pressure in a Sealed Gas Container\n\nWhen a gas is heated, the particles gain kinetic energy and move faster. They collide with the walls of the container more frequently and with greater force, increasing the pressure.\n\nWhy Diffusion Happens\n\nDiffusion is the net movement of particles from an area of higher concentration to an area of lower concentration. It happens because particles in liquids and gases are in constant random motion. Gas particles move very fast, so diffusion i",
+      "isUserProvided": true,
+      "sourceId": "SRC-a46b9e28059e"
+    },
+    {
+      "title": "What is an Authoritative Source? - How to Search for Sources and Manage Them - LibGuides at Graduate Institute of International and Development Studies",
+      "url": "https://libguides.graduateinstitute.ch/how_to_search/authority",
+      "canonicalUrl": "https://libguides.graduateinstitute.ch/how_to_search/authority",
+      "publisher": "libguides.graduateinstitute.ch",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "What is an Authoritative Source? - How to Search for Sources and Manage Them - LibGuides at Graduate Institute of International and Development Studies",
+        "&ldquo;A source that is official. Also, a work known to be reliable because its authenticity or integrity is widely recognized by experts in the field.&rdquo;",
+        "(Reitz, Joan. ODLIS: Online Dictionary for Library and Information Science )",
+        "&ldquo; Authority is constructed and contextual . Information resources reflect their creators&rsquo; expertise and credibility, and are evaluated based on the information need and the context in which the information will be used. Authority is constructed in that various communities may recognize different types of authority. It is contextual in that the in"
+      ],
+      "retrievedAt": "2026-10-20T22:51:59.649Z",
+      "content": "What is an Authoritative Source? - How to Search for Sources and Manage Them - LibGuides at Graduate Institute of International and Development Studies\nSkip to Main Content\nWhat is an Authoritative Source?\nPhoto CC BY-SA Mark Fischer\n&ldquo;A source that is official. Also, a work known to be reliable because its authenticity or integrity is widely recognized by experts in the field.&rdquo;\n(Reitz, Joan. ODLIS: Online Dictionary for Library and Information Science )\n&ldquo; Authority is constructed and contextual . Information resources reflect their creators&rsquo; expertise and credibility, and are evaluated based on the information need and the context in which the information will be used. Authority is constructed in that various communities may recognize different types of authority. It is contextual in that the information need may help to determine the level of authority required.&rdquo;\n( ACRL Framework for Information Literacy for Higher Education , adopted 2016)\nIn the general context of academic writing, authority partly derives from current academic research activity and employment in the designated field . The following are necessary to consider a work as a valid scholarly publication:\nClaims are referenced and a bibliography is included\nThe work is published by a recognised institution/publisher\nThe work is peer-reviewed\nBut other people and media can be authoritative sources in the appropriate context.\nWhat Source Types Can Be Considered Authoritative?\nThe source type provides a preliminary idea, but it is not sufficient to determine authority. The expertise of the author matters even for traditional scholarly publications, and verification grows more necessary as we go further down the categories and gatekeeping decreases.\nScholarly publications &ndash; must be used as references\nPeer reviewed books and journals\nNon-PR academic books and journals (lesser value)\nGrey literature &ndash; can be used as references\nPreprints, working papers, etc. &ndash; non-published academic research\nReports and publications from groups and institutions\nPopular and trade/professional sources &ndash; require careful consideration before using as references\nNews, magazines\nBooks (non-academic)\nOther websites\nPublic conversation and social media &ndash; should not be used as references\nDiscussion forums\nSocial media (Facebook, X, Instagram, TikTok, etc.)",
+      "isUserProvided": true,
+      "sourceId": "SRC-1095d850e32b"
+    },
+    {
+      "title": "Now 100% playable in English & 中文 - What're you doing bro? (Bro มั้ย ...",
+      "url": "https://kenbara.itch.io/bromaila/devlog/1562803/now-100-playable-in-english-",
+      "canonicalUrl": "https://kenbara.itch.io/bromaila/devlog/1562803/now-100-playable-in-english-",
+      "publisher": "kenbara.itch.io",
+      "sourceType": "JSON response",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "converted",
+      "evidenceSnippets": [
+        "recaptcha_sitekey: 6Ld9QvkSAAAAALSAQXedWWk2TA_yLAl96Vb9Xm-v",
+        "topic.url: https://kenbara.itch.io/bromaila/devlog/1562803/now-100-playable-in-english-",
+        "post_form.submit_url: https://itch.io/topic/6524297/new-post",
+        "urls.ban_url: https://itch.io/bans/{{object_type}}/{{id}}"
+      ],
+      "retrievedAt": "2026-10-20T22:51:59.765Z",
+      "content": "recaptcha_sitekey: 6Ld9QvkSAAAAALSAQXedWWk2TA_yLAl96Vb9Xm-v\ntopic:\ntopic.url: https://kenbara.itch.io/bromaila/devlog/1562803/now-100-playable-in-english-\ntopic.id: 6524297\npost_form:\npost_form.redactor_opts:\npost_form.redactor_opts.source: false\npost_form.submit_url: https://itch.io/topic/6524297/new-post\nturnstile_sitekey: 0x4AAAAAAASgD1na_Hj_w-QQ\nurls:\nurls.ban_url: https://itch.io/bans/{{object_type}}/{{id}}\nurls.login_url: https://itch.io/login?return_to=https%3A%2F%2Fkenbara.itch.io%2Fbromaila%2Fdevlog%2F1562803%2Fnow-100-playable-in-english-\nurls.edit_url: https://itch.io/post/{{id}}/edit\nurls.report_url: https://itch.io/post/{{id}}/report\nurls.vote_url: https://itch.io/vote/post/{{id}}\nurls.reply_url: https://itch.io/post/{{id}}/reply\nurls.delete_url: https://itch.io/post/{{id}}/delete\nurls.blocks_url: https://itch.io/blocks",
+      "isUserProvided": true,
+      "sourceId": "SRC-c435084a3197"
+    }
+  ],
+  "unresolvedQuestions": [],
+  "contradictions": [],
+  "completeness": "partial",
+  "limitations": [
+    "11 candidate pages failed or carried no readable text.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 3 of 5 selected sources fit in the synthesis evidence budget.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 5,
+    "failedCount": 11,
+    "rounds": 1,
+    "searches": 3
+  },
+  "archivedAt": "2026-10-20T22:52:01.516Z"
+}
