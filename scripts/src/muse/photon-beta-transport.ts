@@ -46,7 +46,10 @@ export class PhotonBetaTransport {
 
     return new Promise<void>((resolve, reject) => {
       this.completion = { resolve, reject };
-      socket.on("connect", () => this.subscribe());
+      socket.on("connect", () => {
+        console.log("[Mira] Photon connected; subscribing...");
+        this.subscribe();
+      });
       socket.on("disconnect", () => {
         this.generation += 1;
       });
@@ -94,6 +97,9 @@ export class PhotonBetaTransport {
         if (error || !isRecord(result) || result.ok !== true) {
           this.reportFailure("Photon rejected the event stream subscription.");
           this.restartStream();
+        }
+        else {
+          console.log("[Mira] Photon event stream subscription accepted.");
         }
       },
     );
