@@ -13,9 +13,10 @@ function makeSpace(
   id: string,
   onTyping: () => void = () => {},
   onSend: (content: ContentInput) => Promise<unknown> = async () => undefined,
+  platform = "imessage",
 ): PhotonSpace {
   return {
-    __platform: "imessage",
+    __platform: platform,
     id,
     async responding<T>(handler: () => T | Promise<T>): Promise<T> {
       onTyping();
@@ -39,7 +40,7 @@ function makeMessage(
   };
 }
 
-test("Photon ignores outbound, non-iMessage, non-text, and empty events", async () => {
+test("Spectrum ignores outbound, unsupported-platform, non-text, and empty events", async () => {
   let agentCreations = 0;
   const handler = new PhotonMessageHandler(() => {
     agentCreations += 1;
@@ -103,6 +104,42 @@ test("Photon isolates follow-up context by space and sends through the matching 
     "imessage:alice reply 2",
   ]);
   assert.equal(typingSignals, 1);
+});
+
+test("Spectrum handles WhatsApp Business text and replies through its space", async () => {
+  const replies: string[] = [];
+  let createdSpaceKey = "";
+  const handler = new PhotonMessageHandler((spaceKey) => {
+    createdSpaceKey = spaceKey;
+    return {
+      hasConversationHistory: false,
+      async respond(message: string) {
+        return `WhatsApp reply: ${message}`;
+      },
+    };
+  });
+  const space = makeSpace(
+    "whatsapp-user",
+    undefined,
+    async (content) => {
+      if (typeof content === "string") replies.push(content);
+      return undefined;
+    },
+    "whatsapp_business",
+  );
+
+  assert.equal(
+    await handler.handle(
+      space,
+      makeMessage(
+        { type: "text", text: "Hello from WhatsApp" },
+        { platform: "whatsapp_business" },
+      ),
+    ),
+    true,
+  );
+  assert.equal(createdSpaceKey, "whatsapp_business:whatsapp-user");
+  assert.deepEqual(replies, ["WhatsApp reply: Hello from WhatsApp"]);
 });
 
 test("Spectrum transport sends explicit image commands as image attachments", async () => {
@@ -201,7 +238,7 @@ test("Photon reports failures safely and sends a generic reply without exception
   );
 
   assert.deepEqual(replies, [PHOTON_FAILURE_REPLY]);
-  assert.deepEqual(failures, ["Muse could not complete an incoming iMessage."]);
+  assert.deepEqual(failures, ["Muse could not complete an incoming Spectrum message."]);
   assert.equal(
     failures.join(" ").includes("private provider credential"),
     false,

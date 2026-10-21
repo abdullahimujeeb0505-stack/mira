@@ -4,6 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Spectrum } from "spectrum-ts";
 import { imessage } from "spectrum-ts/providers/imessage";
+import { whatsappBusiness } from "spectrum-ts/providers/whatsapp-business";
 import {
   CloudflareWorkersAIProvider,
   type GeneratedImage,
@@ -22,14 +23,24 @@ import {
   defaultPhotonCursorPath,
   PhotonBetaTransport,
 } from "./photon-beta-transport.js";
-import { PhotonMessageHandler } from "./photon-message-handler.js";
+import {
+  PhotonMessageHandler,
+  type PhotonMessage,
+  type PhotonSpace,
+} from "./photon-message-handler.js";
 import { selectMusePhotonTransport } from "./photon-transport-selection.js";
+import { selectMuseSpectrumPlatform } from "./photon-spectrum-platform.js";
 import { createTextGenerationProvider } from "./provider-selection.js";
 
 const DEFAULT_MEMORY_DIRECTORY = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   "../../data/muse-photon-spaces",
 );
+
+type SpectrumAppLike = {
+  messages: AsyncIterable<[PhotonSpace, PhotonMessage]>;
+  stop(): Promise<void>;
+};
 
 async function main(): Promise<void> {
   const transport = selectMusePhotonTransport(
@@ -82,6 +93,9 @@ async function runPhoton2(): Promise<void> {
 }
 
 async function runSpectrum(): Promise<void> {
+  const spectrumPlatform = selectMuseSpectrumPlatform(
+    process.env.MUSE_SPECTRUM_PLATFORM,
+  );
   const projectId = process.env.SPECTRUM_PROJECT_ID?.trim();
   const projectSecret = process.env.SPECTRUM_PROJECT_SECRET?.trim();
   if (!projectId || !projectSecret) {
@@ -94,20 +108,26 @@ async function runSpectrum(): Promise<void> {
   const memoryDirectory =
     process.env.MUSE_PHOTON_MEMORY_DIR?.trim() || DEFAULT_MEMORY_DIRECTORY;
   await mkdir(memoryDirectory, { recursive: true });
-
-  const app = await Promise.resolve()
-    .then(() =>
-      Spectrum({
-        projectId,
-        projectSecret,
-        providers: [imessage.config()],
-      }),
-    )
-    .catch((error: unknown) => {
-      throw new Error(
-        `Spectrum connection failed: ${formatSpectrumError(error, projectSecret)}`,
-      );
-    });
+  let app: SpectrumAppLike;
+  try {
+    app =
+      spectrumPlatform === "imessage"
+        ? await Spectrum({
+            projectId,
+            projectSecret,
+            providers: [imessage.config()],
+          })
+        : await Spectrum({
+            projectId,
+            projectSecret,
+            providers: [whatsappBusiness.config()],
+          });
+  } catch (error) {
+    throw new Error(
+      `Spectrum connection failed: ${formatSpectrumError(error, projectSecret)}`,
+    );
+  }
+  console.info(`Spectrum platform: ${spectrumPlatform}`);
   console.info("Spectrum connected");
 
   const handler = new PhotonMessageHandler(
