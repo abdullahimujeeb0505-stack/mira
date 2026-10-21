@@ -70,8 +70,21 @@ export class PhotonBetaTransport {
       );
       socket.on(
         "delivery",
-        (event: unknown, metadata: unknown) =>
-          this.enqueueDelivery(event, metadata),
+        (event: unknown, metadata: unknown) => {
+          const eventRecord = isRecord(event) ? event : undefined;
+          const eventType =
+            typeof eventRecord?.type === "string"
+              ? eventRecord.type.slice(0, 80)
+              : "unknown";
+          const hasEventId =
+            typeof eventRecord?.id === "string" && eventRecord.id.length > 0;
+          console.info("[Mira] Photon delivery received:", {
+            eventType,
+            hasEventId,
+            metadataReceived: metadata !== undefined,
+          });
+          this.enqueueDelivery(event, metadata);
+        },
       );
       socket.connect();
     });
