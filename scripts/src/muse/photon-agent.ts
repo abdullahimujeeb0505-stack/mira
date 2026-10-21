@@ -86,7 +86,7 @@ async function runSpectrum(): Promise<void> {
   const projectSecret = process.env.SPECTRUM_PROJECT_SECRET?.trim();
   if (!projectId || !projectSecret) {
     throw new Error(
-      "Set SPECTRUM_PROJECT_ID and SPECTRUM_PROJECT_SECRET before starting the Spectrum legacy transport.",
+      "Set SPECTRUM_PROJECT_ID and SPECTRUM_PROJECT_SECRET before starting the Spectrum transport.",
     );
   }
 
@@ -95,11 +95,21 @@ async function runSpectrum(): Promise<void> {
     process.env.MUSE_PHOTON_MEMORY_DIR?.trim() || DEFAULT_MEMORY_DIRECTORY;
   await mkdir(memoryDirectory, { recursive: true });
 
-  const app = await Spectrum({
-    projectId,
-    projectSecret,
-    providers: [imessage.config()],
-  });
+  const app = await Promise.resolve()
+    .then(() =>
+      Spectrum({
+        projectId,
+        projectSecret,
+        providers: [imessage.config()],
+      }),
+    )
+    .catch((error: unknown) => {
+      throw new Error(
+        `Spectrum connection failed: ${formatSpectrumError(error, projectSecret)}`,
+      );
+    });
+  console.info("Spectrum connected");
+
   const handler = new PhotonMessageHandler(
     (spaceKey) => createAgent(memoryDirectory, spaceKey, provider),
     undefined,
@@ -108,7 +118,7 @@ async function runSpectrum(): Promise<void> {
 
   const shutdown = () => {
     void app.stop().catch(() => {
-      console.error("Muse Spectrum shutdown did not complete cleanly.");
+      console.error("Spectrum shutdown did not complete cleanly.");
     });
   };
   process.once("SIGINT", shutdown);
@@ -116,17 +126,63 @@ async function runSpectrum(): Promise<void> {
 
   try {
     for await (const [space, message] of app.messages) {
+      if (message.direction !== "inbound") continue;
+      const handle = formatSpectrumSenderHandle(
+        message.sender?.id,
+        projectSecret,
+      );
+      console.info(`received message from ${handle}`);
       try {
-        await handler.handle(space, message);
-      } catch {
-        console.error("Muse could not deliver an iMessage reply.");
+        const replied = await handler.handle(space, message);
+        if (replied) {
+          console.info(`Spectrum reply sent to ${handle}`);
+        } else {
+          console.info(
+            `Spectrum reply skipped for ${handle}: unsupported message`,
+          );
+        }
+      } catch (error) {
+        const errorMessage = formatSpectrumError(error, projectSecret);
+        console.error(`Spectrum reply failed for ${handle}: ${errorMessage}`);
       }
     }
+  } catch (error) {
+    throw new Error(
+      `Spectrum listener failed: ${formatSpectrumError(error, projectSecret)}`,
+    );
   } finally {
     process.off("SIGINT", shutdown);
     process.off("SIGTERM", shutdown);
-    await app.stop();
+    try {
+      await app.stop();
+    } catch (error) {
+      throw new Error(
+        `Spectrum shutdown failed: ${formatSpectrumError(error, projectSecret)}`,
+      );
+    }
   }
+}
+
+function formatSpectrumSenderHandle(
+  senderId: string | undefined,
+  projectSecret: string,
+): string {
+  const safeSenderId = senderId?.split(projectSecret).join("[REDACTED]");
+  const handle = safeSenderId
+    ?.replace(/[\r\n\t]/g, " ")
+    .trim()
+    .slice(0, 120);
+  return handle || "unknown";
+}
+
+function formatSpectrumError(error: unknown, projectSecret: string): string {
+  const message = error instanceof Error ? error.message : String(error);
+  const safeMessage = message
+    .split(projectSecret)
+    .join("[REDACTED]")
+    .replace(/\s+/g, " ")
+    .trim();
+  return (safeMessage || "Unknown error").slice(0, 500);
 }
 
 function createAgent(
