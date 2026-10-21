@@ -48,7 +48,8 @@ export class PhotonMessageHandler {
   async handle(space: PhotonSpace, message: PhotonMessage): Promise<boolean> {
     if (
       message.direction !== "inbound" ||
-      message.platform !== "imessage" ||
+      (message.platform !== "imessage" &&
+        message.platform !== "whatsapp_business") ||
       message.content.type !== "text" ||
       typeof message.content.text !== "string" ||
       !message.content.text.trim()
@@ -100,7 +101,7 @@ export class PhotonMessageHandler {
         const respond = () => activeConversation.agent.respond(text);
         reply = research ? await space.responding(respond) : await respond();
       } catch {
-        this.reportFailure("Muse could not complete an incoming iMessage.");
+        this.reportFailure("Muse could not complete an incoming Spectrum message.");
         reply = PHOTON_FAILURE_REPLY;
       }
 

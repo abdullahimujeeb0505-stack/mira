@@ -87,7 +87,7 @@ use the same non-Groq provider, Groq is the default alternate when its
 credentials are configured. Safety-filter refusals are never routed to another
 provider. A Gemini-only setup without Groq credentials has no runtime failover.
 
-### Stable Spectrum iMessage transport
+### Stable Spectrum transport: iMessage
 
 To use Spectrum instead of the default Photon 2.0 Beta transport:
 
@@ -101,8 +101,10 @@ To use Spectrum instead of the default Photon 2.0 Beta transport:
    - `SPECTRUM_PROJECT_SECRET` — the stable Spectrum project secret.
    - `GEMINI_API_KEY` — required for the default Gemini chat, research, and
      writing provider (`gemini-3.5-flash-lite`).
-3. Set `MUSE_PHOTON_TRANSPORT=spectrum`. Spectrum credentials are read only
-   from `SPECTRUM_PROJECT_ID` and `SPECTRUM_PROJECT_SECRET`; the Beta variables
+3. Set `MUSE_PHOTON_TRANSPORT=spectrum`. The Spectrum platform defaults to
+   iMessage; set `MUSE_SPECTRUM_PLATFORM=whatsapp_business` for WhatsApp Business
+   (details below). Spectrum credentials are read only from
+   `SPECTRUM_PROJECT_ID` and `SPECTRUM_PROJECT_SECRET`; the Beta variables
    `PHOTON_PROJECT_ID` and `PHOTON_API_KEY` are not used by this path. The
    default remains Photon 2.0 Beta when `MUSE_PHOTON_TRANSPORT` is unset.
 4. From the repository root, start the listener:
@@ -114,6 +116,7 @@ To use Spectrum instead of the default Photon 2.0 Beta transport:
 Expected terminal logs for a successful message:
 
 ```text
+Spectrum platform: imessage
 Spectrum connected
 received message from <handle>
 Spectrum reply sent to <handle>
@@ -122,9 +125,33 @@ Spectrum reply sent to <handle>
 A failed send logs `Spectrum reply failed for <handle>: <error message>`. The
 receive log contains no message body, and the Spectrum project secret is never
 logged. The Spectrum path uses `spectrum-ts` with `Spectrum({ projectId,
-projectSecret, providers: [imessage.config()] })`, consumes `app.messages`,
-and sends replies with `space.send(...)`. The Photon 2.0 Beta transport and its
-configuration are unchanged; it does not require `PHOTON_AGENT_USER_ID`.
+projectSecret, providers })`, consumes `app.messages`, and sends replies with
+`space.send(...)`. The provider is selected by `MUSE_SPECTRUM_PLATFORM`. The
+Photon 2.0 Beta transport and its configuration are unchanged; it does not
+require `PHOTON_AGENT_USER_ID`.
+
+### WhatsApp Business with Spectrum
+
+The stable Spectrum transport can also receive and reply to WhatsApp Business
+messages. In the Mira project dashboard, open **Platforms**, choose **WhatsApp
+Business → Connect**, and complete the official WhatsApp Business Cloud API
+connection flow. Confirm that the platform shows as connected. This is a
+WhatsApp Business Cloud API channel, not a personal WhatsApp account; use a
+number and account authorized for that integration.
+
+Keep `SPECTRUM_PROJECT_ID` and `SPECTRUM_PROJECT_SECRET` configured as above,
+and set the Codespaces variable `MUSE_SPECTRUM_PLATFORM=whatsapp_business`. The
+Spectrum provider retrieves its managed WhatsApp line credentials using the
+Spectrum project credentials; do not put Meta tokens in Muse's environment.
+Start Muse with:
+
+```sh
+MUSE_PHOTON_TRANSPORT=spectrum MUSE_SPECTRUM_PLATFORM=whatsapp_business pnpm --filter @workspace/scripts run muse-photon
+```
+
+Send a new message from an authorized WhatsApp account to the business number
+to test the reply. Check current Photon and Meta terms/pricing before sending
+real messages; Muse does not upgrade plans or enable paid usage.
 
 To generate original artwork in iMessage, type a leading command such as
 `generate image: a red fox under the northern lights`, `create a picture of a
