@@ -1,0 +1,135 @@
+{
+  "id": "2026-10-22T11-31-28-692Z-what-s-do-you-have-on-photonhq",
+  "question": "What’s do you have on photonhq",
+  "plan": {
+    "objective": "Identify and describe PhotonHQ, its core offerings, technology stack, and current status based on official sources and technology documentation.",
+    "taskType": "general",
+    "deliverable": "A concise overview of PhotonHQ including its purpose, features, and target audience.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "Official website",
+      "Documentation",
+      "Tech news and repository platforms"
+    ],
+    "questions": [
+      "What is PhotonHQ?",
+      "What are the key features or products offered by PhotonHQ?"
+    ],
+    "queries": [
+      "PhotonHQ",
+      "Photon HQ software platform product",
+      "PhotonHQ documentation features"
+    ],
+    "unresolvedQuestions": [
+      "What specific technical stack or SDKs does PhotonHQ use for integrating AI agents with messaging channels?",
+      "What are the precise architectural details or developer workflows of PhotonHQ's platform?"
+    ]
+  },
+  "answer": "### Overview of PhotonHQ\nPhotonHQ is an AI agent communications startup that enables AI agents to text people across popular messaging channels (unverified: no matching retrieved evidence).\nThe platform allows developers to integrate their AI agents into everyday messaging services such as iMessage and WhatsApp (unverified: no matching retrieved evidence).\n\n### Key Features and Purpose\n* **Messaging Integration:** Connects AI agents to platforms that millions of users already utilize, specifically supporting channels like iMessage and WhatsApp (unverified: no matching retrieved evidence).\n* **Developer Ecosystem:** Designed for developers, the platform has scaled to over 50,000 developers and achieved 450,000 monthly npm downloads (unverified: no matching retrieved evidence).\n\n### Current Status and Funding\n* **Founders:** Founded by Daniel Tian (daniel_t) and Ryan Zhu [SRC-1c87e03aa161].\n* **Funding:** Raised a $4.5 million Seed round announced in October 2026, following a period operating in stealth. [SRC-1c87e03aa161]\n* **Growth:** Reported a 10x increase in revenue (unverified: no matching retrieved evidence).\n\n*(Note: The name \"Photon\" is heavily overloaded, referring separately to enterprise AI solutions via Photon.com, game development SDKs via Photon Engine, and global payments, which are distinct from PhotonHQ).* (unverified: no matching retrieved evidence).",
+  "followUpQuestions": [
+    "PhotonHQ developer SDK workflows",
+    "AI agent messaging integrations"
+  ],
+  "sources": [
+    {
+      "title": "Home | Photon",
+      "url": "https://www.photon.com/",
+      "canonicalUrl": "https://www.photon.com/",
+      "publisher": "www.photon.com",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "End-to-end Control for AI Agents & AI Ecosystems",
+        "Photon, a global leader in AI and digital solutions, helps clients accelerate AI adoption and embrace Digital HyperExpansion®. With over 7,500 digital engineers, we help Fortune 500 customers stay agile and future-ready in an era of converging digital and AI boundaries.",
+        "Improving Patient Care and Operational Efficiency with GenAI",
+        "Optimizing Procurement Contract Management with GenAI"
+      ],
+      "retrievedAt": "2026-10-22T11:31:02.817Z",
+      "content": "Home | Photon\nSkip to main content\nThink Beyond | Photon\n0\nSkip Intro\nScroll Down\nEnterprise AI at Scale:\nPlatforms, Process Insight and Domain Depth\nLearn More\nAI-Based Security, Ontology, Trust:\nThe Real Barriers to Enterprise AI Adoption\nSoftware & SAAS Retirement Using AI:\nEnterprise Software Footprint Reduction\nAI Governance:\nEnd-to-end Control for AI Agents & AI Ecosystems\nWho We Are\nMaking Tomorrow Happen Today\nPhoton, a global leader in AI and digital solutions, helps clients accelerate AI adoption and embrace Digital HyperExpansion®. With over 7,500 digital engineers, we help Fortune 500 customers stay agile and future-ready in an era of converging digital and AI boundaries.\nSUCCESS STORIES\nView All\nSuccess Story\nImproving Patient Care and Operational Efficiency with GenAI\nOptimizing Procurement Contract Management with GenAI\nPhoton drives KeyBank’s transformation via digital core banking\nOlive Garden serves up rich guest experiences through mobile\nSamsung Rebuilds their eCommerce Platform to Meet New Demands in the Digital HyperExpansion® Era\nCoca-Cola HBC successfully relaunches B2B platform\nWells Fargo CIO explores the future of banking\nOcean Spray shares their tech-led transformation story\nWe Partner\nWith 40% of the Fortune 100, driving AI-led digital transformation.\n4\nWhat We Do\nWe combine AI management, digital innovation, product design thinking, and engineering excellence to create transformational change.\nElevate Your Business with Photon's AI Services\nGet Started\nContact Us\nShelf-Made Success: Building Retail Media Networks That Convert\nRead more\nPhoton Podcast: From Search Box to Delight - E-commerce Revenue Nirvana\nInfrastructure That Must 1000×: The Compute Curve Behind Ubiquitous AI\nHow a Large European Pharmacy Corporation Could Scale AI-Enabled Commerce with the GEO-X Framework\nWhitepaper: Transform Your Brand with Social Commerce\nTomorrow Makers: Fireside chat with Pano Christou, CEO of Pret A Manger\nWhy Agentic AI Success Requires Strategy, Not Experimentation\nWhitepaper: Loyalty Unlocked - Crafting Irresistible Customer Loyalty with Data-Driven Magic\nSign Up for our Newsletter: #TomorrowMakers #DigitalHyperExpansion®\nSign Up Now\nWork With Us\nEmpower your digital initiatives with a partner who works closely with you and your team to understand your business challenges and creates unprecedented mobile-first and innovative digital experiences to help solve them.\nWant to work with us?\nConnect With Us\nWant to join our team?\nView Open Positions\nThe Generative Team\nHow High-Performing Teams Avoid Creative Convergence\nRead Article\nGrowth Is Slowing Down Inside the Organization Before It Slows Down in the Market\nThe Cost of Indecision series\nPhoton Achieves CyberVadis Platinum Rating, Reinforcing Enterprise Trust Through Independent Cybersecurity Validation",
+      "isUserProvided": true,
+      "sourceId": "SRC-e06c4308f3c8"
+    },
+    {
+      "title": "Photon Developer Resources",
+      "url": "https://doc.photonengine.com/photon/current/resources",
+      "canonicalUrl": "https://doc.photonengine.com/photon/current/resources",
+      "publisher": "doc.photonengine.com",
+      "updatedAt": "2026-08-06T00:00:00.000Z",
+      "sourceType": "technical documentation",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Everything you need to build, launch, and operate your project with Photon — learning material, community channels, and account tools — collected in one place.",
+        "Browse all available Photon samples and demos across products in one gallery.",
+        "Ready-to-use examples and step-by-step tutorials for every Photon product.",
+        "Get the latest Photon SDKs for all supported engines and platforms."
+      ],
+      "retrievedAt": "2026-10-22T11:31:02.358Z",
+      "content": "Resources\nEverything you need to build, launch, and operate your project with Photon — learning material, community channels, and account tools — collected in one place.\nLearning Resources\nBrowse all available Photon samples and demos across products in one gallery.\nReady-to-use examples and step-by-step tutorials for every Photon product.\nGet the latest Photon SDKs for all supported engines and platforms.\nNews, release announcements, and technical deep dives from the Photon team.\nTutorial videos and talks on the official Photon Engine channel.\nCommunity & Support\nJoin the Photon Engine Discord to ask questions and connect with other developers.\nPremium development support for game teams, with private access to Photon engineers.\nPremium support and exclusive samples for enterprise and industrial use cases.\nAll support options at a glance, from free community help to enterprise operations support.\nGet in touch with the Photon team for anything else.\nAccount & Operations\nCreate and manage your Photon applications, plans, and account.\nCheck the live service status of Photon Cloud regions and services.\nPlans and pricing for Photon Cloud, from the free tier to enterprise.\nResources for AI Ingestion\nMachine-readable index of the Photon documentation for LLMs and AI assistants.\nMachine-readable overview of the Photon website for LLMs and AI assistants.\nLast updated on 06/08/2026\nBack to top",
+      "isUserProvided": true,
+      "sourceId": "SRC-b6fca638179b"
+    },
+    {
+      "title": "photonhq raised $4.5M Seed (2026): founders | Recent Funding",
+      "url": "https://recentfunding.com/companies/photonhq/",
+      "canonicalUrl": "https://recentfunding.com/companies/photonhq/",
+      "publisher": "Recent Funding",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Bring agents to iMessage, WhatsApp and channels millions already use. Join Discord: https://t.co/omNpZvMWSq",
+        "About photonhq Recent Funding lists photonhq under AI agents . It raised $4.5M in a Seed round in October 2026, according to x.com. It was founded by daniel_t and Ryan Zhu. Recent Funding flagged it as a stealth startup on June 27, 2026.",
+        "@photonhq · Raised $4.5M in 1 sourced round · 3 signals before the first raise",
+        "X ACCOUNT CREATED @PHOTONHQ · SEP 10, 2025 | | WEBSITE CREATED · OCT 10, 2025 | | FLAGGED IN STEALTH · JUN 27, 2026 $4.5M Seed · Oct 1, 2026 $4.5M SEED · OCT '26"
+      ],
+      "retrievedAt": "2026-10-22T11:31:02.571Z",
+      "content": "Recent Funding\nCompanies\nphotonhq\nBring agents to iMessage, WhatsApp and channels millions already use. Join Discord: https://t.co/omNpZvMWSq\nAI agents\nLatest funding\n$4.5M Seed · October 1, 2026\nSource: x.com\nFunding history ↓\nWebsite : photon.codes .\nX : @photonhq · 7,202 followers .\nCategory : AI agents .\nSectors : AI .\nStage : Seed .\nLast round : Oct 1, 2026 · 21 days ago .\nX account age : 13 months .\nDomain age : 12 months .\nFlagged in stealth : Jun 27, 2026 .\nOn Recent Funding since : Jun 27, 2026 .\nAbout photonhq Recent Funding lists photonhq under AI agents . It raised $4.5M in a Seed round in October 2026, according to x.com. It was founded by daniel_t and Ryan Zhu. Recent Funding flagged it as a stealth startup on June 27, 2026.\nTIMELINE · MONEY RAISED\nphotonhq | flagged 96 days before its raise\n@photonhq · Raised $4.5M in 1 sourced round · 3 signals before the first raise\nX ACCOUNT CREATED @PHOTONHQ · SEP 10, 2025 | | WEBSITE CREATED · OCT 10, 2025 | | FLAGGED IN STEALTH · JUN 27, 2026 $4.5M Seed · Oct 1, 2026 $4.5M SEED · OCT '26\nMoney raised, round by round (amounts linked to their source). Pins are dated signals; hover the icons for dates.\nFunding rounds\nOctober 1, 2026\nSeed · $4.5M\nJune 27, 2026\nFlagged in stealth before announcing\nOctober 10, 2025\nWebsite created\nSeptember 10, 2025\nX account created\nFounders and team\nD daniel_t Cofounder\n@danieltian · source: x.com\nRZ Ryan Zhu Cofounder\n@ryanzhuuuu · source: x.com\nSimilar AI agents companies\nC CapitalOS $21.9M Series A · Oct 2026\nY YGO $8.99M · Oct 2026\nF FirstWork $15M Series A · Oct 2026\nA Asymptote Labs $5.5M Seed · Oct 2026\nJ Jooba $4M Seed · Oct 2026\nV Vessla $3.31M Pre Seed · Oct 2026\nQuestions and sources photonhq: questions and answers\nHow much has photonhq raised? photonhq has raised $4.5M in one sourced round on record (Seed), announced October 1, 2026.\nWho founded photonhq? photonhq was founded by daniel_t and Ryan Zhu.\nEvery amount links to the page it came from. * Estimated from an accelerator's published standard deal, not a company-specific disclosure. How Recent Funding sources and verifies funding data . The same data as JSON: /api/v1/companies/photonhq ( get a free API key ).\nTop raises, every week\nThe week's top funded startups and market insights, in your inbox every Monday.\nUnsubscribe anytime · privacy",
+      "isUserProvided": true,
+      "sourceId": "SRC-1c87e03aa161"
+    },
+    {
+      "title": "Photon on X: \"We raised a $4.5M seed to let agents text people. Since April: 50K+ developers, 450K monthly npm downloads and 10x revenue. Bring your agent to iMessage, WhatsApp and more → https://t.co/RVaQzPBimT\" / X",
+      "url": "https://x.com/PhotonHQ/status/2105751855116779565",
+      "canonicalUrl": "https://x.com/PhotonHQ/status/2105751855116779565",
+      "publisher": "X (formerly Twitter)",
+      "publishedAt": "2026-10-01T20:08:59.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Photon on X: \"We raised a $4.5M seed to let agents text people.",
+        "Since April: 50K+ developers, 450K monthly npm downloads and 10x revenue.",
+        "Bring your agent to iMessage, WhatsApp and more → https://t.co/RVaQzPBimT\"",
+        "We raised a $4.5M seed to let agents text people."
+      ],
+      "retrievedAt": "2026-10-22T11:31:04.035Z",
+      "content": "Post\nLog in Sign up\nPhoton on X: \"We raised a $4.5M seed to let agents text people.\nSince April: 50K+ developers, 450K monthly npm downloads and 10x revenue.\nBring your agent to iMessage, WhatsApp and more → https://t.co/RVaQzPBimT\"\nPhoton\n@PhotonHQ\nWe raised a $4.5M seed to let agents text people.\nBring your agent to iMessage, WhatsApp and more → tryphoton.ai\n00:00\ndaniel_t and Ryan Zhu\n8:08 PM · Oct 1, 2026 · 1.1M\nViews\n157\n69\n875\n500",
+      "isUserProvided": true,
+      "sourceId": "SRC-402314780ab4"
+    }
+  ],
+  "unresolvedQuestions": [
+    "What specific technical stack or SDKs does PhotonHQ use for integrating AI agents with messaging channels?",
+    "What are the precise architectural details or developer workflows of PhotonHQ's platform?"
+  ],
+  "contradictions": [
+    "The name 'Photon' is heavily overloaded across multiple distinct entities: PhotonHQ (AI messaging agents), Photon Engine (game development SDKs), Photon Software (SAP financial subledger), Photon.com (enterprise AI digital solutions), and PhotonPay (global payments)."
+  ],
+  "completeness": "partial",
+  "limitations": [
+    "7 candidate pages failed or carried no readable text.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 4 of 6 selected sources fit in the synthesis evidence budget.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 9,
+    "failedCount": 7,
+    "rounds": 1,
+    "searches": 3
+  },
+  "archivedAt": "2026-10-22T11:31:28.692Z"
+}
