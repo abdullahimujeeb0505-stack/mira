@@ -302,11 +302,11 @@ test("Spectrum attaches researched images and sends plain text without Markdown 
   );
 
   assert.equal(sent.length, 2);
-  assert.equal(typeof sent[0], "object");
-  if (!sent[0] || typeof sent[0] === "string") {
+  const imageContent = sent[0];
+  if (!imageContent || typeof imageContent === "string") {
     throw new Error("Expected the researched image to be sent as an attachment.");
   }
-  const built = await sent[0].build();
+  const built = await imageContent.build();
   assert.equal(built.type, "attachment");
   if (built.type !== "attachment") return;
   assert.equal(built.name, "mira-research-image.png");
