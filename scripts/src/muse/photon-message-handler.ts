@@ -1,6 +1,13 @@
 import { attachment, type ContentInput } from "spectrum-ts";
 import type { GeneratedImage } from "./cloudflare-workers-ai.js";
 import {
+  downloadResearchImage,
+  extractIMessageImageReferences,
+  formatIMessageText,
+  researchImageFileName,
+  type ResearchImageDownloader,
+} from "./photon-message-formatting.js";
+import {
   parseImageGenerationCommand,
   runImageGenerationCommand,
   type ImageGenerator,
@@ -39,6 +46,7 @@ export class PhotonMessageHandler {
     ) => Pick<MuseAgent, "hasConversationHistory" | "respond">,
     private readonly reportFailure: (message: string) => void = console.error,
     private readonly generateImage?: ImageGenerator,
+    private readonly downloadImage: ResearchImageDownloader = downloadResearchImage,
   ) {}
 
   get conversationCount(): number {
@@ -105,7 +113,7 @@ export class PhotonMessageHandler {
         reply = PHOTON_FAILURE_REPLY;
       }
 
-      await space.send(reply);
+      await this.sendMessageReply(space, message.platform, reply);
     });
     activeConversation.pending = response.then(
       () => undefined,
@@ -113,5 +121,42 @@ export class PhotonMessageHandler {
     );
     await response;
     return true;
+  }
+
+  private async sendMessageReply(
+    space: PhotonSpace,
+    platform: string,
+    response: string,
+  ): Promise<void> {
+    const extracted = extractIMessageImageReferences(response);
+    const imageFallbacks: string[] = [];
+
+    if (platform === "imessage") {
+      for (const image of extracted.images) {
+        try {
+          const downloaded = await this.downloadImage(image.url);
+          await space.send(
+            attachment(downloaded.bytes, {
+              name: researchImageFileName(downloaded.mimeType),
+              mimeType: downloaded.mimeType,
+            }),
+          );
+        } catch {
+          this.reportFailure(
+            "Muse could not attach a sourced image to an incoming Spectrum message.",
+          );
+          imageFallbacks.push(`Image unavailable: ${image.alt}`);
+        }
+      }
+    } else {
+      imageFallbacks.push(
+        ...extracted.images.map((image) => `Image: ${image.alt}`),
+      );
+    }
+
+    const messageText = formatIMessageText(
+      [...imageFallbacks, extracted.text].filter(Boolean).join("\n\n"),
+    );
+    if (messageText) await space.send(messageText);
   }
 }
