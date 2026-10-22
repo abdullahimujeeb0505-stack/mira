@@ -1,0 +1,116 @@
+{
+  "id": "2026-10-22T11-52-27-266Z-what-s-ansem-thesis-is-simple-term",
+  "question": "What’s ansem thesis is simple term",
+  "plan": {
+    "objective": "Explain the core concept and thesis of Ansem (pseudonymous crypto personality/trader) in simple terms.",
+    "taskType": "general",
+    "deliverable": "A concise, plain-English summary of Ansem's thesis or investment philosophy in the cryptocurrency space.",
+    "requiresCurrentInformation": true,
+    "sourcePreferences": [
+      "Crypto analytical platforms",
+      "Primary social media threads by Ansem",
+      "Blockchain media outlets"
+    ],
+    "questions": [
+      "What is Ansem's core investment thesis in cryptocurrency?",
+      "What specific narratives or tokens does Ansem typically champion?"
+    ],
+    "queries": [
+      "Ansem crypto thesis explained",
+      "what is ansem thesis crypto",
+      "ansem trading philosophy solana memecoins"
+    ],
+    "unresolvedQuestions": [
+      "What are the specific mechanics of Ansem's broader investment thesis regarding attention economies and meme coins as expressed in his own words or prior interviews?",
+      "How does Ansem distinguish between traditional venture-backed crypto projects and community-driven tokens in his overarching market philosophy?"
+    ]
+  },
+  "answer": "Ansem is a prominent pseudonymous crypto trader and analyst (known online as Zion Thomas or @blknoiz06) whose core philosophy and associated market thesis focus on the power of attention, influence, and community-driven tokens. [SRC-ceeb1196d2b7]\n\nIn simple terms, Ansem's thesis and the surrounding vision for tokens like $ANSEM encompass the following concepts: (unverified: no matching retrieved evidence).\n\n* **The Attention Economy:** Reputation and social influence can move cryptocurrency markets just as fast as traditional technical fundamentals [SRC-ea1b431f5095].\nA prominent trader's acknowledgment or attention can serve as a primary price signal (unverified: no matching retrieved evidence).\n* **The Tokenized Creator Economy:** An emerging thesis outlines a vision to merge creator-driven communities with memecoin trading dynamics, aiming to link a creator's audience, community engagement, and on-chain activity into a single token model [SRC-e85bfd46eb22].\n* **Sustained Engagement:** Unlike short-lived memecoins that often fade when market attention shifts, this model proposes using gradual token distribution, protocol partnerships, and community incentives to maintain long-term participation [SRC-e85bfd46eb22].",
+  "followUpQuestions": [
+    "Creator token market outlook",
+    "Solana memecoin ecosystem trends"
+  ],
+  "sources": [
+    {
+      "title": "ANSEM Crypto Explained: Tokenomics, Utility, Risks",
+      "url": "https://www.coingabbar.com/en/crypto-blogs-details/ansem-crypto-token-tokenomics-utility-explained",
+      "canonicalUrl": "https://www.coingabbar.com/en/crypto-blogs-details/ansem-crypto-token-tokenomics-utility-explained",
+      "publisher": "Coin Gabbar",
+      "author": "Bablu Singh Nirwan",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "ANSEM Crypto Explained: Tokenomics, Utility and Risks",
+        "What Is Ansem Crypto? Meet the ANSEM Memecoin",
+        "In crypto, reputation can move markets just as fast as fundamentals do. Ansem crypto is a case study in exactly that &mdash; a Solana memecoin called ANSEM .",
+        "This piece breaks down what actually is, what it offers holders, how its surrounding ecosystem functions, and what its tokenomics reveal about the risk involved."
+      ],
+      "retrievedAt": "2026-10-22T11:52:16.701Z",
+      "content": "ANSEM Crypto Explained: Tokenomics, Utility and Risks\nBablu Singh Nirwan\nPublished:\nJuly 10, 2026\nLast Updated:\nAugust 19, 2026\nWhat Is Ansem Crypto? Meet the ANSEM Memecoin\nIn crypto, reputation can move markets just as fast as fundamentals do. Ansem crypto is a case study in exactly that &mdash; a Solana memecoin called ANSEM .\nThis piece breaks down what actually is, what it offers holders, how its surrounding ecosystem functions, and what its tokenomics reveal about the risk involved.\nWhat Is Ansem Crypto?\nANSEM, officially called The Black Bull, launched on Pump.fun in mid-June 2026. It carries the name of Ansem, a well-known Solana trader whose early calls on tokens like BONK and Dogwifhat had already earned him a large following. He didn't build the coin himself &mdash; an anonymous developer created it and airdropped a large chunk of the supply straight to his wallet, betting that his attention alone would be enough to get it moving.\nThe Token: What It Offers\nANSEM's core pitch isn't a product or piece of infrastructure &mdash; it's a promise. Once a large share of supply landed in his wallet, the trader it's named after chose to lean into the coin instead of selling it off, pledging to route a portion of his pump. fun creator fees back to the people holding or trading it.\nThat single decision is really what kept the coin's momentum going well past its first few days, turning what started as an anonymous ticker into one of the more talked-about trades on Solana .\nCore Features of the ANSEM Ecosystem\nA handful of tools have grown up around the base token itself. An Ansem-call radar tracks and surfaces his trading calls as they happen, giving holders a way to follow his activity without digging through his posts manually. The project also runs non-custodial community liquidity pods on PumpSwap, so holders can provide liquidity without giving up custody of their tokens.\nThere's also a browser-based meme terminal for checking price, volume, and holder activity straight from on-chain data, with no login needed. The whole setup is built to read live blockchain data directly rather than lean on a centralized backend, so anyone curious can check the numbers themselves rather than take the project's word for it.\nToken Utility and Tokenomics\nHere's the breakdown, based on on-chain data and market tracking:\nDetail\n| Data\n|\nBlockchain\n| Solana (standard SPL token, 6 decimals)\nEmissions\n| None&mdash;no printed reward token; rewards come only from real trading fees\nLaunch Platform\n| Pump.fun\nLaunch Date\n| Mid-June 2026\nTotal Supply\n| 1,000,000,000 Token\nSent to Ansem's Wallet at Launch\n| ~65% (roughly 650 million), airdropped by an anonymous developer\nWallet Holding Today\n| About 60.4% (604 million ANSEM), per the project's own live wallet tracker\nCommunity Airdrop\n| 5% of supply set aside, allocated based on on-chain Solana activity\nTeam, VC, or Insider Allocation\n| None disclosed&mdash;the project describes itself as community-owned with no VC or ins",
+      "isUserProvided": true,
+      "sourceId": "SRC-ea1b431f5095"
+    },
+    {
+      "title": "Who Is Ansem the Solana Trader Behind ANSEM Token | 2026",
+      "url": "https://phemex.com/academy/who-is-ansem-solana-trader-ansem-token-frenzy",
+      "canonicalUrl": "https://phemex.com/academy/who-is-ansem-solana-trader-ansem-token-frenzy",
+      "publisher": "phemex.com",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Who Is Ansem the Solana Trader Behind the ANSEM Token Frenzy",
+        "Ansem, real name Zion Thomas, has an ~$20M net worth and a memecoin bearing his name that ran nearly 20,000% in a week. Here is who he is and why traders watch every post.",
+        "A Solana memecoin called The Black Bull (ANSEM) climbed nearly 20,000% in seven days in late June 2026, pushing its market cap past $60 million from a starting point measured in the tens of thousands of dollars. The token carries the name of one person, Ansem , the trader whose Solana and memecoin calls have made him one of the loudest voices on Crypto Twitt",
+        "That reaction is the whole story of why Ansem matters. When a trader can move a token he never launched simply by acknowledging it, you are looking at real influence rather than a follower count. Here is who Ansem actually is, how he built that reach, and what the ANSEM situation reveals about the risks of trading on a name."
+      ],
+      "retrievedAt": "2026-10-22T11:52:17.453Z",
+      "content": "Who Is Ansem the Solana Trader Behind the ANSEM Token Frenzy\nDan\nUpdated on 2026-07-02 04:52:56\n|\n10-15m\nBeginner\nMeme Coins\nKey Points\nAnsem, real name Zion Thomas, has an ~$20M net worth and a memecoin bearing his name that ran nearly 20,000% in a week. Here is who he is and why traders watch every post.\nA Solana memecoin called The Black Bull (ANSEM) climbed nearly 20,000% in seven days in late June 2026, pushing its market cap past $60 million from a starting point measured in the tens of thousands of dollars. The token carries the name of one person, Ansem , the trader whose Solana and memecoin calls have made him one of the loudest voices on Crypto Twitter. He did not create the coin. He still ended up at the center of the frenzy, and the market treated his every reply as a price signal.\nThat reaction is the whole story of why Ansem matters. When a trader can move a token he never launched simply by acknowledging it, you are looking at real influence rather than a follower count. Here is who Ansem actually is, how he built that reach, and what the ANSEM situation reveals about the risks of trading on a name.\nTrade Crypto on Phemex\nWho Is Ansem in Crypto\nAnsem is the online handle of Zion Thomas , a crypto trader and analyst who posts under the username @blknoiz06 to an audience of more than 750,000 followers on X. He is best known as an early and vocal backer of Solana and the memecoins that grew inside its ecosystem, which earned him the informal title of \"The Solana Guy\" during the 2023 to 2025 run.\nHis reputation rests on a few outsized calls rather than a stream of predictions. He bought SOL near $1.50 and held through a move that turned into life-changing money. He backed Dogwifhat (WIF) and Bonk (BONK) before either was widely known, reportedly returning roughly 520x on WIF and around 80x on BONK. Those results, documented on-chain and repeated across crypto media, are what convert casual followers into people who act on his posts.\nWhat separates him from the average influencer is that he trades his own thesis with size, and his wallet moves are public. When Ansem talks about a token, traders can often verify that he holds it, which removes a layer of the usual skepticism.\nThe Boxer From Georgia Tech Who Found Crypto\nBefore the charts, Ansem trained as an amateur boxer . It is an unusual line on a crypto resume, and he references the discipline it took as part of how he approaches risk. The sport rewards patience, reading an opponent, and committing fully at the right moment, which is not a bad description of how he frames position sizing.\nHis formal background is technical. He holds a Bachelor of Science in Computer Science from Georgia Tech , as documented in his public crypto profile , and after graduating around 2017, took a software engineering role at Capital One. That was also the year he entered crypto, early enough to sit through a full bear market before the cycles that made his name.\nThe combination matters more than it loo",
+      "isUserProvided": true,
+      "sourceId": "SRC-ceeb1196d2b7"
+    },
+    {
+      "title": "Can ANSEM Create Crypto's Next Major Sector?",
+      "url": "https://coinedition.com/can-ansem-coin-lead-cryptos-next-2t-sector-new-thesis-outlines-creator-token-vision/",
+      "canonicalUrl": "https://coinedition.com/can-ansem-coin-lead-cryptos-next-2t-sector-new-thesis-outlines-creator-token-vision/",
+      "publisher": "Coin Edition",
+      "author": "Peter Mwangi",
+      "publishedAt": "2026-07-18T05:26:46.000Z",
+      "updatedAt": "2026-07-18T05:26:55.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "body-fallback",
+      "evidenceSnippets": [
+        "Can Ansem Coin Lead Crypto’s Next $2T Sector? New Thesis Outlines Creator Token Vision",
+        "Get our latest news first. Add us as your Preferred Source on Google",
+        "$ANSEM proposes merging creator communities with memecoin trading into one token model.",
+        "The thesis targets a tokenized creator economy it estimates could reach $2T by 2035."
+      ],
+      "retrievedAt": "2026-10-22T11:52:16.358Z",
+      "content": "Can ANSEM Create Crypto's Next Major Sector?\nCan Ansem Coin Lead Crypto’s Next $2T Sector? New Thesis Outlines Creator Token Vision\nBy Peter Mwangi\nPublished: July 18, 2026\nLast Updated: July 18, 2026\nGet our latest news first. Add us as your Preferred Source on Google\nand tap \"Star\" to prioritize our updates.\n$ANSEM proposes merging creator communities with memecoin trading into one token model.\nThe thesis targets a tokenized creator economy it estimates could reach $2T by 2035.\nThe proposal emphasizes gradual airdrops and partnerships to support long-term participation.\nA newly published thesis has outlined a long-term vision for $ANSEM, presenting the token as an attempt to combine creator-driven communities with the speculative dynamics that have historically fueled memecoin markets.\nThe proposal argues that creator tokens could represent a new segment of the digital asset industry by linking a creator’s audience, community participation, and onchain activity under a single token model.\nAccording to the thesis, the broader goal extends beyond a regular memecoin launch, positioning $ANSEM as part of what it describes as a future “Tokenized Creator Economy,” a sector it estimates could reach $2 trillion by 2035.\nThe report also explains how the token intends to build sustained participation through community incentives, protocol partnerships, and gradual token distribution rather than relying on short-lived market attention.\nThesis Links Creator Economy With Crypto Markets\nThe thesis sets out creator tokens from traditional memecoins by arguing that the two sectors solve different problems. While memecoins have historically attracted retail speculation through online communities, the report states that many have struggled to sustain engagement as market attention wanes.\nhttps://t.co/tjTzWHjYYi\n&mdash; Ansem 🐂🀄️ (@blknoiz06) July 16, 2026\nAt the same time, creators have continued generating revenue from loyal audiences through content, merchandise, and business ventures, but without a direct way for supporters to speculate on their influence.\nAccording to the proposal, $ANSEM is intended to bridge those two models by combining speculative trading with creator-led community growth. The thesis identifies interest, storytelling, and network participation as important intangible factors that influence digital asset valuations alongside measurable metrics such as revenue and product development.\nCommunity Growth Strategy Centers on Long-Term Participation\nThe document outlines several mechanisms intended to encourage ongoing participation rather than one-time engagement.\nThese include delayed airdrops distributed after community objectives instead of a single token allocation event, protocol partnerships designed to introduce token holders to onchain applications, and community incentives for members who develop tools, educational content, or other ecosystem resources.\nThe thesis also states that approximately 58% of the token supply is held by the",
+      "isUserProvided": true,
+      "sourceId": "SRC-e85bfd46eb22"
+    }
+  ],
+  "unresolvedQuestions": [
+    "What are the specific mechanics of Ansem's broader investment thesis regarding attention economies and meme coins as expressed in his own words or prior interviews?",
+    "How does Ansem distinguish between traditional venture-backed crypto projects and community-driven tokens in his overarching market philosophy?"
+  ],
+  "contradictions": [],
+  "completeness": "partial",
+  "limitations": [
+    "9 candidate pages failed or carried no readable text.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 3 of 6 selected sources fit in the synthesis evidence budget.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 7,
+    "failedCount": 9,
+    "rounds": 1,
+    "searches": 3
+  },
+  "archivedAt": "2026-10-22T11:52:27.266Z"
+}
