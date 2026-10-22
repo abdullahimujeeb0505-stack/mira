@@ -264,3 +264,96 @@ test("Spectrum space.send failures propagate for transport-level error logging",
     (error) => error === sendError,
   );
 });
+
+test("Spectrum attaches researched images and sends plain text without Markdown syntax", async () => {
+  const imageUrl =
+    "https://upload.wikimedia.org/wikipedia/commons/a/aa/ronaldo.jpg";
+  const imageBytes = Buffer.from([
+    0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x01,
+  ]);
+  const sent: ContentInput[] = [];
+  const failures: string[] = [];
+  const handler = new PhotonMessageHandler(
+    () => ({
+      hasConversationHistory: false,
+      async respond() {
+        return [
+          `![Cristiano Ronaldo](${imageUrl})`,
+          "",
+          "### Career Milestones",
+          "- **Real Madrid:** *450 goals*.",
+        ].join("\n");
+      },
+    }),
+    (message) => failures.push(message),
+    undefined,
+    async (url) => {
+      assert.equal(url, imageUrl);
+      return { bytes: imageBytes, mimeType: "image/png" };
+    },
+  );
+
+  await handler.handle(
+    makeSpace("research-image", undefined, async (content) => {
+      sent.push(content);
+      return undefined;
+    }),
+    makeMessage({ type: "text", text: "Research Cristiano Ronaldo" }),
+  );
+
+  assert.equal(sent.length, 2);
+  assert.equal(typeof sent[0], "object");
+  if (!sent[0] || typeof sent[0] === "string") {
+    throw new Error("Expected the researched image to be sent as an attachment.");
+  }
+  const built = await sent[0].build();
+  assert.equal(built.type, "attachment");
+  if (built.type !== "attachment") return;
+  assert.equal(built.name, "mira-research-image.png");
+  assert.equal(built.mimeType, "image/png");
+  assert.deepEqual(await built.read(), imageBytes);
+  assert.equal(
+    sent[1],
+    "Career Milestones\n• Real Madrid: 450 goals.",
+  );
+  assert.deepEqual(failures, []);
+});
+
+test("Spectrum replaces a failed researched-image attachment with a clean text note", async () => {
+  const sent: ContentInput[] = [];
+  const failures: string[] = [];
+  const handler = new PhotonMessageHandler(
+    () => ({
+      hasConversationHistory: false,
+      async respond() {
+        return [
+          "![Cristiano Ronaldo](https://upload.wikimedia.org/wikipedia/commons/a/aa/ronaldo.jpg)",
+          "### Career",
+          "He scored **many goals**.",
+        ].join("\n");
+      },
+    }),
+    (message) => failures.push(message),
+    undefined,
+    async () => {
+      throw new Error("private fetch detail");
+    },
+  );
+
+  await handler.handle(
+    makeSpace("research-image-failure", undefined, async (content) => {
+      sent.push(content);
+      return undefined;
+    }),
+    makeMessage({ type: "text", text: "Research Cristiano Ronaldo" }),
+  );
+
+  assert.deepEqual(sent, [
+    "Image unavailable: Cristiano Ronaldo\n\nCareer\nHe scored many goals.",
+  ]);
+  assert.deepEqual(failures, [
+    "Muse could not attach a sourced image to an incoming Spectrum message.",
+  ]);
+  assert.doesNotMatch(String(sent[0]), /!\[|\]\(|[#*]/);
+  assert.doesNotMatch(failures.join(" "), /private fetch detail/);
+});
