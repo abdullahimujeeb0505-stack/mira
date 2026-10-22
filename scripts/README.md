@@ -91,10 +91,21 @@ provider. A Gemini-only setup without Groq credentials has no runtime failover.
 
 To use Spectrum instead of the default Photon 2.0 Beta transport:
 
-1. Create or select a **stable Spectrum** project, enable its iMessage provider,
-   and configure an iMessage line in the project. Follow the official
-   [Spectrum project setup](https://photon.codes/docs/spectrum-ts/getting-started)
+1. Create or select a **stable Spectrum** project and enable its iMessage
+   provider. Follow the official [Spectrum project setup](https://photon.codes/docs/spectrum-ts/getting-started)
    and [iMessage provider setup](https://photon.codes/docs/spectrum-ts/providers/imessage).
+   For Free/Pro shared-pool projects, Photon says no dedicated line is assigned;
+   use the number shown in the dashboard (the CLI line list may be empty). No
+   upgrade is needed just to use the shared pool. For this project’s shared pool,
+   follow Photon’s phone-only instruction: use a phone-number iMessage sender,
+   not an email-based handle. Verify the actual sender with Photon’s
+   [debug line](https://debug.photon.codes); if it reports an email, choose the
+   phone number under **Settings → Messages → Send & Receive → Start New
+   Conversations From** on the iPhone, then verify again. Add that exact phone
+   number under the project’s **Users** tab. This allowlist affects outbound
+   replies: an unregistered recipient can fail with
+   `Target not allowed for this project`, but that would happen after an inbound
+   event, not explain a missing `received message` log.
 2. Add these runtime environment variables in GitHub Codespaces Secrets or
    another secret manager. Do not put credential values in tracked files.
    - `SPECTRUM_PROJECT_ID` — the stable Spectrum project ID.
@@ -122,13 +133,21 @@ received message from <handle>
 Spectrum reply sent to <handle>
 ```
 
+Spectrum replies are sent as plain text so Messages does not show Markdown
+markers such as `###` or `**`. Research-image Markdown from Wikimedia Commons or
+Openverse is sent as a bounded, type-checked image attachment instead; if the
+image cannot be attached, Mira sends a short plain-text note rather than raw
+Markdown.
+
 A failed send logs `Spectrum reply failed for <handle>: <error message>`. The
 receive log contains no message body, and the Spectrum project secret is never
-logged. The Spectrum path uses `spectrum-ts` with `Spectrum({ projectId,
-projectSecret, providers })`, consumes `app.messages`, and sends replies with
-`space.send(...)`. The provider is selected by `MUSE_SPECTRUM_PLATFORM`. The
-Photon 2.0 Beta transport and its configuration are unchanged; it does not
-require `PHOTON_AGENT_USER_ID`.
+logged. `Spectrum connected` confirms provider startup only;
+`received message from <handle>` is evidence that the app received an inbound
+event. A Photon routing notice is separate from Mira’s reply. The Spectrum path
+uses `spectrum-ts` with `Spectrum({ projectId, projectSecret, providers })`,
+consumes `app.messages`, and sends replies with `space.send(...)`. The provider
+is selected by `MUSE_SPECTRUM_PLATFORM`. The Photon 2.0 Beta transport and its
+configuration are unchanged; it does not require `PHOTON_AGENT_USER_ID`.
 
 ### WhatsApp Business with Spectrum
 
@@ -137,7 +156,12 @@ messages. In the Mira project dashboard, open **Platforms**, choose **WhatsApp
 Business → Connect**, and complete the official WhatsApp Business Cloud API
 connection flow. Confirm that the platform shows as connected. This is a
 WhatsApp Business Cloud API channel, not a personal WhatsApp account; use a
-number and account authorized for that integration.
+number and account authorized for that integration. Photon’s current API
+reference says connecting itself is free and has no plan requirement, but the
+organization’s billing must be ready with a payment method on file. That does
+not establish that message usage is free; check current Photon and Meta pricing
+before connecting or sending live messages. Muse does not change Photon
+billing settings.
 
 Keep `SPECTRUM_PROJECT_ID` and `SPECTRUM_PROJECT_SECRET` configured as above,
 and set the Codespaces variable `MUSE_SPECTRUM_PLATFORM=whatsapp_business`. The
