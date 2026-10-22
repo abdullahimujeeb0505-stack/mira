@@ -25,7 +25,9 @@ import {
 } from "./photon-beta-transport.js";
 import {
   PhotonMessageHandler,
+  type PhotonImageDescriber,
   type PhotonMessage,
+  type PhotonMessageOutcome,
   type PhotonSpace,
 } from "./photon-message-handler.js";
 import { selectMusePhotonTransport } from "./photon-transport-selection.js";
@@ -134,6 +136,8 @@ async function runSpectrum(): Promise<void> {
     (spaceKey) => createAgent(memoryDirectory, spaceKey, provider),
     undefined,
     createImageGenerator(),
+    undefined,
+    createImageDescriber(),
   );
 
   const shutdown = () => {
@@ -153,9 +157,16 @@ async function runSpectrum(): Promise<void> {
       );
       console.info(`received message from ${handle}`);
       try {
-        const replied = await handler.handle(space, message);
-        if (replied) {
+        const outcome: PhotonMessageOutcome = await handler.handle(
+          space,
+          message,
+        );
+        if (outcome === "replied") {
           console.info(`Spectrum reply sent to ${handle}`);
+        } else if (outcome === "attachment_stored") {
+          console.info(
+            `Spectrum image received from ${handle}; waiting for a follow-up request`,
+          );
         } else {
           console.info(
             `Spectrum reply skipped for ${handle}: unsupported message`,
@@ -238,6 +249,26 @@ function createImageGenerator(): ImageGenerator {
     }
     generationTimestamps.push(now);
     return provider.generateImage(prompt);
+  };
+}
+
+function createImageDescriber(): PhotonImageDescriber {
+  let provider: CloudflareWorkersAIProvider | undefined;
+  const analysisTimestamps: number[] = [];
+  return async (image, mimeType, question) => {
+    provider ??= new CloudflareWorkersAIProvider();
+    const now = Date.now();
+    while (
+      analysisTimestamps.length > 0 &&
+      now - analysisTimestamps[0]! >= 60 * 60 * 1_000
+    ) {
+      analysisTimestamps.shift();
+    }
+    if (analysisTimestamps.length >= 20) {
+      throw new Error("The hourly Spectrum image-analysis limit was reached.");
+    }
+    analysisTimestamps.push(now);
+    return provider.describeImage(image, mimeType, question);
   };
 }
 

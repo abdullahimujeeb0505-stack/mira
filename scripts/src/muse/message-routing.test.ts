@@ -94,9 +94,17 @@ test("substantive factual questions and explicit research requests use live rese
     "Tell me about the history of the printing press.",
     "Search the web for current Node.js LTS versions.",
     "What can you do with Python?",
+    "Make research on this paper.",
+    "Make some research on this paper.",
+    "Conduct research on this paper.",
+    "Carry out research on the attached paper.",
   ]) {
     assert.equal(shouldResearchMessage(message), true, message);
   }
+  assert.equal(
+    shouldResearchMessage("Make research on this paper.", false, true),
+    true,
+  );
 });
 
 test("opinions, brainstorming, and ordinary conversation stay chat-first", () => {

@@ -139,6 +139,21 @@ Openverse is sent as a bounded, type-checked image attachment instead; if the
 image cannot be attached, Mira sends a short plain-text note rather than raw
 Markdown.
 
+On iMessage, Muse adds a 👍 Tapback as soon as it receives each inbound message;
+inbound Tapbacks are ignored so reactions do not create a loop. JPEG, PNG, and
+WebP images up to 4 MB can be sent with a question or in a separate message
+before the question. A separate image is held in memory for up to 15 minutes and
+is inspected only when the follow-up refers to or asks to research/analyze it.
+The resulting image description is passed to Muse as untrusted context, so a
+request such as `Make research on this paper` can guide the existing research
+pipeline rather than being treated as ordinary chat. Image analysis uses the
+optional Cloudflare Workers AI credentials documented above, allows up to 20
+image inputs per running listener per hour, and may consume Cloudflare usage; an
+empty or retryable primary-model result can also trigger a fallback-model request.
+Check your current Cloudflare billing and quotas before using it. Tests for this flow use a mocked image describer and
+do not make live AI or research-provider calls. Image-only messages receive the
+Tapback immediately and do not trigger analysis until a related follow-up arrives.
+
 A failed send logs `Spectrum reply failed for <handle>: <error message>`. The
 receive log contains no message body, and the Spectrum project secret is never
 logged. `Spectrum connected` confirms provider startup only;

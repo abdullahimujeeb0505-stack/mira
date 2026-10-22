@@ -116,6 +116,7 @@ test("Mira identifies as Muse's assistant without delegating identity to the mod
 test("attached-image questions stay in chat unless the user explicitly requests research", async () => {
   const directory = await mkdtemp(join(tmpdir(), "muse-agent-image-routing-"));
   const researchQuestions: string[] = [];
+  const researchContexts: string[] = [];
   let modelCalls = 0;
   const agent = createTestAgent(
     {
@@ -126,8 +127,9 @@ test("attached-image questions stay in chat unless the user explicitly requests 
     },
     new MemoryService(new JsonMemoryRepository(join(directory, "memory.json"))),
     undefined,
-    async (question) => {
+    async (question, _archivedContext, conversationContext) => {
       researchQuestions.push(question);
+      researchContexts.push(conversationContext ?? "");
       return { ...researchResult, question };
     },
   );
@@ -147,7 +149,13 @@ test("attached-image questions stay in chat unless the user explicitly requests 
       imageContext,
       true,
     );
-    assert.deepEqual(researchQuestions, ["Search the web for details about this bicycle model."]);
+    await agent.respond("Make research on this paper.", imageContext, true);
+    assert.deepEqual(researchQuestions, [
+      "Search the web for details about this bicycle model.",
+      "Make research on this paper.",
+    ]);
+    assert.match(researchContexts[0] ?? "", /red bicycle/);
+    assert.match(researchContexts[1] ?? "", /red bicycle/);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
