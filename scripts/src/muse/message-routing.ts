@@ -32,7 +32,7 @@ const CREATOR_REQUEST = new RegExp(
 );
 
 const EXPLICIT_RESEARCH_REQUEST =
-  /(?:^\s*(?:please\s+)?(?:research|search)\b|\b(?:please|can you|could you|would you|will you|should|must|need to|want to|want you to|let's|do(?: some)?|help me)\s+(?:also\s+)?research\b|\b(?:search the web|search online|look up|find sources|cite sources)\b)/i;
+  /(?:^\s*(?:please\s+)?(?:research|search)\b|\b(?:please|can you|could you|would you|will you|should|must|need to|want to|want you to|let's|do(?: some)?|help me)\s+(?:also\s+)?research\b|\b(?:make|conduct|carry out|perform|undertake)\s+(?:(?:some|a|the)\s+)?research\b|\b(?:search the web|search online|look up|find sources|cite sources)\b)/i;
 const CURRENT_INFORMATION_MARKER =
   /\b(?:latest|newest|current(?:ly)?|today|recent(?:ly)?|as of now|right now)\b/i;
 const DYNAMIC_LOOKUP_FRAGMENT =
