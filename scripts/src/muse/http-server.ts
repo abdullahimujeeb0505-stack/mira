@@ -171,8 +171,15 @@ const CHAT_PAGE = `<!doctype html>
       #auth-status:empty { min-height: 0; }
       .chat-header, #messages, .attachment-list, form, #status { position: relative; z-index: 1; }
       .chat-header { display: flex; align-items: center; gap: 13px; flex: 0 0 auto; min-height: 78px; padding: 13px clamp(20px, 4vw, 38px); border-bottom: 1px solid var(--line); background: #fffdfde8; backdrop-filter: blur(14px); }
-      .assistant-avatar { width: 46px; height: 46px; display: grid; flex: 0 0 auto; place-items: center; border: 1px solid #ffffffb8; border-radius: 17px; color: #fff; background: linear-gradient(145deg, #b49ae8 2%, #8c78d1 52%, #df9fbd 100%); box-shadow: 0 7px 18px #876bc52b, inset 0 1px #ffffff70; }
-      .assistant-avatar svg { width: 27px; height: 27px; fill: currentColor; }
+      .assistant-avatar { width: 46px; height: 46px; display: grid; flex: 0 0 auto; place-items: center; border: 1px solid #ffffffb8; border-radius: 17px; color: #fff; background: linear-gradient(145deg, #b49ae8 2%, #8c78d1 52%, #df9fbd 100%); box-shadow: 0 7px 18px #876bc52b, inset 0 1px #ffffff70; transition: box-shadow .2s ease, filter .2s ease; }
+      .assistant-avatar svg { width: 27px; height: 27px; fill: currentColor; transform-origin: center; }
+      .assistant-avatar[data-thinking="true"] { box-shadow: 0 0 0 4px #b49ae83d, 0 7px 22px #876bc55c, inset 0 1px #ffffff70; filter: brightness(1.06); }
+      .assistant-avatar[data-thinking="true"] svg { animation: mira-logo-roll 1.1s linear infinite; }
+      @keyframes mira-logo-roll { to { transform: rotate(360deg); } }
+      @media (prefers-reduced-motion: reduce) {
+        .assistant-avatar[data-thinking="true"] svg { animation: none; }
+        .assistant-avatar[data-thinking="true"] { outline: 2px solid #b49ae8; outline-offset: 3px; }
+      }
       .assistant-avatar .flower-center { fill: #ffe7a6; }
       .brand-copy { display: grid; gap: 1px; }
       .eyebrow { color: var(--lilac); font-size: 9px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; }
@@ -443,7 +450,7 @@ const CHAT_PAGE = `<!doctype html>
       </section>
       <div id="chat-screen" hidden>
       <header class="chat-header">
-        <div class="assistant-avatar" aria-hidden="true">
+        <div id="assistant-avatar" class="assistant-avatar" data-thinking="false" aria-hidden="true">
           <svg viewBox="0 0 32 32"><ellipse cx="16" cy="8.8" rx="4.2" ry="6.4"/><ellipse cx="23.2" cy="16" rx="6.4" ry="4.2"/><ellipse cx="16" cy="23.2" rx="4.2" ry="6.4"/><ellipse cx="8.8" cy="16" rx="6.4" ry="4.2"/><circle class="flower-center" cx="16" cy="16" r="3.1"/></svg>
         </div>
         <div class="brand-copy">
@@ -540,6 +547,7 @@ const CHAT_PAGE = `<!doctype html>
       const messages = document.querySelector("#messages");
       const welcome = document.querySelector("#welcome");
       const status = document.querySelector("#status");
+      const assistantAvatar = document.querySelector("#assistant-avatar");
       const themeToggle = document.querySelector("#theme-toggle");
       const themeColorMeta = document.querySelector("#theme-color");
       function applyTheme(theme, persist = false) {
@@ -916,6 +924,7 @@ const CHAT_PAGE = `<!doctype html>
 
       function setBusy(value) {
         busy = value;
+        assistantAvatar.dataset.thinking = String(value);
         button.disabled = value;
         signOutButton.disabled = value;
         actionMenuToggle.disabled = value;
