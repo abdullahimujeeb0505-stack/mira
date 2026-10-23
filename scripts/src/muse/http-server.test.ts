@@ -33,6 +33,8 @@ async function withServer(
     researchImageFinder: serverOptions.researchImageFinder ?? (async () => []),
     sessionSecret: testSessionSecret,
     memoryDirectory,
+    analyticsFilePath:
+      serverOptions.analyticsFilePath ?? join(memoryDirectory, "analytics.jsonl"),
     ...(sharedMemoryPath ? { sharedMemoryPath } : {}),
     providerFactory,
   });
@@ -261,7 +263,11 @@ test("Muse serves the chat page with same-origin security headers", async () =>
       assert.equal(response.headers.get("x-content-type-options"), "nosniff");
       assert.equal(response.headers.get("content-security-policy")?.includes("connect-src 'self'"), true);
       assert.doesNotMatch(html, /access-code|Chat access code|Bearer /i);
-      assert.doesNotMatch(html, /localStorage|sessionStorage/);
+      assert.match(html, /id="analytics-consent"/);
+      assert.match(html, /Allow analytics/);
+      assert.match(html, /muse-analytics-consent/);
+      assert.match(html, /api\/analytics\/collect/);
+      assert.doesNotMatch(html, /googletagmanager\.com|google-analytics\.com|plausible\.io/i);
     },
   ));
 
@@ -452,6 +458,10 @@ test("browser chat prevents duplicate submits and renders typed image-generation
         ["#messages", fakeElement("section")],
         ["#welcome", fakeElement("div")],
         ["#status", fakeElement("p")],
+        ["#analytics-consent", fakeElement("section")],
+        ["#analytics-accept", fakeElement("button")],
+        ["#analytics-decline", fakeElement("button")],
+        ["#analytics-settings", fakeElement("button")],
         ["#attachment-files", fakeElement("input")],
         ["#attachment-list", fakeElement("div")],
         ["#attachment-menu-toggle", fakeElement("button")],

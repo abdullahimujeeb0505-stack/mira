@@ -1,4 +1,9 @@
-import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
+import {
+  createHash,
+  createHmac,
+  randomBytes,
+  timingSafeEqual,
+} from "node:crypto";
 import {
   createServer,
   type IncomingMessage,
@@ -27,9 +32,23 @@ import {
 } from "./image-generation-command.js";
 import { createTaskAwareProviders } from "./provider-selection.js";
 import type { TextGenerationProvider } from "./llm-provider.js";
+import { WEB_ANALYTICS_DASHBOARD_PAGE } from "./web-analytics-page.js";
+import {
+  buildWebAnalyticsReport,
+  DEFAULT_WEB_ANALYTICS_RETENTION_DAYS,
+  JsonWebAnalyticsStore,
+  WEB_ANALYTICS_EVENT_TYPES,
+  type WebAnalyticsEventType,
+} from "./web-analytics.js";
 
 const SESSION_COOKIE_NAME = "muse_session";
 const SESSION_TTL_MS = 8 * 60 * 60 * 1_000;
+const ANALYTICS_VISITOR_COOKIE_NAME = "muse_analytics_visitor";
+const ANALYTICS_SESSION_COOKIE_NAME = "muse_analytics_session";
+const ANALYTICS_VISITOR_TTL_MS = DEFAULT_WEB_ANALYTICS_RETENTION_DAYS * 24 * 60 * 60 * 1_000;
+const ANALYTICS_SESSION_TTL_MS = 30 * 60 * 1_000;
+const ANALYTICS_PRUNE_INTERVAL_MS = 24 * 60 * 60 * 1_000;
+const MAX_ANALYTICS_REQUEST_BYTES = 2 * 1_024;
 const MAX_ACTIVE_SESSIONS = 500;
 const MAX_REQUEST_BYTES = 16 * 1_024;
 const MAX_MESSAGE_LENGTH = 4_000;
@@ -44,6 +63,9 @@ const MAX_IMAGE_GENERATIONS_PER_HOUR = 10;
 const MAX_IMAGE_ANALYSES_PER_HOUR = 20;
 const DEFAULT_MEMORY_DIRECTORY = fileURLToPath(
   new URL("../../data/muse-http-sessions/", import.meta.url),
+);
+const DEFAULT_WEB_ANALYTICS_FILE = fileURLToPath(
+  new URL("../../data/muse-web-analytics.jsonl", import.meta.url),
 );
 
 const MIRA_FAVICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
@@ -182,6 +204,20 @@ const CHAT_PAGE = `<!doctype html>
       .composer-hint span { color: #b38fc0; }
       #status { width: min(100%, 850px); align-self: center; flex: 0 0 auto; margin: 0 auto; padding: 0 clamp(16px, 5vw, 54px) 10px; color: var(--muted); font-size: 12px; line-height: 1.5; text-align: center; overflow-wrap: anywhere; }
       #status:empty { display: none; }
+      .analytics-preferences { flex: 0 0 auto; margin: 0 auto 8px; text-align: center; }
+      #analytics-settings { min-width: 0; min-height: 30px; padding: 0 8px; color: #796e8a; background: transparent; box-shadow: none; font-size: 10px; font-weight: 650; }
+      #analytics-settings:hover { color: #624b9c; text-decoration: underline; }
+      .analytics-preferences a { color: #796e8a; font-size: 10px; font-weight: 650; text-decoration: none; }
+      .analytics-preferences a:hover { color: #624b9c; text-decoration: underline; }
+      #analytics-consent { width: min(calc(100% - 32px), 820px); display: flex; flex: 0 0 auto; align-items: center; justify-content: space-between; gap: 14px; margin: 0 auto 10px; padding: 12px 15px; border: 1px solid #e8e1ed; border-radius: 16px; color: #544b62; background: #fcf9ff; box-shadow: 0 7px 22px #59487812; }
+      #analytics-consent[hidden] { display: none; }
+      .analytics-consent-copy { min-width: 0; }
+      .analytics-consent-title { margin: 0 0 3px; color: #443a55; font-size: 12px; font-weight: 800; }
+      .analytics-consent-description { margin: 0; color: #756e81; font-size: 11px; line-height: 1.5; }
+      .analytics-consent-actions { display: flex; flex: 0 0 auto; align-items: center; gap: 7px; }
+      .analytics-consent-actions button { min-width: 0; min-height: 36px; padding: 0 12px; font-size: 11px; }
+      #analytics-decline { border: 1px solid #e7deef; color: #695a82; background: #fff; box-shadow: none; }
+      #analytics-decline:hover { background: #f6f2fb; }
       @media (max-width: 620px) {
         body { padding: 0; }
         main { width: 100%; height: 100vh; height: 100dvh; min-height: 0; border: 0; border-radius: 0; box-shadow: none; }
@@ -208,6 +244,8 @@ const CHAT_PAGE = `<!doctype html>
         .attachment-list { padding-right: 12px; padding-left: 12px; }
         #status { padding-right: 12px; padding-left: 12px; }
         .composer-hint { padding-right: 12px; padding-left: 12px; }
+        #analytics-consent { width: calc(100% - 24px); align-items: stretch; flex-direction: column; gap: 9px; margin-bottom: 8px; padding: 11px 12px; }
+        .analytics-consent-actions { justify-content: flex-end; }
       }
       @media (max-width: 380px) {
         .header-note { padding: 7px; }
@@ -301,6 +339,17 @@ const CHAT_PAGE = `<!doctype html>
       </form>
       <p class="composer-hint"><span aria-hidden="true">✦</span> Any question, big idea, or tiny task is welcome.</p>
       <p id="status" role="status" aria-live="polite"></p>
+      <section id="analytics-consent" aria-labelledby="analytics-consent-title" aria-describedby="analytics-consent-description" hidden>
+        <div class="analytics-consent-copy">
+          <p id="analytics-consent-title" class="analytics-consent-title">Help improve Mira?</p>
+          <p id="analytics-consent-description" class="analytics-consent-description">Allow anonymous, first-party visit and feature counts. Analytics does not record chat text, prompts, file contents, IP addresses, or full referrers. You can change this choice later.</p>
+        </div>
+        <div class="analytics-consent-actions">
+          <button id="analytics-decline" type="button">No thanks</button>
+          <button id="analytics-accept" type="button">Allow analytics</button>
+        </div>
+      </section>
+      <p class="analytics-preferences"><button id="analytics-settings" type="button">Privacy &amp; analytics choices</button><span aria-hidden="true"> · </span><a href="/analytics">Site analytics</a></p>
     </main>
     <script>
       const form = document.querySelector("#chat-form");
@@ -309,6 +358,60 @@ const CHAT_PAGE = `<!doctype html>
       const messages = document.querySelector("#messages");
       const welcome = document.querySelector("#welcome");
       const status = document.querySelector("#status");
+      const analyticsConsentPanel = document.querySelector("#analytics-consent");
+      const analyticsAcceptButton = document.querySelector("#analytics-accept");
+      const analyticsDeclineButton = document.querySelector("#analytics-decline");
+      const analyticsSettingsButton = document.querySelector("#analytics-settings");
+      const ANALYTICS_CONSENT_KEY = "muse-analytics-consent";
+      let analyticsRequestQueue = Promise.resolve();
+      let analyticsConsent = "unknown";
+      try {
+        analyticsConsent = localStorage.getItem(ANALYTICS_CONSENT_KEY) || "unknown";
+      } catch {}
+
+      function recordAnalyticsEvent(type) {
+        if (analyticsConsent !== "accepted") return;
+        analyticsRequestQueue = analyticsRequestQueue
+          .then(() => fetch("/api/analytics/collect", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ type, path: location.pathname }),
+            keepalive: true,
+          }))
+          .catch(() => {});
+      }
+
+      function isExplicitImageGenerationCommand(message) {
+        return /^(?:\\/(?:imagine|image|generate-image)\\b|(?:please\\s+)?(?:(?:can|could|would)\\s+you\\s+)?(?:please\\s+)?(?:generate|create|make|draw|paint|illustrate)\\s+(?:me\\s+)?(?:an?\\s+)?(?:image|picture|illustration|artwork|visual)\\b)/i.test(message.trim());
+      }
+
+      function chooseAnalyticsConsent(choice) {
+        analyticsConsent = choice;
+        try { localStorage.setItem(ANALYTICS_CONSENT_KEY, choice); } catch {}
+        analyticsConsentPanel.hidden = true;
+        if (choice === "accepted") {
+          recordAnalyticsEvent("page_view");
+        } else {
+          analyticsRequestQueue = analyticsRequestQueue
+            .then(() => fetch("/api/analytics/forget", { method: "POST", keepalive: true }))
+            .catch(() => {});
+        }
+      }
+
+      analyticsAcceptButton.addEventListener("click", () => chooseAnalyticsConsent("accepted"));
+      analyticsDeclineButton.addEventListener("click", () => chooseAnalyticsConsent("declined"));
+      analyticsSettingsButton.addEventListener("click", () => {
+        analyticsConsentPanel.hidden = false;
+        analyticsAcceptButton.focus();
+      });
+      if (analyticsConsent === "accepted") {
+        analyticsConsentPanel.hidden = true;
+        recordAnalyticsEvent("page_view");
+      } else if (analyticsConsent === "declined") {
+        analyticsConsentPanel.hidden = true;
+      } else {
+        analyticsConsentPanel.hidden = false;
+      }
 
       messages.addEventListener("click", (event) => {
         const promptButton = event.target?.closest?.("button[data-prompt]");
@@ -678,6 +781,7 @@ const CHAT_PAGE = `<!doctype html>
             const result = await response.json().catch(() => ({}));
             if (!response.ok) throw new Error(result.error || "Could not upload " + file.name + ".");
             attachments.push(result.attachment);
+            recordAnalyticsEvent("attachment_uploaded");
             renderAttachments();
           }
           status.textContent = "Attachment ready. It will be discarded after your next message.";
@@ -791,6 +895,11 @@ const CHAT_PAGE = `<!doctype html>
         updateComposerHeight();
         setBusy(true);
         status.textContent = "Mira is thinking…";
+        recordAnalyticsEvent(
+          isExplicitImageGenerationCommand(message)
+            ? "image_generation_requested"
+            : "chat_message_sent",
+        );
         try {
           const response = await fetch("/api/chat", {
             method: "POST",
@@ -841,6 +950,7 @@ const CHAT_PAGE = `<!doctype html>
         updateComposerHeight();
         setBusy(true);
         status.textContent = "Mira is creating your image…";
+        recordAnalyticsEvent("image_generation_requested");
         try {
           const response = await fetch("/api/images/generate", {
             method: "POST",
@@ -921,6 +1031,7 @@ const CHAT_PAGE = `<!doctype html>
             voiceButton.disabled = true;
             setVoiceButtonListening(true);
             status.textContent = "Listening…";
+            recordAnalyticsEvent("voice_input_started");
             voiceRecognition.start();
           } catch {
             voiceButton.disabled = false;
@@ -971,6 +1082,12 @@ export interface MuseHttpServerOptions {
   researchRunner?: ResearchRunner;
   researchImageFinder?: ResearchImageFinder;
   mediaProviderFactory?: () => MuseMediaProvider;
+  /** Local append-only first-party event log. Defaults to scripts/data/muse-web-analytics.jsonl. */
+  analyticsFilePath?: string;
+  /** Server-only bearer token for the private /analytics dashboard. */
+  analyticsAdminToken?: string;
+  /** Number of days to keep raw pseudonymous analytics events; defaults to 90. */
+  analyticsRetentionDays?: number;
   maxActiveSessions?: number;
   sessionTtlMs?: number;
 }
@@ -989,6 +1106,20 @@ export function createMuseHttpServer(
     options.memoryDirectory ??
     process.env.MUSE_HTTP_MEMORY_DIR ??
     DEFAULT_MEMORY_DIRECTORY;
+  const analyticsFilePath =
+    options.analyticsFilePath?.trim() ||
+    process.env.MUSE_WEB_ANALYTICS_FILE?.trim() ||
+    DEFAULT_WEB_ANALYTICS_FILE;
+  const analyticsRetentionDays =
+    options.analyticsRetentionDays ?? DEFAULT_WEB_ANALYTICS_RETENTION_DAYS;
+  const analyticsAdminToken = (
+    options.analyticsAdminToken ?? process.env.MUSE_ANALYTICS_ADMIN_TOKEN ?? ""
+  ).trim();
+  const analyticsAdminEnabled = Buffer.byteLength(analyticsAdminToken, "utf8") >= 32;
+  const analyticsStore = new JsonWebAnalyticsStore(
+    analyticsFilePath,
+    analyticsRetentionDays,
+  );
   const defaultTasks = options.providerFactory
     ? undefined
     : createTaskAwareProviders();
@@ -1109,7 +1240,148 @@ export function createMuseHttpServer(
     });
   }
 
-  return createServer((request, response) => {
+  async function handleAnalyticsCollect(
+    request: IncomingMessage,
+    response: ServerResponse,
+  ): Promise<void> {
+    if (request.method !== "POST") {
+      response.setHeader("Allow", "POST");
+      sendJson(response, 405, { error: "Use POST to record an analytics event." });
+      return;
+    }
+    if (
+      request.headers["content-type"]?.split(";")[0]?.trim() !==
+      "application/json"
+    ) {
+      sendJson(response, 415, { error: "Send analytics events as JSON." });
+      return;
+    }
+
+    let body: unknown;
+    try {
+      const bytes = await readBoundedRequestBody(
+        request,
+        MAX_ANALYTICS_REQUEST_BYTES,
+      );
+      body = JSON.parse(bytes.toString("utf8")) as unknown;
+    } catch (error) {
+      sendJson(
+        response,
+        error instanceof RequestBodyTooLargeError ? 413 : 400,
+        { error: "The analytics event is invalid." },
+      );
+      return;
+    }
+    if (
+      !isRecord(body) ||
+      typeof body.type !== "string" ||
+      !WEB_ANALYTICS_EVENT_TYPES.includes(
+        body.type as WebAnalyticsEventType,
+      )
+    ) {
+      sendJson(response, 400, { error: "The analytics event type is invalid." });
+      return;
+    }
+
+    const visitorId =
+      readSignedAnalyticsCookie(
+        request,
+        ANALYTICS_VISITOR_COOKIE_NAME,
+        sessionSecret,
+      ) ?? randomBytes(32).toString("hex");
+    const sessionId =
+      readSignedAnalyticsCookie(
+        request,
+        ANALYTICS_SESSION_COOKIE_NAME,
+        sessionSecret,
+      ) ?? randomBytes(32).toString("hex");
+    const now = Date.now();
+    await analyticsStore.record({
+      timestamp: now,
+      visitorHash: hashAnalyticsId(visitorId),
+      sessionHash: hashAnalyticsId(sessionId),
+      type: body.type as WebAnalyticsEventType,
+      path: normalizeAnalyticsPath(body.path),
+    });
+    response.setHeader("Set-Cookie", [
+      writeAnalyticsCookie(
+        request,
+        ANALYTICS_VISITOR_COOKIE_NAME,
+        visitorId,
+        sessionSecret,
+        ANALYTICS_VISITOR_TTL_MS,
+      ),
+      writeAnalyticsCookie(
+        request,
+        ANALYTICS_SESSION_COOKIE_NAME,
+        sessionId,
+        sessionSecret,
+        ANALYTICS_SESSION_TTL_MS,
+      ),
+    ]);
+    sendJson(response, 202, { recorded: true });
+  }
+
+  function handleAnalyticsForget(
+    request: IncomingMessage,
+    response: ServerResponse,
+  ): void {
+    if (request.method !== "POST") {
+      response.setHeader("Allow", "POST");
+      sendJson(response, 405, { error: "Use POST to clear analytics cookies." });
+      return;
+    }
+    response.setHeader("Set-Cookie", [
+      clearAnalyticsCookie(request, ANALYTICS_VISITOR_COOKIE_NAME),
+      clearAnalyticsCookie(request, ANALYTICS_SESSION_COOKIE_NAME),
+    ]);
+    sendJson(response, 200, { cleared: true });
+  }
+
+  async function handleAnalyticsReport(
+    request: IncomingMessage,
+    response: ServerResponse,
+  ): Promise<void> {
+    if (request.method !== "GET") {
+      response.setHeader("Allow", "GET");
+      sendJson(response, 405, { error: "Use GET to load analytics." });
+      return;
+    }
+    if (!analyticsAdminEnabled) {
+      sendJson(response, 503, {
+        error:
+          "Analytics dashboard is locked until MUSE_ANALYTICS_ADMIN_TOKEN is set to a secret with at least 32 characters.",
+      });
+      return;
+    }
+    if (!isAnalyticsAdminRequest(request, analyticsAdminToken)) {
+      sendJson(response, 401, { error: "Analytics admin token is incorrect." });
+      return;
+    }
+
+    const url = new URL(request.url ?? "/api/analytics/report", "http://localhost");
+    const days = Number(url.searchParams.get("days") ?? "30");
+    if (![7, 30, 90].includes(days)) {
+      sendJson(response, 400, { error: "Choose a report period of 7, 30, or 90 days." });
+      return;
+    }
+    const now = Date.now();
+    const events = await analyticsStore.readEvents(now);
+    const report = buildWebAnalyticsReport(
+      events,
+      days,
+      now,
+      analyticsRetentionDays,
+    );
+    sendJson(response, 200, report as unknown as Record<string, unknown>);
+  }
+
+  void analyticsStore.prune().catch(() => {});
+  const analyticsPruneTimer = setInterval(() => {
+    void analyticsStore.prune().catch(() => {});
+  }, ANALYTICS_PRUNE_INTERVAL_MS);
+  analyticsPruneTimer.unref();
+  const server = createServer((request, response) => {
     void handleRequest(request, response).catch(() => {
       if (!response.headersSent && !response.destroyed) {
         sendJson(response, 500, {
@@ -1118,6 +1390,8 @@ export function createMuseHttpServer(
       }
     });
   });
+  server.once("close", () => clearInterval(analyticsPruneTimer));
+  return server;
 
   async function handleRequest(
     request: IncomingMessage,
@@ -1138,6 +1412,26 @@ export function createMuseHttpServer(
       response.statusCode = 200;
       response.setHeader("Content-Type", "text/html; charset=utf-8");
       response.end(CHAT_PAGE);
+      return;
+    }
+
+    if (request.method === "GET" && pathname === "/analytics") {
+      response.statusCode = 200;
+      response.setHeader("Content-Type", "text/html; charset=utf-8");
+      response.end(WEB_ANALYTICS_DASHBOARD_PAGE);
+      return;
+    }
+
+    if (pathname === "/api/analytics/collect") {
+      await handleAnalyticsCollect(request, response);
+      return;
+    }
+    if (pathname === "/api/analytics/forget") {
+      handleAnalyticsForget(request, response);
+      return;
+    }
+    if (pathname === "/api/analytics/report") {
+      await handleAnalyticsReport(request, response);
       return;
     }
 
@@ -1692,6 +1986,99 @@ export function createMuseHttpServer(
     writeSessionCookie(request, response, id, sessionSecret, sessionTtlMs);
     return session;
   }
+}
+
+function hashAnalyticsId(id: string): string {
+  return createHash("sha256").update(id).digest("hex");
+}
+
+function normalizeAnalyticsPath(value: unknown): string {
+  if (typeof value !== "string") return "/";
+  const path = (value.split(/[?#]/, 1)[0] ?? "/").trim();
+  if (
+    !path.startsWith("/") ||
+    path.startsWith("//") ||
+    path.length > 120 ||
+    !/^\/[a-zA-Z0-9/_-]*$/.test(path)
+  ) {
+    return "/";
+  }
+  return path || "/";
+}
+
+function readSignedAnalyticsCookie(
+  request: IncomingMessage,
+  name: string,
+  secret: string,
+): string | undefined {
+  const cookieHeader = request.headers.cookie;
+  if (!cookieHeader) return undefined;
+  const cookie = cookieHeader
+    .split(";")
+    .map((part) => part.trim())
+    .find((part) => part.startsWith(`${name}=`));
+  if (!cookie) return undefined;
+  const [id, signature, extra] = cookie.slice(name.length + 1).split(".");
+  if (
+    extra !== undefined ||
+    !/^[a-f0-9]{64}$/.test(id ?? "") ||
+    !/^[a-f0-9]{64}$/.test(signature ?? "")
+  ) {
+    return undefined;
+  }
+  const expected = createHmac("sha256", secret)
+    .update(name)
+    .update("\u0000")
+    .update(id)
+    .digest();
+  const received = Buffer.from(signature, "hex");
+  return timingSafeEqual(expected, received) ? id : undefined;
+}
+
+function writeAnalyticsCookie(
+  request: IncomingMessage,
+  name: string,
+  id: string,
+  secret: string,
+  ttlMs: number,
+): string {
+  const signature = createHmac("sha256", secret)
+    .update(name)
+    .update("\u0000")
+    .update(id)
+    .digest("hex");
+  const maxAgeSeconds = Math.max(1, Math.floor(ttlMs / 1_000));
+  return `${name}=${id}.${signature}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAgeSeconds}${secureCookieAttribute(request)}`;
+}
+
+function clearAnalyticsCookie(
+  request: IncomingMessage,
+  name: string,
+): string {
+  return `${name}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secureCookieAttribute(request)}`;
+}
+
+function secureCookieAttribute(request: IncomingMessage): string {
+  const forwardedProtocol = request.headers["x-forwarded-proto"];
+  const isSecure =
+    typeof forwardedProtocol === "string" &&
+    forwardedProtocol.split(",")[0].trim().toLowerCase() === "https";
+  return isSecure ? "; Secure" : "";
+}
+
+function isAnalyticsAdminRequest(
+  request: IncomingMessage,
+  expectedToken: string,
+): boolean {
+  const authorization = request.headers.authorization;
+  if (typeof authorization !== "string" || !authorization.startsWith("Bearer ")) {
+    return false;
+  }
+  const suppliedToken = authorization.slice("Bearer ".length).trim();
+  if (!suppliedToken) return false;
+  const expectedHash = createHash("sha256").update(expectedToken).digest();
+  const suppliedHash = createHash("sha256").update(suppliedToken).digest();
+  return timingSafeEqual(expectedHash, suppliedHash);
 }
 
 function readSessionId(
