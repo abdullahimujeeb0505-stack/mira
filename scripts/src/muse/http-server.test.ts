@@ -196,6 +196,7 @@ test("Muse serves the chat page with same-origin security headers", async () =>
       assert.ok(script);
       assert.doesNotThrow(() => new Script(script));
       assert.match(html, /Mira — conversational assistant by Muse/);
+      assert.match(html, /<link rel="icon" type="image\/svg\+xml" href="\/favicon\.svg">/);
       assert.match(html, /MUSE AI/);
       assert.match(html, /Hi, I’m Mira\. How can I help\?/);
       assert.match(html, /id="welcome" class="welcome-screen"/);
@@ -231,7 +232,10 @@ test("Muse serves the chat page with same-origin security headers", async () =>
       assert.match(html, /SpeechRecognition/);
       assert.match(html, /speechSynthesis/);
       assert.match(html, /Read Mira's response aloud/);
-      assert.match(html, /speak\.textContent = "🔊"/);
+      assert.match(html, /speak\.append\(createActionIcon\(/);
+      assert.doesNotMatch(html, /speak\.textContent = "🔊"/);
+      assert.match(html, /download\.append\(createActionIcon\(/);
+      assert.match(html, /className = "download-button"/);
       assert.match(html, /api\/images\/generate/);
       assert.match(html, /URL\.createObjectURL/);
       assert.match(html, /Download image/);
@@ -246,8 +250,12 @@ test("Muse serves the chat page with same-origin security headers", async () =>
       assert.match(html, /max-width: 100%; overflow-x: auto/);
       assert.match(
         response.headers.get("content-security-policy") ?? "",
-        /img-src https:\/\/upload\.wikimedia\.org https:\/\/api\.openverse\.org/,
+        /img-src 'self' https:\/\/upload\.wikimedia\.org https:\/\/api\.openverse\.org/,
       );
+      const favicon = await fetch(`${baseUrl}/favicon.svg`);
+      assert.equal(favicon.status, 200);
+      assert.match(favicon.headers.get("content-type") ?? "", /image\/svg\+xml/);
+      assert.match(await favicon.text(), /<svg xmlns="http:\/\/www\.w3\.org\/2000\/svg"/);
       assert.doesNotMatch(html, /\.innerHTML\s*=/);
       assert.equal(response.headers.get("cache-control"), "no-store");
       assert.equal(response.headers.get("x-content-type-options"), "nosniff");
@@ -268,6 +276,7 @@ test("browser Markdown rendering handles sourced images and normalizes other Mar
       const document = {
         querySelector: () => fakeElement("input"),
         createElement: (tagName: string) => fakeElement(tagName),
+        createElementNS: (_namespace: string, tagName: string) => fakeElement(tagName),
         addEventListener() {},
         createTextNode: (text: string) => {
           const node = fakeElement("#text");
@@ -455,6 +464,7 @@ test("browser chat prevents duplicate submits and renders typed image-generation
       const document = {
         querySelector: (selector: string) => elements.get(selector),
         createElement: (tagName: string) => fakeElement(tagName),
+        createElementNS: (_namespace: string, tagName: string) => fakeElement(tagName),
         addEventListener(name: string, listener: (event: any) => void) {
           if (name === "click") documentClickHandler = listener;
         },
@@ -473,10 +483,28 @@ test("browser chat prevents duplicate submits and renders typed image-generation
       let resolveFetch: ((value: FakeResponse) => void) | undefined;
       let fetchCalls = 0;
       const fetchUrls: string[] = [];
+      const spoken: string[] = [];
+      class FakeSpeechSynthesisUtterance {
+        text: string;
+        lang = "";
+        constructor(text: string) {
+          this.text = text;
+        }
+      }
+      const speechWindow = {
+        speechSynthesis: {
+          cancel() {},
+          speak(utterance: FakeSpeechSynthesisUtterance) {
+            spoken.push(utterance.text);
+          },
+        },
+        SpeechSynthesisUtterance: FakeSpeechSynthesisUtterance,
+      };
       const sandbox = {
         document,
         URL,
-        window: {},
+        window: speechWindow,
+        SpeechSynthesisUtterance: FakeSpeechSynthesisUtterance,
         navigator: { language: "en" },
         fetch: (url: string) => {
           fetchCalls += 1;
@@ -606,6 +634,15 @@ test("browser chat prevents duplicate submits and renders typed image-generation
 
       assert.equal(messages.children.length, 2);
       assert.equal(fetchCalls, 1);
+      const replyMessage = messages.children[1];
+      const readAloud = replyMessage?.children
+        .find((child) => child.className === "message-actions")
+        ?.children[0];
+      assert.equal(readAloud?.className, "speak-button");
+      assert.equal(readAloud?.attributes["aria-label"], "Read Mira's response aloud");
+      assert.equal(readAloud?.children[0]?.tagName, "svg");
+      readAloud?.listeners.click?.({});
+      assert.equal(spoken.length, 1);
 
       input.value = "Generate an image of a red fox under the stars";
       const imageSubmit = submit({ preventDefault() {} });
@@ -634,10 +671,11 @@ test("browser chat prevents duplicate submits and renders typed image-generation
         generatedMessage?.children[0]?.alt,
         "Image generated by Mira",
       );
-      assert.equal(
-        generatedMessage?.children[1]?.children[0]?.textContent,
-        "Download image",
-      );
+      const downloadButton = generatedMessage?.children[1]?.children[0];
+      assert.equal(downloadButton?.tagName, "a");
+      assert.equal(downloadButton?.className, "download-button");
+      assert.equal(downloadButton?.attributes["aria-label"], "Download image");
+      assert.equal(downloadButton?.children[0]?.tagName, "svg");
       assert.match(elements.get("#status")?.textContent ?? "", /Image ready/);
       assert.equal(fetchCalls, 2);
     },
