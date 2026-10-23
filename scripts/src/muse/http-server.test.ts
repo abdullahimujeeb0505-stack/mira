@@ -88,9 +88,11 @@ type FakeElement = {
   focused: boolean;
   attributes: Record<string, string>;
   dataset: Record<string, string>;
+  parent: FakeElement | null;
   listeners: Record<string, (event: any) => void | Promise<void>>;
   append(...elements: FakeElement[]): void;
   replaceChildren(...elements: FakeElement[]): void;
+  remove(): void;
   setAttribute(name: string, value: string): void;
   addEventListener(
     name: string,
@@ -116,12 +118,24 @@ function fakeElement(tagName: string): FakeElement {
     focused: false,
     attributes: {},
     dataset: {},
+    parent: null,
     listeners: {},
     append(...elements) {
-      this.children.push(...elements);
+      for (const element of elements) {
+        element.remove();
+        element.parent = this;
+        this.children.push(element);
+      }
     },
     replaceChildren(...elements) {
-      this.children = [...elements];
+      for (const child of this.children) child.parent = null;
+      this.children = [];
+      this.append(...elements);
+    },
+    remove() {
+      if (!this.parent) return;
+      this.parent.children = this.parent.children.filter((child) => child !== this);
+      this.parent = null;
     },
     setAttribute(name, value) {
       this.attributes[name] = value;
@@ -218,8 +232,9 @@ test("Muse serves the chat page with same-origin security headers", async () =>
       assert.match(html, /api\/history/);
       assert.match(html, /Built by <a href="https:\/\/x\.com\/Great_mujey"/);
       assert.match(html, /<h1>Mira<\/h1>/);
-      assert.match(html, /id="assistant-avatar" class="assistant-avatar" data-thinking="false"/);
-      assert.match(html, /\.assistant-avatar\[data-thinking="true"\] svg \{ animation: mira-logo-roll/);
+      assert.doesNotMatch(html, /assistant-avatar[^>]*data-thinking/);
+      assert.match(html, /item\.className = "message muse thinking-indicator"/);
+      assert.match(html, /\.thinking-logo svg \{[^}]*animation: mira-logo-roll/);
       assert.match(html, /@keyframes mira-logo-roll/);
       assert.match(html, /prefers-reduced-motion: reduce/);
       assert.doesNotMatch(
@@ -473,8 +488,6 @@ test("browser chat prevents duplicate submits and renders typed image-generation
       assert.ok(script);
       const actionMenu = fakeElement("div");
       actionMenu.hidden = true;
-      const assistantAvatar = fakeElement("div");
-      assistantAvatar.dataset.thinking = "false";
       const elements = new Map<string, FakeElement>([
         ["#auth-screen", fakeElement("section")],
         ["#chat-screen", fakeElement("div")],
@@ -494,7 +507,6 @@ test("browser chat prevents duplicate submits and renders typed image-generation
         ["#message", fakeElement("textarea")],
         ["#send", fakeElement("button")],
         ["#messages", fakeElement("section")],
-        ["#assistant-avatar", assistantAvatar],
         ["#welcome", fakeElement("div")],
         ["#status", fakeElement("p")],
         ["#theme-toggle", fakeElement("button")],
@@ -679,11 +691,18 @@ test("browser chat prevents duplicate submits and renders typed image-generation
       input.value = "Why?";
 
       const firstSubmit = submit({ preventDefault() {} });
-      assert.equal(assistantAvatar.dataset.thinking, "true");
-      assert.match(elements.get("#status")?.textContent ?? "", /Mira is thinking/);
+      const thinkingIndicator = messages.children[1];
+      assert.equal(thinkingIndicator?.className, "message muse thinking-indicator");
+      assert.equal(thinkingIndicator?.attributes.role, "status");
+      assert.equal(thinkingIndicator?.attributes["aria-label"], "Mira is thinking…");
+      assert.equal(thinkingIndicator?.children[0]?.className, "thinking-logo");
+      assert.equal(thinkingIndicator?.children[0]?.children[0]?.tagName, "svg");
+      assert.equal(thinkingIndicator?.children[1]?.textContent, "Mira is thinking…");
+      assert.equal(elements.get("#status")?.textContent, "");
       await submit({ preventDefault() {} });
       assert.equal(fetchCalls, 1);
-      assert.equal(messages.children.length, 1);
+      assert.equal(messages.children.length, 2);
+      assert.equal(messages.children[1], thinkingIndicator);
       assert.equal(welcome.hidden, true);
 
       resolveFetch?.({
@@ -693,9 +712,9 @@ test("browser chat prevents duplicate submits and renders typed image-generation
         blob: async () => new Blob(),
       });
       await firstSubmit;
-      assert.equal(assistantAvatar.dataset.thinking, "false");
 
       assert.equal(messages.children.length, 2);
+      assert.equal(messages.children[1]?.className, "message muse");
       assert.equal(fetchCalls, 1);
       const replyMessage = messages.children[1];
       const readAloud = replyMessage?.children
@@ -709,10 +728,11 @@ test("browser chat prevents duplicate submits and renders typed image-generation
 
       input.value = "Generate an image of a red fox under the stars";
       const imageSubmit = submit({ preventDefault() {} });
-      assert.equal(assistantAvatar.dataset.thinking, "true");
       assert.equal(fetchCalls, 2);
       assert.deepEqual(fetchUrls, ["/api/chat", "/api/chat"]);
-      assert.equal(messages.children.length, 3);
+      assert.equal(messages.children.length, 4);
+      assert.equal(messages.children[3]?.className, "message muse thinking-indicator");
+      assert.equal(messages.children[3]?.children[1]?.textContent, "Mira is thinking…");
       resolveFetch?.({
         ok: true,
         headers: { get: () => "image/png" },
@@ -726,7 +746,6 @@ test("browser chat prevents duplicate submits and renders typed image-generation
           ),
       });
       await imageSubmit;
-      assert.equal(assistantAvatar.dataset.thinking, "false");
 
       assert.equal(messages.children.length, 4);
       const generatedMessage = messages.children[3];
