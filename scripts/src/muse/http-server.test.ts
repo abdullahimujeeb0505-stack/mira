@@ -198,6 +198,8 @@ test("Muse serves the chat page with same-origin security headers", async () =>
       assert.match(html, /Mira — conversational assistant by Muse/);
       assert.match(html, /MUSE AI/);
       assert.match(html, /Hi, I’m Mira\. How can I help\?/);
+      assert.match(html, /id="welcome" class="welcome-screen"/);
+      assert.match(html, /data-prompt="Help me brainstorm some fresh ideas for a project\."/);
       assert.match(html, /Message to Mira/);
       assert.match(html, /<h1>Mira<\/h1>/);
       assert.doesNotMatch(
@@ -222,7 +224,7 @@ test("Muse serves the chat page with same-origin security headers", async () =>
       assert.match(html, /aria-label="Send message"/);
       assert.match(html, /#attachment-menu\[hidden\]/);
       assert.match(html, /#status:empty \{ display: none; \}/);
-      assert.match(html, /\.message\.muse\s*\{[^}]*background: transparent/s);
+      assert.match(html, /\.message\.muse\s*\{[^}]*background: #fff;/s);
       assert.match(html, /\.message\.you\s*\{[^}]*align-self: flex-end/s);
       assert.doesNotMatch(html, />Use microphone</);
       assert.doesNotMatch(html, />Create image</);
@@ -439,6 +441,7 @@ test("browser chat prevents duplicate submits and renders typed image-generation
         ["#message", fakeElement("textarea")],
         ["#send", fakeElement("button")],
         ["#messages", fakeElement("section")],
+        ["#welcome", fakeElement("div")],
         ["#status", fakeElement("p")],
         ["#attachment-files", fakeElement("input")],
         ["#attachment-list", fakeElement("div")],
@@ -489,8 +492,22 @@ test("browser chat prevents duplicate submits and renders typed image-generation
       const attach = elements.get("#attach");
       const generateImage = elements.get("#generate-image");
       const input = elements.get("#message");
-      assert.ok(toggle && attach && generateImage && input);
+      const messages = elements.get("#messages");
+      const welcome = elements.get("#welcome");
+      assert.ok(toggle && attach && generateImage && input && messages && welcome);
       assert.equal(actionMenu.hidden, true);
+      messages.listeners.click?.({
+        target: {
+          closest: () => ({
+            dataset: {
+              prompt: "Help me brainstorm some fresh ideas for a project.",
+            },
+          }),
+        },
+      });
+      assert.equal(input.value, "Help me brainstorm some fresh ideas for a project.");
+      assert.equal(input.focused, true);
+      assert.equal(welcome.hidden, false);
       toggle.listeners.click?.({});
       assert.equal(actionMenu.hidden, false);
       assert.equal(toggle.attributes["aria-expanded"], "true");
@@ -569,7 +586,6 @@ test("browser chat prevents duplicate submits and renders typed image-generation
       });
       assert.equal(enterSubmitted, 1);
 
-      const messages = elements.get("#messages");
       const submit = form?.listeners.submit;
       assert.ok(input && messages && submit);
       input.value = "Why?";
@@ -578,6 +594,7 @@ test("browser chat prevents duplicate submits and renders typed image-generation
       await submit({ preventDefault() {} });
       assert.equal(fetchCalls, 1);
       assert.equal(messages.children.length, 1);
+      assert.equal(welcome.hidden, true);
 
       resolveFetch?.({
         ok: true,
