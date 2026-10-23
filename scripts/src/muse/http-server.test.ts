@@ -29,13 +29,18 @@ async function withServer(
 ): Promise<void> {
   const memoryDirectory = await mkdtemp(join(tmpdir(), "muse-http-test-"));
   const server = createMuseHttpServer({
-    ...serverOptions,
-    researchImageFinder: serverOptions.researchImageFinder ?? (async () => []),
     sessionSecret: testSessionSecret,
     memoryDirectory,
     analyticsFilePath:
       serverOptions.analyticsFilePath ?? join(memoryDirectory, "analytics.jsonl"),
+    authFilePath:
+      serverOptions.authFilePath ?? join(memoryDirectory, "muse-web-users.json"),
+    historyDirectory:
+      serverOptions.historyDirectory ?? join(memoryDirectory, "muse-web-history"),
+    authEnabled: serverOptions.authEnabled ?? false,
     ...(sharedMemoryPath ? { sharedMemoryPath } : {}),
+    ...serverOptions,
+    researchImageFinder: serverOptions.researchImageFinder ?? (async () => []),
     providerFactory,
   });
   await new Promise<void>((resolve, reject) => {
@@ -204,6 +209,11 @@ test("Muse serves the chat page with same-origin security headers", async () =>
       assert.match(html, /id="welcome" class="welcome-screen"/);
       assert.match(html, /data-prompt="Help me brainstorm some fresh ideas for a project\."/);
       assert.match(html, /Message to Mira/);
+      assert.match(html, /id="auth-form"/);
+      assert.match(html, /id="auth-username"/);
+      assert.match(html, /id="auth-password"/);
+      assert.match(html, /api\/history/);
+      assert.match(html, /Built by <a href="https:\/\/x\.com\/Great_mujey"/);
       assert.match(html, /<h1>Mira<\/h1>/);
       assert.doesNotMatch(
         html,
@@ -452,6 +462,20 @@ test("browser chat prevents duplicate submits and renders typed image-generation
       const actionMenu = fakeElement("div");
       actionMenu.hidden = true;
       const elements = new Map<string, FakeElement>([
+        ["#auth-screen", fakeElement("section")],
+        ["#chat-screen", fakeElement("div")],
+        ["#auth-form", fakeElement("form")],
+        ["#auth-username", fakeElement("input")],
+        ["#auth-password", fakeElement("input")],
+        ["#auth-title", fakeElement("h2")],
+        ["#auth-description", fakeElement("p")],
+        ["#auth-note", fakeElement("p")],
+        ["#auth-submit", fakeElement("button")],
+        ["#auth-toggle", fakeElement("button")],
+        ["#auth-switch-copy", fakeElement("span")],
+        ["#auth-status", fakeElement("p")],
+        ["#account-username", fakeElement("span")],
+        ["#sign-out", fakeElement("button")],
         ["#chat-form", fakeElement("form")],
         ["#message", fakeElement("textarea")],
         ["#send", fakeElement("button")],
@@ -486,8 +510,9 @@ test("browser chat prevents duplicate submits and renders typed image-generation
       };
       type FakeResponse = {
         ok: boolean;
+        status?: number;
         headers: { get(name: string): string | null };
-        json(): Promise<{ reply?: string; error?: string; notices?: string[] }>;
+        json(): Promise<any>;
         blob(): Promise<Blob>;
       };
       let resolveFetch: ((value: FakeResponse) => void) | undefined;
@@ -517,6 +542,14 @@ test("browser chat prevents duplicate submits and renders typed image-generation
         SpeechSynthesisUtterance: FakeSpeechSynthesisUtterance,
         navigator: { language: "en" },
         fetch: (url: string) => {
+          if (url === "/api/auth/me") {
+            return Promise.resolve({
+              ok: true,
+              headers: { get: () => "application/json" },
+              json: async () => ({ authenticated: false }),
+              blob: async () => new Blob(),
+            } satisfies FakeResponse);
+          }
           fetchCalls += 1;
           fetchUrls.push(url);
           return new Promise<FakeResponse>((resolve) => {
@@ -691,7 +724,100 @@ test("browser chat prevents duplicate submits and renders typed image-generation
     },
   ));
 
-test("chat page and API work without an access code", async () => {
+test("browser sign-up leads into the account's saved conversation", async () =>
+  withServer(
+    () => ({ generateText: async () => "unused" }),
+    async (baseUrl) => {
+      const response = await fetch(baseUrl);
+      const html = await response.text();
+      const script = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
+      assert.ok(script);
+      const selectors = [
+        "#auth-screen", "#chat-screen", "#auth-form", "#auth-username",
+        "#auth-password", "#auth-title", "#auth-description", "#auth-note",
+        "#auth-submit", "#auth-toggle", "#auth-switch-copy", "#auth-status",
+        "#account-username", "#sign-out", "#analytics-consent", "#analytics-accept",
+        "#analytics-decline", "#analytics-settings", "#chat-form", "#message", "#send",
+        "#messages", "#welcome", "#status", "#attachment-files",
+        "#attachment-list", "#attachment-menu-toggle", "#attachment-menu",
+        "#attach", "#voice-input", "#generate-image",
+      ];
+      const elements = new Map<string, FakeElement>(
+        selectors.map((selector): [string, FakeElement] => [
+          selector,
+          fakeElement("div"),
+        ]),
+      );
+      const document = {
+        querySelector: (selector: string) => elements.get(selector),
+        createElement: (tagName: string) => fakeElement(tagName),
+        createElementNS: (_namespace: string, tagName: string) => fakeElement(tagName),
+        addEventListener() {},
+        createTextNode: (text: string) => {
+          const node = fakeElement("#text");
+          node.textContent = text;
+          return node;
+        },
+      };
+      const requestedUrls: string[] = [];
+      const sandbox = {
+        document,
+        URL,
+        window: {},
+        navigator: { language: "en" },
+        fetch: async (url: string) => {
+          requestedUrls.push(url);
+          if (url === "/api/auth/me") {
+            return { ok: true, status: 200, json: async () => ({ authenticated: false }) };
+          }
+          if (url === "/api/auth/register") {
+            return { ok: true, status: 201, json: async () => ({ user: { id: "user-1", username: "Nova" } }) };
+          }
+          if (url === "/api/history") {
+            return {
+              ok: true,
+              status: 200,
+              json: async () => ({
+                messages: [
+                  { role: "user", content: "I am back." },
+                  { role: "assistant", content: "Welcome home." },
+                ],
+              }),
+            };
+          }
+          throw new Error("Unexpected preview request: " + url);
+        },
+      };
+      new Script(script).runInNewContext(sandbox);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      const authScreen = elements.get("#auth-screen");
+      const chatScreen = elements.get("#chat-screen");
+      const authForm = elements.get("#auth-form");
+      const username = elements.get("#auth-username");
+      const password = elements.get("#auth-password");
+      const authToggle = elements.get("#auth-toggle");
+      assert.ok(authScreen && chatScreen && authForm && username && password && authToggle);
+      authToggle.listeners.click?.({});
+      assert.equal(elements.get("#auth-title")?.textContent, "Create your Mira account");
+      username.value = "Nova";
+      password.value = "a-safe-passphrase";
+      await authForm.listeners.submit?.({ preventDefault() {} });
+
+      assert.equal(authScreen.hidden, true);
+      assert.equal(chatScreen.hidden, false);
+      assert.equal(elements.get("#account-username")?.textContent, "Nova");
+      assert.deepEqual(requestedUrls, ["/api/auth/me", "/api/auth/register", "/api/history"]);
+      const renderedMessages = elements.get("#messages")?.children ?? [];
+      assert.equal(renderedMessages.length, 3);
+      assert.equal(renderedMessages[1]?.className, "message you");
+      assert.equal(renderedMessages[1]?.textContent, "I am back.");
+      assert.equal(renderedMessages[2]?.className, "message muse");
+      assert.equal(elements.get("#welcome")?.hidden, true);
+    },
+  ));
+
+test("anonymous test mode preserves existing chat behavior without an access code", async () => {
   let providerCreations = 0;
   const providerFactory = () => {
     providerCreations += 1;
@@ -717,6 +843,157 @@ test("chat page and API work without an access code", async () => {
     assert.deepEqual(await response.json(), { reply: "Muse reply" });
     assert.equal(providerCreations, 1);
   });
+});
+
+test("username accounts protect chat and restore isolated conversation history", async () => {
+  let providerCreations = 0;
+  const capturedConversations: TextGenerationRequest[] = [];
+  await withServer(
+    () => {
+      providerCreations += 1;
+      return {
+        generateText: async (request) => {
+          capturedConversations.push(request);
+          return "A reply saved to this account.";
+        },
+      };
+    },
+    async (baseUrl, memoryDirectory) => {
+      const unauthenticated = await sendMessage(baseUrl, "Should be blocked");
+      assert.equal(unauthenticated.status, 401);
+      assert.equal(providerCreations, 0);
+      const blockedUpload = await uploadAttachment(
+        baseUrl,
+        "note.txt",
+        Buffer.from("private"),
+        "text/plain",
+      );
+      assert.equal(blockedUpload.status, 401);
+      const blockedImageGeneration = await fetch(`${baseUrl}/api/images/generate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: "A small flower" }),
+      });
+      assert.equal(blockedImageGeneration.status, 401);
+      assert.equal((await fetch(`${baseUrl}/api/history`)).status, 401);
+      const authState = await fetch(`${baseUrl}/api/auth/me`);
+      assert.deepEqual(await authState.json(), { authenticated: false });
+
+      const badRegistration = await fetch(`${baseUrl}/api/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: "ab", password: "short" }),
+      });
+      assert.equal(badRegistration.status, 400);
+
+      const registration = await fetch(`${baseUrl}/api/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: "History_User", password: "a-safe-passphrase" }),
+      });
+      assert.equal(registration.status, 201);
+      assert.match(registration.headers.get("set-cookie") ?? "", /HttpOnly/);
+      assert.match(registration.headers.get("set-cookie") ?? "", /SameSite=Strict/);
+      const firstCookie = getSessionCookie(registration);
+      const registered = (await registration.json()) as {
+        user: { id: string; username: string };
+      };
+      assert.equal(registered.user.username, "History_User");
+
+      const duplicate = await fetch(`${baseUrl}/api/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: "history_user", password: "another-safe-password" }),
+      });
+      assert.equal(duplicate.status, 409);
+
+      const chatResponse = await sendMessage(baseUrl, "Hello Mira", firstCookie);
+      assert.equal(chatResponse.status, 200);
+      assert.deepEqual(await chatResponse.json(), {
+        reply: "A reply saved to this account.",
+      });
+      assert.equal(providerCreations, 1);
+
+      const firstHistoryResponse = await fetch(`${baseUrl}/api/history`, {
+        headers: { Cookie: firstCookie },
+      });
+      assert.equal(firstHistoryResponse.status, 200);
+      const firstHistory = await firstHistoryResponse.json() as {
+        messages: Array<{ role: string; content: string }>;
+      };
+      assert.deepEqual(firstHistory.messages, [
+        { role: "user", content: "Hello Mira" },
+        { role: "assistant", content: "A reply saved to this account." },
+      ]);
+
+      const accounts = await readFile(
+        join(memoryDirectory, "muse-web-users.json"),
+        "utf8",
+      );
+      assert.doesNotMatch(accounts, /a-safe-passphrase/);
+      assert.match(accounts, /passwordHash/);
+
+      const logout = await fetch(`${baseUrl}/api/auth/logout`, {
+        method: "POST",
+        headers: { Cookie: firstCookie },
+      });
+      assert.equal(logout.status, 200);
+      assert.match(logout.headers.get("set-cookie") ?? "", /Max-Age=0/);
+      assert.equal((await fetch(`${baseUrl}/api/history`)).status, 401);
+
+      const wrongPassword = await fetch(`${baseUrl}/api/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: "history_user", password: "incorrect-password" }),
+      });
+      assert.equal(wrongPassword.status, 401);
+      assert.deepEqual(await wrongPassword.json(), {
+        error: "Username or password is incorrect.",
+      });
+
+      const login = await fetch(`${baseUrl}/api/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: "history_user", password: "a-safe-passphrase" }),
+      });
+      assert.equal(login.status, 200);
+      const secondCookie = getSessionCookie(login);
+      const restoredHistory = await fetch(`${baseUrl}/api/history`, {
+        headers: { Cookie: secondCookie },
+      });
+      assert.equal(restoredHistory.status, 200);
+      assert.deepEqual(await restoredHistory.json(), firstHistory);
+
+      const continuation = await sendMessage(
+        baseUrl,
+        "Let's continue from before.",
+        secondCookie,
+      );
+      assert.equal(continuation.status, 200);
+      assert.deepEqual(
+        capturedConversations[1]?.conversation.map(({ role, content }) => [role, content]),
+        [
+          ["user", "Hello Mira"],
+          ["assistant", "A reply saved to this account."],
+          ["user", "Let's continue from before."],
+        ],
+      );
+
+      const secondRegistration = await fetch(`${baseUrl}/api/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: "Other_User", password: "another-safe-password" }),
+      });
+      assert.equal(secondRegistration.status, 201);
+      const otherHistory = await fetch(`${baseUrl}/api/history`, {
+        headers: { Cookie: getSessionCookie(secondRegistration) },
+      });
+      assert.equal(otherHistory.status, 200);
+      assert.deepEqual(await otherHistory.json(), { messages: [] });
+    },
+    undefined,
+    { authEnabled: true },
+  );
 });
 
 test("chat API places a clean image before a topical research answer", async () => {

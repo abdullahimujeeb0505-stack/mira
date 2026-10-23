@@ -151,10 +151,11 @@ function browserSandbox(
     localStorage: consent,
     fetch: (url: string, options?: RequestInit) => {
       requests.push({ url, options });
+      const authCheck = url === "/api/auth/me";
       return Promise.resolve({
         ok: true,
-        status: 202,
-        json: async () => ({ recorded: true }),
+        status: authCheck ? 200 : 202,
+        json: async () => authCheck ? { authenticated: false } : { recorded: true },
       });
     },
   };
@@ -171,21 +172,29 @@ test("analytics only starts after opt-in, records no message content, and can be
 
     const preview = browserSandbox(script, null);
     assert.equal(preview.elements.get("#analytics-consent")?.hidden, false);
-    assert.equal(preview.requests.length, 0);
+    assert.equal(
+      preview.requests.filter(({ url }) => url === "/api/analytics/collect").length,
+      0,
+    );
     preview.elements.get("#analytics-accept")?.listeners.click?.({});
     await Promise.resolve();
     assert.equal(preview.elements.get("#analytics-consent")?.hidden, true);
     assert.equal(preview.consent.getItem("muse-analytics-consent"), "accepted");
-    assert.equal(preview.requests.length, 1);
-    assert.equal(preview.requests[0]?.url, "/api/analytics/collect");
-    const pageViewBody = JSON.parse(String(preview.requests[0]?.options?.body));
+    const collectionRequests = preview.requests.filter(({ url }) => url === "/api/analytics/collect");
+    assert.equal(collectionRequests.length, 1);
+    const pageViewBody = JSON.parse(String(collectionRequests[0]?.options?.body));
     assert.deepEqual(pageViewBody, { type: "page_view", path: "/" });
 
     const declined = browserSandbox(script, null);
     declined.elements.get("#analytics-decline")?.listeners.click?.({});
     await Promise.resolve();
     assert.equal(declined.consent.getItem("muse-analytics-consent"), "declined");
-    assert.deepEqual(declined.requests.map(({ url }) => url), ["/api/analytics/forget"]);
+    assert.deepEqual(
+      declined.requests
+        .filter(({ url }) => url.startsWith("/api/analytics/"))
+        .map(({ url }) => url),
+      ["/api/analytics/forget"],
+    );
   });
 });
 
