@@ -51,92 +51,161 @@ const CHAT_PAGE = `<!doctype html>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#0c0e12">
+    <meta name="theme-color" content="#f4effa">
     <title>Mira — conversational assistant by Muse</title>
     <style>
       :root {
-        color-scheme: dark;
-        font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-        color: #f2f4f8;
-        background: #0c0e12;
-        --page: #0c0e12;
-        --surface: #171b23;
-        --surface-raised: #1b2029;
-        --line: #292f3a;
-        --muted: #929bab;
-        --accent: #b9c5ff;
-        --accent-strong: #8599ff;
+        color-scheme: light;
+        font-family: "Avenir Next", "Nunito", ui-rounded, system-ui, sans-serif;
+        color: #352f47;
+        background: #f4effa;
+        --canvas: #f4effa;
+        --paper: #fffdfd;
+        --ink: #352f47;
+        --muted: #756e81;
+        --line: #eee8f2;
+        --lilac: #765fc3;
+        --shadow: 0 28px 90px #5948781c;
       }
       * { box-sizing: border-box; }
-      body { width: 100%; min-width: 320px; min-height: 100vh; min-height: 100dvh; margin: 0; background: var(--page); }
-      main { width: 100%; height: 100vh; height: 100dvh; min-height: 0; display: flex; flex-direction: column; overflow: hidden; background: radial-gradient(ellipse at 50% -24%, #1b2030 0, #101219 44%, #0c0e12 100%); }
-      .chat-header { display: flex; align-items: center; gap: 12px; flex: 0 0 auto; min-height: 70px; padding: 11px clamp(18px, 4vw, 40px); border-bottom: 1px solid var(--line); background: #0d0f14cc; }
-      .assistant-avatar { width: 38px; height: 38px; display: grid; place-items: center; border: 1px solid #b9c4ff44; border-radius: 13px; color: #fff; background: linear-gradient(145deg, #8d9eff, #5269dc); box-shadow: 0 5px 18px #5269dc44; font-size: 15px; font-weight: 750; }
-      .brand-copy { display: grid; gap: 2px; }
-      .eyebrow { color: #929db1; font-size: 10px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; }
-      h1 { margin: 0; font-size: 15px; font-weight: 650; letter-spacing: .01em; line-height: 1.2; }
+      html { width: 100%; min-width: 320px; min-height: 100%; }
+      body { width: 100%; min-width: 320px; min-height: 100vh; min-height: 100dvh; display: grid; place-items: center; overflow: hidden; margin: 0; padding: 20px; background: radial-gradient(ellipse at 12% 12%, #f7e9f1 0, transparent 34%), radial-gradient(ellipse at 88% 86%, #e8e5fb 0, transparent 33%), var(--canvas); }
+      main { position: relative; isolation: isolate; width: min(100%, 1120px); height: min(920px, calc(100vh - 40px)); height: min(920px, calc(100dvh - 40px)); min-height: 560px; display: flex; flex-direction: column; overflow: hidden; border: 1px solid #ffffff; border-radius: 30px; background: var(--paper); box-shadow: var(--shadow); }
+      main::before, main::after { position: absolute; z-index: 0; pointer-events: none; content: ""; border-radius: 50%; filter: blur(2px); }
+      main::before { top: -220px; right: -110px; width: 390px; height: 390px; background: radial-gradient(circle, #e9e3ffb8 0, #f2eaff70 48%, transparent 72%); }
+      main::after { bottom: -260px; left: -180px; width: 430px; height: 430px; background: radial-gradient(circle, #f8e5efb0 0, #fff2e870 48%, transparent 72%); }
+      .chat-header, #messages, .attachment-list, form, #status { position: relative; z-index: 1; }
+      .chat-header { display: flex; align-items: center; gap: 13px; flex: 0 0 auto; min-height: 78px; padding: 13px clamp(20px, 4vw, 38px); border-bottom: 1px solid var(--line); background: #fffdfde8; backdrop-filter: blur(14px); }
+      .assistant-avatar { width: 46px; height: 46px; display: grid; flex: 0 0 auto; place-items: center; border: 1px solid #ffffffb8; border-radius: 17px; color: #fff; background: linear-gradient(145deg, #b49ae8 2%, #8c78d1 52%, #df9fbd 100%); box-shadow: 0 7px 18px #876bc52b, inset 0 1px #ffffff70; }
+      .assistant-avatar svg { width: 27px; height: 27px; fill: currentColor; }
+      .assistant-avatar .flower-center { fill: #ffe7a6; }
+      .brand-copy { display: grid; gap: 1px; }
+      .eyebrow { color: var(--lilac); font-size: 9px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; }
+      h1 { margin: 0; color: var(--ink); font-size: 19px; font-weight: 750; letter-spacing: -.04em; line-height: 1.2; }
+      .header-note { display: flex; align-items: center; gap: 8px; margin-left: auto; padding: 8px 12px; border: 1px solid #efe8f5; border-radius: 999px; color: var(--muted); background: #fcf8ff; font-size: 12px; font-weight: 600; }
+      .header-note-icon { color: #b67ea5; font-size: 15px; line-height: 1; }
       .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-      #messages { flex: 1 1 auto; min-height: 0; min-width: 0; width: 100%; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; overscroll-behavior: contain; padding: 36px clamp(18px, 4vw, 40px) 30px; scroll-behavior: smooth; scrollbar-color: #3a414e transparent; scrollbar-width: thin; }
-      .message { width: min(100%, 860px); max-width: 100%; min-width: 0; align-self: center; padding: 10px 14px; border-radius: 18px; line-height: 1.7; overflow-wrap: break-word; word-break: normal; white-space: pre-wrap; }
-      .message.muse { align-self: center; padding: 6px 4px; border: 0; border-radius: 0; background: transparent; color: #eef0f5; }
-      .message.muse h1, .message.muse h2, .message.muse h3, .message.muse h4, .message.muse h5, .message.muse h6 { margin: .75em 0 .4em; font-weight: 650; letter-spacing: -.015em; line-height: 1.28; }
-      .message.muse p { margin: .65em 0; }
+      #messages { flex: 1 1 auto; min-height: 0; min-width: 0; width: 100%; display: flex; flex-direction: column; gap: 18px; overflow-y: auto; overscroll-behavior: contain; padding: 28px clamp(18px, 6vw, 70px) 26px; scroll-behavior: smooth; scrollbar-color: #d9d0e4 transparent; scrollbar-width: thin; }
+      #welcome[hidden] { display: none; }
+      .welcome-screen { width: min(100%, 750px); display: flex; flex-direction: column; align-items: center; margin: auto; padding: 24px 0 34px; text-align: center; }
+      .welcome-art { position: relative; width: 76px; height: 76px; display: grid; place-items: center; margin-bottom: 19px; border: 1px solid #ffffff; border-radius: 27px; background: linear-gradient(145deg, #eee7ff, #fae9f1); box-shadow: 0 12px 30px #9172bb24, inset 0 1px 2px #fff; transform: rotate(-5deg); }
+      .welcome-art svg { width: 42px; height: 42px; overflow: visible; }
+      .welcome-art .flower-petal { fill: #987bd4; }
+      .welcome-art .flower-center { fill: #f5c975; }
+      .welcome-sparkle { position: absolute; top: 8px; right: 8px; color: #d38eb0; font-size: 15px; transform: rotate(12deg); }
+      .welcome-kicker { margin: 0 0 10px; color: #73589f; font-size: 10px; font-weight: 800; letter-spacing: .19em; text-transform: uppercase; }
+      .welcome-title { max-width: 620px; margin: 0; color: #332b46; font-size: clamp(27px, 4vw, 38px); font-weight: 760; letter-spacing: -.055em; line-height: 1.13; }
+      .welcome-description { max-width: 500px; margin: 13px 0 0; color: var(--muted); font-size: 15px; line-height: 1.7; }
+      .starter-prompts { width: min(100%, 670px); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px; margin-top: 29px; text-align: left; }
+      .starter-prompt { min-width: 0; min-height: 76px; display: flex; align-items: center; gap: 12px; justify-content: flex-start; padding: 12px 14px; border: 1px solid #eee8f2; border-radius: 18px; color: var(--ink); background: #fff; box-shadow: 0 4px 13px #59487808; text-align: left; white-space: normal; transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease, background-color .18s ease; }
+      .starter-prompt:hover { transform: translateY(-2px); border-color: #d9ccef; background: #fefcff; box-shadow: 0 10px 24px #59487812; }
+      .starter-prompt:focus-visible { outline: 3px solid #b4a3e7; outline-offset: 3px; }
+      .prompt-icon { width: 38px; height: 38px; display: grid; flex: 0 0 auto; place-items: center; border-radius: 13px; color: #765fc3; background: #f0ebff; }
+      .starter-prompt:nth-child(2) .prompt-icon { color: #ab7097; background: #fbedf4; }
+      .starter-prompt:nth-child(3) .prompt-icon { color: #9a7b41; background: #fbf4df; }
+      .starter-prompt:nth-child(4) .prompt-icon { color: #668d83; background: #eaf5f0; }
+      .prompt-icon svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+      .prompt-copy { min-width: 0; display: grid; gap: 3px; }
+      .prompt-title { color: #433a53; font-size: 13px; font-weight: 720; line-height: 1.3; }
+      .prompt-description { color: #787183; font-size: 11px; font-weight: 450; line-height: 1.4; }
+      .message { width: min(100%, 820px); max-width: 100%; min-width: 0; align-self: flex-start; padding: 15px 18px; border: 1px solid #eee9f2; border-radius: 8px 21px 21px 21px; background: #fff; box-shadow: 0 5px 18px #54476d09; color: #484153; line-height: 1.72; overflow-wrap: break-word; word-break: normal; white-space: pre-wrap; }
+      .message.muse { align-self: flex-start; width: min(100%, 820px); padding: 14px 18px; border: 1px solid #eee9f2; border-radius: 8px 21px 21px 21px; background: #fff; color: #484153; white-space: normal; }
+      .message.muse::before { display: block; margin: 0 0 7px; color: #765fa0; content: "Mira"; font-size: 11px; font-weight: 800; letter-spacing: .02em; }
+      .message.muse h1, .message.muse h2, .message.muse h3, .message.muse h4, .message.muse h5, .message.muse h6 { margin: .75em 0 .4em; color: #3a314a; font-weight: 700; letter-spacing: -.025em; line-height: 1.3; }
+      .message.muse p { margin: .62em 0; }
+      .message.muse p:first-child { margin-top: 0; }
+      .message.muse p:last-of-type { margin-bottom: 0; }
       .message.muse ul, .message.muse ol { margin: .65em 0; padding-left: 1.5em; }
-      .message.muse a { color: var(--accent); text-decoration: underline; text-decoration-color: #8798ff88; text-underline-offset: 3px; }
-      .message.muse img { display: block; max-width: min(100%, 680px); height: auto; margin: 14px 0; border-radius: 12px; box-shadow: 0 12px 36px #0005; }
-      .message.muse table { border-collapse: collapse; table-layout: fixed; display: block; width: 100%; max-width: 100%; overflow-x: auto; border-radius: 10px; white-space: normal; }
-      .message.muse th, .message.muse td { border: 1px solid #343b48; padding: 8px 10px; text-align: left; vertical-align: top; overflow-wrap: anywhere; word-break: normal; }
-      .message.muse th { background: #191e27; }
-      .message.muse pre { max-width: 100%; overflow-x: auto; border: 1px solid #2c3340; border-radius: 14px; padding: 14px 16px; background: #11141a; white-space: pre; }
-      .message.muse code { border-radius: 5px; padding: .12em .35em; background: #252b36; overflow-wrap: anywhere; white-space: break-spaces; }
-      .message.muse pre code { padding: 0; background: transparent; }
-      .message.you { width: auto; max-width: min(78%, 760px); align-self: flex-end; margin-left: auto; border: 1px solid #2c3441; border-radius: 22px 22px 6px 22px; padding: 12px 17px; background: #1b2029; box-shadow: 0 5px 16px #0002; color: #f1f3f7; }
-      form { width: min(100%, 960px); flex: 0 0 auto; display: flex; flex-direction: column; gap: 10px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 36px) 14px; }
+      .message.muse li + li { margin-top: .28em; }
+      .message.muse a { color: #7056b7; text-decoration: underline; text-decoration-color: #b3a3dc; text-underline-offset: 3px; }
+      .message.muse img { display: block; max-width: min(100%, 680px); height: auto; margin: 14px 0; border-radius: 16px; box-shadow: 0 12px 36px #493c5a1a; }
+      .message.muse table { border-collapse: collapse; table-layout: fixed; display: block; width: 100%; max-width: 100%; overflow-x: auto; border-radius: 12px; white-space: normal; }
+      .message.muse th, .message.muse td { border: 1px solid #e8e1ed; padding: 9px 11px; text-align: left; vertical-align: top; overflow-wrap: anywhere; word-break: normal; }
+      .message.muse th { color: #4b405d; background: #f7f3fb; }
+      .message.muse pre { max-width: 100%; overflow-x: auto; border: 1px solid #e9e3ee; border-radius: 14px; padding: 14px 16px; background: #f8f6fb; white-space: pre; }
+      .message.muse code { border-radius: 6px; padding: .12em .35em; color: #684e9b; background: #f1ecf8; overflow-wrap: anywhere; white-space: break-spaces; }
+      .message.muse pre code { padding: 0; color: inherit; background: transparent; }
+      .message.you { width: auto; max-width: min(78%, 760px); align-self: flex-end; margin-left: auto; border: 1px solid #e5dcf7; border-radius: 21px 21px 6px 21px; padding: 12px 17px; background: #f0eaff; box-shadow: 0 5px 16px #6652910b; color: #4e4267; }
+      form { width: min(100%, 850px); flex: 0 0 auto; display: flex; flex-direction: column; gap: 9px; margin: 0 auto; padding: 0 clamp(16px, 5vw, 54px) 3px; }
       .composer-shell { display: grid; grid-template-columns: 46px minmax(0, 1fr); align-items: end; gap: 10px; }
       .action-area { position: relative; }
-      button { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; border: 0; border-radius: 999px; padding: 0 14px; color: #f5f6fa; background: #4e67d0; font: inherit; font-weight: 700; cursor: pointer; touch-action: manipulation; transition: background-color .16s ease, border-color .16s ease, transform .16s ease; }
-      button:focus-visible { outline: 2px solid #b8c3ff; outline-offset: 3px; }
+      button { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; border: 0; border-radius: 999px; padding: 0 14px; color: #f9f7ff; background: #765fc3; font: inherit; font-weight: 700; cursor: pointer; touch-action: manipulation; transition: background-color .16s ease, border-color .16s ease, transform .16s ease, box-shadow .16s ease; }
+      button:focus-visible { outline: 3px solid #a997df; outline-offset: 3px; }
       button:disabled { cursor: wait; opacity: .58; }
-      .icon-button { width: 46px; height: 46px; padding: 0; border: 1px solid #2e3541; color: #e3e7f0; background: #191e27; font-size: 26px; font-weight: 400; }
-      .icon-button:hover { border-color: #414a5a; background: #222833; }
+      .icon-button { width: 46px; height: 46px; padding: 0; border: 1px solid #e9e2ef; color: #8068ae; background: #fff; box-shadow: 0 4px 14px #5948780b; font-size: 25px; font-weight: 450; }
+      .icon-button:hover { border-color: #d9cdec; color: #6852a7; background: #fcfaff; }
       .icon-button svg, .composer-icon svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-      #attachment-menu { position: absolute; z-index: 3; left: 0; bottom: calc(100% + 12px); width: max-content; min-width: 210px; display: flex; flex-direction: column; gap: 4px; padding: 7px; border: 1px solid #343b48; border-radius: 15px; background: var(--surface-raised); box-shadow: 0 16px 44px #0008; }
+      #attachment-menu { position: absolute; z-index: 3; left: 0; bottom: calc(100% + 12px); width: max-content; min-width: 220px; display: flex; flex-direction: column; gap: 4px; padding: 7px; border: 1px solid #ece5f1; border-radius: 17px; background: #fffdfd; box-shadow: 0 16px 44px #40334f24; }
       #attachment-menu[hidden] { display: none; }
-      .menu-item { justify-content: flex-start; width: 100%; min-height: 44px; border-radius: 10px; padding: 0 12px; color: #edf0f7; background: transparent; font-size: 14px; text-align: left; }
-      .menu-item:hover, .menu-item:focus-visible { background: #2a303b; }
-      .composer-box { min-width: 0; display: flex; align-items: flex-end; gap: 5px; padding: 6px 7px 6px 16px; border: 1px solid #313846; border-radius: 28px; background: var(--surface); box-shadow: 0 12px 36px #0004; transition: border-color .16s ease, box-shadow .16s ease; }
-      .composer-box:focus-within { border-color: #7185ee; box-shadow: 0 0 0 3px #7185ee24, 0 12px 36px #0004; }
-      textarea { flex: 1; width: 100%; min-width: 0; min-height: 44px; max-height: 160px; overflow-y: auto; resize: none; border: 0; outline: 0; padding: 10px 2px; color: inherit; background: transparent; font: inherit; font-size: 15px; line-height: 1.5; }
-      textarea::placeholder { color: #8992a1; }
-      .composer-icon { flex: 0 0 auto; width: 40px; height: 40px; min-width: 40px; min-height: 40px; padding: 0; border-radius: 50%; color: #aeb7c6; background: transparent; }
-      .composer-icon:hover { color: #fff; background: #252c37; }
-      .composer-icon.listening { color: #fff; background: #a54155; }
-      #send { flex: 0 0 auto; width: 40px; height: 40px; min-width: 40px; min-height: 40px; padding: 0; border-radius: 50%; color: #0f1218; background: var(--accent-strong); }
-      #send:hover { background: #adbbff; transform: translateY(-1px); }
-      #send svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-      .attachment-list { width: min(100%, 960px); display: flex; flex-wrap: wrap; gap: 8px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 36px); }
-      .attachment-chip { display: inline-flex; gap: 8px; align-items: center; max-width: 100%; padding: 5px 7px 5px 11px; border: 1px solid #343b48; border-radius: 999px; color: #dce2ee; background: var(--surface); font-size: 12px; }
+      .menu-item { justify-content: flex-start; width: 100%; min-height: 44px; border-radius: 12px; padding: 0 12px; color: #51465f; background: transparent; font-size: 13px; text-align: left; }
+      .menu-item:hover, .menu-item:focus-visible { color: #59438f; background: #f5f1fb; }
+      .composer-box { min-width: 0; display: flex; align-items: flex-end; gap: 5px; padding: 6px 7px 6px 16px; border: 1px solid #e8e1ed; border-radius: 25px; background: #fff; box-shadow: 0 8px 26px #57476910; transition: border-color .16s ease, box-shadow .16s ease; }
+      .composer-box:focus-within { border-color: #b8a8dd; box-shadow: 0 0 0 4px #a890d91c, 0 8px 26px #57476910; }
+      textarea { flex: 1; width: 100%; min-width: 0; min-height: 44px; max-height: 160px; overflow-y: auto; resize: none; border: 0; outline: 0; padding: 10px 2px; color: var(--ink); background: transparent; font: inherit; font-size: 15px; line-height: 1.5; }
+      textarea::placeholder { color: var(--muted); }
+      .composer-icon { flex: 0 0 auto; width: 40px; height: 40px; min-width: 40px; min-height: 40px; padding: 0; border-radius: 50%; color: #9a8baa; background: transparent; }
+      .composer-icon:hover { color: #7059b4; background: #f3eff9; }
+      .composer-icon.listening { color: #fff; background: #c87391; box-shadow: 0 0 0 4px #f5e2eb; }
+      #send { flex: 0 0 auto; width: 40px; height: 40px; min-width: 40px; min-height: 40px; padding: 0; border-radius: 50%; color: #fff; background: linear-gradient(145deg, #9a81da, #7259bd); box-shadow: 0 5px 13px #7259bd38; }
+      #send:hover { background: linear-gradient(145deg, #8d74d0, #634cac); box-shadow: 0 7px 17px #7259bd4a; transform: translateY(-1px); }
+      #send svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+      .attachment-list { width: min(100%, 850px); display: flex; flex-wrap: wrap; gap: 8px; margin: 0 auto; padding: 0 clamp(16px, 5vw, 54px); }
+      .attachment-chip { display: inline-flex; gap: 8px; align-items: center; max-width: 100%; padding: 5px 7px 5px 11px; border: 1px solid #e9e2ef; border-radius: 999px; color: #655973; background: #fff; box-shadow: 0 3px 10px #59487808; font-size: 12px; }
       .attachment-chip > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-      .attachment-remove { min-height: 30px; padding: 0 9px; color: #d9e1ff; background: #30394c; font-size: 12px; }
+      .attachment-remove { min-height: 30px; padding: 0 9px; color: #7059a4; background: #f1ecf9; font-size: 12px; }
       .message-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-      .speak-button { width: 36px; min-width: 36px; min-height: 36px; height: 36px; padding: 0; border: 1px solid #394254; color: #d9e1ff; background: #252c39; font-size: 18px; }
-      .download-link { display: inline-block; padding: 8px 12px; border: 1px solid #394254; border-radius: 10px; color: #d9e1ff; background: #202633; font-size: 13px; text-decoration: none; }
-      .download-link:hover { background: #2a3343; }
-      .generated-image { display: block; max-width: min(100%, 680px); height: auto; border-radius: 12px; box-shadow: 0 12px 36px #0005; }
-      #status { width: min(100%, 960px); align-self: center; flex: 0 0 auto; margin: 0 auto; padding: 0 clamp(16px, 4vw, 36px) 10px; color: var(--muted); font-size: 12px; line-height: 1.5; text-align: center; overflow-wrap: anywhere; }
+      .speak-button { width: 36px; min-width: 36px; min-height: 36px; height: 36px; padding: 0; border: 1px solid #e7deef; color: #735ca8; background: #f5f1fb; font-size: 18px; }
+      .download-link { display: inline-block; padding: 8px 12px; border: 1px solid #e3d9ef; border-radius: 11px; color: #7059a4; background: #f8f5fc; font-size: 13px; text-decoration: none; }
+      .download-link:hover { background: #eee8f8; }
+      .generated-image { display: block; max-width: min(100%, 680px); height: auto; border-radius: 16px; box-shadow: 0 12px 36px #493c5a1a; }
+      .composer-hint { width: min(100%, 850px); margin: 0 auto; padding: 0 clamp(16px, 5vw, 54px) 12px; color: #786f83; font-size: 10px; line-height: 1.4; text-align: center; }
+      .composer-hint span { color: #b38fc0; }
+      #status { width: min(100%, 850px); align-self: center; flex: 0 0 auto; margin: 0 auto; padding: 0 clamp(16px, 5vw, 54px) 10px; color: var(--muted); font-size: 12px; line-height: 1.5; text-align: center; overflow-wrap: anywhere; }
       #status:empty { display: none; }
-      @media (max-width: 600px) {
-        .chat-header { min-height: 62px; padding: 9px max(16px, env(safe-area-inset-left)); }
-        #messages { gap: 16px; padding: 24px 16px 20px; }
-        .message.you { max-width: 90%; }
-        form { padding: 0 12px max(10px, env(safe-area-inset-bottom)); }
+      @media (max-width: 620px) {
+        body { padding: 0; }
+        main { width: 100%; height: 100vh; height: 100dvh; min-height: 0; border: 0; border-radius: 0; box-shadow: none; }
+        .chat-header { min-height: 68px; padding: 10px max(16px, env(safe-area-inset-left)); }
+        .assistant-avatar { width: 42px; height: 42px; border-radius: 15px; }
+        .header-note { gap: 6px; padding: 7px 9px; font-size: 10px; }
+        #messages { gap: 14px; padding: 22px 16px 18px; }
+        .welcome-screen { padding: 18px 0 24px; }
+        .welcome-art { width: 67px; height: 67px; margin-bottom: 16px; border-radius: 23px; }
+        .welcome-art svg { width: 38px; height: 38px; }
+        .welcome-title { font-size: clamp(27px, 8vw, 34px); }
+        .welcome-description { max-width: 360px; margin-top: 10px; font-size: 14px; }
+        .starter-prompts { grid-template-columns: 1fr; gap: 8px; margin-top: 22px; }
+        .starter-prompt { min-height: 65px; padding: 9px 11px; border-radius: 16px; }
+        .prompt-icon { width: 35px; height: 35px; border-radius: 12px; }
+        .message.you { max-width: 91%; }
+        .message.muse { padding: 13px 15px; }
+        form { padding: 0 12px max(2px, env(safe-area-inset-bottom)); }
         .composer-shell { grid-template-columns: 42px minmax(0, 1fr); gap: 8px; }
         .icon-button { width: 42px; height: 42px; min-width: 42px; min-height: 42px; }
-        .composer-box { gap: 2px; padding-left: 12px; }
+        .composer-box { gap: 2px; padding-left: 11px; }
         .composer-icon { width: 36px; height: 36px; min-width: 36px; min-height: 36px; }
         #send { width: 38px; height: 38px; min-width: 38px; min-height: 38px; }
         .attachment-list { padding-right: 12px; padding-left: 12px; }
         #status { padding-right: 12px; padding-left: 12px; }
+        .composer-hint { padding-right: 12px; padding-left: 12px; }
+      }
+      @media (max-width: 380px) {
+        .header-note { padding: 7px; }
+        .header-note-copy { display: none; }
+        .welcome-title { font-size: 27px; }
+      }
+      @media (max-height: 640px) {
+        body { padding: 0; }
+        main { height: 100vh; height: 100dvh; min-height: 0; border-radius: 0; }
+        .chat-header { min-height: 62px; }
+        #messages { padding-top: 16px; padding-bottom: 14px; }
+        .welcome-screen { padding: 8px 0 16px; }
+        .welcome-art { width: 58px; height: 58px; margin-bottom: 10px; }
+        .welcome-art svg { width: 32px; height: 32px; }
+        .welcome-kicker { margin-bottom: 7px; }
+        .welcome-title { font-size: 27px; }
+        .welcome-description { margin-top: 7px; }
+        .starter-prompts { margin-top: 16px; }
       }
       @media (prefers-reduced-motion: reduce) {
         #messages { scroll-behavior: auto; }
@@ -147,14 +216,43 @@ const CHAT_PAGE = `<!doctype html>
   <body>
     <main>
       <header class="chat-header">
-        <div class="assistant-avatar" aria-hidden="true">M</div>
+        <div class="assistant-avatar" aria-hidden="true">
+          <svg viewBox="0 0 32 32"><ellipse cx="16" cy="8.8" rx="4.2" ry="6.4"/><ellipse cx="23.2" cy="16" rx="6.4" ry="4.2"/><ellipse cx="16" cy="23.2" rx="4.2" ry="6.4"/><ellipse cx="8.8" cy="16" rx="6.4" ry="4.2"/><circle class="flower-center" cx="16" cy="16" r="3.1"/></svg>
+        </div>
         <div class="brand-copy">
           <div class="eyebrow">MUSE AI</div>
           <h1>Mira</h1>
         </div>
+        <div class="header-note"><span class="header-note-icon" aria-hidden="true">✿</span><span class="header-note-copy">Here for your next idea</span></div>
       </header>
       <section id="messages" aria-live="polite" aria-label="Conversation" aria-relevant="additions">
-        <div class="message muse">Hi, I’m Mira. How can I help?</div>
+        <div id="welcome" class="welcome-screen">
+          <div class="welcome-art" aria-hidden="true">
+            <svg viewBox="0 0 48 48"><ellipse class="flower-petal" cx="24" cy="11.5" rx="6.2" ry="9.4"/><ellipse class="flower-petal" cx="36.5" cy="24" rx="9.4" ry="6.2"/><ellipse class="flower-petal" cx="24" cy="36.5" rx="6.2" ry="9.4"/><ellipse class="flower-petal" cx="11.5" cy="24" rx="9.4" ry="6.2"/><circle class="flower-center" cx="24" cy="24" r="4.8"/></svg>
+            <span class="welcome-sparkle">✦</span>
+          </div>
+          <p class="welcome-kicker">A LITTLE SPACE FOR BIG IDEAS</p>
+          <h2 class="welcome-title">Hi, I’m Mira. How can I help?</h2>
+          <p class="welcome-description">Bring me a question, a half-formed thought, or a little task. We’ll figure it out together.</p>
+          <div class="starter-prompts" role="group" aria-label="Suggested ways to start">
+            <button class="starter-prompt" type="button" data-prompt="Help me brainstorm some fresh ideas for a project.">
+              <span class="prompt-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 13.8 9.2 20 11l-6.2 1.8L12 19l-1.8-6.2L4 11l6.2-1.8L12 3Z"/><path d="m19 15 .9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9L19 15Z"/></svg></span>
+              <span class="prompt-copy"><span class="prompt-title">Brainstorm with me</span><span class="prompt-description">Find a fresh angle for your idea.</span></span>
+            </button>
+            <button class="starter-prompt" type="button" data-prompt="Research a topic and give me a clear, sourced summary.">
+              <span class="prompt-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5M8.5 10.8h4.6M10.8 8.5v4.6"/></svg></span>
+              <span class="prompt-copy"><span class="prompt-title">Explore a question</span><span class="prompt-description">Get a thoughtful, sourced answer.</span></span>
+            </button>
+            <button class="starter-prompt" type="button" data-prompt="Help me draft a warm, polished message.">
+              <span class="prompt-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m4 16.5 9.8-9.8a2.1 2.1 0 0 1 3 0l.5.5a2.1 2.1 0 0 1 0 3L7.5 20H4v-3.5Z"/><path d="m12.5 8 3.5 3.5M4 21h16"/></svg></span>
+              <span class="prompt-copy"><span class="prompt-title">Make it sound lovely</span><span class="prompt-description">Draft, polish, or reshape your words.</span></span>
+            </button>
+            <button class="starter-prompt" type="button" data-prompt="Help me turn my goal into a simple plan.">
+              <span class="prompt-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16M8 14h3M8 17h6"/></svg></span>
+              <span class="prompt-copy"><span class="prompt-title">Make a gentle plan</span><span class="prompt-description">Turn a big goal into small steps.</span></span>
+            </button>
+          </div>
+        </div>
       </section>
       <div id="attachment-list" class="attachment-list" aria-label="Pending attachments"></div>
       <form id="chat-form">
@@ -181,6 +279,7 @@ const CHAT_PAGE = `<!doctype html>
           </div>
         </div>
       </form>
+      <p class="composer-hint"><span aria-hidden="true">✦</span> Any question, big idea, or tiny task is welcome.</p>
       <p id="status" role="status" aria-live="polite"></p>
     </main>
     <script>
@@ -188,7 +287,17 @@ const CHAT_PAGE = `<!doctype html>
       const input = document.querySelector("#message");
       const button = document.querySelector("#send");
       const messages = document.querySelector("#messages");
+      const welcome = document.querySelector("#welcome");
       const status = document.querySelector("#status");
+
+      messages.addEventListener("click", (event) => {
+        const promptButton = event.target?.closest?.("button[data-prompt]");
+        const prompt = promptButton?.dataset?.prompt;
+        if (typeof prompt !== "string" || !prompt) return;
+        input.value = prompt;
+        updateComposerHeight();
+        input.focus();
+      });
 
       function addInlineFormatting(parent, text) {
         const parts = text.split(/(\\*\\*[^*]+\\*\\*|\\*[^*]+\\*|\`[^\`]+\`|!?\\[[^\\]]+\\]\\([^)]+\\))/g);
@@ -560,6 +669,7 @@ const CHAT_PAGE = `<!doctype html>
       });
 
       function addMessage(kind, text) {
+        if (welcome) welcome.hidden = true;
         const item = document.createElement("div");
         item.className = "message " + kind;
         if (kind === "muse") {
