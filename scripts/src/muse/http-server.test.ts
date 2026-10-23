@@ -218,6 +218,10 @@ test("Muse serves the chat page with same-origin security headers", async () =>
       assert.match(html, /api\/history/);
       assert.match(html, /Built by <a href="https:\/\/x\.com\/Great_mujey"/);
       assert.match(html, /<h1>Mira<\/h1>/);
+      assert.match(html, /id="assistant-avatar" class="assistant-avatar" data-thinking="false"/);
+      assert.match(html, /\.assistant-avatar\[data-thinking="true"\] svg \{ animation: mira-logo-roll/);
+      assert.match(html, /@keyframes mira-logo-roll/);
+      assert.match(html, /prefers-reduced-motion: reduce/);
       assert.doesNotMatch(
         html,
         /class="intro"|chat, brainstorm, ask a question, or request web research/i,
@@ -469,6 +473,8 @@ test("browser chat prevents duplicate submits and renders typed image-generation
       assert.ok(script);
       const actionMenu = fakeElement("div");
       actionMenu.hidden = true;
+      const assistantAvatar = fakeElement("div");
+      assistantAvatar.dataset.thinking = "false";
       const elements = new Map<string, FakeElement>([
         ["#auth-screen", fakeElement("section")],
         ["#chat-screen", fakeElement("div")],
@@ -488,6 +494,7 @@ test("browser chat prevents duplicate submits and renders typed image-generation
         ["#message", fakeElement("textarea")],
         ["#send", fakeElement("button")],
         ["#messages", fakeElement("section")],
+        ["#assistant-avatar", assistantAvatar],
         ["#welcome", fakeElement("div")],
         ["#status", fakeElement("p")],
         ["#theme-toggle", fakeElement("button")],
@@ -672,6 +679,8 @@ test("browser chat prevents duplicate submits and renders typed image-generation
       input.value = "Why?";
 
       const firstSubmit = submit({ preventDefault() {} });
+      assert.equal(assistantAvatar.dataset.thinking, "true");
+      assert.match(elements.get("#status")?.textContent ?? "", /Mira is thinking/);
       await submit({ preventDefault() {} });
       assert.equal(fetchCalls, 1);
       assert.equal(messages.children.length, 1);
@@ -684,6 +693,7 @@ test("browser chat prevents duplicate submits and renders typed image-generation
         blob: async () => new Blob(),
       });
       await firstSubmit;
+      assert.equal(assistantAvatar.dataset.thinking, "false");
 
       assert.equal(messages.children.length, 2);
       assert.equal(fetchCalls, 1);
@@ -699,6 +709,7 @@ test("browser chat prevents duplicate submits and renders typed image-generation
 
       input.value = "Generate an image of a red fox under the stars";
       const imageSubmit = submit({ preventDefault() {} });
+      assert.equal(assistantAvatar.dataset.thinking, "true");
       assert.equal(fetchCalls, 2);
       assert.deepEqual(fetchUrls, ["/api/chat", "/api/chat"]);
       assert.equal(messages.children.length, 3);
@@ -715,6 +726,7 @@ test("browser chat prevents duplicate submits and renders typed image-generation
           ),
       });
       await imageSubmit;
+      assert.equal(assistantAvatar.dataset.thinking, "false");
 
       assert.equal(messages.children.length, 4);
       const generatedMessage = messages.children[3];
