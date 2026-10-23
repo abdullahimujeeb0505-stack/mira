@@ -4,8 +4,19 @@ export const WEB_ANALYTICS_DASHBOARD_PAGE = `<!doctype html>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
-    <meta name="theme-color" content="#f4effa">
+    <meta id="theme-color" name="theme-color" content="#f4effa">
     <title>Site analytics · Mira</title>
+    <script id="theme-bootstrap">
+      (() => {
+        let savedTheme = "";
+        let systemTheme = "light";
+        try { savedTheme = localStorage.getItem("muse-theme") || ""; } catch {}
+        try {
+          systemTheme = window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        } catch {}
+        document.documentElement.dataset.theme = savedTheme === "dark" || savedTheme === "light" ? savedTheme : systemTheme;
+      })();
+    </script>
     <style>
       :root { color-scheme: light; font-family: "Avenir Next", "Nunito", ui-rounded, system-ui, sans-serif; color: #352f47; background: #f4effa; --ink: #352f47; --muted: #756e81; --line: #eee8f2; --lilac: #765fc3; }
       * { box-sizing: border-box; }
@@ -25,6 +36,8 @@ export const WEB_ANALYTICS_DASHBOARD_PAGE = `<!doctype html>
       button:hover { background: linear-gradient(145deg, #8d74d0, #634cac); }
       button:focus-visible { outline: 3px solid #b4a3e7; outline-offset: 3px; }
       button:disabled { cursor: wait; opacity: .65; }
+      .theme-toggle { position: fixed; z-index: 10; top: 16px; right: 18px; min-height: 38px; border: 1px solid #e7deef; border-radius: 999px; padding: 0 12px; color: #695a82; background: #fffdfd; box-shadow: 0 5px 18px #59487812; font-size: 11px; }
+      .theme-toggle:hover { border-color: #d9ccef; background: #f6f2fb; }
       .subtle-button { border: 1px solid #e7deef; color: #695a82; background: #fff; }
       .subtle-button:hover { background: #f6f2fb; }
       .message { min-height: 20px; margin: 12px 0 0; color: #a34e65; font-size: 13px; line-height: 1.5; }
@@ -58,11 +71,30 @@ export const WEB_ANALYTICS_DASHBOARD_PAGE = `<!doctype html>
       .empty { padding: 17px 0; color: #8a8294; font-size: 12px; }
       .footnote { margin: 18px 0 0; color: #8a8294; font-size: 11px; line-height: 1.65; }
       @media (max-width: 760px) { .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); } .tables-grid { grid-template-columns: 1fr; } }
-      @media (max-width: 430px) { body { padding: 12px 10px 28px; } .panel { border-radius: 21px; } .metric { padding: 13px; } .section { padding: 15px; } .bar-row { grid-template-columns: 78px minmax(28px, 1fr) 42px; gap: 7px; } }
+      @media (max-width: 430px) { body { padding: 12px 10px 28px; } .panel { border-radius: 21px; } .metric { padding: 13px; } .section { padding: 15px; } .bar-row { grid-template-columns: 78px minmax(28px, 1fr) 42px; gap: 7px; } .theme-toggle { top: 10px; right: 10px; } }
+      :root[data-theme="dark"] { color-scheme: dark; color: #f3edf8; background: #17141d; --ink: #f3edf8; --muted: #b9b0c3; --line: #3b3446; --lilac: #bca4ed; }
+      :root[data-theme="dark"] body { background: radial-gradient(ellipse at 12% 12%, #3d2a3d 0, transparent 34%), radial-gradient(ellipse at 88% 86%, #292543 0, transparent 33%), #17141d; }
+      :root[data-theme="dark"] .panel { border-color: #3b3446; background: #211e29; box-shadow: 0 24px 80px #0007; }
+      :root[data-theme="dark"] label { color: #ddd4e7; }
+      :root[data-theme="dark"] input, :root[data-theme="dark"] select { border-color: #453b51; color: #f3edf8; background: #191620; }
+      :root[data-theme="dark"] input:focus, :root[data-theme="dark"] select:focus { border-color: #8d76b6; }
+      :root[data-theme="dark"] .theme-toggle, :root[data-theme="dark"] .subtle-button { border-color: #4b4255; color: #e4d9ef; background: #2a2532; }
+      :root[data-theme="dark"] .theme-toggle:hover, :root[data-theme="dark"] .subtle-button:hover { border-color: #6d5b7d; background: #3a3046; }
+      :root[data-theme="dark"] .message { color: #ffadbf; }
+      :root[data-theme="dark"] .privacy-note { border-color: #443c4d; color: #c6bdcf; background: #292430; }
+      :root[data-theme="dark"] .metric, :root[data-theme="dark"] .section { border-color: #3b3446; background: #28242f; }
+      :root[data-theme="dark"] .metric-help, :root[data-theme="dark"] .section-help, :root[data-theme="dark"] .footnote, :root[data-theme="dark"] .empty { color: #b0a7bb; }
+      :root[data-theme="dark"] .bar-row { color: #c0b6ca; }
+      :root[data-theme="dark"] .bar-track { background: #3a3342; }
+      :root[data-theme="dark"] .bar-count { color: #e6ddec; }
+      :root[data-theme="dark"] th, :root[data-theme="dark"] td { border-color: #3c3546; }
+      :root[data-theme="dark"] th { color: #c4b9d0; }
+      :root[data-theme="dark"] td { color: #e4dce9; }
     </style>
   </head>
   <body>
     <main>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false" title="Switch to dark mode">☾ Dark mode</button>
       <section id="gate" class="panel gate" aria-labelledby="page-title">
         <p class="eyebrow">Mira · private dashboard</p>
         <h1 id="page-title">Site analytics</h1>
@@ -131,7 +163,33 @@ export const WEB_ANALYTICS_DASHBOARD_PAGE = `<!doctype html>
         <p class="footnote">Analytics data is kept locally on the server for up to 90 days (maximum 100,000 events). On free hosts with temporary storage it may disappear after a restart or redeploy. This dashboard is a lightweight, self-hosted tool—not a substitute for a full analytics platform.</p>
       </section>
     </main>
-    <script>
+    <script id="analytics-script">
+      const themeToggle = document.querySelector("#theme-toggle");
+      const themeColorMeta = document.querySelector("#theme-color");
+      function applyTheme(theme, persist = false) {
+        const selectedTheme = theme === "dark" ? "dark" : "light";
+        document.documentElement.dataset.theme = selectedTheme;
+        const action = selectedTheme === "dark" ? "Switch to light mode" : "Switch to dark mode";
+        themeToggle.setAttribute("aria-pressed", String(selectedTheme === "dark"));
+        themeToggle.setAttribute("aria-label", action);
+        themeToggle.setAttribute("title", action);
+        themeToggle.textContent = selectedTheme === "dark" ? "☀ Light mode" : "☾ Dark mode";
+        themeColorMeta?.setAttribute("content", selectedTheme === "dark" ? "#17141d" : "#f4effa");
+        if (persist) {
+          try { localStorage.setItem("muse-theme", selectedTheme); } catch {}
+        }
+      }
+      let savedTheme = "";
+      try { savedTheme = localStorage.getItem("muse-theme") || ""; } catch {}
+      const initialTheme = savedTheme === "dark" || savedTheme === "light"
+        ? savedTheme
+        : document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+      applyTheme(initialTheme);
+      themeToggle.addEventListener("click", () => {
+        const currentTheme = document.documentElement.dataset.theme;
+        applyTheme(currentTheme === "dark" ? "light" : "dark", true);
+      });
+
       const gate = document.querySelector("#gate");
       const dashboard = document.querySelector("#dashboard");
       const tokenForm = document.querySelector("#token-form");

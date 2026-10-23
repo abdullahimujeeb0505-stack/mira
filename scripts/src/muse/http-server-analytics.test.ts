@@ -111,27 +111,48 @@ function analyticsCookieHeader(response: Response): string {
 function browserSandbox(
   script: string,
   initialConsent: string | null,
+  initialTheme: string | null = null,
 ): {
   elements: Map<string, FakeElement>;
   requests: Array<{ url: string; options?: RequestInit }>;
   consent: { getItem(key: string): string | null; setItem(key: string, value: string): void };
+  theme: { getItem(key: string): string | null; setItem(key: string, value: string): void };
+  documentElement: { dataset: Record<string, string> };
 } {
   const selectors = [
     "#analytics-consent",
     "#analytics-accept",
     "#analytics-decline",
     "#analytics-settings",
+    "#theme-toggle",
   ];
   const elements = new Map(selectors.map((selector) => [selector, fakeElement()]));
   const requests: Array<{ url: string; options?: RequestInit }> = [];
   let storedConsent = initialConsent;
+  let storedTheme = initialTheme;
   const consent = {
     getItem: (key: string) => key === "muse-analytics-consent" ? storedConsent : null,
     setItem: (key: string, value: string) => {
       if (key === "muse-analytics-consent") storedConsent = value;
     },
   };
+  const theme = {
+    getItem: (key: string) => key === "muse-theme" ? storedTheme : null,
+    setItem: (key: string, value: string) => {
+      if (key === "muse-theme") storedTheme = value;
+    },
+  };
+  const localStorage = {
+    getItem: (key: string) => key === "muse-analytics-consent"
+      ? consent.getItem(key)
+      : theme.getItem(key),
+    setItem: (key: string, value: string) => {
+      consent.setItem(key, value);
+      theme.setItem(key, value);
+    },
+  };
   const document = {
+    documentElement: { dataset: { theme: "light" } },
     querySelector: (selector: string) => elements.get(selector) ?? fakeElement(),
     createElement: (tagName: string) => fakeElement(tagName),
     createElementNS: (_namespace: string, tagName: string) => fakeElement(tagName),
@@ -148,7 +169,7 @@ function browserSandbox(
     window: {},
     navigator: { language: "en" },
     location: { pathname: "/" },
-    localStorage: consent,
+    localStorage,
     fetch: (url: string, options?: RequestInit) => {
       requests.push({ url, options });
       const authCheck = url === "/api/auth/me";
@@ -160,14 +181,14 @@ function browserSandbox(
     },
   };
   new Script(script).runInNewContext(sandbox);
-  return { elements, requests, consent };
+  return { elements, requests, consent, theme, documentElement: document.documentElement };
 }
 
 test("analytics only starts after opt-in, records no message content, and can be declined", async () => {
   await withAnalyticsServer(async (baseUrl) => {
     const page = await fetch(baseUrl);
     const html = await page.text();
-    const script = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
+    const script = html.match(/<script id="chat-script">([\s\S]*?)<\/script>/)?.[1];
     assert.ok(script);
 
     const preview = browserSandbox(script, null);
@@ -198,6 +219,26 @@ test("analytics only starts after opt-in, records no message content, and can be
   });
 });
 
+test("site theme honors a saved choice and persists a toggle", async () => {
+  await withAnalyticsServer(async (baseUrl) => {
+    const html = await (await fetch(baseUrl)).text();
+    const script = html.match(/<script id="chat-script">([\s\S]*?)<\/script>/)?.[1];
+    assert.ok(script);
+
+    const preview = browserSandbox(script, null, "dark");
+    const toggle = preview.elements.get("#theme-toggle");
+    assert.equal(preview.documentElement.dataset.theme, "dark");
+    assert.equal(toggle?.attributes["aria-pressed"], "true");
+    assert.equal(toggle?.textContent, "☀ Light mode");
+
+    toggle?.listeners.click?.({});
+    assert.equal(preview.documentElement.dataset.theme, "light");
+    assert.equal(toggle?.attributes["aria-pressed"], "false");
+    assert.equal(toggle?.textContent, "☾ Dark mode");
+    assert.equal(preview.theme.getItem("muse-theme"), "light");
+  });
+});
+
 test("analytics collection is pseudonymous and reports are protected by a server-only token", async () => {
   const adminToken = "muse-private-dashboard-token-32-characters-long";
   await withAnalyticsServer(
@@ -208,8 +249,14 @@ test("analytics collection is pseudonymous and reports are protected by a server
       const dashboardHtml = await dashboard.text();
       assert.match(dashboardHtml, /Site analytics/);
       assert.match(dashboardHtml, /Authorization: "Bearer " \+ token/);
-      assert.doesNotMatch(dashboardHtml, /sessionStorage|localStorage/);
-      const dashboardScript = dashboardHtml.match(/<script>([\s\S]*?)<\/script>/)?.[1];
+      assert.match(dashboardHtml, /id="theme-toggle"/);
+      assert.match(dashboardHtml, /prefers-color-scheme: dark/);
+      assert.doesNotMatch(dashboardHtml, /sessionStorage/);
+      assert.doesNotMatch(dashboardHtml, /localStorage\.setItem\([^)]*(?:token|admin)/i);
+      const themeBootstrap = dashboardHtml.match(/<script id="theme-bootstrap">([\s\S]*?)<\/script>/)?.[1];
+      assert.ok(themeBootstrap);
+      assert.doesNotThrow(() => new Script(themeBootstrap));
+      const dashboardScript = dashboardHtml.match(/<script id="analytics-script">([\s\S]*?)<\/script>/)?.[1];
       assert.ok(dashboardScript);
       assert.doesNotThrow(() => new Script(dashboardScript));
 

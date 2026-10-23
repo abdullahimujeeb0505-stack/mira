@@ -199,7 +199,10 @@ test("Muse serves the chat page with same-origin security headers", async () =>
       const response = await fetch(baseUrl);
       assert.equal(response.status, 200);
       const html = await response.text();
-      const script = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
+      const themeBootstrap = html.match(/<script id="theme-bootstrap">([\s\S]*?)<\/script>/)?.[1];
+      assert.ok(themeBootstrap);
+      assert.doesNotThrow(() => new Script(themeBootstrap));
+      const script = html.match(/<script id="chat-script">([\s\S]*?)<\/script>/)?.[1];
       assert.ok(script);
       assert.doesNotThrow(() => new Script(script));
       assert.match(html, /Mira — conversational assistant by Muse/);
@@ -276,6 +279,10 @@ test("Muse serves the chat page with same-origin security headers", async () =>
       assert.match(html, /id="analytics-consent"/);
       assert.match(html, /Allow analytics/);
       assert.match(html, /muse-analytics-consent/);
+      assert.match(html, /id="theme-toggle"/);
+      assert.match(html, /prefers-color-scheme: dark/);
+      assert.match(html, /data-theme="dark"/);
+      assert.match(html, /muse-theme/);
       assert.match(html, /api\/analytics\/collect/);
       assert.doesNotMatch(html, /googletagmanager\.com|google-analytics\.com|plausible\.io/i);
     },
@@ -287,9 +294,10 @@ test("browser Markdown rendering handles sourced images and normalizes other Mar
     async (baseUrl) => {
       const response = await fetch(baseUrl);
       const html = await response.text();
-      const script = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
+      const script = html.match(/<script id="chat-script">([\s\S]*?)<\/script>/)?.[1];
       assert.ok(script);
       const document = {
+        documentElement: { dataset: { theme: "light" } },
         querySelector: () => fakeElement("input"),
         createElement: (tagName: string) => fakeElement(tagName),
         createElementNS: (_namespace: string, tagName: string) => fakeElement(tagName),
@@ -457,7 +465,7 @@ test("browser chat prevents duplicate submits and renders typed image-generation
     async (baseUrl) => {
       const response = await fetch(baseUrl);
       const html = await response.text();
-      const script = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
+      const script = html.match(/<script id="chat-script">([\s\S]*?)<\/script>/)?.[1];
       assert.ok(script);
       const actionMenu = fakeElement("div");
       actionMenu.hidden = true;
@@ -482,6 +490,7 @@ test("browser chat prevents duplicate submits and renders typed image-generation
         ["#messages", fakeElement("section")],
         ["#welcome", fakeElement("div")],
         ["#status", fakeElement("p")],
+        ["#theme-toggle", fakeElement("button")],
         ["#analytics-consent", fakeElement("section")],
         ["#analytics-accept", fakeElement("button")],
         ["#analytics-decline", fakeElement("button")],
@@ -496,6 +505,7 @@ test("browser chat prevents duplicate submits and renders typed image-generation
       ]);
       let documentClickHandler: ((event: { target: unknown }) => void) | undefined;
       const document = {
+        documentElement: { dataset: { theme: "light" } },
         querySelector: (selector: string) => elements.get(selector),
         createElement: (tagName: string) => fakeElement(tagName),
         createElementNS: (_namespace: string, tagName: string) => fakeElement(tagName),
@@ -730,13 +740,13 @@ test("browser sign-up leads into the account's saved conversation", async () =>
     async (baseUrl) => {
       const response = await fetch(baseUrl);
       const html = await response.text();
-      const script = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
+      const script = html.match(/<script id="chat-script">([\s\S]*?)<\/script>/)?.[1];
       assert.ok(script);
       const selectors = [
         "#auth-screen", "#chat-screen", "#auth-form", "#auth-username",
         "#auth-password", "#auth-title", "#auth-description", "#auth-note",
         "#auth-submit", "#auth-toggle", "#auth-switch-copy", "#auth-status",
-        "#account-username", "#sign-out", "#analytics-consent", "#analytics-accept",
+        "#account-username", "#sign-out", "#theme-toggle", "#analytics-consent", "#analytics-accept",
         "#analytics-decline", "#analytics-settings", "#chat-form", "#message", "#send",
         "#messages", "#welcome", "#status", "#attachment-files",
         "#attachment-list", "#attachment-menu-toggle", "#attachment-menu",
@@ -749,6 +759,7 @@ test("browser sign-up leads into the account's saved conversation", async () =>
         ]),
       );
       const document = {
+        documentElement: { dataset: { theme: "light" } },
         querySelector: (selector: string) => elements.get(selector),
         createElement: (tagName: string) => fakeElement(tagName),
         createElementNS: (_namespace: string, tagName: string) => fakeElement(tagName),

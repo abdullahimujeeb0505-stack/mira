@@ -36,7 +36,7 @@ The browser chat requires a username and password (no email); passwords are stor
 
 ## First-party site analytics
 
-The chat page includes an optional, first-party analytics notice. Visitors must opt in before a page view or feature-use event is sent; they can decline or change their choice later. The self-hosted dashboard at `/analytics` reports page views, approximate unique browsers, sessions, returning browsers, and daily, weekly, and monthly summaries in UTC. Only allowlisted event names and a cleaned page path are stored—never chat text, prompts, attachment content, IP addresses, full referrers, or raw browser IDs. “Unique browsers” are pseudonymous opt-in browser cookies, not verified people or account identities.
+The chat page includes an optional, first-party analytics notice. Visitors must opt in before a page view or feature-use event is sent; they can decline or change their choice later. The self-hosted dashboard at `/analytics` reports page views, approximate unique browsers, sessions, returning browsers, and daily, weekly, and monthly summaries in UTC. Only allowlisted event names and a cleaned page path are stored—never chat text, prompts, attachment content, IP addresses, full referrers, or raw browser IDs. “Unique browsers” are pseudonymous opt-in browser cookies, not verified people or account identities. The chat, sign-in, and analytics screens also provide a persistent light/dark theme switch that follows the device preference until changed.
 
 To unlock the private dashboard, generate a strong server-side token and add it as `MUSE_ANALYTICS_ADMIN_TOKEN` in the host's secret settings (do not put it in source code or a URL):
 

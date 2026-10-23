@@ -111,9 +111,20 @@ const CHAT_PAGE = `<!doctype html>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#f4effa">
+    <meta id="theme-color" name="theme-color" content="#f4effa">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <title>Mira — conversational assistant by Muse</title>
+    <script id="theme-bootstrap">
+      (() => {
+        let savedTheme = "";
+        let systemTheme = "light";
+        try { savedTheme = localStorage.getItem("muse-theme") || ""; } catch {}
+        try {
+          systemTheme = window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        } catch {}
+        document.documentElement.dataset.theme = savedTheme === "dark" || savedTheme === "light" ? savedTheme : systemTheme;
+      })();
+    </script>
     <style>
       :root {
         color-scheme: light;
@@ -176,6 +187,9 @@ const CHAT_PAGE = `<!doctype html>
       .site-footer { position: relative; z-index: 4; flex: 0 0 auto; padding: 7px 14px max(11px, env(safe-area-inset-bottom)); color: #8a8294; font-size: 10px; text-align: center; }
       .site-footer a { color: #765fc3; font-weight: 750; text-decoration: none; }
       .site-footer a:hover { color: #59438f; text-decoration: underline; }
+      .site-utility { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 7px 12px; margin: 0 auto 5px; }
+      .theme-toggle { min-width: 0; min-height: 30px; padding: 0 8px; border: 1px solid #e7deef; color: #796e8a; background: #fff; box-shadow: none; font-size: 10px; font-weight: 650; }
+      .theme-toggle:hover { border-color: #d9ccef; color: #624b9c; background: #f6f2fb; }
       .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
       #messages { flex: 1 1 auto; min-height: 0; min-width: 0; width: 100%; display: flex; flex-direction: column; gap: 18px; overflow-y: auto; overscroll-behavior: contain; padding: 28px clamp(18px, 6vw, 70px) 26px; scroll-behavior: smooth; scrollbar-color: #d9d0e4 transparent; scrollbar-width: thin; }
       #welcome[hidden] { display: none; }
@@ -256,6 +270,7 @@ const CHAT_PAGE = `<!doctype html>
       #status { width: min(100%, 850px); align-self: center; flex: 0 0 auto; margin: 0 auto; padding: 0 clamp(16px, 5vw, 54px) 10px; color: var(--muted); font-size: 12px; line-height: 1.5; text-align: center; overflow-wrap: anywhere; }
       #status:empty { display: none; }
       .analytics-preferences { flex: 0 0 auto; margin: 0 auto 8px; text-align: center; }
+      .site-utility .analytics-preferences { margin: 0; }
       #analytics-settings { min-width: 0; min-height: 30px; padding: 0 8px; color: #796e8a; background: transparent; box-shadow: none; font-size: 10px; font-weight: 650; }
       #analytics-settings:hover { color: #624b9c; text-decoration: underline; }
       .analytics-preferences a { color: #796e8a; font-size: 10px; font-weight: 650; text-decoration: none; }
@@ -325,6 +340,83 @@ const CHAT_PAGE = `<!doctype html>
         #messages { scroll-behavior: auto; }
         button, .composer-box { transition: none; }
       }
+      :root[data-theme="dark"] {
+        color-scheme: dark;
+        color: #f3edf8;
+        background: #17141d;
+        --canvas: #17141d;
+        --paper: #211e29;
+        --ink: #f3edf8;
+        --muted: #b9b0c3;
+        --line: #3b3446;
+        --lilac: #bca4ed;
+        --shadow: 0 28px 90px #0008;
+      }
+      :root[data-theme="dark"] body { background: radial-gradient(ellipse at 12% 12%, #3d2a3d 0, transparent 34%), radial-gradient(ellipse at 88% 86%, #292543 0, transparent 33%), var(--canvas); }
+      :root[data-theme="dark"] main { border-color: #3b3445; }
+      :root[data-theme="dark"] main::before { background: radial-gradient(circle, #59457655 0, #3a2d4d35 48%, transparent 72%); }
+      :root[data-theme="dark"] main::after { background: radial-gradient(circle, #633d5145 0, #402d3a30 48%, transparent 72%); }
+      :root[data-theme="dark"] .auth-screen { background: radial-gradient(ellipse at 18% 16%, #38283a 0, transparent 40%), radial-gradient(ellipse at 86% 84%, #292440 0, transparent 38%), #17141d; }
+      :root[data-theme="dark"] .auth-card { border-color: #3b3446; background: #241f2c; box-shadow: 0 20px 60px #0006; }
+      :root[data-theme="dark"] .auth-label { color: #d8cfe2; }
+      :root[data-theme="dark"] .auth-input { border-color: #453b51; background: #191620; }
+      :root[data-theme="dark"] .auth-note { color: #b6acbf; }
+      :root[data-theme="dark"] #auth-status { color: #ff9fb4; }
+      :root[data-theme="dark"] .auth-text-button { color: #c7aff5; }
+      :root[data-theme="dark"] .auth-text-button:hover { color: #e0d0ff; }
+      :root[data-theme="dark"] .chat-header { background: #211e29ed; }
+      :root[data-theme="dark"] .header-note { border-color: #44384f; color: #c2b8cd; background: #2b2534; }
+      :root[data-theme="dark"] .account-username { color: #ded4e8; }
+      :root[data-theme="dark"] .sign-out { border-color: #493f53; color: #d3c7df; background: #2a2531; }
+      :root[data-theme="dark"] .sign-out:hover { color: #f1e9ff; background: #3a3046; }
+      :root[data-theme="dark"] .site-footer { color: #a99fb4; }
+      :root[data-theme="dark"] .site-footer a { color: #c1aaf1; }
+      :root[data-theme="dark"] .site-footer a:hover { color: #e0d1ff; }
+      :root[data-theme="dark"] .welcome-art { border-color: #45394f; background: linear-gradient(145deg, #352943, #382832); box-shadow: 0 12px 30px #0004, inset 0 1px 2px #ffffff14; }
+      :root[data-theme="dark"] .welcome-kicker { color: #c5b1f3; }
+      :root[data-theme="dark"] .welcome-title { color: #f3edf8; }
+      :root[data-theme="dark"] .starter-prompt { border-color: #403949; background: #292530; box-shadow: 0 4px 13px #0003; }
+      :root[data-theme="dark"] .starter-prompt:hover { border-color: #625371; background: #332b3c; box-shadow: 0 10px 24px #0005; }
+      :root[data-theme="dark"] .prompt-icon { color: #d0bbff; background: #383049; }
+      :root[data-theme="dark"] .starter-prompt:nth-child(2) .prompt-icon { color: #f0b7d5; background: #402c3a; }
+      :root[data-theme="dark"] .starter-prompt:nth-child(3) .prompt-icon { color: #f1d18c; background: #403723; }
+      :root[data-theme="dark"] .starter-prompt:nth-child(4) .prompt-icon { color: #9fe0c6; background: #243a35; }
+      :root[data-theme="dark"] .prompt-title { color: #eee7f5; }
+      :root[data-theme="dark"] .prompt-description { color: #b8afc2; }
+      :root[data-theme="dark"] .message, :root[data-theme="dark"] .message.muse { border-color: #403949; background: #28242f; color: #eee8f4; box-shadow: 0 5px 18px #0003; }
+      :root[data-theme="dark"] .message.muse::before { color: #c7b1ef; }
+      :root[data-theme="dark"] .message.muse h1, :root[data-theme="dark"] .message.muse h2, :root[data-theme="dark"] .message.muse h3, :root[data-theme="dark"] .message.muse h4, :root[data-theme="dark"] .message.muse h5, :root[data-theme="dark"] .message.muse h6 { color: #f3edf8; }
+      :root[data-theme="dark"] .message.muse a { color: #c7b1ff; text-decoration-color: #9c83d4; }
+      :root[data-theme="dark"] .message.muse th, :root[data-theme="dark"] .message.muse td { border-color: #453d50; }
+      :root[data-theme="dark"] .message.muse th { color: #e4d9ef; background: #332d3b; }
+      :root[data-theme="dark"] .message.muse pre { border-color: #443b4d; background: #1f1b26; }
+      :root[data-theme="dark"] .message.muse code { color: #d4c0ff; background: #383048; }
+      :root[data-theme="dark"] .message.muse pre code { background: transparent; }
+      :root[data-theme="dark"] .message.you { border-color: #57486e; background: #39304a; color: #f1eafa; box-shadow: 0 5px 16px #0004; }
+      :root[data-theme="dark"] .icon-button { border-color: #484052; color: #d1bdf5; background: #292530; box-shadow: 0 4px 14px #0003; }
+      :root[data-theme="dark"] .icon-button:hover { border-color: #665878; color: #eadfff; background: #36303f; }
+      :root[data-theme="dark"] #attachment-menu { border-color: #443c4d; background: #292530; box-shadow: 0 16px 44px #0008; }
+      :root[data-theme="dark"] .menu-item { color: #e5ddeb; }
+      :root[data-theme="dark"] .menu-item:hover, :root[data-theme="dark"] .menu-item:focus-visible { color: #f0e7ff; background: #3a3246; }
+      :root[data-theme="dark"] .composer-box { border-color: #453c4f; background: #211e29; box-shadow: 0 8px 26px #0004; }
+      :root[data-theme="dark"] .composer-box:focus-within { border-color: #8d76b6; box-shadow: 0 0 0 4px #a890d91c, 0 8px 26px #0004; }
+      :root[data-theme="dark"] .composer-icon { color: #b7a9c8; }
+      :root[data-theme="dark"] .composer-icon:hover { color: #e4d5ff; background: #383044; }
+      :root[data-theme="dark"] .attachment-chip { border-color: #453b50; color: #e1d7e9; background: #292530; box-shadow: 0 3px 10px #0003; }
+      :root[data-theme="dark"] .attachment-remove { color: #ddcaff; background: #3a3048; }
+      :root[data-theme="dark"] .speak-button, :root[data-theme="dark"] .download-button { border-color: #514460; color: #d5c1fa; background: #332b3d; box-shadow: 0 3px 10px #0003; }
+      :root[data-theme="dark"] .speak-button:hover, :root[data-theme="dark"] .download-button:hover { border-color: #726084; color: #f1e9ff; background: #41364f; box-shadow: 0 5px 14px #0005; }
+      :root[data-theme="dark"] .composer-hint { color: #b9afc3; }
+      :root[data-theme="dark"] .composer-hint span { color: #d1a9e0; }
+      :root[data-theme="dark"] .analytics-preferences a, :root[data-theme="dark"] #analytics-settings { color: #b9adca; }
+      :root[data-theme="dark"] .analytics-preferences a:hover, :root[data-theme="dark"] #analytics-settings:hover { color: #e0d1ff; }
+      :root[data-theme="dark"] #analytics-consent { border-color: #443c4d; color: #e8e0ed; background: #292430; box-shadow: 0 7px 22px #0004; }
+      :root[data-theme="dark"] .analytics-consent-title { color: #f0e9f5; }
+      :root[data-theme="dark"] .analytics-consent-description { color: #c2b8cb; }
+      :root[data-theme="dark"] #analytics-decline { border-color: #51465d; color: #e2d7ec; background: #332d3b; }
+      :root[data-theme="dark"] #analytics-decline:hover { background: #42384d; }
+      :root[data-theme="dark"] .theme-toggle { border-color: #4b4255; color: #e4d9ef; background: #2a2532; }
+      :root[data-theme="dark"] .theme-toggle:hover { border-color: #6d5b7d; background: #3a3046; }
     </style>
   </head>
   <body>
@@ -434,17 +526,52 @@ const CHAT_PAGE = `<!doctype html>
             <button id="analytics-accept" type="button">Allow analytics</button>
           </div>
         </section>
-        <p class="analytics-preferences"><button id="analytics-settings" type="button">Privacy &amp; analytics choices</button><span aria-hidden="true"> · </span><a href="/analytics">Site analytics</a></p>
+        <div class="site-utility">
+          <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false" title="Switch to dark mode">☾ Dark mode</button>
+          <p class="analytics-preferences"><button id="analytics-settings" type="button">Privacy &amp; analytics choices</button><span aria-hidden="true"> · </span><a href="/analytics">Site analytics</a></p>
+        </div>
         <span class="site-credit">Built by <a href="https://x.com/Great_mujey" target="_blank" rel="noopener noreferrer">Great_mujey</a></span>
       </footer>
     </main>
-    <script>
+    <script id="chat-script">
       const form = document.querySelector("#chat-form");
       const input = document.querySelector("#message");
       const button = document.querySelector("#send");
       const messages = document.querySelector("#messages");
       const welcome = document.querySelector("#welcome");
       const status = document.querySelector("#status");
+      const themeToggle = document.querySelector("#theme-toggle");
+      const themeColorMeta = document.querySelector("#theme-color");
+      function applyTheme(theme, persist = false) {
+        const selectedTheme = theme === "dark" ? "dark" : "light";
+        document.documentElement.dataset.theme = selectedTheme;
+        const action = selectedTheme === "dark" ? "Switch to light mode" : "Switch to dark mode";
+        themeToggle.setAttribute("aria-pressed", String(selectedTheme === "dark"));
+        themeToggle.setAttribute("aria-label", action);
+        themeToggle.setAttribute("title", action);
+        themeToggle.textContent = selectedTheme === "dark" ? "☀ Light mode" : "☾ Dark mode";
+        themeColorMeta?.setAttribute("content", selectedTheme === "dark" ? "#17141d" : "#f4effa");
+        if (persist) {
+          try { localStorage.setItem("muse-theme", selectedTheme); } catch {}
+        }
+      }
+      let savedTheme = "";
+      let systemPrefersDark = false;
+      try {
+        savedTheme = localStorage.getItem("muse-theme") || "";
+        systemPrefersDark = window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false;
+      } catch {}
+      const initialTheme = savedTheme === "dark" || savedTheme === "light"
+        ? savedTheme
+        : document.documentElement.dataset.theme === "dark" || systemPrefersDark
+        ? "dark"
+        : "light";
+      applyTheme(initialTheme);
+      themeToggle.addEventListener("click", () => {
+        const currentTheme = document.documentElement.dataset.theme;
+        applyTheme(currentTheme === "dark" ? "light" : "dark", true);
+      });
+
       const analyticsConsentPanel = document.querySelector("#analytics-consent");
       const analyticsAcceptButton = document.querySelector("#analytics-accept");
       const analyticsDeclineButton = document.querySelector("#analytics-decline");
