@@ -46,12 +46,31 @@ const DEFAULT_MEMORY_DIRECTORY = fileURLToPath(
   new URL("../../data/muse-http-sessions/", import.meta.url),
 );
 
+const MIRA_FAVICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="background" x1="8" y1="5" x2="58" y2="61" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#b49ae8"/>
+      <stop offset=".55" stop-color="#8c78d1"/>
+      <stop offset="1" stop-color="#df9fbd"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="19" fill="url(#background)"/>
+  <g fill="#fff">
+    <ellipse cx="32" cy="17.5" rx="7.8" ry="12"/>
+    <ellipse cx="46.5" cy="32" rx="12" ry="7.8"/>
+    <ellipse cx="32" cy="46.5" rx="7.8" ry="12"/>
+    <ellipse cx="17.5" cy="32" rx="12" ry="7.8"/>
+  </g>
+  <circle cx="32" cy="32" r="6" fill="#ffe7a6"/>
+</svg>`;
+
 const CHAT_PAGE = `<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#f4effa">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <title>Mira — conversational assistant by Muse</title>
     <style>
       :root {
@@ -154,9 +173,10 @@ const CHAT_PAGE = `<!doctype html>
       .attachment-chip > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       .attachment-remove { min-height: 30px; padding: 0 9px; color: #7059a4; background: #f1ecf9; font-size: 12px; }
       .message-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-      .speak-button { width: 36px; min-width: 36px; min-height: 36px; height: 36px; padding: 0; border: 1px solid #e7deef; color: #735ca8; background: #f5f1fb; font-size: 18px; }
-      .download-link { display: inline-block; padding: 8px 12px; border: 1px solid #e3d9ef; border-radius: 11px; color: #7059a4; background: #f8f5fc; font-size: 13px; text-decoration: none; }
-      .download-link:hover { background: #eee8f8; }
+      .speak-button, .download-button { width: 38px; min-width: 38px; min-height: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center; padding: 0; border: 1px solid #e7deef; border-radius: 50%; color: #735ca8; background: #f5f1fb; box-shadow: 0 3px 10px #5948780a; cursor: pointer; text-decoration: none; transition: transform .16s ease, background-color .16s ease, border-color .16s ease, box-shadow .16s ease; }
+      .speak-button:hover, .download-button:hover { transform: translateY(-1px); border-color: #d8ccea; color: #634cae; background: #eee8f8; box-shadow: 0 5px 14px #59487814; }
+      .speak-button:focus-visible, .download-button:focus-visible { outline: 3px solid #b4a3e7; outline-offset: 3px; }
+      .speak-button svg, .download-button svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
       .generated-image { display: block; max-width: min(100%, 680px); height: auto; border-radius: 16px; box-shadow: 0 12px 36px #493c5a1a; }
       .composer-hint { width: min(100%, 850px); margin: 0 auto; padding: 0 clamp(16px, 5vw, 54px) 12px; color: #786f83; font-size: 10px; line-height: 1.4; text-align: center; }
       .composer-hint span { color: #b38fc0; }
@@ -668,6 +688,20 @@ const CHAT_PAGE = `<!doctype html>
         }
       });
 
+      function createActionIcon(paths) {
+        const namespace = "http://www.w3.org/2000/svg";
+        const svg = document.createElementNS(namespace, "svg");
+        svg.setAttribute("viewBox", "0 0 24 24");
+        svg.setAttribute("aria-hidden", "true");
+        svg.setAttribute("focusable", "false");
+        for (const pathData of paths) {
+          const path = document.createElementNS(namespace, "path");
+          path.setAttribute("d", pathData);
+          svg.append(path);
+        }
+        return svg;
+      }
+
       function addMessage(kind, text) {
         if (welcome) welcome.hidden = true;
         const item = document.createElement("div");
@@ -680,8 +714,12 @@ const CHAT_PAGE = `<!doctype html>
             const speak = document.createElement("button");
             speak.className = "speak-button";
             speak.type = "button";
-            speak.textContent = "🔊";
             speak.setAttribute("aria-label", "Read Mira's response aloud");
+            speak.append(createActionIcon([
+              "M11 5 6 9H3v6h3l5 4V5Z",
+              "M15.5 8.5a5 5 0 0 1 0 7",
+              "M18.5 5.5a9 9 0 0 1 0 13",
+            ]));
             speak.title = "Read aloud";
             speak.addEventListener("click", () => {
               const plainText = text
@@ -715,11 +753,17 @@ const CHAT_PAGE = `<!doctype html>
         const actions = document.createElement("div");
         actions.className = "message-actions";
         const download = document.createElement("a");
-        download.className = "download-link";
+        download.className = "download-button";
         download.href = objectUrl;
+        download.setAttribute("aria-label", "Download image");
+        download.title = "Download image";
         const extension = blob.type === "image/png" ? "png" : blob.type === "image/webp" ? "webp" : "jpg";
         download.download = "mira-generated-image." + extension;
-        download.textContent = "Download image";
+        download.append(createActionIcon([
+          "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4",
+          "m7 10 5 5 5-5",
+          "M12 15V3",
+        ]));
         download.addEventListener("click", () => {
           window.setTimeout(() => URL.revokeObjectURL(objectUrl), 60_000);
         }, { once: true });
@@ -762,7 +806,7 @@ const CHAT_PAGE = `<!doctype html>
           const contentType = response.headers.get("content-type") || "";
           if (contentType.startsWith("image/")) {
             addGeneratedImage(await response.blob());
-            status.textContent = "Image ready. Use Download image to save it.";
+            status.textContent = "Image ready. Use the download icon to save it.";
           } else {
             const result = await response.json();
             addMessage("muse", result.reply);
@@ -806,7 +850,7 @@ const CHAT_PAGE = `<!doctype html>
           if (!response.ok) throw new Error(await readError(response, "Image generation failed."));
           const blob = await response.blob();
           addGeneratedImage(blob);
-          status.textContent = "Image ready. Use Download image to save it.";
+          status.textContent = "Image ready. Use the download icon to save it.";
         } catch (error) {
           status.textContent = error instanceof Error ? error.message : "Image generation failed.";
         } finally {
@@ -1081,6 +1125,14 @@ export function createMuseHttpServer(
   ): Promise<void> {
     setSecurityHeaders(response);
     const pathname = new URL(request.url ?? "/", "http://localhost").pathname;
+
+    if (request.method === "GET" && pathname === "/favicon.svg") {
+      response.statusCode = 200;
+      response.setHeader("Content-Type", "image/svg+xml; charset=utf-8");
+      response.setHeader("Cache-Control", "public, max-age=86400");
+      response.end(MIRA_FAVICON_SVG);
+      return;
+    }
 
     if (request.method === "GET" && pathname === "/") {
       response.statusCode = 200;
@@ -1694,7 +1746,7 @@ function setSecurityHeaders(response: ServerResponse): void {
   response.setHeader("Cache-Control", "no-store");
   response.setHeader(
     "Content-Security-Policy",
-    "default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'self'; img-src https://upload.wikimedia.org https://api.openverse.org blob:; form-action 'self'; base-uri 'none'; frame-ancestors 'none'",
+    "default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'self'; img-src 'self' https://upload.wikimedia.org https://api.openverse.org blob:; form-action 'self'; base-uri 'none'; frame-ancestors 'none'",
   );
   response.setHeader("Referrer-Policy", "no-referrer");
   response.setHeader("X-Content-Type-Options", "nosniff");
