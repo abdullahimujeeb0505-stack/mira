@@ -1,0 +1,119 @@
+{
+  "id": "2026-10-22T12-17-50-221Z-make-research-around-this-image",
+  "question": "Make research around this image",
+  "plan": {
+    "objective": "Analyze the provided image depicting the Action Research Cycle and research its core stages, methodology, and practical application in educational or organizational contexts.",
+    "taskType": "definition",
+    "deliverable": "A structured explanation of the Action Research Cycle stages (planning, action, observation, reflection/analysis) and its significance in research methodology.",
+    "requiresCurrentInformation": false,
+    "sourcePreferences": [
+      "academic journals",
+      "educational research methodology texts",
+      "reputable institutional sources"
+    ],
+    "questions": [
+      "What are the core stages of the Action Research Cycle?",
+      "How does the iterative process of action research work in practice?",
+      "What is the origin and purpose of the action research model?"
+    ],
+    "queries": [
+      "Action Research Cycle stages planning action observation reflection",
+      "definition and history of action research methodology"
+    ],
+    "unresolvedQuestions": [
+      "What specific practical examples illustrate how the action research cycle is applied in educational or organizational settings?",
+      "How do different frameworks vary regarding the exact number of stages (e.g., 4 phases vs. 5 phases) in the action research cycle?"
+    ]
+  },
+  "answer": "### Overview and Origin of Action Research\nAction research is a philosophy and methodology of research applied in the social sciences, education, and organizational contexts. [SRC-a883f536f6c5]\nIt seeks transformative change through the simultaneous process of taking action and conducting research, which are linked by critical reflection [SRC-a883f536f6c5].\nThe term was coined in 1944 by Kurt Lewin, a German-American psychologist at MIT, who elaborated on the concept in his 1946 paper \"Action Research and Minority Problems\". [SRC-a883f536f6c5]\nLewin's purpose was to ensure that inquiry drives real, lasting social change simultaneously with academic understanding rather than merely producing isolated academic papers [SRC-5d4a0709d4c2].\n\n### Core Stages of the Action Research Cycle\nAction research utilizes an interactive inquiry process structured around a repeating cycle of steps: [SRC-a883f536f6c5]\n* **Planning:** Researchers and practitioners collaborate to diagnose a real, local problem and plan an intervention or change intended to address it [SRC-c0013bfb7930].\nIn Lewin's formulation, this involves a spiral of steps utilizing a circle of planning, action, and fact-finding [SRC-a883f536f6c5].\n* **Action:** Implementing the planned problem-solving action within a collaborative setting (unverified: no matching retrieved evidence).\n* **Observation (Fact-finding):** Systematically studying and observing the effects, conditions, and results of the implemented action. [SRC-a883f536f6c5]\n* **Reflection / Analysis:** Engaging in data-driven collaborative analysis and critical reflection to understand underlying causes and outcomes, which informs future predictions and revisions. [SRC-a883f536f6c5]\n\n### Practical Application and Iterative Process\nIn practice, action research operates as an iterative inquiry process where participants jointly plan, implement, and study a change, then revise and repeat the cycle based on what was learned [SRC-c0013bfb7930].\nUnlike traditional research designs that aim only to describe or explain a phenomenon, action research explicitly strives to produce practical improvements in specific settings while generating transferable knowledge [SRC-c0013bfb7930].\nOver decades of development, methods have evolved to balance focus between the actions taken and the research resulting from reflective understanding [SRC-a883f536f6c5].",
+  "followUpQuestions": [
+    "action research traditions",
+    "action research in education"
+  ],
+  "sources": [
+    {
+      "title": "Action research - Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Action_Research",
+      "canonicalUrl": "https://en.wikipedia.org/wiki/Action_research",
+      "publisher": "en.wikipedia.org",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Action research is a philosophy and methodology of research generally applied in the social sciences. It seeks transformative change through the simultaneous process of taking action and doing research, which are linked together by critical reflection. Kurt Lewin , then a professor at MIT , coined the term \"action research\" in 1944. In his 1946 paper \"Action",
+        "Action research is an interactive inquiry process that balances problem-solving actions implemented in a collaborative context with data-driven collaborative analysis or research to understand underlying causes enabling future predictions about personal and organizational change. [ 1 ] [ 2 ] [ 3 ] [ 4 ] [ 5 ] [ 6 ] [ 7 ] [ 8 ]",
+        "After seven decades of action research development, many methods have evolved that adjust the balance to focus more on the actions taken or more on the research that results from the reflective understanding of the actions.",
+        "those who are more driven either by the researcher's agenda or by participants;"
+      ],
+      "retrievedAt": "2026-10-22T12:17:44.318Z",
+      "content": "From Wikipedia, the free encyclopedia\n(Redirected from Action Research )\nMethodology for social science research\non |\nResearch |\n|\nPhilosophy portal |\nAction research is a philosophy and methodology of research generally applied in the social sciences. It seeks transformative change through the simultaneous process of taking action and doing research, which are linked together by critical reflection. Kurt Lewin , then a professor at MIT , coined the term \"action research\" in 1944. In his 1946 paper \"Action Research and Minority Problems\" he described action research as \"a comparative research on the conditions and effects of various forms of social action and research leading to social action\" that uses \"a spiral of steps, each of which is composed of a circle of planning, action and fact-finding about the result of the action\".\nProcess\n[ edit ]\nAction research is an interactive inquiry process that balances problem-solving actions implemented in a collaborative context with data-driven collaborative analysis or research to understand underlying causes enabling future predictions about personal and organizational change. [ 1 ] [ 2 ] [ 3 ] [ 4 ] [ 5 ] [ 6 ] [ 7 ] [ 8 ]\nAfter seven decades of action research development, many methods have evolved that adjust the balance to focus more on the actions taken or more on the research that results from the reflective understanding of the actions.\nThis tension exists between:\nthose who are more driven either by the researcher's agenda or by participants;\nthose who are motivated primarily by instrumental goal attainment or by the aim of personal, organizational or societal transformation; and\n1st-, to 2nd-, to 3rd-person research, that is, my research on my own action, aimed primarily at personal change; our research on our group (family/team), aimed primarily at improving the group; and 'scholarly' research aimed primarily at theoretical generalization or large-scale change. [ 9 ]\nAction research challenges traditional social science by moving beyond reflective knowledge created by outside experts sampling variables, to an active moment-to-moment theorizing, data collecting and inquiry occurring in the midst of emergent structure. \"Knowledge is always gained through action and for action. From this starting point, to question the validity of social knowledge is to question, not how to develop a reflective science about action, but how to develop genuinely well-informed action – how to conduct an action science\". [ 10 ] In this sense, engaging in action research is a form of problem-based investigation by practitioners into their practice, thus it is an empirical process . The goal is both to create and share knowledge in the social sciences.\nMajor theoretical approaches\nChris Argyris' action science\nChris Argyris ' action science begins with the study of how human beings design their actions in difficult situations. Humans design their actions to achieve intended consequences and are governed by a set of e",
+      "isUserProvided": true,
+      "sourceId": "SRC-a883f536f6c5"
+    },
+    {
+      "title": "Action Research: Method and Cycle Explained — CASRAI",
+      "url": "https://casrai.org/guides/action-research-method",
+      "canonicalUrl": "https://casrai.org/guides/action-research-method",
+      "publisher": "CASRAI",
+      "publishedAt": "2026-07-30T03:02:31.000Z",
+      "updatedAt": "2026-07-30T03:02:31.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Research-admin AI Research-admin question? Get an answer that links its sources. Ask about 2 CFR 200, an NIH or NSF application, IRB review or your own case. Answers link the sources they rest on. 2 questions free, no account. $29/month after. Ask 2 questions free → CASRAI's own product or subscribe — $29/month",
+        "CASRAI Working Groups Help write the standards you have to implement 24 working groups propose, review and ratify the terms CASRAI publishes, one per dictionary domain. Chair, co-chair, community and observer seats are open, from about two hours a month. Applications are reviewed. Apply to join a group → CASRAI · Volunteer seats",
+        "Action Research: Method, Cycle, and When to Use It",
+        "Action research is a cyclical research approach in which researchers and practitioners jointly plan, implement, and study a change to a real problem, then revise and repeat. This guide explains the plan-act-observe-reflect cycle, its major traditions (technical, practical, emancipatory, PAR), how it differs from program evaluation and quality improvement, an"
+      ],
+      "retrievedAt": "2026-10-22T12:17:43.998Z",
+      "content": "Research-admin AI Research-admin question? Get an answer that links its sources. Ask about 2 CFR 200, an NIH or NSF application, IRB review or your own case. Answers link the sources they rest on. 2 questions free, no account. $29/month after. Ask 2 questions free → CASRAI's own product or subscribe — $29/month\nCASRAI Working Groups Help write the standards you have to implement 24 working groups propose, review and ratify the terms CASRAI publishes, one per dictionary domain. Chair, co-chair, community and observer seats are open, from about two hours a month. Applications are reviewed. Apply to join a group → CASRAI · Volunteer seats\nGuide Research Data Management\nAction Research: Method, Cycle, and When to Use It\nAction research is a cyclical research approach in which researchers and practitioners jointly plan, implement, and study a change to a real problem, then revise and repeat. This guide explains the plan-act-observe-reflect cycle, its major traditions (technical, practical, emancipatory, PAR), how it differs from program evaluation and quality improvement, and what a rigorous write-up requires.\nWritten and maintained by CASRAI Editorial Board\nLast updated 30 July 2026\nX\nLinkedIn\nFacebook\nCopy link\nAction research is a research approach in which researchers and practitioners collaborate to diagnose a real, local problem, implement a change intended to address it, and systematically study the effects of that change — then repeat the cycle based on what was learned. Unlike most research designs, which aim only to describe or explain a phenomenon, action research explicitly aims to produce practical improvement in a specific setting and generate transferable knowledge at the same time. It traces to psychologist Kurt Lewin’s work in the 1940s, who coined the term to describe research that proceeds through a spiral of planning, acting, observing, and reflecting.\nThis guide explains the action research cycle, its major traditions, how it differs from program evaluation and quality improvement work, what a rigorous action research write-up needs to contain, and its common critiques and limitations.\nThe Action Research Cycle\nAction research is organized around an iterative cycle rather than a single linear procedure. The most widely cited formulation, derived from Lewin and elaborated by later methodologists, has four recurring stages:\nPlan. The researcher(s) and the practitioners or stakeholders affected by the problem jointly diagnose the issue and design an intervention or change intended to address it, grounded in existing evidence and the group’s own knowledge of the local context.\nAct. The planned change is implemented in the real setting — a classroom, a clinical unit, an organization, a community program — under normal operating conditions rather than an artificially controlled one.\nObserve. Data are collected on the effects of the change using whatever mix of methods fits the question: field notes, interviews, surveys, routine performa",
+      "isUserProvided": true,
+      "sourceId": "SRC-c0013bfb7930"
+    },
+    {
+      "title": "The Evolution of Action Research: From Kurt Lewin to Modern Education &bull; Teachers Institute",
+      "url": "https://teachers.institute/growth-and-development-of-educational-management/evolution-of-action-research/",
+      "canonicalUrl": "https://teachers.institute/growth-and-development-of-educational-management/evolution-of-action-research/",
+      "publisher": "Teachers Institute",
+      "publishedAt": "2025-12-06T18:30:00.000Z",
+      "updatedAt": "2026-04-04T16:26:09.000Z",
+      "sourceType": "web page",
+      "retrievalStatus": "retrieved",
+      "extractionStatus": "main-content",
+      "evidenceSnippets": [
+        "Research in education has rarely followed a straight path. Some of the most powerful ideas about how teachers learn, grow, and improve their practice were not born in universities or policy documents – they emerged from urgent real-world problems: racial tensions , post-war social disruption , and the quiet frustration of teachers who knew their classrooms c",
+        "The origins: Kurt Lewin and the birth of action research",
+        "Early use in education: Stephen Corey and the 1950s",
+        "Challenges and criticism: the decline in the late 1950s and 1960s"
+      ],
+      "retrievedAt": "2026-10-22T12:17:43.921Z",
+      "content": "Research in education has rarely followed a straight path. Some of the most powerful ideas about how teachers learn, grow, and improve their practice were not born in universities or policy documents – they emerged from urgent real-world problems: racial tensions , post-war social disruption , and the quiet frustration of teachers who knew their classrooms could be better. Action research is one such idea. It has a rich, sometimes turbulent history that stretches from a psychologist’s wartime lab in the 1940s to today’s professional learning communities in schools across the world. Tracing that history reveals not just how a methodology evolved, but why it keeps proving its worth.\nTable of Contents\nThe origins: Kurt Lewin and the birth of action research\nEarly use in education: Stephen Corey and the 1950s\nChallenges and criticism: the decline in the late 1950s and 1960s\nResurgence: the 1970s and the push for school reform\nModern adoption: action research in today’s schools\nWhat makes action research endure\nKurt Lewin (1890-1947) was a German-American psychologist who is widely regarded as the father of action research. Forced to flee Nazi Germany in 1933, he eventually joined MIT, where he developed his most influential ideas. Lewin was not content with research that produced only academic papers. He wanted inquiry to drive real, lasting social change – and he believed the two had to happen simultaneously.\nLewin’s first ideas on what he called “action research” were sketched out around 1934 , but the concept came into sharper focus through his practical work in the early 1940s. He formally introduced the term in 1944 and elaborated on it in his landmark 1946 paper, Action Research and Minority Problems . In that paper, he described action research as comparative inquiry into the conditions and effects of different forms of social action – research that does not stop at observation but leads directly to change.\nHis core conviction was captured in a maxim that has defined the field ever since: “No action without research; no research without action.” For Lewin, this was not a slogan but a structural principle. He described the process as a spiral of steps, each consisting of planning, action, and fact-finding about the result of that action . This cyclical model – often summarised as plan → act → observe → reflect – became the backbone of action research methodology.\nLewin’s model also had a social conscience at its heart. Much of his work focused on racial relations, religious prejudice, and minority group dynamics – areas where traditional research methods had produced knowledge without producing change. He was explicit that action research demanded moral courage alongside intellectual rigour , noting that social scientists must be willing to act on their findings, not merely publish them.\nLewin’s ideas were conceived in the social sciences, but it did not take long for educators to recognise their potential inside schools. The key figure in this",
+      "isUserProvided": true,
+      "sourceId": "SRC-5d4a0709d4c2"
+    }
+  ],
+  "unresolvedQuestions": [
+    "What specific practical examples illustrate how the action research cycle is applied in educational or organizational settings?",
+    "How do different frameworks vary regarding the exact number of stages (e.g., 4 phases vs. 5 phases) in the action research cycle?"
+  ],
+  "contradictions": [
+    "Some sources describe the cycle using 4 phases (Plan, Act, Observe, Reflect), while others outline 5 essential phases or more detailed step breakdowns."
+  ],
+  "completeness": "partial",
+  "limitations": [
+    "7 candidate pages failed or carried no readable text.",
+    "The configured candidate-page budget of 16 was exhausted.",
+    "Only 3 of 6 selected sources fit in the synthesis evidence budget.",
+    "The configured research round limit of 2 was reached.",
+    "One or more generated citations did not match a retrieved source or relevant page text."
+  ],
+  "retrieval": {
+    "candidateCount": 16,
+    "retrievedCount": 9,
+    "failedCount": 7,
+    "rounds": 2,
+    "searches": 5
+  },
+  "archivedAt": "2026-10-22T12:17:50.222Z"
+}
