@@ -171,15 +171,8 @@ const CHAT_PAGE = `<!doctype html>
       #auth-status:empty { min-height: 0; }
       .chat-header, #messages, .attachment-list, form, #status { position: relative; z-index: 1; }
       .chat-header { display: flex; align-items: center; gap: 13px; flex: 0 0 auto; min-height: 78px; padding: 13px clamp(20px, 4vw, 38px); border-bottom: 1px solid var(--line); background: #fffdfde8; backdrop-filter: blur(14px); }
-      .assistant-avatar { width: 46px; height: 46px; display: grid; flex: 0 0 auto; place-items: center; border: 1px solid #ffffffb8; border-radius: 17px; color: #fff; background: linear-gradient(145deg, #b49ae8 2%, #8c78d1 52%, #df9fbd 100%); box-shadow: 0 7px 18px #876bc52b, inset 0 1px #ffffff70; transition: box-shadow .2s ease, filter .2s ease; }
-      .assistant-avatar svg { width: 27px; height: 27px; fill: currentColor; transform-origin: center; }
-      .assistant-avatar[data-thinking="true"] { box-shadow: 0 0 0 4px #b49ae83d, 0 7px 22px #876bc55c, inset 0 1px #ffffff70; filter: brightness(1.06); }
-      .assistant-avatar[data-thinking="true"] svg { animation: mira-logo-roll 1.1s linear infinite; }
-      @keyframes mira-logo-roll { to { transform: rotate(360deg); } }
-      @media (prefers-reduced-motion: reduce) {
-        .assistant-avatar[data-thinking="true"] svg { animation: none; }
-        .assistant-avatar[data-thinking="true"] { outline: 2px solid #b49ae8; outline-offset: 3px; }
-      }
+      .assistant-avatar { width: 46px; height: 46px; display: grid; flex: 0 0 auto; place-items: center; border: 1px solid #ffffffb8; border-radius: 17px; color: #fff; background: linear-gradient(145deg, #b49ae8 2%, #8c78d1 52%, #df9fbd 100%); box-shadow: 0 7px 18px #876bc52b, inset 0 1px #ffffff70; }
+      .assistant-avatar svg { width: 27px; height: 27px; fill: currentColor; }
       .assistant-avatar .flower-center { fill: #ffe7a6; }
       .brand-copy { display: grid; gap: 1px; }
       .eyebrow { color: var(--lilac); font-size: 9px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; }
@@ -224,6 +217,22 @@ const CHAT_PAGE = `<!doctype html>
       .message { width: min(100%, 820px); max-width: 100%; min-width: 0; align-self: flex-start; padding: 15px 18px; border: 1px solid #eee9f2; border-radius: 8px 21px 21px 21px; background: #fff; box-shadow: 0 5px 18px #54476d09; color: #484153; line-height: 1.72; overflow-wrap: break-word; word-break: normal; white-space: pre-wrap; }
       .message.muse { align-self: flex-start; width: min(100%, 820px); padding: 14px 18px; border: 1px solid #eee9f2; border-radius: 8px 21px 21px 21px; background: #fff; color: #484153; white-space: normal; }
       .message.muse::before { display: block; margin: 0 0 7px; color: #765fa0; content: "Mira"; font-size: 11px; font-weight: 800; letter-spacing: .02em; }
+      .message.muse.thinking-indicator { display: flex; align-items: center; gap: 10px; min-height: 62px; }
+      .message.muse.thinking-indicator::before { display: none; }
+      .thinking-logo { width: 32px; height: 32px; display: grid; flex: 0 0 auto; place-items: center; border: 1px solid #ffffffb8; border-radius: 11px; color: #fff; background: linear-gradient(145deg, #b49ae8 2%, #8c78d1 52%, #df9fbd 100%); box-shadow: 0 5px 13px #876bc522; }
+      .thinking-logo svg { width: 21px; height: 21px; fill: currentColor; transform-origin: center; animation: mira-logo-roll 1.1s linear infinite; }
+      .thinking-logo .flower-center { fill: #ffe7a6; }
+      .thinking-copy { color: var(--muted); font-size: 13px; font-weight: 650; }
+      .thinking-dots { display: inline-flex; align-items: center; gap: 3px; margin-left: -7px; }
+      .thinking-dots span { width: 4px; height: 4px; display: block; border-radius: 50%; background: #987bd4; animation: mira-thinking-pulse 1s ease-in-out infinite; }
+      .thinking-dots span:nth-child(2) { animation-delay: .14s; }
+      .thinking-dots span:nth-child(3) { animation-delay: .28s; }
+      @keyframes mira-logo-roll { to { transform: rotate(360deg); } }
+      @keyframes mira-thinking-pulse { 0%, 60%, 100% { opacity: .42; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-3px); } }
+      @media (prefers-reduced-motion: reduce) {
+        .thinking-logo svg, .thinking-dots span { animation: none; }
+        .thinking-logo { outline: 2px solid #b49ae8; outline-offset: 2px; }
+      }
       .message.muse h1, .message.muse h2, .message.muse h3, .message.muse h4, .message.muse h5, .message.muse h6 { margin: .75em 0 .4em; color: #3a314a; font-weight: 700; letter-spacing: -.025em; line-height: 1.3; }
       .message.muse p { margin: .62em 0; }
       .message.muse p:first-child { margin-top: 0; }
@@ -450,7 +459,7 @@ const CHAT_PAGE = `<!doctype html>
       </section>
       <div id="chat-screen" hidden>
       <header class="chat-header">
-        <div id="assistant-avatar" class="assistant-avatar" data-thinking="false" aria-hidden="true">
+        <div class="assistant-avatar" aria-hidden="true">
           <svg viewBox="0 0 32 32"><ellipse cx="16" cy="8.8" rx="4.2" ry="6.4"/><ellipse cx="23.2" cy="16" rx="6.4" ry="4.2"/><ellipse cx="16" cy="23.2" rx="4.2" ry="6.4"/><ellipse cx="8.8" cy="16" rx="6.4" ry="4.2"/><circle class="flower-center" cx="16" cy="16" r="3.1"/></svg>
         </div>
         <div class="brand-copy">
@@ -547,7 +556,6 @@ const CHAT_PAGE = `<!doctype html>
       const messages = document.querySelector("#messages");
       const welcome = document.querySelector("#welcome");
       const status = document.querySelector("#status");
-      const assistantAvatar = document.querySelector("#assistant-avatar");
       const themeToggle = document.querySelector("#theme-toggle");
       const themeColorMeta = document.querySelector("#theme-color");
       function applyTheme(theme, persist = false) {
@@ -924,7 +932,6 @@ const CHAT_PAGE = `<!doctype html>
 
       function setBusy(value) {
         busy = value;
-        assistantAvatar.dataset.thinking = String(value);
         button.disabled = value;
         signOutButton.disabled = value;
         actionMenuToggle.disabled = value;
@@ -1041,6 +1048,59 @@ const CHAT_PAGE = `<!doctype html>
           setBusy(false);
         }
       });
+
+      function createMiraLogo() {
+        const namespace = "http://www.w3.org/2000/svg";
+        const svg = document.createElementNS(namespace, "svg");
+        svg.setAttribute("viewBox", "0 0 32 32");
+        svg.setAttribute("aria-hidden", "true");
+        svg.setAttribute("focusable", "false");
+        const petals = [
+          ["16", "8.8", "4.2", "6.4"],
+          ["23.2", "16", "6.4", "4.2"],
+          ["16", "23.2", "4.2", "6.4"],
+          ["8.8", "16", "6.4", "4.2"],
+        ];
+        for (const [cx, cy, rx, ry] of petals) {
+          const petal = document.createElementNS(namespace, "ellipse");
+          petal.setAttribute("cx", cx);
+          petal.setAttribute("cy", cy);
+          petal.setAttribute("rx", rx);
+          petal.setAttribute("ry", ry);
+          svg.append(petal);
+        }
+        const center = document.createElementNS(namespace, "circle");
+        center.setAttribute("class", "flower-center");
+        center.setAttribute("cx", "16");
+        center.setAttribute("cy", "16");
+        center.setAttribute("r", "3.1");
+        svg.append(center);
+        return svg;
+      }
+
+      function addThinkingIndicator(label) {
+        const item = document.createElement("div");
+        item.className = "message muse thinking-indicator";
+        item.setAttribute("role", "status");
+        item.setAttribute("aria-label", label);
+        const logo = document.createElement("span");
+        logo.className = "thinking-logo";
+        logo.setAttribute("aria-hidden", "true");
+        logo.append(createMiraLogo());
+        const copy = document.createElement("span");
+        copy.className = "thinking-copy";
+        copy.textContent = label;
+        const dots = document.createElement("span");
+        dots.className = "thinking-dots";
+        dots.setAttribute("aria-hidden", "true");
+        for (let index = 0; index < 3; index += 1) {
+          dots.append(document.createElement("span"));
+        }
+        item.append(logo, copy, dots);
+        messages.append(item);
+        item.scrollIntoView({ block: "nearest" });
+        return item;
+      }
 
       function createActionIcon(paths) {
         const namespace = "http://www.w3.org/2000/svg";
@@ -1291,7 +1351,8 @@ const CHAT_PAGE = `<!doctype html>
         input.value = "";
         updateComposerHeight();
         setBusy(true);
-        status.textContent = "Mira is thinking…";
+        status.textContent = "";
+        const thinkingIndicator = addThinkingIndicator("Mira is thinking…");
         recordAnalyticsEvent(
           isExplicitImageGenerationCommand(message)
             ? "image_generation_requested"
@@ -1311,10 +1372,13 @@ const CHAT_PAGE = `<!doctype html>
           }
           const contentType = response.headers.get("content-type") || "";
           if (contentType.startsWith("image/")) {
-            addGeneratedImage(await response.blob());
+            const image = await response.blob();
+            thinkingIndicator.remove();
+            addGeneratedImage(image);
             status.textContent = "Image ready. Use the download icon to save it.";
           } else {
             const result = await response.json();
+            thinkingIndicator.remove();
             addMessage("muse", result.reply);
             status.textContent = Array.isArray(result.notices)
               ? result.notices.filter((notice) => typeof notice === "string").join(" ")
@@ -1323,6 +1387,7 @@ const CHAT_PAGE = `<!doctype html>
         } catch (error) {
           status.textContent = error instanceof Error ? error.message : "Mira could not reply.";
         } finally {
+          thinkingIndicator.remove();
           attachments = [];
           renderAttachments();
           setBusy(false);
@@ -1346,7 +1411,8 @@ const CHAT_PAGE = `<!doctype html>
         input.value = "";
         updateComposerHeight();
         setBusy(true);
-        status.textContent = "Mira is creating your image…";
+        status.textContent = "";
+        const thinkingIndicator = addThinkingIndicator("Mira is creating your image…");
         recordAnalyticsEvent("image_generation_requested");
         try {
           const response = await fetch("/api/images/generate", {
@@ -1356,11 +1422,13 @@ const CHAT_PAGE = `<!doctype html>
           });
           if (!response.ok) throw new Error(await readError(response, "Image generation failed."));
           const blob = await response.blob();
+          thinkingIndicator.remove();
           addGeneratedImage(blob);
           status.textContent = "Image ready. Use the download icon to save it.";
         } catch (error) {
           status.textContent = error instanceof Error ? error.message : "Image generation failed.";
         } finally {
+          thinkingIndicator.remove();
           setBusy(false);
           input.focus();
         }
