@@ -1,4 +1,9 @@
-import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
+import {
+  createHash,
+  createHmac,
+  randomBytes,
+  timingSafeEqual,
+} from "node:crypto";
 import {
   createServer,
   type IncomingMessage,
@@ -27,6 +32,14 @@ import {
 } from "./image-generation-command.js";
 import { createTaskAwareProviders } from "./provider-selection.js";
 import type { ConversationMessage, TextGenerationProvider } from "./llm-provider.js";
+import { WEB_ANALYTICS_DASHBOARD_PAGE } from "./web-analytics-page.js";
+import {
+  buildWebAnalyticsReport,
+  DEFAULT_WEB_ANALYTICS_RETENTION_DAYS,
+  JsonWebAnalyticsStore,
+  WEB_ANALYTICS_EVENT_TYPES,
+  type WebAnalyticsEventType,
+} from "./web-analytics.js";
 import {
   JsonChatHistoryStore,
   MAX_MODEL_CONTEXT_MESSAGES,
@@ -41,6 +54,12 @@ import {
 
 const SESSION_COOKIE_NAME = "muse_session";
 const SESSION_TTL_MS = 8 * 60 * 60 * 1_000;
+const ANALYTICS_VISITOR_COOKIE_NAME = "muse_analytics_visitor";
+const ANALYTICS_SESSION_COOKIE_NAME = "muse_analytics_session";
+const ANALYTICS_VISITOR_TTL_MS = DEFAULT_WEB_ANALYTICS_RETENTION_DAYS * 24 * 60 * 60 * 1_000;
+const ANALYTICS_SESSION_TTL_MS = 30 * 60 * 1_000;
+const ANALYTICS_PRUNE_INTERVAL_MS = 24 * 60 * 60 * 1_000;
+const MAX_ANALYTICS_REQUEST_BYTES = 2 * 1_024;
 const MAX_ACTIVE_SESSIONS = 500;
 const MAX_REQUEST_BYTES = 16 * 1_024;
 const MAX_MESSAGE_LENGTH = 4_000;
@@ -58,6 +77,9 @@ const MAX_IMAGE_GENERATIONS_PER_HOUR = 10;
 const MAX_IMAGE_ANALYSES_PER_HOUR = 20;
 const DEFAULT_MEMORY_DIRECTORY = fileURLToPath(
   new URL("../../data/muse-http-sessions/", import.meta.url),
+);
+const DEFAULT_WEB_ANALYTICS_FILE = fileURLToPath(
+  new URL("../../data/muse-web-analytics.jsonl", import.meta.url),
 );
 const DEFAULT_WEB_AUTH_FILE = fileURLToPath(
   new URL("../../data/muse-web-users.json", import.meta.url),
@@ -89,9 +111,20 @@ const CHAT_PAGE = `<!doctype html>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#f4effa">
+    <meta id="theme-color" name="theme-color" content="#f4effa">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <title>Mira — conversational assistant by Muse</title>
+    <script id="theme-bootstrap">
+      (() => {
+        let savedTheme = "";
+        let systemTheme = "light";
+        try { savedTheme = localStorage.getItem("muse-theme") || ""; } catch {}
+        try {
+          systemTheme = window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        } catch {}
+        document.documentElement.dataset.theme = savedTheme === "dark" || savedTheme === "light" ? savedTheme : systemTheme;
+      })();
+    </script>
     <style>
       :root {
         color-scheme: light;
@@ -115,7 +148,7 @@ const CHAT_PAGE = `<!doctype html>
       main::after { bottom: -260px; left: -180px; width: 430px; height: 430px; background: radial-gradient(circle, #f8e5efb0 0, #fff2e870 48%, transparent 72%); }
       #chat-screen { position: relative; z-index: 1; min-height: 0; display: flex; flex: 1 1 auto; flex-direction: column; }
       #chat-screen[hidden], #auth-screen[hidden] { display: none; }
-      .auth-screen { position: absolute; z-index: 3; inset: 0; display: grid; place-items: center; overflow-y: auto; padding: 26px 26px 54px; background: radial-gradient(ellipse at 18% 16%, #f8e9f1 0, transparent 40%), radial-gradient(ellipse at 86% 84%, #e8e4fb 0, transparent 38%), #faf7fc; }
+      .auth-screen { position: absolute; z-index: 3; inset: 0; display: grid; place-items: center; overflow-y: auto; padding: 26px 26px 150px; background: radial-gradient(ellipse at 18% 16%, #f8e9f1 0, transparent 40%), radial-gradient(ellipse at 86% 84%, #e8e4fb 0, transparent 38%), #faf7fc; }
       .auth-card { width: min(100%, 430px); padding: 34px clamp(22px, 6vw, 38px); border: 1px solid #ffffff; border-radius: 28px; background: #fffdfd; box-shadow: 0 20px 60px #5948781c; text-align: center; }
       .auth-mark { width: 54px; height: 54px; display: grid; place-items: center; margin: 0 auto 17px; border-radius: 19px; color: #fff; background: linear-gradient(145deg, #b49ae8 2%, #8c78d1 52%, #df9fbd 100%); box-shadow: 0 7px 18px #876bc52b; }
       .auth-mark svg { width: 31px; height: 31px; fill: currentColor; }
@@ -154,6 +187,9 @@ const CHAT_PAGE = `<!doctype html>
       .site-footer { position: relative; z-index: 4; flex: 0 0 auto; padding: 7px 14px max(11px, env(safe-area-inset-bottom)); color: #8a8294; font-size: 10px; text-align: center; }
       .site-footer a { color: #765fc3; font-weight: 750; text-decoration: none; }
       .site-footer a:hover { color: #59438f; text-decoration: underline; }
+      .site-utility { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 7px 12px; margin: 0 auto 5px; }
+      .theme-toggle { min-width: 0; min-height: 30px; padding: 0 8px; border: 1px solid #e7deef; color: #796e8a; background: #fff; box-shadow: none; font-size: 10px; font-weight: 650; }
+      .theme-toggle:hover { border-color: #d9ccef; color: #624b9c; background: #f6f2fb; }
       .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
       #messages { flex: 1 1 auto; min-height: 0; min-width: 0; width: 100%; display: flex; flex-direction: column; gap: 18px; overflow-y: auto; overscroll-behavior: contain; padding: 28px clamp(18px, 6vw, 70px) 26px; scroll-behavior: smooth; scrollbar-color: #d9d0e4 transparent; scrollbar-width: thin; }
       #welcome[hidden] { display: none; }
@@ -233,10 +269,25 @@ const CHAT_PAGE = `<!doctype html>
       .composer-hint span { color: #b38fc0; }
       #status { width: min(100%, 850px); align-self: center; flex: 0 0 auto; margin: 0 auto; padding: 0 clamp(16px, 5vw, 54px) 10px; color: var(--muted); font-size: 12px; line-height: 1.5; text-align: center; overflow-wrap: anywhere; }
       #status:empty { display: none; }
+      .analytics-preferences { flex: 0 0 auto; margin: 0 auto 8px; text-align: center; }
+      .site-utility .analytics-preferences { margin: 0; }
+      #analytics-settings { min-width: 0; min-height: 30px; padding: 0 8px; color: #796e8a; background: transparent; box-shadow: none; font-size: 10px; font-weight: 650; }
+      #analytics-settings:hover { color: #624b9c; text-decoration: underline; }
+      .analytics-preferences a { color: #796e8a; font-size: 10px; font-weight: 650; text-decoration: none; }
+      .analytics-preferences a:hover { color: #624b9c; text-decoration: underline; }
+      #analytics-consent { width: min(calc(100% - 32px), 820px); display: flex; flex: 0 0 auto; align-items: center; justify-content: space-between; gap: 14px; margin: 0 auto 10px; padding: 12px 15px; border: 1px solid #e8e1ed; border-radius: 16px; color: #544b62; background: #fcf9ff; box-shadow: 0 7px 22px #59487812; }
+      #analytics-consent[hidden] { display: none; }
+      .analytics-consent-copy { min-width: 0; }
+      .analytics-consent-title { margin: 0 0 3px; color: #443a55; font-size: 12px; font-weight: 800; }
+      .analytics-consent-description { margin: 0; color: #756e81; font-size: 11px; line-height: 1.5; }
+      .analytics-consent-actions { display: flex; flex: 0 0 auto; align-items: center; gap: 7px; }
+      .analytics-consent-actions button { min-width: 0; min-height: 36px; padding: 0 12px; font-size: 11px; }
+      #analytics-decline { border: 1px solid #e7deef; color: #695a82; background: #fff; box-shadow: none; }
+      #analytics-decline:hover { background: #f6f2fb; }
       @media (max-width: 620px) {
         body { padding: 0; }
         main { width: 100%; height: 100vh; height: 100dvh; min-height: 0; border: 0; border-radius: 0; box-shadow: none; }
-        .auth-screen { padding: 18px 18px 58px; }
+        .auth-screen { padding: 18px 18px 150px; }
         .auth-card { padding: 29px 23px; border-radius: 25px; }
         .chat-header { min-height: 68px; gap: 9px; padding: 10px max(16px, env(safe-area-inset-left)); }
         .assistant-avatar { width: 42px; height: 42px; border-radius: 15px; }
@@ -264,6 +315,8 @@ const CHAT_PAGE = `<!doctype html>
         .attachment-list { padding-right: 12px; padding-left: 12px; }
         #status { padding-right: 12px; padding-left: 12px; }
         .composer-hint { padding-right: 12px; padding-left: 12px; }
+        #analytics-consent { width: calc(100% - 24px); align-items: stretch; flex-direction: column; gap: 9px; margin-bottom: 8px; padding: 11px 12px; }
+        .analytics-consent-actions { justify-content: flex-end; }
       }
       @media (max-width: 380px) {
         .header-note { padding: 7px; }
@@ -287,6 +340,83 @@ const CHAT_PAGE = `<!doctype html>
         #messages { scroll-behavior: auto; }
         button, .composer-box { transition: none; }
       }
+      :root[data-theme="dark"] {
+        color-scheme: dark;
+        color: #f3edf8;
+        background: #17141d;
+        --canvas: #17141d;
+        --paper: #211e29;
+        --ink: #f3edf8;
+        --muted: #b9b0c3;
+        --line: #3b3446;
+        --lilac: #bca4ed;
+        --shadow: 0 28px 90px #0008;
+      }
+      :root[data-theme="dark"] body { background: radial-gradient(ellipse at 12% 12%, #3d2a3d 0, transparent 34%), radial-gradient(ellipse at 88% 86%, #292543 0, transparent 33%), var(--canvas); }
+      :root[data-theme="dark"] main { border-color: #3b3445; }
+      :root[data-theme="dark"] main::before { background: radial-gradient(circle, #59457655 0, #3a2d4d35 48%, transparent 72%); }
+      :root[data-theme="dark"] main::after { background: radial-gradient(circle, #633d5145 0, #402d3a30 48%, transparent 72%); }
+      :root[data-theme="dark"] .auth-screen { background: radial-gradient(ellipse at 18% 16%, #38283a 0, transparent 40%), radial-gradient(ellipse at 86% 84%, #292440 0, transparent 38%), #17141d; }
+      :root[data-theme="dark"] .auth-card { border-color: #3b3446; background: #241f2c; box-shadow: 0 20px 60px #0006; }
+      :root[data-theme="dark"] .auth-label { color: #d8cfe2; }
+      :root[data-theme="dark"] .auth-input { border-color: #453b51; background: #191620; }
+      :root[data-theme="dark"] .auth-note { color: #b6acbf; }
+      :root[data-theme="dark"] #auth-status { color: #ff9fb4; }
+      :root[data-theme="dark"] .auth-text-button { color: #c7aff5; }
+      :root[data-theme="dark"] .auth-text-button:hover { color: #e0d0ff; }
+      :root[data-theme="dark"] .chat-header { background: #211e29ed; }
+      :root[data-theme="dark"] .header-note { border-color: #44384f; color: #c2b8cd; background: #2b2534; }
+      :root[data-theme="dark"] .account-username { color: #ded4e8; }
+      :root[data-theme="dark"] .sign-out { border-color: #493f53; color: #d3c7df; background: #2a2531; }
+      :root[data-theme="dark"] .sign-out:hover { color: #f1e9ff; background: #3a3046; }
+      :root[data-theme="dark"] .site-footer { color: #a99fb4; }
+      :root[data-theme="dark"] .site-footer a { color: #c1aaf1; }
+      :root[data-theme="dark"] .site-footer a:hover { color: #e0d1ff; }
+      :root[data-theme="dark"] .welcome-art { border-color: #45394f; background: linear-gradient(145deg, #352943, #382832); box-shadow: 0 12px 30px #0004, inset 0 1px 2px #ffffff14; }
+      :root[data-theme="dark"] .welcome-kicker { color: #c5b1f3; }
+      :root[data-theme="dark"] .welcome-title { color: #f3edf8; }
+      :root[data-theme="dark"] .starter-prompt { border-color: #403949; background: #292530; box-shadow: 0 4px 13px #0003; }
+      :root[data-theme="dark"] .starter-prompt:hover { border-color: #625371; background: #332b3c; box-shadow: 0 10px 24px #0005; }
+      :root[data-theme="dark"] .prompt-icon { color: #d0bbff; background: #383049; }
+      :root[data-theme="dark"] .starter-prompt:nth-child(2) .prompt-icon { color: #f0b7d5; background: #402c3a; }
+      :root[data-theme="dark"] .starter-prompt:nth-child(3) .prompt-icon { color: #f1d18c; background: #403723; }
+      :root[data-theme="dark"] .starter-prompt:nth-child(4) .prompt-icon { color: #9fe0c6; background: #243a35; }
+      :root[data-theme="dark"] .prompt-title { color: #eee7f5; }
+      :root[data-theme="dark"] .prompt-description { color: #b8afc2; }
+      :root[data-theme="dark"] .message, :root[data-theme="dark"] .message.muse { border-color: #403949; background: #28242f; color: #eee8f4; box-shadow: 0 5px 18px #0003; }
+      :root[data-theme="dark"] .message.muse::before { color: #c7b1ef; }
+      :root[data-theme="dark"] .message.muse h1, :root[data-theme="dark"] .message.muse h2, :root[data-theme="dark"] .message.muse h3, :root[data-theme="dark"] .message.muse h4, :root[data-theme="dark"] .message.muse h5, :root[data-theme="dark"] .message.muse h6 { color: #f3edf8; }
+      :root[data-theme="dark"] .message.muse a { color: #c7b1ff; text-decoration-color: #9c83d4; }
+      :root[data-theme="dark"] .message.muse th, :root[data-theme="dark"] .message.muse td { border-color: #453d50; }
+      :root[data-theme="dark"] .message.muse th { color: #e4d9ef; background: #332d3b; }
+      :root[data-theme="dark"] .message.muse pre { border-color: #443b4d; background: #1f1b26; }
+      :root[data-theme="dark"] .message.muse code { color: #d4c0ff; background: #383048; }
+      :root[data-theme="dark"] .message.muse pre code { background: transparent; }
+      :root[data-theme="dark"] .message.you { border-color: #57486e; background: #39304a; color: #f1eafa; box-shadow: 0 5px 16px #0004; }
+      :root[data-theme="dark"] .icon-button { border-color: #484052; color: #d1bdf5; background: #292530; box-shadow: 0 4px 14px #0003; }
+      :root[data-theme="dark"] .icon-button:hover { border-color: #665878; color: #eadfff; background: #36303f; }
+      :root[data-theme="dark"] #attachment-menu { border-color: #443c4d; background: #292530; box-shadow: 0 16px 44px #0008; }
+      :root[data-theme="dark"] .menu-item { color: #e5ddeb; }
+      :root[data-theme="dark"] .menu-item:hover, :root[data-theme="dark"] .menu-item:focus-visible { color: #f0e7ff; background: #3a3246; }
+      :root[data-theme="dark"] .composer-box { border-color: #453c4f; background: #211e29; box-shadow: 0 8px 26px #0004; }
+      :root[data-theme="dark"] .composer-box:focus-within { border-color: #8d76b6; box-shadow: 0 0 0 4px #a890d91c, 0 8px 26px #0004; }
+      :root[data-theme="dark"] .composer-icon { color: #b7a9c8; }
+      :root[data-theme="dark"] .composer-icon:hover { color: #e4d5ff; background: #383044; }
+      :root[data-theme="dark"] .attachment-chip { border-color: #453b50; color: #e1d7e9; background: #292530; box-shadow: 0 3px 10px #0003; }
+      :root[data-theme="dark"] .attachment-remove { color: #ddcaff; background: #3a3048; }
+      :root[data-theme="dark"] .speak-button, :root[data-theme="dark"] .download-button { border-color: #514460; color: #d5c1fa; background: #332b3d; box-shadow: 0 3px 10px #0003; }
+      :root[data-theme="dark"] .speak-button:hover, :root[data-theme="dark"] .download-button:hover { border-color: #726084; color: #f1e9ff; background: #41364f; box-shadow: 0 5px 14px #0005; }
+      :root[data-theme="dark"] .composer-hint { color: #b9afc3; }
+      :root[data-theme="dark"] .composer-hint span { color: #d1a9e0; }
+      :root[data-theme="dark"] .analytics-preferences a, :root[data-theme="dark"] #analytics-settings { color: #b9adca; }
+      :root[data-theme="dark"] .analytics-preferences a:hover, :root[data-theme="dark"] #analytics-settings:hover { color: #e0d1ff; }
+      :root[data-theme="dark"] #analytics-consent { border-color: #443c4d; color: #e8e0ed; background: #292430; box-shadow: 0 7px 22px #0004; }
+      :root[data-theme="dark"] .analytics-consent-title { color: #f0e9f5; }
+      :root[data-theme="dark"] .analytics-consent-description { color: #c2b8cb; }
+      :root[data-theme="dark"] #analytics-decline { border-color: #51465d; color: #e2d7ec; background: #332d3b; }
+      :root[data-theme="dark"] #analytics-decline:hover { background: #42384d; }
+      :root[data-theme="dark"] .theme-toggle { border-color: #4b4255; color: #e4d9ef; background: #2a2532; }
+      :root[data-theme="dark"] .theme-toggle:hover { border-color: #6d5b7d; background: #3a3046; }
     </style>
   </head>
   <body>
@@ -385,15 +515,118 @@ const CHAT_PAGE = `<!doctype html>
       <p class="composer-hint"><span aria-hidden="true">✦</span> Any question, big idea, or tiny task is welcome.</p>
       <p id="status" role="status" aria-live="polite"></p>
       </div>
-      <footer class="site-footer">Built by <a href="https://x.com/Great_mujey" target="_blank" rel="noopener noreferrer">Great_mujey</a></footer>
+      <footer class="site-footer">
+        <section id="analytics-consent" aria-labelledby="analytics-consent-title" aria-describedby="analytics-consent-description" hidden>
+          <div class="analytics-consent-copy">
+            <p id="analytics-consent-title" class="analytics-consent-title">Help improve Mira?</p>
+            <p id="analytics-consent-description" class="analytics-consent-description">Allow anonymous, first-party visit and feature counts. Analytics does not record chat text, prompts, file contents, IP addresses, or full referrers. You can change this choice later.</p>
+          </div>
+          <div class="analytics-consent-actions">
+            <button id="analytics-decline" type="button">No thanks</button>
+            <button id="analytics-accept" type="button">Allow analytics</button>
+          </div>
+        </section>
+        <div class="site-utility">
+          <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false" title="Switch to dark mode">☾ Dark mode</button>
+          <p class="analytics-preferences"><button id="analytics-settings" type="button">Privacy &amp; analytics choices</button><span aria-hidden="true"> · </span><a href="/analytics">Site analytics</a></p>
+        </div>
+        <span class="site-credit">Built by <a href="https://x.com/Great_mujey" target="_blank" rel="noopener noreferrer">Great_mujey</a></span>
+      </footer>
     </main>
-    <script>
+    <script id="chat-script">
       const form = document.querySelector("#chat-form");
       const input = document.querySelector("#message");
       const button = document.querySelector("#send");
       const messages = document.querySelector("#messages");
       const welcome = document.querySelector("#welcome");
       const status = document.querySelector("#status");
+      const themeToggle = document.querySelector("#theme-toggle");
+      const themeColorMeta = document.querySelector("#theme-color");
+      function applyTheme(theme, persist = false) {
+        const selectedTheme = theme === "dark" ? "dark" : "light";
+        document.documentElement.dataset.theme = selectedTheme;
+        const action = selectedTheme === "dark" ? "Switch to light mode" : "Switch to dark mode";
+        themeToggle.setAttribute("aria-pressed", String(selectedTheme === "dark"));
+        themeToggle.setAttribute("aria-label", action);
+        themeToggle.setAttribute("title", action);
+        themeToggle.textContent = selectedTheme === "dark" ? "☀ Light mode" : "☾ Dark mode";
+        themeColorMeta?.setAttribute("content", selectedTheme === "dark" ? "#17141d" : "#f4effa");
+        if (persist) {
+          try { localStorage.setItem("muse-theme", selectedTheme); } catch {}
+        }
+      }
+      let savedTheme = "";
+      let systemPrefersDark = false;
+      try {
+        savedTheme = localStorage.getItem("muse-theme") || "";
+        systemPrefersDark = window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false;
+      } catch {}
+      const initialTheme = savedTheme === "dark" || savedTheme === "light"
+        ? savedTheme
+        : document.documentElement.dataset.theme === "dark" || systemPrefersDark
+        ? "dark"
+        : "light";
+      applyTheme(initialTheme);
+      themeToggle.addEventListener("click", () => {
+        const currentTheme = document.documentElement.dataset.theme;
+        applyTheme(currentTheme === "dark" ? "light" : "dark", true);
+      });
+
+      const analyticsConsentPanel = document.querySelector("#analytics-consent");
+      const analyticsAcceptButton = document.querySelector("#analytics-accept");
+      const analyticsDeclineButton = document.querySelector("#analytics-decline");
+      const analyticsSettingsButton = document.querySelector("#analytics-settings");
+      const ANALYTICS_CONSENT_KEY = "muse-analytics-consent";
+      let analyticsRequestQueue = Promise.resolve();
+      let analyticsConsent = "unknown";
+      try {
+        analyticsConsent = localStorage.getItem(ANALYTICS_CONSENT_KEY) || "unknown";
+      } catch {}
+
+      function recordAnalyticsEvent(type) {
+        if (analyticsConsent !== "accepted") return;
+        analyticsRequestQueue = analyticsRequestQueue
+          .then(() => fetch("/api/analytics/collect", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ type, path: location.pathname }),
+            keepalive: true,
+          }))
+          .catch(() => {});
+      }
+
+      function isExplicitImageGenerationCommand(message) {
+        return /^(?:\\/(?:imagine|image|generate-image)\\b|(?:please\\s+)?(?:(?:can|could|would)\\s+you\\s+)?(?:please\\s+)?(?:generate|create|make|draw|paint|illustrate)\\s+(?:me\\s+)?(?:an?\\s+)?(?:image|picture|illustration|artwork|visual)\\b)/i.test(message.trim());
+      }
+
+      function chooseAnalyticsConsent(choice) {
+        analyticsConsent = choice;
+        try { localStorage.setItem(ANALYTICS_CONSENT_KEY, choice); } catch {}
+        analyticsConsentPanel.hidden = true;
+        if (choice === "accepted") {
+          recordAnalyticsEvent("page_view");
+        } else {
+          analyticsRequestQueue = analyticsRequestQueue
+            .then(() => fetch("/api/analytics/forget", { method: "POST", keepalive: true }))
+            .catch(() => {});
+        }
+      }
+
+      analyticsAcceptButton.addEventListener("click", () => chooseAnalyticsConsent("accepted"));
+      analyticsDeclineButton.addEventListener("click", () => chooseAnalyticsConsent("declined"));
+      analyticsSettingsButton.addEventListener("click", () => {
+        analyticsConsentPanel.hidden = false;
+        analyticsAcceptButton.focus();
+      });
+      if (analyticsConsent === "accepted") {
+        analyticsConsentPanel.hidden = true;
+        recordAnalyticsEvent("page_view");
+      } else if (analyticsConsent === "declined") {
+        analyticsConsentPanel.hidden = true;
+      } else {
+        analyticsConsentPanel.hidden = false;
+      }
+
       const authScreen = document.querySelector("#auth-screen");
       const chatScreen = document.querySelector("#chat-screen");
       const authForm = document.querySelector("#auth-form");
@@ -789,6 +1022,7 @@ const CHAT_PAGE = `<!doctype html>
               throw new Error(result.error || "Could not upload " + file.name + ".");
             }
             attachments.push(result.attachment);
+            recordAnalyticsEvent("attachment_uploaded");
             renderAttachments();
           }
           status.textContent = "Attachment ready. It will be discarded after your next message.";
@@ -1049,6 +1283,11 @@ const CHAT_PAGE = `<!doctype html>
         updateComposerHeight();
         setBusy(true);
         status.textContent = "Mira is thinking…";
+        recordAnalyticsEvent(
+          isExplicitImageGenerationCommand(message)
+            ? "image_generation_requested"
+            : "chat_message_sent",
+        );
         try {
           const response = await fetch("/api/chat", {
             method: "POST",
@@ -1099,6 +1338,7 @@ const CHAT_PAGE = `<!doctype html>
         updateComposerHeight();
         setBusy(true);
         status.textContent = "Mira is creating your image…";
+        recordAnalyticsEvent("image_generation_requested");
         try {
           const response = await fetch("/api/images/generate", {
             method: "POST",
@@ -1179,6 +1419,7 @@ const CHAT_PAGE = `<!doctype html>
             voiceButton.disabled = true;
             setVoiceButtonListening(true);
             status.textContent = "Listening…";
+            recordAnalyticsEvent("voice_input_started");
             voiceRecognition.start();
           } catch {
             voiceButton.disabled = false;
@@ -1241,6 +1482,12 @@ export interface MuseHttpServerOptions {
   researchRunner?: ResearchRunner;
   researchImageFinder?: ResearchImageFinder;
   mediaProviderFactory?: () => MuseMediaProvider;
+  /** Local append-only first-party event log. Defaults to scripts/data/muse-web-analytics.jsonl. */
+  analyticsFilePath?: string;
+  /** Server-only bearer token for the private /analytics dashboard. */
+  analyticsAdminToken?: string;
+  /** Number of days to keep raw pseudonymous analytics events; defaults to 90. */
+  analyticsRetentionDays?: number;
   maxActiveSessions?: number;
   sessionTtlMs?: number;
 }
@@ -1259,6 +1506,20 @@ export function createMuseHttpServer(
     options.memoryDirectory ??
     process.env.MUSE_HTTP_MEMORY_DIR ??
     DEFAULT_MEMORY_DIRECTORY;
+  const analyticsFilePath =
+    options.analyticsFilePath?.trim() ||
+    process.env.MUSE_WEB_ANALYTICS_FILE?.trim() ||
+    DEFAULT_WEB_ANALYTICS_FILE;
+  const analyticsRetentionDays =
+    options.analyticsRetentionDays ?? DEFAULT_WEB_ANALYTICS_RETENTION_DAYS;
+  const analyticsAdminToken = (
+    options.analyticsAdminToken ?? process.env.MUSE_ANALYTICS_ADMIN_TOKEN ?? ""
+  ).trim();
+  const analyticsAdminEnabled = Buffer.byteLength(analyticsAdminToken, "utf8") >= 32;
+  const analyticsStore = new JsonWebAnalyticsStore(
+    analyticsFilePath,
+    analyticsRetentionDays,
+  );
   const authEnabled = options.authEnabled ?? true;
   const userStore = new JsonWebUserStore(
     options.authFilePath ??
@@ -1613,7 +1874,148 @@ export function createMuseHttpServer(
     });
   }
 
-  return createServer((request, response) => {
+  async function handleAnalyticsCollect(
+    request: IncomingMessage,
+    response: ServerResponse,
+  ): Promise<void> {
+    if (request.method !== "POST") {
+      response.setHeader("Allow", "POST");
+      sendJson(response, 405, { error: "Use POST to record an analytics event." });
+      return;
+    }
+    if (
+      request.headers["content-type"]?.split(";")[0]?.trim() !==
+      "application/json"
+    ) {
+      sendJson(response, 415, { error: "Send analytics events as JSON." });
+      return;
+    }
+
+    let body: unknown;
+    try {
+      const bytes = await readBoundedRequestBody(
+        request,
+        MAX_ANALYTICS_REQUEST_BYTES,
+      );
+      body = JSON.parse(bytes.toString("utf8")) as unknown;
+    } catch (error) {
+      sendJson(
+        response,
+        error instanceof RequestBodyTooLargeError ? 413 : 400,
+        { error: "The analytics event is invalid." },
+      );
+      return;
+    }
+    if (
+      !isRecord(body) ||
+      typeof body.type !== "string" ||
+      !WEB_ANALYTICS_EVENT_TYPES.includes(
+        body.type as WebAnalyticsEventType,
+      )
+    ) {
+      sendJson(response, 400, { error: "The analytics event type is invalid." });
+      return;
+    }
+
+    const visitorId =
+      readSignedAnalyticsCookie(
+        request,
+        ANALYTICS_VISITOR_COOKIE_NAME,
+        sessionSecret,
+      ) ?? randomBytes(32).toString("hex");
+    const sessionId =
+      readSignedAnalyticsCookie(
+        request,
+        ANALYTICS_SESSION_COOKIE_NAME,
+        sessionSecret,
+      ) ?? randomBytes(32).toString("hex");
+    const now = Date.now();
+    await analyticsStore.record({
+      timestamp: now,
+      visitorHash: hashAnalyticsId(visitorId),
+      sessionHash: hashAnalyticsId(sessionId),
+      type: body.type as WebAnalyticsEventType,
+      path: normalizeAnalyticsPath(body.path),
+    });
+    response.setHeader("Set-Cookie", [
+      writeAnalyticsCookie(
+        request,
+        ANALYTICS_VISITOR_COOKIE_NAME,
+        visitorId,
+        sessionSecret,
+        ANALYTICS_VISITOR_TTL_MS,
+      ),
+      writeAnalyticsCookie(
+        request,
+        ANALYTICS_SESSION_COOKIE_NAME,
+        sessionId,
+        sessionSecret,
+        ANALYTICS_SESSION_TTL_MS,
+      ),
+    ]);
+    sendJson(response, 202, { recorded: true });
+  }
+
+  function handleAnalyticsForget(
+    request: IncomingMessage,
+    response: ServerResponse,
+  ): void {
+    if (request.method !== "POST") {
+      response.setHeader("Allow", "POST");
+      sendJson(response, 405, { error: "Use POST to clear analytics cookies." });
+      return;
+    }
+    response.setHeader("Set-Cookie", [
+      clearAnalyticsCookie(request, ANALYTICS_VISITOR_COOKIE_NAME),
+      clearAnalyticsCookie(request, ANALYTICS_SESSION_COOKIE_NAME),
+    ]);
+    sendJson(response, 200, { cleared: true });
+  }
+
+  async function handleAnalyticsReport(
+    request: IncomingMessage,
+    response: ServerResponse,
+  ): Promise<void> {
+    if (request.method !== "GET") {
+      response.setHeader("Allow", "GET");
+      sendJson(response, 405, { error: "Use GET to load analytics." });
+      return;
+    }
+    if (!analyticsAdminEnabled) {
+      sendJson(response, 503, {
+        error:
+          "Analytics dashboard is locked until MUSE_ANALYTICS_ADMIN_TOKEN is set to a secret with at least 32 characters.",
+      });
+      return;
+    }
+    if (!isAnalyticsAdminRequest(request, analyticsAdminToken)) {
+      sendJson(response, 401, { error: "Analytics admin token is incorrect." });
+      return;
+    }
+
+    const url = new URL(request.url ?? "/api/analytics/report", "http://localhost");
+    const days = Number(url.searchParams.get("days") ?? "30");
+    if (![7, 30, 90].includes(days)) {
+      sendJson(response, 400, { error: "Choose a report period of 7, 30, or 90 days." });
+      return;
+    }
+    const now = Date.now();
+    const events = await analyticsStore.readEvents(now);
+    const report = buildWebAnalyticsReport(
+      events,
+      days,
+      now,
+      analyticsRetentionDays,
+    );
+    sendJson(response, 200, report as unknown as Record<string, unknown>);
+  }
+
+  void analyticsStore.prune().catch(() => {});
+  const analyticsPruneTimer = setInterval(() => {
+    void analyticsStore.prune().catch(() => {});
+  }, ANALYTICS_PRUNE_INTERVAL_MS);
+  analyticsPruneTimer.unref();
+  const server = createServer((request, response) => {
     void handleRequest(request, response).catch(() => {
       if (!response.headersSent && !response.destroyed) {
         sendJson(response, 500, {
@@ -1622,6 +2024,8 @@ export function createMuseHttpServer(
       }
     });
   });
+  server.once("close", () => clearInterval(analyticsPruneTimer));
+  return server;
 
   async function handleRequest(
     request: IncomingMessage,
@@ -1642,6 +2046,26 @@ export function createMuseHttpServer(
       response.statusCode = 200;
       response.setHeader("Content-Type", "text/html; charset=utf-8");
       response.end(CHAT_PAGE);
+      return;
+    }
+
+    if (request.method === "GET" && pathname === "/analytics") {
+      response.statusCode = 200;
+      response.setHeader("Content-Type", "text/html; charset=utf-8");
+      response.end(WEB_ANALYTICS_DASHBOARD_PAGE);
+      return;
+    }
+
+    if (pathname === "/api/analytics/collect") {
+      await handleAnalyticsCollect(request, response);
+      return;
+    }
+    if (pathname === "/api/analytics/forget") {
+      handleAnalyticsForget(request, response);
+      return;
+    }
+    if (pathname === "/api/analytics/report") {
+      await handleAnalyticsReport(request, response);
       return;
     }
 
@@ -2328,6 +2752,99 @@ export function createMuseHttpServer(
     writeSessionCookie(request, response, id, sessionSecret, sessionTtlMs);
     return session;
   }
+}
+
+function hashAnalyticsId(id: string): string {
+  return createHash("sha256").update(id).digest("hex");
+}
+
+function normalizeAnalyticsPath(value: unknown): string {
+  if (typeof value !== "string") return "/";
+  const path = (value.split(/[?#]/, 1)[0] ?? "/").trim();
+  if (
+    !path.startsWith("/") ||
+    path.startsWith("//") ||
+    path.length > 120 ||
+    !/^\/[a-zA-Z0-9/_-]*$/.test(path)
+  ) {
+    return "/";
+  }
+  return path || "/";
+}
+
+function readSignedAnalyticsCookie(
+  request: IncomingMessage,
+  name: string,
+  secret: string,
+): string | undefined {
+  const cookieHeader = request.headers.cookie;
+  if (!cookieHeader) return undefined;
+  const cookie = cookieHeader
+    .split(";")
+    .map((part) => part.trim())
+    .find((part) => part.startsWith(`${name}=`));
+  if (!cookie) return undefined;
+  const [id, signature, extra] = cookie.slice(name.length + 1).split(".");
+  if (
+    extra !== undefined ||
+    !/^[a-f0-9]{64}$/.test(id ?? "") ||
+    !/^[a-f0-9]{64}$/.test(signature ?? "")
+  ) {
+    return undefined;
+  }
+  const expected = createHmac("sha256", secret)
+    .update(name)
+    .update("\u0000")
+    .update(id)
+    .digest();
+  const received = Buffer.from(signature, "hex");
+  return timingSafeEqual(expected, received) ? id : undefined;
+}
+
+function writeAnalyticsCookie(
+  request: IncomingMessage,
+  name: string,
+  id: string,
+  secret: string,
+  ttlMs: number,
+): string {
+  const signature = createHmac("sha256", secret)
+    .update(name)
+    .update("\u0000")
+    .update(id)
+    .digest("hex");
+  const maxAgeSeconds = Math.max(1, Math.floor(ttlMs / 1_000));
+  return `${name}=${id}.${signature}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAgeSeconds}${secureCookieAttribute(request)}`;
+}
+
+function clearAnalyticsCookie(
+  request: IncomingMessage,
+  name: string,
+): string {
+  return `${name}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secureCookieAttribute(request)}`;
+}
+
+function secureCookieAttribute(request: IncomingMessage): string {
+  const forwardedProtocol = request.headers["x-forwarded-proto"];
+  const isSecure =
+    typeof forwardedProtocol === "string" &&
+    forwardedProtocol.split(",")[0].trim().toLowerCase() === "https";
+  return isSecure ? "; Secure" : "";
+}
+
+function isAnalyticsAdminRequest(
+  request: IncomingMessage,
+  expectedToken: string,
+): boolean {
+  const authorization = request.headers.authorization;
+  if (typeof authorization !== "string" || !authorization.startsWith("Bearer ")) {
+    return false;
+  }
+  const suppliedToken = authorization.slice("Bearer ".length).trim();
+  if (!suppliedToken) return false;
+  const expectedHash = createHash("sha256").update(expectedToken).digest();
+  const suppliedHash = createHash("sha256").update(suppliedToken).digest();
+  return timingSafeEqual(expectedHash, suppliedHash);
 }
 
 function readSessionId(
