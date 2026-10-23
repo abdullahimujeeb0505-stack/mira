@@ -241,6 +241,35 @@ export class MuseAgent {
     return this.conversation.length > 0;
   }
 
+  getConversationHistory(): ConversationMessage[] {
+    return this.conversation.map(({ role, content }) => ({ role, content }));
+  }
+
+  restoreConversationHistory(messages: readonly ConversationMessage[]): void {
+    this.conversation.splice(
+      0,
+      this.conversation.length,
+      ...messages
+        .filter(
+          (message) =>
+            (message.role === "user" || message.role === "assistant") &&
+            typeof message.content === "string",
+        )
+        .map(({ role, content }) => ({ role, content })),
+    );
+    this.latestResearch = undefined;
+    this.hasActiveWritingAssignment = false;
+  }
+
+  trimConversationHistory(maxMessages: number): void {
+    if (!Number.isInteger(maxMessages) || maxMessages < 1) {
+      throw new RangeError("maxMessages must be a positive integer.");
+    }
+    if (this.conversation.length > maxMessages) {
+      this.conversation.splice(0, this.conversation.length - maxMessages);
+    }
+  }
+
   async respond(
     userMessage: string,
     attachmentContext = "",

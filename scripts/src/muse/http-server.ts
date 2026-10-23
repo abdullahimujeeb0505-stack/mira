@@ -26,7 +26,18 @@ import {
   parseImageGenerationCommand,
 } from "./image-generation-command.js";
 import { createTaskAwareProviders } from "./provider-selection.js";
-import type { TextGenerationProvider } from "./llm-provider.js";
+import type { ConversationMessage, TextGenerationProvider } from "./llm-provider.js";
+import {
+  JsonChatHistoryStore,
+  MAX_MODEL_CONTEXT_MESSAGES,
+  MAX_STORED_CHAT_MESSAGES,
+} from "./chat-history-store.js";
+import {
+  JsonWebUserStore,
+  WebAuthInputError,
+  WebUsernameTakenError,
+  type WebUser,
+} from "./web-auth.js";
 
 const SESSION_COOKIE_NAME = "muse_session";
 const SESSION_TTL_MS = 8 * 60 * 60 * 1_000;
@@ -40,10 +51,19 @@ const MAX_SERVER_ATTACHMENT_BYTES = 32 * 1_024 * 1_024;
 const MAX_ATTACHMENTS_PER_MESSAGE = 3;
 const MAX_ATTACHMENT_TEXT_CHARS = 16_000;
 const MAX_TOTAL_ATTACHMENT_TEXT_CHARS = 24_000;
+const MAX_LOGIN_FAILURES = 8;
+const LOGIN_FAILURE_WINDOW_MS = 15 * 60 * 1_000;
+const GENERATED_IMAGE_HISTORY_NOTE = "Image generated. The image file itself is not retained in chat history.";
 const MAX_IMAGE_GENERATIONS_PER_HOUR = 10;
 const MAX_IMAGE_ANALYSES_PER_HOUR = 20;
 const DEFAULT_MEMORY_DIRECTORY = fileURLToPath(
   new URL("../../data/muse-http-sessions/", import.meta.url),
+);
+const DEFAULT_WEB_AUTH_FILE = fileURLToPath(
+  new URL("../../data/muse-web-users.json", import.meta.url),
+);
+const DEFAULT_CHAT_HISTORY_DIRECTORY = fileURLToPath(
+  new URL("../../data/muse-web-history/", import.meta.url),
 );
 
 const MIRA_FAVICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
@@ -93,6 +113,29 @@ const CHAT_PAGE = `<!doctype html>
       main::before, main::after { position: absolute; z-index: 0; pointer-events: none; content: ""; border-radius: 50%; filter: blur(2px); }
       main::before { top: -220px; right: -110px; width: 390px; height: 390px; background: radial-gradient(circle, #e9e3ffb8 0, #f2eaff70 48%, transparent 72%); }
       main::after { bottom: -260px; left: -180px; width: 430px; height: 430px; background: radial-gradient(circle, #f8e5efb0 0, #fff2e870 48%, transparent 72%); }
+      #chat-screen { position: relative; z-index: 1; min-height: 0; display: flex; flex: 1 1 auto; flex-direction: column; }
+      #chat-screen[hidden], #auth-screen[hidden] { display: none; }
+      .auth-screen { position: absolute; z-index: 3; inset: 0; display: grid; place-items: center; overflow-y: auto; padding: 26px 26px 54px; background: radial-gradient(ellipse at 18% 16%, #f8e9f1 0, transparent 40%), radial-gradient(ellipse at 86% 84%, #e8e4fb 0, transparent 38%), #faf7fc; }
+      .auth-card { width: min(100%, 430px); padding: 34px clamp(22px, 6vw, 38px); border: 1px solid #ffffff; border-radius: 28px; background: #fffdfd; box-shadow: 0 20px 60px #5948781c; text-align: center; }
+      .auth-mark { width: 54px; height: 54px; display: grid; place-items: center; margin: 0 auto 17px; border-radius: 19px; color: #fff; background: linear-gradient(145deg, #b49ae8 2%, #8c78d1 52%, #df9fbd 100%); box-shadow: 0 7px 18px #876bc52b; }
+      .auth-mark svg { width: 31px; height: 31px; fill: currentColor; }
+      .auth-mark .flower-center { fill: #ffe7a6; }
+      .auth-eyebrow { margin: 0 0 8px; color: var(--lilac); font-size: 10px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; }
+      .auth-title { margin: 0; color: var(--ink); font-size: clamp(24px, 6vw, 30px); font-weight: 760; letter-spacing: -.05em; }
+      .auth-description { margin: 10px 0 22px; color: var(--muted); font-size: 14px; line-height: 1.65; }
+      #auth-form { position: relative; z-index: 1; width: 100%; display: grid; gap: 9px; margin: 0; padding: 0; text-align: left; }
+      .auth-label { margin-top: 4px; color: #514961; font-size: 12px; font-weight: 700; }
+      .auth-input { width: 100%; min-height: 47px; padding: 11px 14px; border: 1px solid #e8e1ed; border-radius: 14px; outline: none; color: var(--ink); background: #fff; font: inherit; font-size: 14px; }
+      .auth-input:focus { border-color: #b8a8dd; box-shadow: 0 0 0 4px #a890d91c; }
+      .auth-note { margin: 3px 0 5px; color: #81798c; font-size: 11px; line-height: 1.55; }
+      .auth-submit { width: 100%; min-height: 47px; margin-top: 3px; border-radius: 15px; color: #fff; background: linear-gradient(145deg, #9a81da, #7259bd); box-shadow: 0 5px 13px #7259bd2b; }
+      .auth-submit:hover { background: linear-gradient(145deg, #8d74d0, #634cac); }
+      .auth-submit:disabled { cursor: wait; opacity: .7; }
+      .auth-switch { margin: 8px 0 0; color: var(--muted); font-size: 12px; text-align: center; }
+      .auth-text-button { width: auto; min-width: 0; min-height: auto; margin: 0; padding: 2px 4px; border: 0; color: #7059b4; background: transparent; box-shadow: none; font-size: inherit; font-weight: 750; }
+      .auth-text-button:hover { color: #59438f; background: transparent; text-decoration: underline; }
+      #auth-status { min-height: 19px; margin: 1px 0 0; color: #a34e65; font-size: 12px; line-height: 1.5; text-align: center; }
+      #auth-status:empty { min-height: 0; }
       .chat-header, #messages, .attachment-list, form, #status { position: relative; z-index: 1; }
       .chat-header { display: flex; align-items: center; gap: 13px; flex: 0 0 auto; min-height: 78px; padding: 13px clamp(20px, 4vw, 38px); border-bottom: 1px solid var(--line); background: #fffdfde8; backdrop-filter: blur(14px); }
       .assistant-avatar { width: 46px; height: 46px; display: grid; flex: 0 0 auto; place-items: center; border: 1px solid #ffffffb8; border-radius: 17px; color: #fff; background: linear-gradient(145deg, #b49ae8 2%, #8c78d1 52%, #df9fbd 100%); box-shadow: 0 7px 18px #876bc52b, inset 0 1px #ffffff70; }
@@ -103,6 +146,14 @@ const CHAT_PAGE = `<!doctype html>
       h1 { margin: 0; color: var(--ink); font-size: 19px; font-weight: 750; letter-spacing: -.04em; line-height: 1.2; }
       .header-note { display: flex; align-items: center; gap: 8px; margin-left: auto; padding: 8px 12px; border: 1px solid #efe8f5; border-radius: 999px; color: var(--muted); background: #fcf8ff; font-size: 12px; font-weight: 600; }
       .header-note-icon { color: #b67ea5; font-size: 15px; line-height: 1; }
+      .account-controls { display: flex; flex: 0 0 auto; align-items: center; gap: 9px; margin-left: auto; }
+      .account-username { max-width: 120px; overflow: hidden; color: #655a78; font-size: 12px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+      .sign-out { width: 34px; min-width: 34px; min-height: 34px; height: 34px; display: grid; place-items: center; padding: 0; border: 1px solid #eee8f2; border-radius: 50%; color: #756c85; background: #fff; }
+      .sign-out:hover { color: #7059b4; background: #f5f1fb; }
+      .sign-out svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+      .site-footer { position: relative; z-index: 4; flex: 0 0 auto; padding: 7px 14px max(11px, env(safe-area-inset-bottom)); color: #8a8294; font-size: 10px; text-align: center; }
+      .site-footer a { color: #765fc3; font-weight: 750; text-decoration: none; }
+      .site-footer a:hover { color: #59438f; text-decoration: underline; }
       .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
       #messages { flex: 1 1 auto; min-height: 0; min-width: 0; width: 100%; display: flex; flex-direction: column; gap: 18px; overflow-y: auto; overscroll-behavior: contain; padding: 28px clamp(18px, 6vw, 70px) 26px; scroll-behavior: smooth; scrollbar-color: #d9d0e4 transparent; scrollbar-width: thin; }
       #welcome[hidden] { display: none; }
@@ -185,9 +236,14 @@ const CHAT_PAGE = `<!doctype html>
       @media (max-width: 620px) {
         body { padding: 0; }
         main { width: 100%; height: 100vh; height: 100dvh; min-height: 0; border: 0; border-radius: 0; box-shadow: none; }
-        .chat-header { min-height: 68px; padding: 10px max(16px, env(safe-area-inset-left)); }
+        .auth-screen { padding: 18px 18px 58px; }
+        .auth-card { padding: 29px 23px; border-radius: 25px; }
+        .chat-header { min-height: 68px; gap: 9px; padding: 10px max(16px, env(safe-area-inset-left)); }
         .assistant-avatar { width: 42px; height: 42px; border-radius: 15px; }
-        .header-note { gap: 6px; padding: 7px 9px; font-size: 10px; }
+        .header-note { display: none; }
+        .account-controls { gap: 6px; }
+        .account-username { max-width: 90px; font-size: 11px; }
+        .site-footer { padding-bottom: max(11px, env(safe-area-inset-bottom)); }
         #messages { gap: 14px; padding: 22px 16px 18px; }
         .welcome-screen { padding: 18px 0 24px; }
         .welcome-art { width: 67px; height: 67px; margin-bottom: 16px; border-radius: 23px; }
@@ -235,6 +291,27 @@ const CHAT_PAGE = `<!doctype html>
   </head>
   <body>
     <main>
+      <section id="auth-screen" class="auth-screen" aria-labelledby="auth-title">
+        <div class="auth-card">
+          <div class="auth-mark" aria-hidden="true">
+            <svg viewBox="0 0 32 32"><ellipse cx="16" cy="8.8" rx="4.2" ry="6.4"/><ellipse cx="23.2" cy="16" rx="6.4" ry="4.2"/><ellipse cx="16" cy="23.2" rx="4.2" ry="6.4"/><ellipse cx="8.8" cy="16" rx="6.4" ry="4.2"/><circle class="flower-center" cx="16" cy="16" r="3.1"/></svg>
+          </div>
+          <p class="auth-eyebrow">MUSE AI · YOUR PRIVATE SPACE</p>
+          <h1 id="auth-title" class="auth-title">Welcome back</h1>
+          <p id="auth-description" class="auth-description">Sign in to pick up where you left off. Your conversation history is saved to your account.</p>
+          <form id="auth-form">
+            <label class="auth-label" for="auth-username">Username</label>
+            <input id="auth-username" class="auth-input" name="username" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" minlength="3" maxlength="24" required>
+            <label class="auth-label" for="auth-password">Password</label>
+            <input id="auth-password" class="auth-input" name="password" type="password" autocomplete="current-password" minlength="8" maxlength="128" required>
+            <p id="auth-note" class="auth-note">No email is needed. Keep your password safe; there is no email reset yet.</p>
+            <button id="auth-submit" class="auth-submit" type="submit">Sign in</button>
+            <p class="auth-switch"><span id="auth-switch-copy">New to Mira?</span> <button id="auth-toggle" class="auth-text-button" type="button">Create an account</button></p>
+            <p id="auth-status" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </section>
+      <div id="chat-screen" hidden>
       <header class="chat-header">
         <div class="assistant-avatar" aria-hidden="true">
           <svg viewBox="0 0 32 32"><ellipse cx="16" cy="8.8" rx="4.2" ry="6.4"/><ellipse cx="23.2" cy="16" rx="6.4" ry="4.2"/><ellipse cx="16" cy="23.2" rx="4.2" ry="6.4"/><ellipse cx="8.8" cy="16" rx="6.4" ry="4.2"/><circle class="flower-center" cx="16" cy="16" r="3.1"/></svg>
@@ -244,6 +321,12 @@ const CHAT_PAGE = `<!doctype html>
           <h1>Mira</h1>
         </div>
         <div class="header-note"><span class="header-note-icon" aria-hidden="true">✿</span><span class="header-note-copy">Here for your next idea</span></div>
+        <div class="account-controls">
+          <span id="account-username" class="account-username"></span>
+          <button id="sign-out" class="sign-out" type="button" aria-label="Sign out" title="Sign out">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3"/><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></svg>
+          </button>
+        </div>
       </header>
       <section id="messages" aria-live="polite" aria-label="Conversation" aria-relevant="additions">
         <div id="welcome" class="welcome-screen">
@@ -301,6 +384,8 @@ const CHAT_PAGE = `<!doctype html>
       </form>
       <p class="composer-hint"><span aria-hidden="true">✦</span> Any question, big idea, or tiny task is welcome.</p>
       <p id="status" role="status" aria-live="polite"></p>
+      </div>
+      <footer class="site-footer">Built by <a href="https://x.com/Great_mujey" target="_blank" rel="noopener noreferrer">Great_mujey</a></footer>
     </main>
     <script>
       const form = document.querySelector("#chat-form");
@@ -309,6 +394,21 @@ const CHAT_PAGE = `<!doctype html>
       const messages = document.querySelector("#messages");
       const welcome = document.querySelector("#welcome");
       const status = document.querySelector("#status");
+      const authScreen = document.querySelector("#auth-screen");
+      const chatScreen = document.querySelector("#chat-screen");
+      const authForm = document.querySelector("#auth-form");
+      const authUsername = document.querySelector("#auth-username");
+      const authPassword = document.querySelector("#auth-password");
+      const authTitle = document.querySelector("#auth-title");
+      const authDescription = document.querySelector("#auth-description");
+      const authNote = document.querySelector("#auth-note");
+      const authSubmit = document.querySelector("#auth-submit");
+      const authToggle = document.querySelector("#auth-toggle");
+      const authSwitchCopy = document.querySelector("#auth-switch-copy");
+      const authStatus = document.querySelector("#auth-status");
+      const accountUsername = document.querySelector("#account-username");
+      const signOutButton = document.querySelector("#sign-out");
+      let authMode = "login";
 
       messages.addEventListener("click", (event) => {
         const promptButton = event.target?.closest?.("button[data-prompt]");
@@ -584,6 +684,7 @@ const CHAT_PAGE = `<!doctype html>
       function setBusy(value) {
         busy = value;
         button.disabled = value;
+        signOutButton.disabled = value;
         actionMenuToggle.disabled = value;
         attachButton.disabled = value;
         imageButton.disabled = value;
@@ -633,6 +734,10 @@ const CHAT_PAGE = `<!doctype html>
           });
           if (!response.ok) {
             const result = await response.json().catch(() => ({}));
+            if (response.status === 401) {
+              setAuthMode("login");
+              showAuth("Your sign-in expired. Please sign in again.");
+            }
             throw new Error(result.error || "Could not remove that attachment.");
           }
           attachments = attachments.filter((attachment) => attachment.id !== id);
@@ -676,7 +781,13 @@ const CHAT_PAGE = `<!doctype html>
               body: file
             });
             const result = await response.json().catch(() => ({}));
-            if (!response.ok) throw new Error(result.error || "Could not upload " + file.name + ".");
+            if (!response.ok) {
+              if (response.status === 401) {
+                setAuthMode("login");
+                showAuth("Your sign-in expired. Please sign in again.");
+              }
+              throw new Error(result.error || "Could not upload " + file.name + ".");
+            }
             attachments.push(result.attachment);
             renderAttachments();
           }
@@ -775,7 +886,154 @@ const CHAT_PAGE = `<!doctype html>
 
       async function readError(response, fallback) {
         const result = await response.json().catch(() => ({}));
+        if (response.status === 401) {
+          setAuthMode("login");
+          showAuth("Your sign-in expired. Please sign in again.");
+        }
         return result.error || fallback;
+      }
+
+      function setAuthMode(mode) {
+        authMode = mode === "register" ? "register" : "login";
+        const registering = authMode === "register";
+        authTitle.textContent = registering ? "Create your Mira account" : "Welcome back";
+        authDescription.textContent = registering
+          ? "Choose a username and password to keep your conversation history for next time."
+          : "Sign in to pick up where you left off. Your conversation history is saved to your account.";
+        authNote.textContent = registering
+          ? "Usernames use 3–24 letters, numbers, or underscores. Passwords need at least 8 characters; there is no email reset yet."
+          : "No email is needed. Keep your password safe; there is no email reset yet.";
+        authPassword.autocomplete = registering ? "new-password" : "current-password";
+        authSwitchCopy.textContent = registering ? "Already have an account?" : "New to Mira?";
+        authToggle.textContent = registering ? "Sign in" : "Create an account";
+        authSubmit.textContent = registering ? "Create my account" : "Sign in";
+        authStatus.textContent = "";
+      }
+
+      function showAuth(message = "") {
+        authScreen.hidden = false;
+        chatScreen.hidden = true;
+        authStatus.textContent = message;
+        authPassword.value = "";
+        authUsername.focus();
+      }
+
+      async function loadChatHistory() {
+        messages.replaceChildren();
+        welcome.hidden = false;
+        messages.append(welcome);
+        try {
+          const response = await fetch("/api/history");
+          if (response.status === 401) {
+            setAuthMode("login");
+            showAuth("Your sign-in expired. Please sign in again.");
+            return;
+          }
+          if (!response.ok) throw new Error("Chat history could not be loaded.");
+          const result = await response.json();
+          const history = Array.isArray(result.messages) ? result.messages : [];
+          const validMessages = history.filter((item) =>
+            item &&
+            (item.role === "user" || item.role === "assistant") &&
+            typeof item.content === "string",
+          );
+          if (!validMessages.length) return;
+          welcome.hidden = true;
+          for (const item of validMessages) {
+            addMessage(item.role === "user" ? "you" : "muse", item.content);
+          }
+          messages.scrollTop = messages.scrollHeight;
+        } catch (error) {
+          status.textContent = error instanceof Error
+            ? error.message
+            : "Chat history could not be loaded.";
+        }
+      }
+
+      async function enterChat(user) {
+        authScreen.hidden = true;
+        chatScreen.hidden = false;
+        accountUsername.textContent = user.username;
+        status.textContent = "";
+        authPassword.value = "";
+        await loadChatHistory();
+        if (!chatScreen.hidden) input.focus();
+      }
+
+      authToggle.addEventListener("click", () => {
+        setAuthMode(authMode === "login" ? "register" : "login");
+      });
+
+      authForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        if (authSubmit.disabled) return;
+        authStatus.textContent = "";
+        authSubmit.disabled = true;
+        authToggle.disabled = true;
+        try {
+          const endpoint = authMode === "register"
+            ? "/api/auth/register"
+            : "/api/auth/login";
+          const response = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              username: authUsername.value.trim(),
+              password: authPassword.value,
+            }),
+          });
+          const result = await response.json().catch(() => ({}));
+          if (!response.ok) {
+            throw new Error(result.error || "Could not sign in. Please try again.");
+          }
+          if (!result.user || typeof result.user.username !== "string") {
+            throw new Error("Mira could not verify this account.");
+          }
+          await enterChat(result.user);
+        } catch (error) {
+          authStatus.textContent = error instanceof Error
+            ? error.message
+            : "Could not sign in. Please try again.";
+        } finally {
+          authSubmit.disabled = false;
+          authToggle.disabled = false;
+        }
+      });
+
+      signOutButton.addEventListener("click", async () => {
+        signOutButton.disabled = true;
+        try {
+          const response = await fetch("/api/auth/logout", { method: "POST" });
+          if (!response.ok) throw new Error("Could not sign out. Please try again.");
+          messages.replaceChildren(welcome);
+          welcome.hidden = false;
+          attachments = [];
+          renderAttachments();
+          input.value = "";
+          updateComposerHeight();
+          setAuthMode("login");
+          showAuth();
+        } catch (error) {
+          status.textContent = error instanceof Error
+            ? error.message
+            : "Could not sign out. Please try again.";
+        } finally {
+          signOutButton.disabled = false;
+        }
+      });
+
+      async function checkAuth() {
+        try {
+          const response = await fetch("/api/auth/me");
+          const result = await response.json();
+          if (response.ok && result.authenticated && result.user) {
+            await enterChat(result.user);
+          } else {
+            showAuth();
+          }
+        } catch {
+          showAuth("Could not reach the sign-in service. Please try again.");
+        }
       }
 
       form.addEventListener("submit", async (event) => {
@@ -936,6 +1194,8 @@ const CHAT_PAGE = `<!doctype html>
           "Speech recognition is not supported in this browser",
         );
       }
+
+      void checkAuth();
     </script>
   </body>
 </html>`;
@@ -953,9 +1213,13 @@ interface AttachmentContextResult {
 }
 
 interface MuseSession {
-  agent: MuseAgent;
+  agent?: MuseAgent;
+  userId: string;
+  username: string;
+  history: ConversationMessage[];
   lastUsedAt: number;
   pending: Promise<void>;
+  historyPending: Promise<void>;
   attachments: Map<string, MuseAttachment>;
 }
 
@@ -963,6 +1227,12 @@ export interface MuseHttpServerOptions {
   sessionSecret?: string;
   memoryDirectory?: string;
   sharedMemoryPath?: string;
+  /** File for username/password account records. Defaults to scripts/data/muse-web-users.json. */
+  authFilePath?: string;
+  /** Directory for per-user chat transcripts. Defaults to scripts/data/muse-web-history/. */
+  historyDirectory?: string;
+  /** Defaults to true. Disable only in isolated tests that exercise legacy anonymous sessions. */
+  authEnabled?: boolean;
   providerFactory?: () => TextGenerationProvider;
   /** Provider for research planning, synthesis, and long-form writing.
    *  Defaults to `providerFactory` (or the task-aware research provider when
@@ -989,6 +1259,17 @@ export function createMuseHttpServer(
     options.memoryDirectory ??
     process.env.MUSE_HTTP_MEMORY_DIR ??
     DEFAULT_MEMORY_DIRECTORY;
+  const authEnabled = options.authEnabled ?? true;
+  const userStore = new JsonWebUserStore(
+    options.authFilePath ??
+      process.env.MUSE_WEB_AUTH_FILE ??
+      DEFAULT_WEB_AUTH_FILE,
+  );
+  const chatHistoryStore = new JsonChatHistoryStore(
+    options.historyDirectory ??
+      process.env.MUSE_WEB_HISTORY_DIR ??
+      DEFAULT_CHAT_HISTORY_DIRECTORY,
+  );
   const defaultTasks = options.providerFactory
     ? undefined
     : createTaskAwareProviders();
@@ -1013,10 +1294,39 @@ export function createMuseHttpServer(
   }
 
   const sessions = new Map<string, MuseSession>();
+  const activeUserSessions = new Map<string, MuseSession>();
+  const loginFailures = new Map<string, { count: number; resetAt: number }>();
   const imageGenerationTimestamps: number[] = [];
   const imageAnalysisTimestamps: number[] = [];
   let storedAttachmentBytes = 0;
   let mediaProvider: MuseMediaProvider | undefined;
+
+  function createAgent(
+    userId: string,
+    history: readonly ConversationMessage[],
+  ): MuseAgent {
+    const chatProvider = providerFactory();
+    const agent = new MuseAgent(
+      chatProvider,
+      new MemoryService(
+        new JsonMemoryRepository(join(memoryDirectory, `${userId}.json`)),
+      ),
+      authEnabled ? undefined : sharedMemories,
+      options.researchRunner,
+      options.researchImageFinder,
+      {
+        research: options.researchProviderFactory
+          ? options.researchProviderFactory()
+          : defaultTasks
+            ? defaultTasks.research.provider
+            : chatProvider,
+      },
+    );
+    agent.restoreConversationHistory(
+      history.slice(-MAX_MODEL_CONTEXT_MESSAGES),
+    );
+    return agent;
+  }
 
   function getMediaProvider(): MuseMediaProvider {
     if (!mediaProvider) {
@@ -1109,6 +1419,200 @@ export function createMuseHttpServer(
     });
   }
 
+  async function createAuthenticatedSession(
+    user: WebUser,
+    request: IncomingMessage,
+    response: ServerResponse,
+  ): Promise<MuseSession | undefined> {
+    expireSessions();
+    if (sessions.size >= maxActiveSessions) return undefined;
+
+    let session = activeUserSessions.get(user.id);
+    if (!session || Date.now() - session.lastUsedAt > sessionTtlMs) {
+      const history = await chatHistoryStore.load(user.id);
+      session = {
+        userId: user.id,
+        username: user.username,
+        history: history.slice(-MAX_STORED_CHAT_MESSAGES),
+        lastUsedAt: Date.now(),
+        pending: Promise.resolve(),
+        historyPending: Promise.resolve(),
+        attachments: new Map(),
+      };
+      activeUserSessions.set(user.id, session);
+    } else {
+      session.username = user.username;
+    }
+
+    const sessionId = randomBytes(32).toString("hex");
+    sessions.set(sessionId, session);
+    session.lastUsedAt = Date.now();
+    writeSessionCookie(request, response, sessionId, sessionSecret, sessionTtlMs);
+    return session;
+  }
+
+  async function handleAuthRequest(
+    request: IncomingMessage,
+    response: ServerResponse,
+    pathname: string,
+  ): Promise<void> {
+    if (pathname === "/api/auth/me") {
+      if (request.method !== "GET") {
+        response.setHeader("Allow", "GET");
+        sendJson(response, 405, { error: "Use GET to check your sign-in." });
+        return;
+      }
+      if (!authEnabled) {
+        sendJson(response, 200, {
+          authenticated: true,
+          user: { id: "preview-user", username: "Preview" },
+        });
+        return;
+      }
+      const session = getSession(request, response);
+      if (!session) {
+        sendJson(response, 200, { authenticated: false });
+        return;
+      }
+      sendJson(response, 200, {
+        authenticated: true,
+        user: { id: session.userId, username: session.username },
+      });
+      return;
+    }
+
+    if (pathname === "/api/auth/logout") {
+      if (request.method !== "POST") {
+        response.setHeader("Allow", "POST");
+        sendJson(response, 405, { error: "Use POST to sign out." });
+        return;
+      }
+      const sessionId = readSessionId(request, sessionSecret);
+      const session = sessionId ? sessions.get(sessionId) : undefined;
+      if (sessionId) sessions.delete(sessionId);
+      if (
+        session &&
+        ![...sessions.values()].includes(session)
+      ) {
+        activeUserSessions.delete(session.userId);
+        discardSessionAttachments(session);
+      }
+      clearSessionCookie(request, response);
+      sendJson(response, 200, { signedOut: true });
+      return;
+    }
+
+    if (pathname !== "/api/auth/register" && pathname !== "/api/auth/login") {
+      sendJson(response, 404, { error: "Not found." });
+      return;
+    }
+    if (!authEnabled) {
+      sendJson(response, 404, { error: "Sign-in is not enabled in this test server." });
+      return;
+    }
+    if (request.method !== "POST") {
+      response.setHeader("Allow", "POST");
+      sendJson(response, 405, { error: "Use POST to sign in." });
+      return;
+    }
+    if (
+      request.headers["content-type"]?.split(";")[0]?.trim() !==
+      "application/json"
+    ) {
+      sendJson(response, 415, { error: "Send your sign-in details as JSON." });
+      return;
+    }
+
+    let body: unknown;
+    try {
+      body = await readJsonBody(request);
+    } catch (error) {
+      sendJson(
+        response,
+        error instanceof RequestBodyTooLargeError ? 413 : 400,
+        {
+          error:
+            error instanceof RequestBodyTooLargeError
+              ? "The sign-in request is too large."
+              : "The request body must be valid JSON.",
+        },
+      );
+      return;
+    }
+    if (
+      !isRecord(body) ||
+      typeof body.username !== "string" ||
+      typeof body.password !== "string"
+    ) {
+      sendJson(response, 400, { error: "Enter a username and password." });
+      return;
+    }
+
+    if (pathname === "/api/auth/register") {
+      let user: WebUser;
+      try {
+        user = await userStore.register(body.username, body.password);
+      } catch (error) {
+        if (error instanceof WebAuthInputError) {
+          sendJson(response, 400, { error: error.message });
+        } else if (error instanceof WebUsernameTakenError) {
+          sendJson(response, 409, { error: error.message });
+        } else {
+          throw error;
+        }
+        return;
+      }
+      const session = await createAuthenticatedSession(user, request, response);
+      if (!session) {
+        sendJson(response, 503, { error: "Muse is busy. Please try again shortly." });
+        return;
+      }
+      sendJson(response, 201, {
+        authenticated: true,
+        user: { id: user.id, username: user.username },
+      });
+      return;
+    }
+
+    const attemptKey = body.username.trim().toLowerCase().slice(0, 32);
+    const now = Date.now();
+    for (const [key, attempt] of loginFailures) {
+      if (attempt.resetAt <= now) loginFailures.delete(key);
+    }
+    const priorFailure = loginFailures.get(attemptKey);
+    if (priorFailure && priorFailure.count >= MAX_LOGIN_FAILURES) {
+      response.setHeader(
+        "Retry-After",
+        String(Math.max(1, Math.ceil((priorFailure.resetAt - now) / 1_000))),
+      );
+      sendJson(response, 429, {
+        error: "Too many sign-in attempts for that username. Try again later.",
+      });
+      return;
+    }
+
+    const user = await userStore.authenticate(body.username, body.password);
+    if (!user) {
+      const currentFailure = loginFailures.get(attemptKey);
+      loginFailures.set(attemptKey, {
+        count: currentFailure ? currentFailure.count + 1 : 1,
+        resetAt: currentFailure?.resetAt ?? now + LOGIN_FAILURE_WINDOW_MS,
+      });
+      sendJson(response, 401, { error: "Username or password is incorrect." });
+      return;
+    }
+    loginFailures.delete(attemptKey);
+    const session = await createAuthenticatedSession(user, request, response);
+    if (!session) {
+      sendJson(response, 503, { error: "Muse is busy. Please try again shortly." });
+      return;
+    }
+    sendJson(response, 200, {
+      authenticated: true,
+      user: { id: user.id, username: user.username },
+    });
+  }
+
   return createServer((request, response) => {
     void handleRequest(request, response).catch(() => {
       if (!response.headersSent && !response.destroyed) {
@@ -1143,6 +1647,37 @@ export function createMuseHttpServer(
 
     if (request.method === "GET" && pathname === "/api/healthz") {
       sendJson(response, 200, { status: "ok" });
+      return;
+    }
+
+    if (pathname === "/api/auth/me" || pathname.startsWith("/api/auth/")) {
+      await handleAuthRequest(request, response, pathname);
+      return;
+    }
+
+    if (pathname === "/api/history") {
+      if (request.method !== "GET") {
+        response.setHeader("Allow", "GET");
+        sendJson(response, 405, { error: "Use GET to load chat history." });
+        return;
+      }
+      const session = getSession(request, response);
+      if (!session) {
+        sendJson(response, 401, { error: "Sign in to view chat history." });
+        return;
+      }
+      sendJson(response, 200, {
+        messages: session.history.slice(-MAX_STORED_CHAT_MESSAGES),
+      });
+      return;
+    }
+
+    if (
+      authEnabled &&
+      isProtectedApiPath(pathname) &&
+      !getSession(request, response)
+    ) {
+      sendJson(response, 401, { error: "Sign in to continue." });
       return;
     }
 
@@ -1226,8 +1761,12 @@ export function createMuseHttpServer(
 
     const imageCommand = parseImageGenerationCommand(message);
     if (imageCommand) {
-      const sessionId = readSessionId(request, sessionSecret);
-      const attachmentSession = sessionId ? sessions.get(sessionId) : undefined;
+      let attachmentSession: MuseSession | undefined;
+      try {
+        attachmentSession = getSession(request, response);
+      } catch {
+        // Image generation can work even when the text model is unavailable.
+      }
       try {
         if (imageCommand.kind === "missing-prompt") {
           sendJson(response, 400, { error: IMAGE_GENERATION_USAGE_REPLY });
@@ -1237,6 +1776,13 @@ export function createMuseHttpServer(
           });
         } else {
           const image = await generateImageForPrompt(imageCommand.prompt);
+          if (attachmentSession) {
+            await appendHistoryTurn(
+              attachmentSession,
+              message,
+              GENERATED_IMAGE_HISTORY_NOTE,
+            );
+          }
           sendGeneratedImage(response, image);
         }
       } catch (error) {
@@ -1263,6 +1809,15 @@ export function createMuseHttpServer(
     if (!session) {
       sendJson(response, 503, {
         error: "Muse has reached its active session limit. Try again later.",
+      });
+      return;
+    }
+    try {
+      session.agent ??= createAgent(session.userId, session.history);
+    } catch {
+      sendJson(response, 503, {
+        error:
+          "Muse's model provider is not configured. Set a provider key and try again.",
       });
       return;
     }
@@ -1507,8 +2062,21 @@ export function createMuseHttpServer(
       return;
     }
 
+    let session: MuseSession | undefined;
+    try {
+      session = getSession(request, response);
+    } catch {
+      // Image generation can work even when the text model is unavailable.
+    }
     try {
       const image = await generateImageForPrompt(prompt);
+      if (session) {
+        await appendHistoryTurn(
+          session,
+          `Create image: ${prompt}`,
+          GENERATED_IMAGE_HISTORY_NOTE,
+        );
+      }
       sendGeneratedImage(response, image);
     } catch (error) {
       sendImageGenerationError(response, error);
@@ -1597,6 +2165,37 @@ export function createMuseHttpServer(
     return { context: sections.join("\n\n"), notices };
   }
 
+  function appendHistoryTurn(
+    session: MuseSession,
+    userMessage: string,
+    assistantMessage: string,
+  ): Promise<boolean> {
+    const operation = session.historyPending.then(async () => {
+      session.history = [
+        ...session.history,
+        { role: "user", content: userMessage },
+        { role: "assistant", content: assistantMessage },
+      ].slice(-MAX_STORED_CHAT_MESSAGES);
+      session.lastUsedAt = Date.now();
+      if (!authEnabled) return true;
+      try {
+        await chatHistoryStore.save(session.userId, session.history);
+        return true;
+      } catch (error) {
+        console.error(
+          "Muse chat history could not be saved:",
+          error instanceof Error ? error.message : "unknown error",
+        );
+        return false;
+      }
+    });
+    session.historyPending = operation.then(
+      () => undefined,
+      () => undefined,
+    );
+    return operation;
+  }
+
   function enqueueResponse(
     session: MuseSession,
     message: string,
@@ -1618,12 +2217,30 @@ export function createMuseHttpServer(
         const hasImageAttachment = resolvedAttachments.some((attachment) =>
           attachment.mimeType.startsWith("image/"),
         );
-        const reply = await session.agent.respond(
+        const agent = session.agent;
+        if (!agent) throw new Error("The chat agent was not initialized.");
+        const reply = await agent.respond(
           message,
           attachmentContext.context,
           hasImageAttachment,
         );
-        return { reply, notices: attachmentContext.notices };
+        agent.trimConversationHistory(MAX_MODEL_CONTEXT_MESSAGES);
+        const attachmentNames = resolvedAttachments.map(
+          (attachment) => attachment.name,
+        );
+        const historyUserMessage = attachmentNames.length
+          ? `${message}\n[Attached: ${attachmentNames.join(", ")}]`
+          : message;
+        const notices = [...attachmentContext.notices];
+        const historySaved = await appendHistoryTurn(
+          session,
+          historyUserMessage,
+          reply,
+        );
+        if (!historySaved) {
+          notices.push("This reply could not be saved to your chat history.");
+        }
+        return { reply, notices };
       } finally {
         for (const id of attachmentIds) {
           const attachment = session.attachments.get(id);
@@ -1644,45 +2261,64 @@ export function createMuseHttpServer(
     return response;
   }
 
+  function expireSessions(now = Date.now()): void {
+    const expiredSessions = new Set<MuseSession>();
+    for (const [id, session] of sessions) {
+      if (now - session.lastUsedAt > sessionTtlMs) {
+        sessions.delete(id);
+        expiredSessions.add(session);
+      }
+    }
+    for (const [userId, session] of activeUserSessions) {
+      if (now - session.lastUsedAt > sessionTtlMs) {
+        activeUserSessions.delete(userId);
+        expiredSessions.add(session);
+      }
+    }
+    for (const session of expiredSessions) {
+      if (![...sessions.values()].includes(session)) {
+        discardSessionAttachments(session);
+        if (activeUserSessions.get(session.userId) === session) {
+          activeUserSessions.delete(session.userId);
+        }
+      }
+    }
+  }
+
   function getSession(
     request: IncomingMessage,
     response: ServerResponse,
   ): MuseSession | undefined {
     const now = Date.now();
-    for (const [id, session] of sessions) {
-      if (now - session.lastUsedAt > sessionTtlMs) {
-        discardSessionAttachments(session);
-        sessions.delete(id);
-      }
-    }
+    expireSessions(now);
 
     const cookieSessionId = readSessionId(request, sessionSecret);
-    let id = cookieSessionId ?? randomBytes(32).toString("hex");
+    if (authEnabled) {
+      if (!cookieSessionId) return undefined;
+      const session = sessions.get(cookieSessionId);
+      if (!session) return undefined;
+      session.lastUsedAt = now;
+      writeSessionCookie(
+        request,
+        response,
+        cookieSessionId,
+        sessionSecret,
+        sessionTtlMs,
+      );
+      return session;
+    }
+
+    const id = cookieSessionId ?? randomBytes(32).toString("hex");
     let session = sessions.get(id);
     if (!session) {
       if (sessions.size >= maxActiveSessions) return undefined;
       session = {
-        agent: (() => {
-          const chatProvider = providerFactory();
-          return new MuseAgent(
-            chatProvider,
-            new MemoryService(
-              new JsonMemoryRepository(join(memoryDirectory, `${id}.json`)),
-            ),
-            sharedMemories,
-            options.researchRunner,
-            options.researchImageFinder,
-            {
-              research: options.researchProviderFactory
-                ? options.researchProviderFactory()
-                : defaultTasks
-                ? defaultTasks.research.provider
-                : chatProvider,
-            },
-          );
-        })(),
+        userId: id,
+        username: "Guest",
+        history: [],
         lastUsedAt: now,
         pending: Promise.resolve(),
+        historyPending: Promise.resolve(),
         attachments: new Map(),
       };
       sessions.set(id, session);
@@ -1739,6 +2375,29 @@ function writeSessionCookie(
   response.setHeader(
     "Set-Cookie",
     `${SESSION_COOKIE_NAME}=${id}.${signature}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${maxAgeSeconds}${secureAttribute}`,
+  );
+}
+
+function clearSessionCookie(
+  request: IncomingMessage,
+  response: ServerResponse,
+): void {
+  const forwardedProtocol = request.headers["x-forwarded-proto"];
+  const isSecure =
+    typeof forwardedProtocol === "string" &&
+    forwardedProtocol.split(",")[0].trim().toLowerCase() === "https";
+  response.setHeader(
+    "Set-Cookie",
+    `${SESSION_COOKIE_NAME}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0${isSecure ? "; Secure" : ""}`,
+  );
+}
+
+function isProtectedApiPath(pathname: string): boolean {
+  return (
+    pathname === "/api/chat" ||
+    pathname === "/api/images/generate" ||
+    pathname === "/api/attachments" ||
+    pathname.startsWith("/api/attachments/")
   );
 }
 
